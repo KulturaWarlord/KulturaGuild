@@ -21,6 +21,13 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            /* MU Online Custom Cursor (Gauntlet / Sword Pointer) */
+            cursor: url('https://muonline.webzen.com/Cont/images/common/cursor.cur'), auto !important;
+        }
+
+        /* Specific pointer style for buttons/links/cards */
+        a, button, .member-card, .server-logo-link, #music-control, .close-modal {
+            cursor: url('https://muonline.webzen.com/Cont/images/common/cursor_select.cur'), pointer !important;
         }
 
         body {
@@ -45,7 +52,6 @@
             color: #fff;
             padding: 12px 20px;
             border-radius: 30px;
-            cursor: pointer;
             font-family: 'Cinzel', serif;
             font-size: 0.85rem;
             font-weight: 700;
@@ -136,7 +142,6 @@
             border-radius: 4px;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
-            cursor: pointer;
         }
 
         .btn:hover {
@@ -233,7 +238,7 @@
             letter-spacing: 1px;
         }
 
-        /* Roster Grid */
+        /* Guild Grid */
         .roster-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -255,7 +260,6 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            cursor: pointer;
         }
 
         .member-card:hover {
@@ -364,7 +368,6 @@
             top: 15px; right: 20px;
             font-size: 1.8rem;
             color: var(--primary);
-            cursor: pointer;
             font-weight: bold;
             z-index: 10;
         }
@@ -463,6 +466,43 @@
         .members-list li span:last-child {
             font-size: 0.85rem;
             font-weight: 600;
+        }
+
+        /* Upcoming Events Section Styling */
+        .events-single-container {
+            max-width: 800px;
+            margin: 0 auto 60px;
+        }
+
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .event-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            border-radius: 6px;
+        }
+
+        .event-title {
+            font-family: 'Cinzel', serif;
+            color: var(--primary-glow);
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .event-time {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+
+        .event-desc {
+            font-size: 0.95rem;
+            color: var(--text-light);
         }
 
         /* Rules & Recruitment */
@@ -567,7 +607,7 @@
         <p class="guild-motto">"Respect, Loyalty, Unity, and Victory."</p>
         <div class="hero-btns">
             <a href="https://discord.gg/ZwZcUPaMP" target="_blank" rel="noopener noreferrer" class="btn">Apply For Guild</a>
-            <a href="#roster" class="btn btn-secondary">View Roster</a>
+            <a href="#guild" class="btn btn-secondary">View Guild</a>
         </div>
     </header>
 
@@ -593,8 +633,8 @@
             </div>
         </div>
 
-        <!-- Roster Section -->
-        <section id="roster">
+        <!-- Guild Section -->
+        <section id="guild">
             <h2 class="section-title">Guild Leadership & Alliance</h2>
             
             <!-- ROW 1: GUILD MASTERS -->
@@ -735,6 +775,25 @@
             </div>
         </section>
 
+        <!-- Upcoming Events Section -->
+        <section class="events-single-container">
+            <h2 class="section-title">Upcoming Guild Schedule</h2>
+            <div class="panel">
+                <div class="events-list">
+                    <div class="event-card">
+                        <div class="event-title">Castle Siege War</div>
+                        <div class="event-time">📅 Saturday | 6:00 PM PH Time</div>
+                        <div class="event-desc">Mandatory attendance for all main members and alliance rosters. Be ready 30 mins prior.</div>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-title">Guild Events</div>
+                        <div class="event-time">📅 Saturday | 8:00 PM PH Time</div>
+                        <div class="event-desc">All Guild Leaders will host an Event.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Rules & Recruitment Section -->
         <section id="recruitment" class="two-col">
             
@@ -755,7 +814,7 @@
                 </p>
                 <div style="display: flex; flex-direction: column; gap: 15px;">
                     <a href="https://discord.gg/ZwZcUPaMP" target="_blank" rel="noopener noreferrer" class="btn" style="text-align: center;">Join Our Discord</a>
-                    <a href="#" class="btn btn-secondary" style="text-align: center;">Message Warlock in Game</a>
+                    <a href="#" class="btn btn-secondary" style="text-align: center;">Message Tsukushi in Game</a>
                 </div>
             </div>
 
@@ -895,7 +954,7 @@
             const subtitle = document.getElementById('modal-guild-master');
             const list = document.getElementById('modal-members-list');
 
-            title.innerText = `${guildName} Roster`;
+            title.innerText = `${guildName} Guild`;
             subtitle.innerText = `Guild Master: ${gmName}`;
             list.innerHTML = '';
 
