@@ -255,6 +255,7 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
+            cursor: pointer;
         }
 
         .member-card:hover {
@@ -284,7 +285,6 @@
 
         .role-master { background: var(--primary); color: #000; }
         .role-bm { background: var(--secondary); color: #fff; }
-        .role-member { background: rgba(255, 255, 255, 0.15); color: var(--text-light); }
 
         .member-avatar {
             width: 100%;
@@ -321,6 +321,109 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding-top: 10px;
             width: 100%;
+        }
+
+        .click-hint {
+            font-size: 0.75rem;
+            color: var(--primary);
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* Modal Popup Styling */
+        #member-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(6px);
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #12121c, #0a0a0f);
+            border: 2px solid var(--primary);
+            width: 90%;
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(230, 184, 0, 0.4);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 1.8rem;
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .close-modal:hover { color: #fff; }
+
+        .modal-title {
+            font-family: 'Cinzel', serif;
+            color: var(--primary-glow);
+            font-size: 1.6rem;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .modal-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+
+        .members-list {
+            list-style: none;
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .members-list li {
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 10px;
+            padding: 12px 15px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid var(--secondary);
+        }
+
+        .members-list li span:first-child {
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .members-list li span:last-child {
+            font-size: 0.85rem;
+            color: var(--primary-glow);
+        }
+
+        /* Weapon Icon Style */
+        .weapon-icon-img {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+            vertical-align: middle;
+            filter: drop-shadow(0 0 3px rgba(230, 184, 0, 0.6));
         }
 
         /* Rules & Recruitment */
@@ -392,16 +495,27 @@
 
     <!-- Floating Audio Control Button -->
     <div id="music-control" onclick="toggleMusic()">
-        <span id="music-icon">🔊</span>
-        <span id="music-text">Pause Music</span>
+        <span id="music-icon">🎵</span>
+        <span id="music-text">Play Guild Music</span>
     </div>
 
-    <!-- Audio Element with Autoplay Enabled -->
-    <audio id="bg-audio" autoplay loop preload="auto">
-        <source src="Epic Medieval Battle Music_ _Valiant Warriors of our Lands_ by RageSound (Copyright Free Music) [MGIt04kMV_g]_2.mp3" type="audio/mpeg">
+    <!-- Audio Element -->
+    <audio id="bg-audio" loop preload="auto">
         <source src="Epic Medieval Battle Music_ _Valiant Warriors of our Lands_ by RageSound (Copyright Free Music) [MGIt04kMV_g].mp3" type="audio/mpeg">
         <source src="kultura_music.mp3" type="audio/mpeg">
     </audio>
+
+    <!-- Modal Popup for Guild Members -->
+    <div id="member-modal" onclick="closeModalOnOutside(event)">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3 id="modal-guild-name" class="modal-title">Guild Members</h3>
+            <p id="modal-guild-master" class="modal-subtitle">Led by Guild Master</p>
+            <ul id="modal-members-list" class="members-list">
+                <!-- Dynamically populated members -->
+            </ul>
+        </div>
+    </div>
 
     <!-- Header Section -->
     <header>
@@ -443,9 +557,10 @@
             <h2 class="section-title">Guild Leadership & Alliance</h2>
             
             <!-- ROW 1: GUILD MASTERS -->
-            <h3 class="category-title">Guild Masters</h3>
+            <h3 class="category-title">Guild Masters (Click card to view members)</h3>
             <div class="roster-grid">
-                <div class="member-card master">
+                
+                <div class="member-card master" onclick="openGuildMembers('Kultura', 'Fullclip')">
                     <span class="role-badge role-master">Guild Master</span>
                     <h3 class="member-name">Fullclip</h3>
                     <div class="member-class">Kultura Guild Master</div>
@@ -453,10 +568,10 @@
                         <span>Role: Leader / Sealer</span>
                         <span>Resets: Max</span>
                     </div>
+                    <span class="click-hint">🖱️ Click to view members</span>
                 </div>
 
-                <!-- Guild Master Warlock -->
-                <div class="member-card master">
+                <div class="member-card master" onclick="openGuildMembers('Kultura (Warlock Division)', 'Warlock')">
                     <span class="role-badge role-master">Guild Master</span>
                     <img src="https://cdn.phototourl.com/member/2026-10-07-4f35248b-2602-408c-8175-3e37cc1e0977.png" alt="Guild Master Warlock" class="member-avatar">
                     <h3 class="member-name">Warlock</h3>
@@ -465,9 +580,10 @@
                         <span>Role: Leader / Shotcaller</span>
                         <span>Resets: Max</span>
                     </div>
+                    <span class="click-hint">🖱️ Click to view members</span>
                 </div>
 
-                <div class="member-card master">
+                <div class="member-card master" onclick="openGuildMembers('Stealth', 'LordDwight')">
                     <span class="role-badge role-master">Guild Master</span>
                     <h3 class="member-name">LordDwight</h3>
                     <div class="member-class">Stealth Guild Master</div>
@@ -475,9 +591,10 @@
                         <span>Role: Leader / Shotcaller</span>
                         <span>Resets: Max</span>
                     </div>
+                    <span class="click-hint">🖱️ Click to view members</span>
                 </div>
 
-                <div class="member-card master">
+                <div class="member-card master" onclick="openGuildMembers('Protect', 'WindTalker')">
                     <span class="role-badge role-master">Guild Master</span>
                     <h3 class="member-name">WindTalker</h3>
                     <div class="member-class">Protect Guild Master</div>
@@ -485,9 +602,10 @@
                         <span>Role: Leader / Support Leader</span>
                         <span>Resets: Max</span>
                     </div>
+                    <span class="click-hint">🖱️ Click to view members</span>
                 </div>
 
-                <div class="member-card master">
+                <div class="member-card master" onclick="openGuildMembers('Anxiety', 'iKapitana')">
                     <span class="role-badge role-master">Guild Master</span>
                     <h3 class="member-name">iKapitana</h3>
                     <div class="member-class">Anxiety Guild Master</div>
@@ -495,9 +613,10 @@
                         <span>Role: Leader / Support Leader</span>
                         <span>Resets: Max</span>
                     </div>
+                    <span class="click-hint">🖱️ Click to view members</span>
                 </div>
 
-                <div class="member-card master">
+                <div class="member-card master" onclick="openGuildMembers('Leadership Command', 'Tsukushi')">
                     <span class="role-badge role-master">Assistant GM</span>
                     <h3 class="member-name">Tsukushi</h3>
                     <div class="member-class">Assistant Guild Master</div>
@@ -505,6 +624,7 @@
                         <span>Role: Moderator / Shotcaller</span>
                         <span>Resets: Max</span>
                     </div>
+                    <span class="click-hint">🖱️ Click to view members</span>
                 </div>
             </div>
 
@@ -527,6 +647,46 @@
                     <div class="member-class">Grand Master (GM)</div>
                     <div class="member-details">
                         <span>Role: Main Crowd Control</span>
+                        <span>Resets: Max</span>
+                    </div>
+                </div>
+
+                <div class="member-card">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <h3 class="member-name">DeelanPaul</h3>
+                    <div class="member-class">Blade Master (BM)</div>
+                    <div class="member-details">
+                        <span>Role: Vanguard / PvP</span>
+                        <span>Resets: Max</span>
+                    </div>
+                </div>
+
+                <div class="member-card">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <h3 class="member-name">WarHeadz</h3>
+                    <div class="member-class">Soul Master (SM)</div>
+                    <div class="member-details">
+                        <span>Role: Assault / Frontline</span>
+                        <span>Resets: Max</span>
+                    </div>
+                </div>
+
+                <div class="member-card">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <h3 class="member-name">Misthios</h3>
+                    <div class="member-class">Blade Master (BM)</div>
+                    <div class="member-details">
+                        <span>Role: Tactical Striker</span>
+                        <span>Resets: Max</span>
+                    </div>
+                </div>
+
+                <div class="member-card">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <h3 class="member-name">L4rykS</h3>
+                    <div class="member-class">High Elf (HE)</div>
+                    <div class="member-details">
+                        <span>Role: Vanguard / Sealer Support</span>
                         <span>Resets: Max</span>
                     </div>
                 </div>
@@ -566,8 +726,111 @@
         <p>&copy; 2026 <span>Kultura Guild</span> — NoLimit MU Online Community. All Rights Reserved.</p>
     </footer>
 
-    <!-- Audio Autoplay Handler Script -->
+    <!-- Interactive Scripts -->
     <script>
+        // Guild Members Database with specific classes
+        const guildData = {
+            "Fullclip": [
+                { name: "AlphaWolf", class: "Blade Master" },
+                { name: "ShadowSniper", class: "Soul Master" },
+                { name: "Valkyrie", class: "Elf" },
+                { name: "DarkLord99", class: "Dark Lord" },
+                { name: "Titan", class: "Magic Gladiator" }
+            ],
+            "Warlock": [
+                { name: "Necromancer", class: "Soul Master" },
+                { name: "AbyssWalker", class: "Blade Master" },
+                { name: "Starlight", class: "Elf" },
+                { name: "Venom", class: "Summoner" },
+                { name: "RageBlade", class: "Blade Master" },
+                { name: "FrostQueen", class: "Soul Master" },
+                { name: "Zyrus", class: "Duel Master" }
+            ],
+            "LordDwight": [
+                { name: "StealthGhost", class: "Blade Master" },
+                { name: "NightStalker", class: "Dark Lord" },
+                { name: "SilentAim", class: "Elf" },
+                { name: "CursedSoul", class: "Soul Master" }
+            ],
+            "WindTalker": [
+                { name: "ProtectShield", class: "Blade Master" },
+                { name: "AuraHealer", class: "Elf" },
+                { name: "Guardian", class: "Dark Lord" },
+                { name: "IronWall", class: "Blade Master" }
+            ],
+            "iKapitana": [
+                { name: "CalmStorm", class: "Soul Master" },
+                { name: "Zenith", class: "Blade Master" },
+                { name: "Serenity", class: "Elf" },
+                { name: "Pacifist", class: "Summoner" }
+            ],
+            "Tsukushi": [
+                { name: "CommandHQ", class: "Dark Lord" },
+                { name: "Tactician", class: "Soul Master" },
+                { name: "Vanguard", class: "Blade Master" }
+            ]
+        };
+
+        // Function to get the correct weapon icon based on character class
+        function getWeaponIcon(className) {
+            switch(className) {
+                case 'Elf':
+                    return '🏹';
+                case 'Summoner':
+                    return '🪄';
+                case 'Dark Lord':
+                    return '<img src="https://cdn.phototourl.com/member/2026-10-07-2cf6815e-4081-42ae-9bc6-353d9eebfc81.png" alt="Scepter" class="weapon-icon-img">';
+                case 'Soul Master':
+                    return '<img src="https://cdn.phototourl.com/member/2026-10-07-2cf6815e-4081-42ae-9bc6-353d9eebfc81.png" alt="Magic Staff" class="weapon-icon-img">';
+                case 'Blade Master':
+                    return '⚔️';
+                case 'Duel Master':
+                    return '🗡️';
+                case 'Magic Gladiator':
+                    return '🗡️';
+                default:
+                    return '⚔️';
+            }
+        }
+
+        // Open Modal Function
+        function openGuildMembers(guildName, gmName) {
+            const modal = document.getElementById('member-modal');
+            const title = document.getElementById('modal-guild-name');
+            const subtitle = document.getElementById('modal-guild-master');
+            const list = document.getElementById('modal-members-list');
+
+            title.innerText = `${guildName} Roster`;
+            subtitle.innerText = `Guild Master: ${gmName}`;
+            list.innerHTML = '';
+
+            const members = guildData[gmName] || [
+                { name: "Active Warrior 1", class: "Blade Master" },
+                { name: "Active Warrior 2", class: "Soul Master" }
+            ];
+
+            members.forEach(member => {
+                const li = document.createElement('li');
+                const weaponIcon = getWeaponIcon(member.class);
+                li.innerHTML = `<span>${weaponIcon} ${member.name}</span><span>${member.class}</span>`;
+                list.appendChild(li);
+            });
+
+            modal.style.display = 'flex';
+        }
+
+        // Close Modal Function
+        function closeModal() {
+            document.getElementById('member-modal').style.display = 'none';
+        }
+
+        function closeModalOnOutside(event) {
+            if (event.target.id === 'member-modal') {
+                closeModal();
+            }
+        }
+
+        // Audio Player Logic
         const audio = document.getElementById('bg-audio');
         let isPlaying = false;
 
@@ -578,26 +841,8 @@
             }).catch((err) => {
                 isPlaying = false;
                 updateButton();
-                console.log("Autoplay was blocked by browser policies until user interaction:", err);
             });
         }
-
-        // Attempt autoplay immediately when page loads
-        window.addEventListener('load', playMusic);
-
-        // Fallback: Force autoplay on any initial user gesture anywhere on the screen
-        const forcePlayOnGesture = () => {
-            if (!isPlaying) {
-                playMusic();
-            }
-            document.removeEventListener('click', forcePlayOnGesture);
-            document.removeEventListener('keydown', forcePlayOnGesture);
-            document.removeEventListener('touchstart', forcePlayOnGesture);
-        };
-
-        document.addEventListener('click', forcePlayOnGesture);
-        document.addEventListener('keydown', forcePlayOnGesture);
-        document.addEventListener('touchstart', forcePlayOnGesture);
 
         function toggleMusic() {
             if (isPlaying) {
@@ -608,6 +853,12 @@
             }
             updateButton();
         }
+
+        document.addEventListener('click', function startAudio() {
+            if (!isPlaying) {
+                playMusic();
+            }
+        }, { once: true });
 
         function updateButton() {
             const icon = document.getElementById('music-icon');
