@@ -348,7 +348,7 @@
             width: 90%;
             max-width: 600px;
             padding: 30px;
-            border-radius: 10px;
+            border-radius: 14px;
             position: relative;
             box-shadow: 0 0 30px rgba(230, 184, 0, 0.4);
             animation: modalFadeIn 0.3s ease;
@@ -389,8 +389,31 @@
 
         .members-container {
             max-height: 350px;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
             position: relative;
+            border-radius: 10px;
+            padding-right: 5px;
+        }
+
+        /* Curved / Rounded Custom Scrollbar styling */
+        .members-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .members-container::-webkit-scrollbar-track {
+            background: rgba(10, 10, 15, 0.5);
+            border-radius: 10px;
+        }
+
+        .members-container::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .members-container::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-glow);
         }
 
         .members-list {
@@ -415,7 +438,7 @@
             background: rgba(255, 255, 255, 0.05);
             margin-bottom: 10px;
             padding: 12px 15px;
-            border-radius: 5px;
+            border-radius: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -424,24 +447,22 @@
 
         .members-list li span:first-child {
             font-weight: 600;
-            color: #fff;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
+        /* Class-based Font Colors */
+        .class-summoner { color: #ff3333 !important; }
+        .class-blademaster { color: #3399ff !important; }
+        .class-darklord { color: #ff9900 !important; }
+        .class-duelmaster { color: #ffffff !important; }
+        .class-elf { color: #33cc33 !important; }
+        .class-soulmaster { color: #ffff33 !important; }
+
         .members-list li span:last-child {
             font-size: 0.85rem;
-            color: var(--primary-glow);
-        }
-
-        /* Weapon Icon Style */
-        .weapon-icon-img {
-            width: 22px;
-            height: 22px;
-            object-fit: contain;
-            vertical-align: middle;
-            filter: drop-shadow(0 0 3px rgba(230, 184, 0, 0.6));
+            font-weight: 600;
         }
 
         /* Rules & Recruitment */
@@ -638,6 +659,7 @@
 
                 <div class="member-card master" onclick="openGuildMembers('Leadership Command', 'Tsukushi')">
                     <span class="role-badge role-master">Assistant GM</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-07-5cb85190-c10a-47a1-8b08-870ed366d52f.png" alt="Assistant GM Tsukushi" class="member-avatar">
                     <h3 class="member-name">Tsukushi</h3>
                     <div class="member-class">Assistant Guild Master</div>
                     <div class="member-details">
@@ -846,6 +868,26 @@
             }
         }
 
+        // Function to get class color CSS class
+        function getClassColorClass(className) {
+            switch(className) {
+                case 'Summoner':
+                    return 'class-summoner';
+                case 'Blade Master':
+                    return 'class-blademaster';
+                case 'Dark Lord':
+                    return 'class-darklord';
+                case 'Duel Master':
+                    return 'class-duelmaster';
+                case 'Elf':
+                    return 'class-elf';
+                case 'Soul Master':
+                    return 'class-soulmaster';
+                default:
+                    return '';
+            }
+        }
+
         // Open Modal Function
         function openGuildMembers(guildName, gmName) {
             const modal = document.getElementById('member-modal');
@@ -862,13 +904,13 @@
                 { name: "Active Warrior 2", class: "Soul Master" }
             ];
 
-            // Doblehin ang listahan para sa seamless infinite scroll effect pataas
             const scrollingMembers = [...members, ...members];
 
             scrollingMembers.forEach(member => {
                 const li = document.createElement('li');
                 const weaponIcon = getWeaponIcon(member.class);
-                li.innerHTML = `<span>${weaponIcon} ${member.name}</span><span>${member.class}</span>`;
+                const colorClass = getClassColorClass(member.class);
+                li.innerHTML = `<span>${weaponIcon} <span class="${colorClass}">${member.name}</span></span><span class="${colorClass}">${member.class}</span>`;
                 list.appendChild(li);
             });
 
