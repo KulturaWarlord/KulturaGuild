@@ -366,6 +366,7 @@
             color: var(--primary);
             cursor: pointer;
             font-weight: bold;
+            z-index: 10;
         }
 
         .close-modal:hover { color: #fff; }
@@ -386,11 +387,28 @@
             padding-bottom: 10px;
         }
 
+        .members-container {
+            max-height: 350px;
+            overflow: hidden;
+            position: relative;
+        }
+
         .members-list {
             list-style: none;
-            max-height: 350px;
-            overflow-y: auto;
-            padding-right: 5px;
+            animation: scrollUp 12s linear infinite;
+        }
+
+        .members-list:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scrollUp {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-50%);
+            }
         }
 
         .members-list li {
@@ -511,9 +529,11 @@
             <span class="close-modal" onclick="closeModal()">&times;</span>
             <h3 id="modal-guild-name" class="modal-title">Guild Members</h3>
             <p id="modal-guild-master" class="modal-subtitle">Led by Guild Master</p>
-            <ul id="modal-members-list" class="members-list">
-                <!-- Dynamically populated members -->
-            </ul>
+            <div class="members-container">
+                <ul id="modal-members-list" class="members-list">
+                    <!-- Dynamically populated members -->
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -643,10 +663,10 @@
 
                 <div class="member-card">
                     <span class="role-badge role-bm">Battle Master</span>
-                    <h3 class="member-name">Runebinder</h3>
-                    <div class="member-class">Grand Master (GM)</div>
+                    <h3 class="member-name">BunnyBabe</h3>
+                    <div class="member-class">High Elf (HE)</div>
                     <div class="member-details">
-                        <span>Role: Main Crowd Control</span>
+                        <span>Role: Main Crowd Control/Support</span>
                         <span>Resets: Max</span>
                     </div>
                 </div>
@@ -654,7 +674,7 @@
                 <div class="member-card">
                     <span class="role-badge role-bm">Battle Master</span>
                     <h3 class="member-name">DeelanPaul</h3>
-                    <div class="member-class">Blade Master (BM)</div>
+                    <div class="member-class">Battle Master</div>
                     <div class="member-details">
                         <span>Role: Vanguard / PvP</span>
                         <span>Resets: Max</span>
@@ -664,7 +684,7 @@
                 <div class="member-card">
                     <span class="role-badge role-bm">Battle Master</span>
                     <h3 class="member-name">WarHeadz</h3>
-                    <div class="member-class">Soul Master (SM)</div>
+                    <div class="member-class">Battle Master</div>
                     <div class="member-details">
                         <span>Role: Assault / Frontline</span>
                         <span>Resets: Max</span>
@@ -674,7 +694,7 @@
                 <div class="member-card">
                     <span class="role-badge role-bm">Battle Master</span>
                     <h3 class="member-name">Misthios</h3>
-                    <div class="member-class">Blade Master (BM)</div>
+                    <div class="member-class">Battle Master</div>
                     <div class="member-details">
                         <span>Role: Tactical Striker</span>
                         <span>Resets: Max</span>
@@ -684,7 +704,7 @@
                 <div class="member-card">
                     <span class="role-badge role-bm">Battle Master</span>
                     <h3 class="member-name">L4rykS</h3>
-                    <div class="member-class">High Elf (HE)</div>
+                    <div class="member-class">Battle Master</div>
                     <div class="member-details">
                         <span>Role: Vanguard / Sealer Support</span>
                         <span>Resets: Max</span>
@@ -732,20 +752,52 @@
         const guildData = {
             "Fullclip": [
                 { name: "Crafted", class: "Blade Master" },
-                { name: "Mechado", class: "Soul Master" },
-                { name: "Greenhill", class: "Elf" },
-                { name: "Shockuragi", class: "Dark Lord" },
-                { name: "Sypha", class: "Summoner" }
-                { name: "BKCHUNG11", class: "Blade Master" }
+                { name: "Mechado", class: "Blade Master" },
+                { name: "BKCHUNG11", class: "Blade Master" },
+                { name: "GreenHill", class: "Elf" },
+                { name: "Scarecrows", class: "Summoner" },
+                { name: "LordJepz", class: "Dark Lord" },
+                { name: "Sypha", class: "Summoner" },
+                { name: "Blankz", class: "Dark Lord" },
+                { name: "Eremes", class: "Soul Master" },
+                { name: "Yllyona", class: "Elf" },
+                { name: "xPONG", class: "Blade Master" },
+                { name: "Sedation", class: "Summoner" },
+                { name: "VERMOUTH", class: "Summoner" },
+		{ name: "Herieya", class: "Summoner" },
+		{ name: "IRONMAN", class: "Blade Master" },
+		{ name: "TognaluK", class: "Blade Master" },
+		{ name: "Relic", class: "Soul Master" },
+		{ name: "RetroSpect", class: "Summoner" }
             ],
             "Warlock": [
-                { name: "Necromancer", class: "Soul Master" },
-                { name: "AbyssWalker", class: "Blade Master" },
-                { name: "Starlight", class: "Elf" },
-                { name: "Venom", class: "Summoner" },
-                { name: "RageBlade", class: "Blade Master" },
-                { name: "FrostQueen", class: "Soul Master" },
-                { name: "Zyrus", class: "Duel Master" }
+                { name: "Tr3nity", class: "Blade Master" },
+                { name: "Kreios", class: "Blade Master" },
+                { name: "PUREIgorot", class: "Dark Lord" },
+                { name: "Aurion", class: "Soul Master" },
+                { name: "Papaliciou", class: "Soul Master" },
+                { name: "SMCai", class: "Soul Master" },
+                { name: "asdgyhqrqt", class: "Blade Master" },
+		{ name: "James", class: "Soul Master" },
+		{ name: "BATONGBKL", class: "Blade Master" },
+		{ name: "VyyLlah", class: "Elf" },
+		{ name: "krisjo", class: "Soul Master" },
+		{ name: "Bosvell23", class: "Blade Master" },
+		{ name: "BUMBUANG", class: "Soul Master" },
+		{ name: "Hundredick", class: "Dark Lord" },
+		{ name: "NAYAR", class: "Blade Master" },
+		{ name: "PizzaSlice", class: "Blade Master" },
+		{ name: "SMCeimoun", class: "Soul Master" },
+		{ name: "Moondancer", class: "Soul Master" },
+		{ name: "TankBK", class: "Blade Master" },
+		{ name: "TR1Gun", class: "Soul Master" },
+		{ name: "Vonn", class: "Blade Master" },
+		{ name: "Godis", class: "Blade Master" },
+		{ name: "Ekamamoko", class: "Elf" },
+		{ name: "RAG3", class: "Soul Master" },
+		{ name: "Levis501", class: "Soul Master" },
+		{ name: "FreeToGo", class: "Blade Master" },
+		{ name: "Gatubela", class: "Summoner" }	
             ],
             "LordDwight": [
                 { name: "StealthGhost", class: "Blade Master" },
@@ -778,11 +830,11 @@
                 case 'Elf':
                     return '🏹';
                 case 'Summoner':
-                    return '🪄';
+                    return '✨';
                 case 'Dark Lord':
-                    return '<img src="https://cdn.phototourl.com/member/2026-10-07-2cf6815e-4081-42ae-9bc6-353d9eebfc81.png" alt="Scepter" class="weapon-icon-img">';
+                    return '♛';
                 case 'Soul Master':
-                    return '<img src="https://cdn.phototourl.com/member/2026-10-07-2cf6815e-4081-42ae-9bc6-353d9eebfc81.png" alt="Magic Staff" class="weapon-icon-img">';
+                    return '🌠';
                 case 'Blade Master':
                     return '⚔️';
                 case 'Duel Master':
@@ -805,12 +857,15 @@
             subtitle.innerText = `Guild Master: ${gmName}`;
             list.innerHTML = '';
 
-            const members = guildData[gmName] || [
+            let members = guildData[gmName] || [
                 { name: "Active Warrior 1", class: "Blade Master" },
                 { name: "Active Warrior 2", class: "Soul Master" }
             ];
 
-            members.forEach(member => {
+            // Doblehin ang listahan para sa seamless infinite scroll effect pataas
+            const scrollingMembers = [...members, ...members];
+
+            scrollingMembers.forEach(member => {
                 const li = document.createElement('li');
                 const weaponIcon = getWeaponIcon(member.class);
                 li.innerHTML = `<span>${weaponIcon} ${member.name}</span><span>${member.class}</span>`;
