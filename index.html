@@ -26,7 +26,7 @@
         }
 
         /* Specific pointer style for buttons/links/cards */
-        a, button, .member-card, .server-logo-link, #music-control, .close-modal {
+        a, button, .member-card, .server-logo-link, #music-control, .close-modal, .rotating-alliance-badge {
             cursor: url('https://muonline.webzen.com/Cont/images/common/cursor_select.cur'), pointer !important;
         }
 
@@ -84,12 +84,55 @@
             font-weight: 900;
             color: #fff;
             text-shadow: 0 0 15px rgba(230, 184, 0, 0.8), 0 0 30px rgba(139, 0, 0, 0.9);
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             letter-spacing: 3px;
         }
 
         .guild-logo span {
             color: var(--primary);
+        }
+
+        /* Rotating Alliance Badge in Header */
+        .rotating-alliance-container {
+            margin: 10px auto 20px;
+            display: inline-block;
+        }
+
+        .rotating-alliance-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(30, 30, 45, 0.92), rgba(10, 10, 15, 0.95));
+            border: 2px solid var(--primary);
+            color: #fff;
+            padding: 8px 24px;
+            border-radius: 30px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8), 0 0 15px rgba(230, 184, 0, 0.4);
+            backdrop-filter: blur(6px);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            animation: pulseBadge 2s infinite ease-in-out;
+        }
+
+        .rotating-alliance-badge:hover {
+            transform: scale(1.05);
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 25px rgba(230, 184, 0, 0.8);
+        }
+
+        .rotating-alliance-badge span {
+            color: var(--primary);
+        }
+
+        @keyframes pulseBadge {
+            0% { box-shadow: 0 0 10px rgba(230, 184, 0, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(230, 184, 0, 0.7); }
+            100% { box-shadow: 0 0 10px rgba(230, 184, 0, 0.3); }
         }
 
         /* Header / Hero */
@@ -152,18 +195,6 @@
             color: #000;
             box-shadow: 0 0 20px var(--primary-glow);
             transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid var(--text-dim);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: #fff;
-            border-color: #fff;
-            box-shadow: none;
         }
 
         /* Container */
@@ -571,6 +602,7 @@
             .two-col { grid-template-columns: 1fr; }
             .guild-logo { font-size: 3rem; }
             .server-logo { max-width: 220px; }
+            .rotating-alliance-badge { font-size: 0.8rem; padding: 6px 16px; }
         }
 
         .panel {
@@ -659,10 +691,17 @@
             <img src="https://nolimit.lv/themes/def_theme/images/logo.png" alt="NoLimit MU Online Logo" class="server-logo">
         </a>
         <h1 class="guild-logo">KULTURA <span>GUILD</span></h1>
+        
+        <!-- Rotating Alliance Badge Header Element -->
+        <div class="rotating-alliance-container">
+            <a href="#guild" class="rotating-alliance-badge">
+                <span id="rotating-icon">🛡️</span> <span id="rotating-text">PROTECT GUILD</span>
+            </a>
+        </div>
+
         <p class="guild-motto">"Respect, Loyalty, Unity, and Victory."</p>
         <div class="hero-btns">
             <a href="https://discord.gg/ZwZcUPaMP" target="_blank" rel="noopener noreferrer" class="btn">Apply For Guild</a>
-            <a href="#guild" class="btn btn-secondary">View Guild</a>
         </div>
     </header>
 
@@ -919,6 +958,33 @@
 
     <!-- Interactive Scripts -->
     <script>
+        // Rotating Alliance Database
+        const allianceGuilds = [
+            { name: "PROTECT GUILD", icon: "🛡️" },
+            { name: "ANXIETY GUILD", icon: "⚡" },
+            { name: "SPIDEY GUILD", icon: "🕷️" },
+            { name: "STEALTH GUILD", icon: "⚔️" },
+            { name: "VALKYRIE GUILD", icon: "✨" },
+            { name: "xNOTA GUILD", icon: "🔥" }
+        ];
+
+        let currentIndex = 0;
+        function rotateAllianceBadge() {
+            currentIndex = (currentIndex + 1) % allianceGuilds.length;
+            const guild = allianceGuilds[currentIndex];
+            
+            const iconElem = document.getElementById('rotating-icon');
+            const textElem = document.getElementById('rotating-text');
+            
+            if (iconElem && textElem) {
+                iconElem.innerText = guild.icon;
+                textElem.innerText = guild.name;
+            }
+        }
+
+        // Rotate every 3 seconds
+        setInterval(rotateAllianceBadge, 3000);
+
         // Guild Members Database with specific classes
         const guildData = {
             "Fullclip": [
