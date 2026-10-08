@@ -348,25 +348,20 @@
             animation-delay: 1.5s;
         }
 
-        /* Avatar Blinking / Opacity Pulse Animation */
-        @keyframes avatarBlink {
+        /* Avatar Flashing Animation (Nawawala at Babalik) */
+        @keyframes avatarFlash {
             0%, 100% {
                 opacity: 1;
-                filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7)) brightness(1);
+                filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7));
             }
             50% {
-                opacity: 0.6;
-                filter: drop-shadow(0 4px 15px rgba(255, 221, 85, 0.8)) brightness(1.3);
+                opacity: 0;
+                filter: none;
             }
         }
 
-        .battle-avatar-blink-1 {
-            animation: avatarBlink 2.5s infinite ease-in-out;
-        }
-
-        .battle-avatar-blink-2 {
-            animation: avatarBlink 2.5s infinite ease-in-out;
-            animation-delay: 1.25s;
+        .battle-avatar-flash {
+            animation: avatarFlash 1.5s infinite ease-in-out;
         }
 
         .role-badge {
@@ -864,7 +859,7 @@
                 
                 <div class="member-card master" onclick="openGuildMembers('Kultura', 'Fullclip')">
                     <span class="role-badge role-master">Guild Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png" alt="Guild Master Fullclip" class="member-avatar">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png" alt="Guild Master Fullclip" class="member-avatar battle-avatar-flash">
                     <h3 class="member-name">Fullclip</h3>
                     <div class="member-class">Kultura Guild Master</div>
                     <div class="member-details">
@@ -876,7 +871,7 @@
 
                 <div class="member-card master" onclick="openGuildMembers('Kultura (Warlock Division)', 'Warlock')">
                     <span class="role-badge role-master">Guild Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-07-4f35248b-2602-408c-8175-3e37cc1e0977.png" alt="Guild Master Warlock" class="member-avatar">
+                    <img src="https://cdn.phototourl.com/member/2026-10-07-4f35248b-2602-408c-8175-3e37cc1e0977.png" alt="Guild Master Warlock" class="member-avatar battle-avatar-flash">
                     <h3 class="member-name">Warlock</h3>
                     <div class="member-class">Kultura Guild Master</div>
                     <div class="member-details">
@@ -888,7 +883,7 @@
 
                 <div class="member-card master" onclick="openGuildMembers('Stealth', 'LordDwight')">
                     <span class="role-badge role-master">Guild Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-f86e67c4-ab50-45e0-8c0b-38490e52c60c.png" alt="Guild Master LordDwight" class="member-avatar">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-f86e67c4-ab50-45e0-8c0b-38490e52c60c.png" alt="Guild Master LordDwight" class="member-avatar battle-avatar-flash">
                     <h3 class="member-name">LordDwight</h3>
                     <div class="member-class">Stealth Guild Master</div>
                     <div class="member-details">
@@ -900,7 +895,7 @@
 
                 <div class="member-card master" onclick="openGuildMembers('Protect', 'WindTalker')">
                     <span class="role-badge role-master">Guild Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-a6619f00-88bb-4a5b-b244-715b129a4c1e.png" alt="Guild Master WindTalker" class="member-avatar">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-a6619f00-88bb-4a5b-b244-715b129a4c1e.png" alt="Guild Master WindTalker" class="member-avatar battle-avatar-flash">
                     <h3 class="member-name">WindTalker</h3>
                     <div class="member-class">Protect Guild Master</div>
                     <div class="member-details">
@@ -912,7 +907,7 @@
 
                 <div class="member-card master" onclick="openGuildMembers('Anxiety', 'iKapitana')">
                     <span class="role-badge role-master">Guild Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-9594006c-6428-4b19-a7a4-e6f1e807e489.png" alt="Guild Master iKapitana" class="member-avatar">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-9594006c-6428-4b19-a7a4-e6f1e807e489.png" alt="Guild Master iKapitana" class="member-avatar battle-avatar-flash">
                     <h3 class="member-name">iKapitana</h3>
                     <div class="member-class">Anxiety Guild Master</div>
                     <div class="member-details">
@@ -924,7 +919,7 @@
 
                 <div class="member-card master" onclick="openGuildMembers('Leadership Command', 'Tsukushi')">
                     <span class="role-badge role-master">Assistant GM</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-07-5cb85190-c10a-47a1-8b08-870ed366d52f.png" alt="Assistant GM Tsukushi" class="member-avatar">
+                    <img src="https://cdn.phototourl.com/member/2026-10-07-5cb85190-c10a-47a1-8b08-870ed366d52f.png" alt="Assistant GM Tsukushi" class="member-avatar battle-avatar-flash">
                     <h3 class="member-name">Tsukushi</h3>
                     <div class="member-class">Assistant Guild Master</div>
                     <div class="member-details">
@@ -935,7 +930,7 @@
                 </div>
             </div>
 
-            <!-- ROW 2: BATTLE MASTERS & COMMANDERS (Na may Blinking Avatars) -->
+            <!-- ROW 2: BATTLE MASTERS & COMMANDERS -->
             <h3 class="category-title">Battle Masters & Commanders</h3>
             <div class="roster-grid">
                 <div class="member-card battle-card-1">
@@ -1096,7 +1091,7 @@
                 <!-- Video 2 (Crown Sealing & Final Push) -->
                 <div class="video-card">
                     <div class="video-container">
-                        <iframe src="https://www.youtube.com/embed/wZqn7qP13BA" title="Crown Sealing & Final Push" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/odEg-UWoY7s" title="Crown Sealing & Final Push" allowfullscreen></iframe>
                     </div>
                     <div class="video-info">
                         <div class="video-title">Crown Sealing & Final Push</div>
