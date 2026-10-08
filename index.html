@@ -337,6 +337,58 @@
             font-style: italic;
         }
 
+        /* YouTube Video Player Section Styling */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .video-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-gold);
+            border-radius: 8px;
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            transition: transform 0.3s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-glow);
+            box-shadow: 0 10px 25px rgba(230, 184, 0, 0.2);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-info {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .video-title {
+            font-family: 'Cinzel', serif;
+            color: var(--primary-glow);
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
         /* Modal Popup Styling */
         #member-modal {
             display: none;
@@ -782,6 +834,31 @@
                     <div class="member-details">
                         <span>Role: Vanguard / Sealer Support</span>
                         <span>Resets: Max</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Castle Siege Wars Media Player Section -->
+        <section id="media-player">
+            <h2 class="section-title">Castle Siege Wars</h2>
+            <div class="video-grid">
+                <!-- Video 1 (Castle Siege Defense Highlights) -->
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/C7_WnodZ9SE" title="We Are Kultura (Castle Siege Defense Highlights)" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">Castle Siege Defense Highlights</div>
+                    </div>
+                </div>
+                <!-- Video 2 -->
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID_2" title="Crown Sealing & Final Push" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">Crown Sealing & Final Push</div>
                     </div>
                 </div>
             </div>
