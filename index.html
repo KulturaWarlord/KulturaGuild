@@ -308,6 +308,67 @@
             box-shadow: 0 0 15px rgba(230, 184, 0, 0.25);
         }
 
+        /* Alternate Card Border Blinking/Glowing Animations */
+        @keyframes battleBlink1 {
+            0% {
+                border-color: rgba(255, 51, 51, 0.4);
+                box-shadow: 0 0 10px rgba(255, 51, 51, 0.2);
+            }
+            50% {
+                border-color: #ff3333;
+                box-shadow: 0 0 25px rgba(255, 51, 51, 0.8), inset 0 0 15px rgba(255, 51, 51, 0.4);
+            }
+            100% {
+                border-color: rgba(255, 51, 51, 0.4);
+                box-shadow: 0 0 10px rgba(255, 51, 51, 0.2);
+            }
+        }
+
+        @keyframes battleBlink2 {
+            0% {
+                border-color: rgba(230, 184, 0, 0.4);
+                box-shadow: 0 0 10px rgba(230, 184, 0, 0.2);
+            }
+            50% {
+                border-color: var(--primary-glow);
+                box-shadow: 0 0 25px rgba(230, 184, 0, 0.8), inset 0 0 15px rgba(230, 184, 0, 0.4);
+            }
+            100% {
+                border-color: rgba(230, 184, 0, 0.4);
+                box-shadow: 0 0 10px rgba(230, 184, 0, 0.2);
+            }
+        }
+
+        .battle-card-1 {
+            animation: battleBlink1 3s infinite ease-in-out;
+        }
+
+        .battle-card-2 {
+            animation: battleBlink2 3s infinite ease-in-out;
+            animation-delay: 1.5s;
+        }
+
+        /* Avatar Blinking / Opacity Pulse Animation */
+        @keyframes avatarBlink {
+            0%, 100% {
+                opacity: 1;
+                filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7)) brightness(1);
+            }
+            50% {
+                opacity: 0.6;
+                filter: drop-shadow(0 4px 15px rgba(255, 221, 85, 0.8)) brightness(1.3);
+            }
+        }
+
+        .battle-avatar-blink-1 {
+            animation: avatarBlink 2.5s infinite ease-in-out;
+        }
+
+        .battle-avatar-blink-2 {
+            animation: avatarBlink 2.5s infinite ease-in-out;
+            animation-delay: 1.25s; /* Salitan ang kislap ng avatar */
+        }
+
         .role-badge {
             position: absolute;
             top: 15px;
@@ -808,12 +869,34 @@
                 </div>
             </div>
 
-            <!-- ROW 2: BATTLE MASTERS & COMMANDERS -->
+            <!-- ROW 2: BATTLE MASTERS & COMMANDERS (Na may Blinking Avatars) -->
             <h3 class="category-title">Battle Masters & Commanders</h3>
             <div class="roster-grid">
-                <div class="member-card">
+                <div class="member-card battle-card-1">
                     <span class="role-badge role-bm">Battle Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-9594006c-6428-4b19-a7a4-e6f1e807e489.png" alt="Battle Master Gail" class="member-avatar">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-0b3aef55-bea9-4b9e-935a-12629c594da5.png" alt="Battle Master Crafted" class="member-avatar battle-avatar-blink-1">
+                    <h3 class="member-name">Crafted</h3>
+                    <div class="member-class">Blade Master (BM)</div>
+                    <div class="member-details">
+                        <span>Role: Frontline / PvP</span>
+                        <span>Resets: Max</span>
+                    </div>
+                </div>
+
+                <div class="member-card battle-card-2">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-c3395667-4870-47b9-9bfa-59edf9189938.png" alt="Battle Master TognaluK" class="member-avatar battle-avatar-blink-2">
+                    <h3 class="member-name">TognaluK</h3>
+                    <div class="member-class class-blademaster">Blade Master (BM)</div>
+                    <div class="member-details">
+                        <span>Role: Vanguard / Frontline</span>
+                        <span>Resets: Max</span>
+                    </div>
+                </div>
+
+                <div class="member-card battle-card-1">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-9594006c-6428-4b19-a7a4-e6f1e807e489.png" alt="Battle Master Gail" class="member-avatar battle-avatar-blink-1">
                     <h3 class="member-name">Gail</h3>
                     <div class="member-class">Bloody Summoner (BS)</div>
                     <div class="member-details">
@@ -822,20 +905,20 @@
                     </div>
                 </div>
 
-                <div class="member-card">
+                <div class="member-card battle-card-2">
                     <span class="role-badge role-bm">Battle Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-a6619f00-88bb-4a5b-b244-715b129a4c1e.png" alt="Battle Master BunnyBabe" class="member-avatar">
-                    <h3 class="member-name">BunnyBabe</h3>
-                    <div class="member-class">High Elf (HE)</div>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-4bf45f09-a4bb-4ca2-b9d1-d8dd804a47fc.png" alt="Battle Master Eremes" class="member-avatar battle-avatar-blink-2">
+                    <h3 class="member-name">Eremes</h3>
+                    <div class="member-class class-soulmaster">Soul Master (SM)</div>
                     <div class="member-details">
                         <span>Role: Main Crowd Control/Support</span>
                         <span>Resets: Max</span>
                     </div>
                 </div>
 
-                <div class="member-card">
+                <div class="member-card battle-card-1">
                     <span class="role-badge role-bm">Battle Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-c3395667-4870-47b9-9bfa-59edf9189938.png" alt="Battle Master DeelanPaul" class="member-avatar">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-c3395667-4870-47b9-9bfa-59edf9189938.png" alt="Battle Master DeelanPaul" class="member-avatar battle-avatar-blink-1">
                     <h3 class="member-name">DeelanPaul</h3>
                     <div class="member-class">Battle Master</div>
                     <div class="member-details">
@@ -844,9 +927,9 @@
                     </div>
                 </div>
 
-                <div class="member-card">
+                <div class="member-card battle-card-2">
                     <span class="role-badge role-bm">Battle Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-4bf45f09-a4bb-4ca2-b9d1-d8dd804a47fc.png" alt="Battle Master WarHeadz" class="member-avatar">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-4bf45f09-a4bb-4ca2-b9d1-d8dd804a47fc.png" alt="Battle Master WarHeadz" class="member-avatar battle-avatar-blink-2">
                     <h3 class="member-name">WarHeadz</h3>
                     <div class="member-class">Battle Master</div>
                     <div class="member-details">
@@ -855,9 +938,9 @@
                     </div>
                 </div>
 
-                <div class="member-card">
+                <div class="member-card battle-card-1">
                     <span class="role-badge role-bm">Battle Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png" alt="Battle Master Misthios" class="member-avatar">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png" alt="Battle Master Misthios" class="member-avatar battle-avatar-blink-1">
                     <h3 class="member-name">Misthios</h3>
                     <div class="member-class">Battle Master</div>
                     <div class="member-details">
@@ -866,9 +949,9 @@
                     </div>
                 </div>
 
-                <div class="member-card">
+                <div class="member-card battle-card-2">
                     <span class="role-badge role-bm">Battle Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-a6619f00-88bb-4a5b-b244-715b129a4c1e.png" alt="Battle Master R4LYKS" class="member-avatar">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-a6619f00-88bb-4a5b-b244-715b129a4c1e.png" alt="Battle Master R4LYKS" class="member-avatar battle-avatar-blink-2">
                     <h3 class="member-name">R4LYKS</h3>
                     <div class="member-class">Battle Master</div>
                     <div class="member-details">
