@@ -366,7 +366,7 @@
 
         .battle-avatar-blink-2 {
             animation: avatarBlink 2.5s infinite ease-in-out;
-            animation-delay: 1.25s; /* Salitan ang kislap ng avatar */
+            animation-delay: 1.25s;
         }
 
         .role-badge {
@@ -384,6 +384,7 @@
 
         .role-master { background: var(--primary); color: #000; }
         .role-bm { background: var(--secondary); color: #fff; }
+        .role-supporter { background: linear-gradient(135deg, #ff9900, #ff3333); color: #fff; }
 
         .member-avatar {
             width: 100%;
@@ -427,6 +428,71 @@
             color: var(--primary);
             margin-top: 10px;
             font-style: italic;
+        }
+
+        /* Keepers of the Flame Section Specific Styles */
+        .flame-section {
+            background: linear-gradient(145deg, rgba(20, 10, 5, 0.85), rgba(10, 10, 15, 0.95));
+            border: 2px solid #ff7700;
+            border-radius: 12px;
+            padding: 40px 30px;
+            box-shadow: 0 0 30px rgba(255, 119, 0, 0.25);
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flame-title {
+            font-size: 2rem;
+            text-align: center;
+            color: #ffaa33;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(255, 119, 0, 0.6);
+        }
+
+        .flame-subtitle {
+            text-align: center;
+            color: var(--text-dim);
+            font-style: italic;
+            margin-bottom: 35px;
+            font-size: 1.05rem;
+        }
+
+        .flame-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .flame-card {
+            background: rgba(30, 15, 10, 0.7);
+            border: 1px solid rgba(255, 119, 0, 0.4);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .flame-card:hover {
+            transform: translateY(-5px);
+            border-color: #ffaa33;
+            box-shadow: 0 0 20px rgba(255, 119, 0, 0.6);
+        }
+
+        @keyframes flameGlow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(255, 119, 0, 0.6)); }
+            50% { filter: drop-shadow(0 0 15px rgba(255, 200, 50, 0.9)); }
+        }
+
+        .flame-avatar {
+            width: 100%;
+            max-height: 160px;
+            object-fit: contain;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            animation: flameGlow 3s infinite ease-in-out;
         }
 
         /* YouTube Video Player Section Styling */
@@ -957,6 +1023,58 @@
                     <div class="member-details">
                         <span>Role: Vanguard / Sealer Support</span>
                         <span>Resets: Max</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KEEPERS OF THE FLAME SECTION -->
+        <section class="flame-section">
+            <h2 class="flame-title">🔥 Keepers of the Flame 🔥</h2>
+            <p class="flame-subtitle">A tribute to the loyal and unwavering supporters who continue to contribute to the success of Kultura Guild.</p>
+            
+            <div class="flame-grid">
+                <div class="flame-card">
+                    <span class="role-badge role-supporter">Loyalist</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png" alt="Supporter" class="flame-avatar">
+                    <h3 class="member-name" style="font-size: 1.2rem;">Loyal Pillar I</h3>
+                    <div class="member-class">Unwavering Supporter</div>
+                    <div class="member-details">
+                        <span>Status: Active</span>
+                        <span>Dedication: 100%</span>
+                    </div>
+                </div>
+
+                <div class="flame-card">
+                    <span class="role-badge role-supporter">Loyalist</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-4bf45f09-a4bb-4ca2-b9d1-d8dd804a47fc.png" alt="Supporter" class="flame-avatar">
+                    <h3 class="member-name" style="font-size: 1.2rem;">Loyal Pillar II</h3>
+                    <div class="member-class">Community Back Bone</div>
+                    <div class="member-details">
+                        <span>Status: Active</span>
+                        <span>Dedication: 100%</span>
+                    </div>
+                </div>
+
+                <div class="flame-card">
+                    <span class="role-badge role-supporter">Loyalist</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-c3395667-4870-47b9-9bfa-59edf9189938.png" alt="Supporter" class="flame-avatar">
+                    <h3 class="member-name" style="font-size: 1.2rem;">Loyal Pillar III</h3>
+                    <div class="member-class">Flame Keeper</div>
+                    <div class="member-details">
+                        <span>Status: Active</span>
+                        <span>Dedication: 100%</span>
+                    </div>
+                </div>
+
+                <div class="flame-card">
+                    <span class="role-badge role-supporter">Loyalist</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-9594006c-6428-4b19-a7a4-e6f1e807e489.png" alt="Supporter" class="flame-avatar">
+                    <h3 class="member-name" style="font-size: 1.2rem;">Loyal Pillar IV</h3>
+                    <div class="member-class">Steadfast Guardian</div>
+                    <div class="member-details">
+                        <span>Status: Active</span>
+                        <span>Dedication: 100%</span>
                     </div>
                 </div>
             </div>
