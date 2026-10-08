@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kultura Guild & Alliance | NoLimit MU Online</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=MedievalSharp&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #e6b800;
@@ -71,10 +71,25 @@
         }
 
         /* Typography */
-        h1, h2, h3, h4, .guild-logo {
+        h1, h2, h3, h4 {
             font-family: 'Cinzel', serif;
             letter-spacing: 2px;
             text-transform: uppercase;
+        }
+
+        /* Medieval Font specifically for Kultura Guild Logo */
+        .guild-logo {
+            font-family: 'MedievalSharp', cursive, serif;
+            font-size: 4.2rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 15px rgba(230, 184, 0, 0.8), 0 0 30px rgba(139, 0, 0, 0.9);
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+
+        .guild-logo span {
+            color: var(--primary);
         }
 
         /* Header / Hero */
@@ -101,18 +116,6 @@
             height: auto;
             margin-bottom: 20px;
             filter: drop-shadow(0 0 10px rgba(230, 184, 0, 0.5));
-        }
-
-        .guild-logo {
-            font-size: 3.8rem;
-            font-weight: 900;
-            color: #fff;
-            text-shadow: 0 0 15px rgba(230, 184, 0, 0.8), 0 0 30px rgba(139, 0, 0, 0.9);
-            margin-bottom: 10px;
-        }
-
-        .guild-logo span {
-            color: var(--primary);
         }
 
         .guild-motto {
@@ -514,7 +517,7 @@
 
         @media (max-width: 768px) {
             .two-col { grid-template-columns: 1fr; }
-            .guild-logo { font-size: 2.8rem; }
+            .guild-logo { font-size: 3rem; }
             .server-logo { max-width: 220px; }
         }
 
