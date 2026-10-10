@@ -926,12 +926,12 @@
                 <!-- SUPERADMIN EXCLUSIVE PANEL: MULTI-DUMMY INPUT MAPPER -->
                 <div id="superadmin-main-dummy-block" class="admin-section-block" style="display: none;">
                     <button onclick="toggleAdminSection('sec-main-dummy-linker')" class="admin-collapsible-btn">
-                        <span>🎭 SuperAdmin: Multi-Dummy Character Mapper (Up to 10+ Accounts)</span>
+                        <span>🎭 SuperAdmin: Multi-Dummy Character Mapper (Link Dummies to Main)</span>
                         <span id="icon-sec-main-dummy-linker">▼ Expand</span>
                     </button>
                     <div id="sec-main-dummy-linker" class="admin-collapsible-content">
                         <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
-                            I-type ang <strong>Main Character IGN</strong> (halimbawa: <code>Eremes</code>) at ilagay sa mga boxes sa ibaba ang lahat ng kanyang <strong>Dummy Accounts</strong> (halimbawa: <code>Kreios</code>, <code>Papaliciou</code>, atbp.). Awtomatiko silang ililipat sa division kung nasaan ang Main.
+                            I-type ang <strong>Main Character IGN</strong> at ilagay sa mga boxes ang kanyang <strong>Dummy Accounts</strong>. Magiging <strong>naka-link</strong> lamang sila sa Main pero **mananatili (stay) sila sa kani-kanilang kasalukuyang Guild/Division**.
                         </p>
                         
                         <!-- MAIN IGN FIELD -->
@@ -953,7 +953,7 @@
                             <button onclick="addMoreDummyBox()" class="btn" style="padding: 5px 12px; font-size: 0.75rem; background: #333; border-color: #777;">➕ Add More Dummy Box</button>
                         </div>
 
-                        <button onclick="saveSuperAdminMultiLinkage()" class="btn" style="padding: 8px 14px; font-size: 0.85rem; width: 100%; background: linear-gradient(135deg, #8b0000, #ffaa33); color: #000;">🔗 Link & Migrate Dummies to Main Division</button>
+                        <button onclick="saveSuperAdminMultiLinkage()" class="btn" style="padding: 8px 14px; font-size: 0.85rem; width: 100%; background: linear-gradient(135deg, #8b0000, #ffaa33); color: #000;">🔗 Link Dummies to Main (Keep Current Guild Position)</button>
                     </div>
                 </div>
 
@@ -1522,7 +1522,6 @@
             if (latestCS && latestCS.presents && latestCS.presents.length > 0) {
                 countElem.innerText = `${latestCS.presents.length}`;
             } else {
-                // FALLBACK: Kukuha mula sa kabuuang Roster Members kapag wala pang CS attendance record
                 let data = getGuildData();
                 let totalMembers = 0;
                 for (let divKey in data) {
@@ -1585,7 +1584,7 @@
             container.appendChild(newInput);
         }
 
-        /* SUPERADMIN SAVE MULTI-DUMMY MIGRATION LINKAGE WITH IMMEDIATE RE-RENDER */
+        /* SUPERADMIN SAVE MULTI-DUMMY LINKAGE ONLY (NO GUILD MIGRATION) */
         async function saveSuperAdminMultiLinkage() {
             if (currentLoggedInOfficer !== "Fullclip" && currentLoggedInOfficer !== "kultura") return;
 
@@ -1612,49 +1611,48 @@
 
             let data = getGuildData();
             
-            let mainDivisionKey = null;
+            // Verify Main Character exists anywhere in roster
+            let mainFound = false;
             for (let divKey in data) {
-                let foundMain = data[divKey].find(m => m.name.toLowerCase() === mainIgn.toLowerCase());
-                if (foundMain) {
-                    mainDivisionKey = divKey;
+                if (data[divKey].some(m => m.name.toLowerCase() === mainIgn.toLowerCase())) {
+                    mainFound = true;
                     break;
                 }
             }
 
-            if (!mainDivisionKey) {
-                alert(`⚠️ Ang Main Character na "${mainIgn}" ay hindi pa mahanap sa anumang Roster Division. I-register muna siya sa Roster!`);
+            if (!mainFound) {
+                alert(`⚠️ Ang Main Character na "${mainIgn}" ay hindi mahanap sa anumang Roster Division. I-register muna siya sa Roster!`);
                 return;
             }
 
-            let migratedCount = 0;
+            let linkedCount = 0;
             let missingDummies = [];
 
+            // Directly link dummy accounts without moving them from their current guild
             dummyList.forEach(dummyIgn => {
-                let foundMemberObj = null;
+                let foundDummyObj = null;
 
                 for (let divKey in data) {
-                    let idx = data[divKey].findIndex(m => m.name.toLowerCase() === dummyIgn.toLowerCase());
-                    if (idx !== -1) {
-                        foundMemberObj = data[divKey][idx];
-                        data[divKey].splice(idx, 1);
+                    let member = data[divKey].find(m => m.name.toLowerCase() === dummyIgn.toLowerCase());
+                    if (member) {
+                        foundDummyObj = member;
                         break;
                     }
                 }
 
-                if (foundMemberObj) {
-                    foundMemberObj.mainOwner = mainIgn;
-                    foundMemberObj.icon = '🎭';
-                    data[mainDivisionKey].push(foundMemberObj);
-                    migratedCount++;
+                if (foundDummyObj) {
+                    foundDummyObj.mainOwner = mainIgn;
+                    foundDummyObj.icon = '🎭';
+                    linkedCount++;
                 } else {
                     missingDummies.push(dummyIgn);
                 }
             });
 
-            if (migratedCount > 0) {
+            if (linkedCount > 0) {
                 await saveGuildData(data);
-                let missingMsg = missingDummies.length > 0 ? `\n⚠️ Hindi pa naka-register sa roster: ${missingDummies.join(', ')}` : '';
-                alert(`🎉 [Migration Successful] Na-link at nailipat na ang ${migratedCount} Dummy Accounts sa Roster Division ni Main "${mainIgn}" (${mainDivisionKey})!${missingMsg}`);
+                let missingMsg = missingDummies.length > 0 ? `\n⚠️ Hindi pa naka-register sa roster ang: ${missingDummies.join(', ')}` : '';
+                alert(`🎉 [Link Successful] Naka-link na ang ${linkedCount} Dummy Accounts kay Main "${mainIgn}"! Nanatili sila sa kani-kanilang kasalukuyang Guild/Division.${missingMsg}`);
 
                 document.getElementById('type-main-ign').value = '';
                 dummyInputs.forEach(i => i.value = '');
@@ -1662,7 +1660,7 @@
                 renderRosters();
                 onDivisionChange();
             } else {
-                alert(`⚠️ Walang na-migrate! Siguraduhing na-register muna sa Roster ang mga Dummy Accounts na: ${missingDummies.join(', ')}`);
+                alert(`⚠️ Walang na-link! Siguraduhing na-register muna sa Roster ang mga Dummy Accounts na: ${missingDummies.join(', ')}`);
             }
         }
 
@@ -2239,7 +2237,7 @@
             }
         }
 
-        /* DYNAMIC ROSTER RENDERER WITH VISUAL AUTO-REROUTING */
+        /* DYNAMIC ROSTER RENDERER */
         function renderRosters() {
             const data = getGuildData();
             const dynamicGrid = document.getElementById('dynamic-roster-grid');
@@ -2256,8 +2254,8 @@
                 members.forEach(m => {
                     const cssClass = getClassCss(m.class);
                     let isDummy = m.mainOwner && m.mainOwner.toLowerCase() !== m.name.toLowerCase();
-                    let displayName = isDummy ? m.mainOwner : m.name;
-                    let altTag = isDummy ? ` <small style="color:#ffaa33; font-weight:bold;">[Dummy: ${m.name}]</small>` : '';
+                    let displayName = m.name; // Keep character's own name on display in roster
+                    let altTag = isDummy ? ` <small style="color:#ffaa33; font-weight:bold;">[Dummy of ${m.mainOwner}]</small>` : '';
                     
                     membersHTML += `
                         <div class="roster-list-item">
