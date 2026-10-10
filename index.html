@@ -1726,14 +1726,14 @@
                     if (!acknowledgedMains.has(mainChar.toLowerCase())) {
                         acknowledgedMains.add(mainChar.toLowerCase());
                         
-                        // CRITICAL LOGIC: Hanapin kung saan talaga nakarehistro si MAIN CHARACTER (Halimbawa: Fullclip Division)
+                        // AUTOMATIC CROSS-DIVISION DISPLAY REROUTING:
                         let registeredMainGuild = findMainGuildDivision(mainChar);
                         let targetDivisionForDisplay = registeredMainGuild ? registeredMainGuild : currentCheckingGM;
 
                         existingRecord.presents.push({
-                            name: mainChar, // Eremes ang lalabas na name
-                            loggedIgn: loggedChar, // Kreios ang ginamit na dummy
-                            officer: targetDivisionForDisplay // Fullclip Division ilalagay sa display output!
+                            name: mainChar, // Eremes ang lalabas na pangalan
+                            loggedIgn: loggedChar, // Kreios ang dummy account
+                            officer: targetDivisionForDisplay // Fullclip Division sa display output!
                         });
                     }
                 }
@@ -1747,12 +1747,12 @@
                 await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), allRecords);
             }
 
-            alert(`🎉 Attendance updated! Any Present Dummies were automatically rerouted and displayed under their Main Character's Division.`);
+            alert(`🎉 Attendance updated! Ang dummy "${selects[0]?.getAttribute('data-name')}" ay direktang inilagay at ipinakita sa Division ng kanyang Main Character!`);
             closeAdminModal();
             renderAttendanceHistory();
         }
 
-        /* PUBLIC ATTENDANCE LOG DISPLAY */
+        /* PUBLIC ATTENDANCE LOG DISPLAY OUTPUT */
         function renderAttendanceHistory() {
             const tbody = document.getElementById('public-attendance-history');
             let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
@@ -2104,6 +2104,7 @@
             }
         }
 
+        /* DYNAMIC ROSTER RENDERER WITH VISUAL AUTO-REROUTING */
         function renderRosters() {
             const data = getGuildData();
             const dynamicGrid = document.getElementById('dynamic-roster-grid');
@@ -2119,10 +2120,13 @@
                 let membersHTML = '';
                 members.forEach(m => {
                     const cssClass = getClassCss(m.class);
-                    let altTag = (m.mainOwner && m.mainOwner.toLowerCase() !== m.name.toLowerCase()) ? ` <small style="color:#ffaa33;">[Dummy of ${m.mainOwner}]</small>` : '';
+                    let isDummy = m.mainOwner && m.mainOwner.toLowerCase() !== m.name.toLowerCase();
+                    let displayName = isDummy ? m.mainOwner : m.name;
+                    let altTag = isDummy ? ` <small style="color:#ffaa33; font-weight:bold;">[Dummy: ${m.name}]</small>` : '';
+                    
                     membersHTML += `
                         <div class="roster-list-item">
-                            <span>${m.icon} <span class="${cssClass}">${m.name}</span>${altTag}</span>
+                            <span>${m.icon} <span class="${cssClass}">${displayName}</span>${altTag}</span>
                             <span class="${cssClass}">${m.class}</span>
                         </div>
                     `;
