@@ -904,7 +904,7 @@
             </div>
         </div>
 
-        <!-- AUTHORIZED OFFICER PORTAL WITH MINIMIZE / MAXIMIZE WINDOW CONTROLS -->
+        <!-- AUTHORIZED OFFICER PORTAL WITH FIXED MINIMIZE/RESTORE DOCK (NO LONGER CENTERED WHEN MINIMIZED) -->
         <div id="attendance-admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center;">
             <div id="admin-modal-card" style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 680px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto; position: relative; transition: all 0.3s ease;">
                 
@@ -1051,7 +1051,7 @@
                     <div class="admin-section-block">
                         <button onclick="toggleAdminSection('sec-attendance-roster')" class="admin-collapsible-btn">
                             <span>📋 Member Management & Anti-Double Compensation Attendance</span>
-                            <span id="icon-sec-attendance-roster">▲ Hide</span>
+                            <span id="icon-sec-attendance-roster">▼ Hide</span>
                         </button>
                         <div id="sec-attendance-roster" class="admin-collapsible-content" style="display: block;">
                             <div style="margin-bottom: 12px;">
@@ -1444,7 +1444,6 @@
         let cloudAttendanceHistory = null;
         let cloudResetTickets = [];
 
-        /* STANDARDIZED DATE FORMATTER FIX (YYYY-MM-DD) */
         function getStandardDateKey() {
             const d = new Date();
             const year = d.getFullYear();
@@ -1459,7 +1458,6 @@
             const dbRef = window.dbRef;
             const dbOnValue = window.dbOnValue;
 
-            // 1. Live Officer Accounts Listener
             dbOnValue(dbRef(window.database, 'kultura_officer_accounts'), (snap) => {
                 if (snap.exists()) {
                     OFFICER_ACCOUNTS = snap.val();
@@ -1468,7 +1466,6 @@
                 }
             });
 
-            // 2. Live Roster & Migration Listener
             dbOnValue(dbRef(window.database, 'kultura_roster'), (snap) => {
                 if (snap.exists()) {
                     cloudGuildData = snap.val();
@@ -1483,7 +1480,6 @@
                 }
             });
 
-            // 3. Live Public Attendance Table Listener
             dbOnValue(dbRef(window.database, 'kultura_attendance'), (snap) => {
                 if (snap.exists()) {
                     cloudAttendanceHistory = snap.val();
@@ -1495,7 +1491,6 @@
                 updateLiveActiveWarriors();
             });
 
-            // 4. Live Tickets Listener
             dbOnValue(dbRef(window.database, 'kultura_reset_tickets'), (snap) => {
                 if (snap.exists()) {
                     cloudResetTickets = snap.val();
@@ -1523,7 +1518,6 @@
             updateLiveActiveWarriors();
         }
 
-        /* DYNAMIC ACTIVE WARRIORS STAT BOX UPDATE FUNCTION */
         function updateLiveActiveWarriors() {
             const countElem = document.getElementById('active-warriors-count');
             if (!countElem) return;
@@ -1585,20 +1579,38 @@
             }
         }
 
-        /* TOGGLE MINIMIZE / MAXIMIZE FOR ADMIN PORTAL MODAL */
         function toggleMinimizeAdminModal() {
+            const modalOverlay = document.getElementById('attendance-admin-modal');
             const bodyContent = document.getElementById('admin-modal-body-content');
             const minBtn = document.getElementById('modal-min-btn');
             const modalCard = document.getElementById('admin-modal-card');
 
             if (bodyContent.style.display === "none") {
+                // RESTORE
                 bodyContent.style.display = "block";
                 minBtn.innerText = "➖";
                 modalCard.style.maxHeight = "85vh";
+                modalCard.style.width = "90%";
+                modalCard.style.maxWidth = "680px";
+                modalCard.style.position = "relative";
+                modalCard.style.bottom = "auto";
+                modalCard.style.right = "auto";
+                modalOverlay.style.background = "rgba(0,0,0,0.85)";
+                modalOverlay.style.justifyContent = "center";
+                modalOverlay.style.alignItems = "center";
             } else {
+                // MINIMIZE (DOCK TO BOTTOM RIGHT, NO LONGER CENTERED)
                 bodyContent.style.display = "none";
                 minBtn.innerText = "🗖";
                 modalCard.style.maxHeight = "auto";
+                modalCard.style.width = "300px";
+                modalCard.style.maxWidth = "300px";
+                modalCard.style.position = "fixed";
+                modalCard.style.bottom = "20px";
+                modalCard.style.right = "20px";
+                modalOverlay.style.background = "transparent";
+                modalOverlay.style.justifyContent = "flex-end";
+                modalOverlay.style.alignItems = "flex-end";
             }
         }
 
@@ -1613,7 +1625,6 @@
             container.appendChild(newInput);
         }
 
-        /* SUPERADMIN SAVE MULTI-DUMMY LINKAGE ONLY */
         async function saveSuperAdminMultiLinkage() {
             if (currentLoggedInOfficer !== "Fullclip" && currentLoggedInOfficer !== "kultura") return;
 
@@ -1767,7 +1778,6 @@
             });
         }
 
-        /* HELPER: FIND MAIN CHARACTER'S REGISTERED GUILD DIVISION */
         function findMainGuildDivision(mainIgn) {
             const data = getGuildData();
             for (let divKey in data) {
@@ -1779,7 +1789,6 @@
             return null;
         }
 
-        /* ATTENDANCE ENTRY FIX: HINDI NA AUTOMATIC MAG-CLOSE/LOG OUT ANG MODAL */
         async function saveAttendanceEntry() {
             if (!currentLoggedInOfficer) return;
 
@@ -1844,11 +1853,9 @@
             renderAdminAttendanceLogList();
             updateLiveActiveWarriors();
             
-            // MANATILING BUKAS ANG PORTAL (HINDI NA NAG-CLOSE) PARA SA CONTINUOUS CHECKING
             alert(`🎉 Live Attendance Updated successfully! Nakasave na ang attendance at nananatiling bukas ang portal para sa inyo.`);
         }
 
-        /* PUBLIC ATTENDANCE LOG DISPLAY OUTPUT */
         function renderAttendanceHistory() {
             const tbody = document.getElementById('public-attendance-history');
             let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
@@ -1900,7 +1907,6 @@
             });
         }
 
-        /* RENDER DELETE LOGS LIST IN SUPERADMIN PORTAL ONLY */
         function renderAdminAttendanceLogList() {
             const listContainer = document.getElementById('admin-attendance-logs-list');
             if (!listContainer) return;
@@ -1929,7 +1935,6 @@
             });
         }
 
-        /* DELETE ATTENDANCE LOG FUNCTION (SUPERADMIN STRICT RESTRICTION) */
         async function deleteAttendanceLog(logIndex) {
             if (currentLoggedInOfficer !== "Fullclip" && currentLoggedInOfficer !== "kultura") {
                 alert("⛔ Ang pagbura ng Attendance Logs ay para lamang sa SuperAdmin!");
@@ -2193,10 +2198,19 @@
 
             onDivisionChange();
             
-            // Siguraduhing naka-restore/maximize state kapag binuksan ang modal
+            const modalOverlay = document.getElementById('attendance-admin-modal');
+            const modalCard = document.getElementById('admin-modal-card');
+            modalOverlay.style.background = "rgba(0,0,0,0.85)";
+            modalOverlay.style.justifyContent = "center";
+            modalOverlay.style.alignItems = "center";
+            modalCard.style.width = "90%";
+            modalCard.style.maxWidth = "680px";
+            modalCard.style.position = "relative";
+            modalCard.style.bottom = "auto";
+            modalCard.style.right = "auto";
             document.getElementById('admin-modal-body-content').style.display = 'block';
             document.getElementById('modal-min-btn').innerText = "➖";
-            document.getElementById('attendance-admin-modal').style.display = 'flex';
+            modalOverlay.style.display = 'flex';
         }
 
         function onDivisionChange() {
@@ -2269,7 +2283,6 @@
             }
         }
 
-        /* DYNAMIC ROSTER RENDERER */
         function renderRosters() {
             const data = getGuildData();
             const dynamicGrid = document.getElementById('dynamic-roster-grid');
