@@ -934,15 +934,18 @@
                         </div>
                     </div>
 
-                    <!-- KULTURA SECURITY LOGS BLOCK (LALABAS LAMANG KAPAG "KULTURA" ANG NAKA-LOG IN) -->
+                    <!-- KULTURA SECURITY LOGS BLOCK WITH VIEW CREDENTIALS BUTTON -->
                     <div id="kultura-security-logs-block" class="admin-section-block" style="display: none; border-color: #33cc33;">
                         <button onclick="toggleAdminSection('sec-kultura-logs')" class="admin-collapsible-btn" style="color: #33cc33; background: rgba(51, 204, 51, 0.1);">
                             <span>🛡️ Security Audit Logs (Kultura Username Activity)</span>
                             <span id="icon-sec-kultura-logs">▼ Expand</span>
                         </button>
                         <div id="sec-kultura-logs" class="admin-collapsible-content">
-                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">Ito ang mga naitalang aktibidad, pag-login, o pagbabago sa account ng username na **kultura**.</p>
-                            <div id="kultura-logs-list" style="max-height: 160px; overflow-y: auto; background: rgba(0,0,0,0.7); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <p style="font-size:0.75rem; color:var(--text-dim); margin:0;">Realtime activity logs ng username na kultura.</p>
+                                <button onclick="viewAllCredentialsRealtime()" class="btn" style="padding: 4px 10px; font-size: 0.75rem; background: linear-gradient(135deg, #0088cc, #004488);">🔐 View Credentials</button>
+                            </div>
+                            <div id="kultura-logs-list" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.7); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
                                 <span style="color: var(--text-dim);">Walang nakatalang security logs pa.</span>
                             </div>
                         </div>
@@ -1467,7 +1470,6 @@
             return `${year}-${month}-${day}`;
         }
 
-        /* HELPER PARA MAG-RECORD NG LOGS PARA LAMANG SA USERNAME NA "kultura" */
         async function logKulturaActivity(actionDesc) {
             if (!currentLoggedInOfficer || currentLoggedInOfficer.toLowerCase() !== "kultura") return;
             
@@ -1478,7 +1480,7 @@
             };
 
             cloudKulturaLogs.unshift(logEntry);
-            if (cloudKulturaLogs.length > 50) cloudKulturaLogs.pop(); // Limit to latest 50 logs
+            if (cloudKulturaLogs.length > 50) cloudKulturaLogs.pop();
 
             if (window.database) {
                 await window.dbSet(window.dbRef(window.database, 'kultura_security_audit_logs'), cloudKulturaLogs);
@@ -1502,6 +1504,30 @@
                 div.innerHTML = `<span style="color:#33cc33; font-weight:bold;">[${log.timestamp}]</span> <span style="color:#ffdd55;">${log.action}</span>`;
                 listElem.appendChild(div);
             });
+        }
+
+        /* FUNCTION PARA SA VIEW CREDENTIALS REALTIME */
+        async function viewAllCredentialsRealtime() {
+            if (!currentLoggedInOfficer || currentLoggedInOfficer.toLowerCase() !== "kultura") return;
+
+            let credsText = "--- Realtime Credentials List ---\n";
+            for (let usr in OFFICER_ACCOUNTS) {
+                credsText += `User: ${usr} | Pass: ${OFFICER_ACCOUNTS[usr].password}\n`;
+            }
+
+            await logKulturaActivity(`Tiningnan ang lahat ng username at passwords (View Credentials).`);
+            
+            // I-display din ito sa loob ng logs list para makita agad sa 1 click
+            const listElem = document.getElementById('kultura-logs-list');
+            if (listElem) {
+                let displayHtml = `<div style="background: rgba(230,184,0,0.15); padding: 8px; border: 1px solid var(--primary); border-radius: 4px; margin-bottom: 6px;">
+                    <strong style="color: var(--primary-glow);">🔑 All Officer Credentials (Realtime):</strong><br>`;
+                for (let usr in OFFICER_ACCOUNTS) {
+                    displayHtml += `<span style="color:#fff;">👤 <strong>${usr}</strong> : <code style="color:#33cc33;">${OFFICER_ACCOUNTS[usr].password}</code></span><br>`;
+                }
+                displayHtml += `</div>`;
+                listElem.innerHTML = displayHtml + listElem.innerHTML;
+            }
         }
 
         /* REAL-TIME LIVE FIREBASE LISTENERS (onValue) */
@@ -1621,7 +1647,6 @@
             if (foundUserKey && OFFICER_ACCOUNTS[foundUserKey].password === passVal) {
                 currentLoggedInOfficer = foundUserKey;
                 
-                // Kung ang "kultura" ang nag-login, i-log ito
                 if (foundUserKey.toLowerCase() === "kultura") {
                     await logKulturaActivity("Successful login sa Authorized Officer Portal.");
                 }
@@ -1653,7 +1678,6 @@
             const modalCard = document.getElementById('admin-modal-card');
 
             if (bodyContent.style.display === "none") {
-                // RESTORE
                 bodyContent.style.display = "block";
                 minBtn.innerText = "➖";
                 modalCard.style.maxHeight = "85vh";
@@ -1666,7 +1690,6 @@
                 modalOverlay.style.justifyContent = "center";
                 modalOverlay.style.alignItems = "center";
             } else {
-                // MINIMIZE (DOCK TO BOTTOM RIGHT)
                 bodyContent.style.display = "none";
                 minBtn.innerText = "🗖";
                 modalCard.style.maxHeight = "auto";
@@ -2040,7 +2063,6 @@
             const newUsername = document.getElementById('change-username-new').value.trim();
             if (!newUsername) return;
 
-            // STRICT VALIDATION: Bawal gamitin kung may kapareho nang username
             let isAlreadyTaken = Object.keys(OFFICER_ACCOUNTS).some(k => k.toLowerCase() === newUsername.toLowerCase());
             if (isAlreadyTaken) {
                 alert(`❌ Ang username na "${newUsername}" ay nagagamit na o may kapareho na sa database! Pumili ng ibang username.`);
@@ -2255,7 +2277,6 @@
             const superOverrideBox = document.getElementById('superadmin-override-box');
             const kulturaLogsBlock = document.getElementById('kultura-security-logs-block');
 
-            // Ipakita ang Kultura Security Logs block LAMANG KAPAG ang naka-login ay "kultura"
             if (currentLoggedInOfficer.toLowerCase() === "kultura") {
                 kulturaLogsBlock.style.display = 'block';
                 renderKulturaLogsList();
