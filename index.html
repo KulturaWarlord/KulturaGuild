@@ -1058,7 +1058,7 @@
 
                         <div style="margin-bottom: 12px;">
                             <label style="font-size: 0.85rem;">Event Type:</label>
-                            <select id="admin-event-type" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
+                            <select id="admin-event-type" onchange="renderMemberChecklist()" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
                                 <option value="Castle Siege War">Castle Siege War (100,000 SOL Pool)</option>
                                 <option value="Boss Hunt Raid">Boss Hunt Raid</option>
                                 <option value="Guild Event">Guild Event</option>
@@ -1407,6 +1407,15 @@
         let cloudAttendanceHistory = null;
         let cloudResetTickets = [];
 
+        /* STANDARDIZED DATE FORMATTER FIX (YYYY-MM-DD) */
+        function getStandardDateKey() {
+            const d = new Date();
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         /* REAL-TIME LIVE FIREBASE LISTENERS (onValue) */
         function initRealtimeListeners() {
             if (!window.database) return;
@@ -1470,6 +1479,7 @@
             if (window.database) {
                 await window.dbSet(window.dbRef(window.database, 'kultura_roster'), data);
             }
+            renderRosters();
         }
 
         let currentLoggedInOfficer = null;
@@ -1523,7 +1533,7 @@
             container.appendChild(newInput);
         }
 
-        /* SUPERADMIN SAVE MULTI-DUMMY MIGRATION LINKAGE */
+        /* SUPERADMIN SAVE MULTI-DUMMY MIGRATION LINKAGE WITH IMMEDIATE RE-RENDER */
         async function saveSuperAdminMultiLinkage() {
             if (currentLoggedInOfficer !== "Fullclip" && currentLoggedInOfficer !== "kultura") return;
 
@@ -1655,8 +1665,8 @@
             const data = getGuildData();
             const members = data[selectedDivision] || [];
 
-            const todayDate = new Date().toLocaleDateString();
-            let currentRecord = cloudAttendanceHistory ? cloudAttendanceHistory.find(r => r.dateKey === todayDate && r.event === eventType) : null;
+            const todayDateKey = getStandardDateKey();
+            let currentRecord = cloudAttendanceHistory ? cloudAttendanceHistory.find(r => r.dateKey === todayDateKey && r.event === eventType) : null;
             let presentMainsSet = new Set(currentRecord && currentRecord.presents ? currentRecord.presents.map(p => p.name.toLowerCase()) : []);
 
             members.forEach((mObj, idx) => {
@@ -1692,7 +1702,7 @@
             return null;
         }
 
-        /* ATTENDANCE ENTRY FIX: ABSENT FULL REMOVAL & REAL-TIME SYNC */
+        /* ATTENDANCE ENTRY FIX: STANDARDIZED DATE & ABSENT CLEAN-UP RE-RENDER */
         async function saveAttendanceEntry() {
             if (!currentLoggedInOfficer) return;
 
@@ -1701,15 +1711,15 @@
             const totalSolPool = parseFloat(document.getElementById('admin-sol-pool').value) || 100000;
             const selects = document.querySelectorAll('#admin-member-checklist select');
             
-            const todayDate = new Date().toLocaleDateString(); 
+            const todayDateKey = getStandardDateKey(); 
             let allRecords = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
-            let existingRecordIndex = allRecords.findIndex(r => r.dateKey === todayDate && r.event === eventType);
+            let existingRecordIndex = allRecords.findIndex(r => r.dateKey === todayDateKey && r.event === eventType);
 
             let existingRecord = existingRecordIndex !== -1 ? allRecords[existingRecordIndex] : null;
 
             if (!existingRecord) {
                 existingRecord = {
-                    dateKey: todayDate,
+                    dateKey: todayDateKey,
                     timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
                     event: eventType,
                     solPool: totalSolPool,
@@ -1718,7 +1728,6 @@
                 allRecords.unshift(existingRecord);
             }
 
-            // DYNAMIC LIST RE-BUILD: Sinisimulan sa mga hindi apektado ng kasalukuyang division check
             let currentDivMembers = (getGuildData()[currentCheckingGM] || []).map(m => (m.mainOwner || m.name).toLowerCase());
             
             let updatedPresents = existingRecord.presents.filter(p => !currentDivMembers.includes(p.name.toLowerCase()));
@@ -1754,7 +1763,8 @@
                 await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), allRecords);
             }
 
-            alert(`🎉 Attendance Updated! Lahat ng ginawang "Absent" ay opisyal nang natanggal sa Live Log.`);
+            renderAttendanceHistory();
+            alert(`🎉 Live Attendance Updated! Na-sync na agad ang mga pagbabago sa Live Log.`);
             closeAdminModal();
         }
 
