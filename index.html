@@ -929,7 +929,7 @@
                     </button>
                     <div id="sec-main-dummy-linker" class="admin-collapsible-content">
                         <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
-                            I-type ang <strong>Main Character IGN</strong> (halimbawa: <code>Eremes</code>) at ilagay sa mga boxes sa ibaba ang lahat ng kanyang <strong>Dummy Accounts</strong> (halimbawa: <code>Kreios</code>, <code>Papaliciou</code>, atbp.).
+                            I-type ang <strong>Main Character IGN</strong> (halimbawa: <code>Eremes</code>) at ilagay sa mga boxes sa ibaba ang lahat ng kanyang <strong>Dummy Accounts</strong> (halimbawa: <code>Kreios</code>, <code>Papaliciou</code>, atbp.). Awtomatiko silang ililipat sa division kung nasaan ang Main.
                         </p>
                         
                         <!-- MAIN IGN FIELD -->
@@ -957,7 +957,7 @@
                             <button onclick="addMoreDummyBox()" class="btn" style="padding: 5px 12px; font-size: 0.75rem; background: #333; border-color: #777;">➕ Add More Dummy Box</button>
                         </div>
 
-                        <button onclick="saveSuperAdminMultiLinkage()" class="btn" style="padding: 8px 14px; font-size: 0.85rem; width: 100%; background: linear-gradient(135deg, #8b0000, #ffaa33); color: #000;">🔗 Link All Dummy Accounts to Main</button>
+                        <button onclick="saveSuperAdminMultiLinkage()" class="btn" style="padding: 8px 14px; font-size: 0.85rem; width: 100%; background: linear-gradient(135deg, #8b0000, #ffaa33); color: #000;">🔗 Link & Migrate Dummies to Main Division</button>
                     </div>
                 </div>
 
@@ -1518,7 +1518,6 @@
             }
         }
 
-        /* SUPERADMIN DYNAMIC DUMMY BOX ADDER */
         function addMoreDummyBox() {
             const container = document.getElementById('dummy-boxes-container');
             const totalCurrent = container.querySelectorAll('.dummy-input-field').length;
@@ -1530,7 +1529,7 @@
             container.appendChild(newInput);
         }
 
-        /* SUPERADMIN SAVE MULTI-DUMMY LINKAGE */
+        /* SUPERADMIN SAVE MULTI-DUMMY MIGRATION LINKAGE */
         async function saveSuperAdminMultiLinkage() {
             if (currentLoggedInOfficer !== "Fullclip" && currentLoggedInOfficer !== "kultura") return;
 
@@ -1556,30 +1555,50 @@
             }
 
             let data = getGuildData();
-            let linkedCount = 0;
+            
+            let mainDivisionKey = null;
+            for (let divKey in data) {
+                let foundMain = data[divKey].find(m => m.name.toLowerCase() === mainIgn.toLowerCase());
+                if (foundMain) {
+                    mainDivisionKey = divKey;
+                    break;
+                }
+            }
+
+            if (!mainDivisionKey) {
+                alert(`⚠️ Ang Main Character na "${mainIgn}" ay hindi pa mahanap sa anumang Roster Division. I-register muna siya sa Roster!`);
+                return;
+            }
+
+            let migratedCount = 0;
             let missingDummies = [];
 
             dummyList.forEach(dummyIgn => {
-                let found = false;
+                let foundMemberObj = null;
+
                 for (let divKey in data) {
-                    data[divKey].forEach(m => {
-                        if (m.name.toLowerCase() === dummyIgn.toLowerCase()) {
-                            m.mainOwner = mainIgn;
-                            m.icon = '🎭';
-                            found = true;
-                            linkedCount++;
-                        }
-                    });
+                    let idx = data[divKey].findIndex(m => m.name.toLowerCase() === dummyIgn.toLowerCase());
+                    if (idx !== -1) {
+                        foundMemberObj = data[divKey][idx];
+                        data[divKey].splice(idx, 1);
+                        break;
+                    }
                 }
-                if (!found) {
+
+                if (foundMemberObj) {
+                    foundMemberObj.mainOwner = mainIgn;
+                    foundMemberObj.icon = '🎭';
+                    data[mainDivisionKey].push(foundMemberObj);
+                    migratedCount++;
+                } else {
                     missingDummies.push(dummyIgn);
                 }
             });
 
-            if (linkedCount > 0) {
+            if (migratedCount > 0) {
                 await saveGuildData(data);
                 let missingMsg = missingDummies.length > 0 ? `\n⚠️ Hindi pa naka-register sa roster: ${missingDummies.join(', ')}` : '';
-                alert(`🎉 [SuperAdmin Multi-Linker] Tagumpay na na-link ang ${linkedCount} Dummy Accounts para kay Main "${mainIgn}"!${missingMsg}`);
+                alert(`🎉 [Migration Successful] Na-link at nailipat na ang ${migratedCount} Dummy Accounts sa Roster Division ni Main "${mainIgn}" (${mainDivisionKey})!${missingMsg}`);
 
                 document.getElementById('type-main-ign').value = '';
                 dummyInputs.forEach(i => i.value = '');
@@ -1587,7 +1606,7 @@
                 renderRosters();
                 onDivisionChange();
             } else {
-                alert(`⚠️ Walang na-link! Siguraduhing na-register muna sa Roster ang mga Dummy Accounts na: ${missingDummies.join(', ')}`);
+                alert(`⚠️ Walang na-migrate! Siguraduhing na-register muna sa Roster ang mga Dummy Accounts na: ${missingDummies.join(', ')}`);
             }
         }
 
@@ -1672,7 +1691,7 @@
             return null;
         }
 
-        /* ATTENDANCE ENTRY WITH CROSS-GUILD AUTO ROUTING */
+        /* ATTENDANCE ENTRY WITH AUTOMATIC CROSS-GUILD MAIN REROUTING */
         async function saveAttendanceEntry() {
             if (!currentLoggedInOfficer) return;
 
@@ -1707,14 +1726,14 @@
                     if (!acknowledgedMains.has(mainChar.toLowerCase())) {
                         acknowledgedMains.add(mainChar.toLowerCase());
                         
-                        // AUTOMATIC CROSS-GUILD ROUTING: Credit to Main Character's registered Guild!
+                        // CRITICAL LOGIC: Hanapin kung saan talaga nakarehistro si MAIN CHARACTER (Halimbawa: Fullclip Division)
                         let registeredMainGuild = findMainGuildDivision(mainChar);
-                        let creditedOfficer = registeredMainGuild ? registeredMainGuild : currentCheckingGM;
+                        let targetDivisionForDisplay = registeredMainGuild ? registeredMainGuild : currentCheckingGM;
 
                         existingRecord.presents.push({
-                            name: mainChar,
-                            loggedIgn: loggedChar,
-                            officer: creditedOfficer
+                            name: mainChar, // Eremes ang lalabas na name
+                            loggedIgn: loggedChar, // Kreios ang ginamit na dummy
+                            officer: targetDivisionForDisplay // Fullclip Division ilalagay sa display output!
                         });
                     }
                 }
@@ -1728,11 +1747,12 @@
                 await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), allRecords);
             }
 
-            alert(`🎉 Attendance updated! Any Present Dummies were automatically routed and credited as 1 Share under their Main Character's registered Guild.`);
+            alert(`🎉 Attendance updated! Any Present Dummies were automatically rerouted and displayed under their Main Character's Division.`);
             closeAdminModal();
             renderAttendanceHistory();
         }
 
+        /* PUBLIC ATTENDANCE LOG DISPLAY */
         function renderAttendanceHistory() {
             const tbody = document.getElementById('public-attendance-history');
             let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
@@ -1760,7 +1780,7 @@
                 let formattedMembersHTML = '';
                 if (totalPresent > 0) {
                     for (let divName in groupedByDivision) {
-                        formattedMembersHTML += `<div class="division-group-title">👑 ${divName} (${groupedByDivision[divName].length} Mains Credited):</div><br>`;
+                        formattedMembersHTML += `<div class="division-group-title">👑 ${divName} (${groupedByDivision[divName].length} Mains Present):</div><br>`;
                         groupedByDivision[divName].forEach(pObj => {
                             let altNote = (pObj.loggedIgn && pObj.loggedIgn.toLowerCase() !== pObj.name.toLowerCase()) ? ` <small style="color:#ffaa33;">(Attended via Dummy ${pObj.loggedIgn})</small>` : '';
                             formattedMembersHTML += `💎 <strong>${pObj.name}</strong>${altNote} — <span style="color:var(--primary-glow);">${solPerMember} SOL</span><br>`;
