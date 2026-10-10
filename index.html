@@ -25,14 +25,12 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Make database functions globally accessible
         window.dbRef = ref;
         window.dbGet = get;
         window.dbChild = child;
         window.dbSet = set;
         window.database = db;
         
-        // Trigger initial data load once Firebase is ready
         window.dispatchEvent(new Event('firebase-ready'));
     </script>
 
@@ -814,9 +812,13 @@
                     <input type="text" id="login-username" placeholder="Enter Username" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
                 </div>
 
-                <div style="margin-bottom: 20px; text-align: left;">
+                <div style="margin-bottom: 15px; text-align: left;">
                     <label style="font-size: 0.8rem; color: var(--primary-glow);">Password:</label>
                     <input type="password" id="login-password" placeholder="Enter Password" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                </div>
+
+                <div style="margin-bottom: 18px; text-align: right;">
+                    <a href="javascript:void(0)" onclick="openForgotPasswordModal()" style="color: var(--primary-glow); font-size: 0.8rem; text-decoration: underline;">🔑 Nakalimutan ang Password?</a>
                 </div>
 
                 <div style="display: flex; gap: 10px; justify-content: center;">
@@ -826,11 +828,86 @@
             </div>
         </div>
 
+        <!-- FORGOT PASSWORD MODAL (Secret Question System) -->
+        <div id="forgot-password-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10002; justify-content: center; align-items: center;">
+            <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 450px; padding: 25px; border-radius: 10px; color: #fff; text-align: center;">
+                <h3 style="color: var(--primary-glow); margin-bottom: 10px;">🔑 Password Recovery Portal</h3>
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Sagutin ang iyong Secret Question upang ma-reset ang iyong Officer Password.</p>
+                
+                <div style="margin-bottom: 12px; text-align: left;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Officer Username:</label>
+                    <input type="text" id="reset-username" placeholder="Enter Username (e.g., kultura)" onchange="loadOfficerQuestion()" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                </div>
+
+                <div style="margin-bottom: 12px; text-align: left;">
+                    <label style="font-size: 0.8rem; color: #33cc33;">Secret Question:</label>
+                    <div id="secret-question-display" style="font-size: 0.85rem; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; color: #fff; margin-top: 3px;">Pumili/Ilagay muna ang Username sa taas...</div>
+                </div>
+
+                <div style="margin-bottom: 12px; text-align: left;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Secret Answer:</label>
+                    <input type="text" id="reset-secret-answer" placeholder="Enter your Secret Answer" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                </div>
+
+                <div style="margin-bottom: 20px; text-align: left;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Bagong Password (New Password):</label>
+                    <input type="password" id="reset-new-password" placeholder="Enter New Password" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button onclick="closeForgotPasswordModal()" class="btn" style="background: #444;">Cancel</button>
+                    <button onclick="handlePasswordReset()" class="btn">Reset Password</button>
+                </div>
+            </div>
+        </div>
+
         <!-- ADMIN ATTENDANCE & MEMBER REGISTRATION/DELETE MODAL -->
         <div id="attendance-admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center;">
             <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 650px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto;">
                 <h3 style="color: var(--primary-glow); margin-bottom: 10px;">🔒 Authorized Officer Portal</h3>
                 <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">Officer</strong></p>
+
+                <!-- CHANGE PASSWORD PANEL -->
+                <div style="margin-bottom: 15px; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-gold); border-radius: 6px;">
+                    <h4 style="color: var(--primary-glow); font-size: 0.95rem; margin-bottom: 8px;">🔑 Change My Password</h4>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
+                        <input type="password" id="change-pass-current" placeholder="Current Password" style="flex: 1; min-width: 140px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                        <input type="password" id="change-pass-new" placeholder="New Password" style="flex: 1; min-width: 140px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                    </div>
+                    <button onclick="changeMyPassword()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">⚙️ Update My Password</button>
+                </div>
+
+                <!-- SUPERADMIN PANEL: REGISTER NEW ALLIANCE GUILD & GUILDMASTER -->
+                <div id="superadmin-guild-registration-panel" style="display: none; margin-bottom: 15px; padding: 12px; background: rgba(0, 150, 255, 0.1); border: 1px solid #3399ff; border-radius: 6px;">
+                    <h4 style="color: #33ccff; font-size: 0.95rem; margin-bottom: 8px;">🏰 SuperAdmin: Register New Alliance Guild & Guild Master</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                        <input type="text" id="reg-guild-name" placeholder="Guild Name (e.g., SPIDEY)" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                        <input type="text" id="reg-gm-username" placeholder="New GM Username (e.g., PeterParker)" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                        <input type="password" id="reg-gm-password" placeholder="GM Account Password" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                        <select id="reg-gm-class" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                            <option value="Blade Master">GM Class: Blade Master</option>
+                            <option value="Dark Lord">GM Class: Dark Lord</option>
+                            <option value="Summoner">GM Class: Summoner</option>
+                            <option value="Soul Master">GM Class: Soul Master</option>
+                            <option value="Elf">GM Class: Elf</option>
+                            <option value="Dimension Master">GM Class: Dimension Master</option>
+                        </select>
+                        <input type="text" id="reg-gm-question" placeholder="Secret Recovery Question" style="grid-column: span 2; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                        <input type="text" id="reg-gm-answer" placeholder="Secret Question Answer" style="grid-column: span 2; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                    </div>
+                    <button onclick="registerAllianceAndGM()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%; background: linear-gradient(135deg, #0055ff, #002288);">🚀 Create Guild & Register Guild Master</button>
+                </div>
+
+                <!-- SUPERADMIN MASTER RESET PANEL -->
+                <div id="superadmin-master-panel" style="display: none; margin-bottom: 15px; padding: 12px; background: rgba(230, 184, 0, 0.1); border: 1px solid var(--primary); border-radius: 6px;">
+                    <h4 style="color: var(--primary-glow); font-size: 0.95rem; margin-bottom: 8px;">🔑 SuperAdmin Officer Password Override</h4>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
+                        <select id="superadmin-target-officer" style="padding: 8px; background: #111; border: 1px solid #555; color: var(--primary-glow); border-radius: 4px; font-size: 0.85rem;">
+                        </select>
+                        <input type="text" id="superadmin-override-pass" placeholder="New Password for Officer" style="flex: 1; min-width: 150px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                    </div>
+                    <button onclick="superadminChangePassword()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">⚡ Directly Override Officer Password</button>
+                </div>
 
                 <div style="margin-bottom: 12px;">
                     <label style="font-size: 0.85rem; color: var(--primary-glow);">Select Division / Guild to Manage:</label>
@@ -1026,56 +1103,8 @@
         <section id="members-roster-section">
             <h2 class="section-title">Guild Members Roster</h2>
             
-            <div class="roster-grid-container">
-                <div class="roster-box">
-                    <div class="roster-box-header" onclick="toggleDivision('fullclip-roster', 'btn-fullclip')">
-                        <span class="roster-box-title">👑 Kultura Main (Fullclip Division)</span>
-                        <button id="btn-fullclip" class="roster-toggle-btn">▼ Click to Expand</button>
-                    </div>
-                    <div id="fullclip-roster" class="roster-list-container">
-                        <!-- Dynamic Fullclip Members -->
-                    </div>
-                </div>
-
-                <div class="roster-box">
-                    <div class="roster-box-header" onclick="toggleDivision('warlock-roster', 'btn-warlock')">
-                        <span class="roster-box-title">👑 Kultura (Warlock Division)</span>
-                        <button id="btn-warlock" class="roster-toggle-btn">▼ Click to Expand</button>
-                    </div>
-                    <div id="warlock-roster" class="roster-list-container">
-                        <!-- Dynamic Warlock Members -->
-                    </div>
-                </div>
-
-                <div class="roster-box">
-                    <div class="roster-box-header" onclick="toggleDivision('protect-roster', 'btn-protect')">
-                        <span class="roster-box-title">🛡️ Alliance (PROTECT Guild)</span>
-                        <button id="btn-protect" class="roster-toggle-btn">▼ Click to Expand</button>
-                    </div>
-                    <div id="protect-roster" class="roster-list-container">
-                        <!-- Dynamic PROTECT Members -->
-                    </div>
-                </div>
-
-                <div class="roster-box">
-                    <div class="roster-box-header" onclick="toggleDivision('stealth-roster', 'btn-stealth')">
-                        <span class="roster-box-title">⚔️ Alliance (STEALTH Guild)</span>
-                        <button id="btn-stealth" class="roster-toggle-btn">▼ Click to Expand</button>
-                    </div>
-                    <div id="stealth-roster" class="roster-list-container">
-                        <!-- Dynamic STEALTH Members -->
-                    </div>
-                </div>
-
-                <div class="roster-box">
-                    <div class="roster-box-header" onclick="toggleDivision('anxiety-roster', 'btn-anxiety')">
-                        <span class="roster-box-title">⚡ Alliance (ANXIETY Guild)</span>
-                        <button id="btn-anxiety" class="roster-toggle-btn">▼ Click to Expand</button>
-                    </div>
-                    <div id="anxiety-roster" class="roster-list-container">
-                        <!-- Dynamic ANXIETY Members -->
-                    </div>
-                </div>
+            <div class="roster-grid-container" id="dynamic-roster-grid">
+                <!-- Dynamic Rosters rendered via JS -->
             </div>
         </section>
 
@@ -1165,9 +1194,9 @@
         <p>&copy; 2026 <span>Kultura Guild</span> — NoLimit MU Online Community. All Rights Reserved.</p>
     </footer>
 
-    <!-- Interactive Scripts with Firebase Integration & Delete Member Logic -->
+    <!-- Interactive Scripts with Dynamic Alliance/GM Registration -->
     <script>
-        const ALL_DIVISIONS = [
+        let ALL_DIVISIONS = [
             "Fullclip Division (Fullclip)",
             "Warlock Division (Warlock)",
             "PROTECT Division (Windtalker)",
@@ -1175,36 +1204,66 @@
             "ANXIETY Division (iKapitana)"
         ];
 
-        const OFFICER_ACCOUNTS = {
+        let PROTECTED_ADMIN_ACCOUNTS = [
+            "fullclip", 
+            "warlock", 
+            "lorddwight", 
+            "windtalker", 
+            "ikapitana", 
+            "mechado", 
+            "tsukushi",
+            "kultura"
+        ];
+
+        let OFFICER_ACCOUNTS = {
             "Fullclip": {
                 password: "GMKulturamain",
                 assignedDivision: ALL_DIVISIONS,
-                role: "Main Guild Master (Super Admin)"
+                role: "Main Guild Master (Super Admin)",
+                question: "Sino ang Main Guild Master ng Kultura?",
+                secretAnswer: "fullclip"
+            },
+            "kultura": {
+                password: "a admin",
+                assignedDivision: ALL_DIVISIONS,
+                role: "Main Guild Master (Super Admin)",
+                question: "Ano ang pangalan ng ating guild?",
+                secretAnswer: "kultura"
             },
             "Tsukushi": {
                 password: "blademasteragm",
                 assignedDivision: "Warlock Division (Warlock)",
-                role: "Assistant GM"
+                role: "Assistant GM",
+                question: "Ano ang class ng iyong main character?",
+                secretAnswer: "blade master"
             },
             "Mechado": {
                 password: "blademasterkultura",
                 assignedDivision: "Fullclip Division (Fullclip)",
-                role: "Assistant GM"
+                role: "Assistant GM",
+                question: "Ano ang paborito mong ulam?",
+                secretAnswer: "mechado"
             },
             "PROTECT": {
                 password: "GMlordjepz",
                 assignedDivision: "PROTECT Division (Windtalker)",
-                role: "Guild Officer / GM"
+                role: "Guild Officer / GM",
+                question: "Sino ang Alliance Guild Master ng PROTECT?",
+                secretAnswer: "windtalker"
             },
             "LordDwight": {
                 password: "GMStealth",
                 assignedDivision: "STEALTH Division (LordDwight)",
-                role: "Guild Master"
+                role: "Guild Master",
+                question: "Ano ang pangalan ng iyong Alliance Guild?",
+                secretAnswer: "stealth"
             },
             "ANXIETY": {
                 password: "GMKapitana",
                 assignedDivision: "ANXIETY Division (iKapitana)",
-                role: "Guild Master"
+                role: "Guild Master",
+                question: "Sino ang Guild Master ng ANXIETY?",
+                secretAnswer: "ikapitana"
             }
         };
 
@@ -1327,6 +1386,21 @@
             try {
                 const dbRef = window.dbRef(window.database);
                 
+                // Fetch Passwords
+                const passSnap = await window.dbGet(window.dbChild(dbRef, 'kultura_officer_accounts'));
+                if (passSnap.exists()) {
+                    OFFICER_ACCOUNTS = passSnap.val();
+                } else {
+                    await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
+                }
+
+                // Sync ALL_DIVISIONS and PROTECTED_ADMIN_ACCOUNTS dynamically
+                for (let key in OFFICER_ACCOUNTS) {
+                    if (!PROTECTED_ADMIN_ACCOUNTS.includes(key.toLowerCase())) {
+                        PROTECTED_ADMIN_ACCOUNTS.push(key.toLowerCase());
+                    }
+                }
+
                 // Fetch Roster
                 const rosterSnap = await window.dbGet(window.dbChild(dbRef, 'kultura_roster'));
                 if (rosterSnap.exists()) {
@@ -1335,6 +1409,13 @@
                     cloudGuildData = defaultDivisionMembers;
                     await window.dbSet(window.dbRef(window.database, 'kultura_roster'), defaultDivisionMembers);
                 }
+
+                // Update Divisions from Roster Keys
+                ALL_DIVISIONS = Object.keys(cloudGuildData);
+
+                // Sync SuperAdmins (Fullclip & kultura) assignedDivision array
+                if (OFFICER_ACCOUNTS["Fullclip"]) OFFICER_ACCOUNTS["Fullclip"].assignedDivision = ALL_DIVISIONS;
+                if (OFFICER_ACCOUNTS["kultura"]) OFFICER_ACCOUNTS["kultura"].assignedDivision = ALL_DIVISIONS;
 
                 // Fetch Attendance
                 const attSnap = await window.dbGet(window.dbChild(dbRef, 'kultura_attendance'));
@@ -1392,11 +1473,202 @@
             }
         }
 
+        /* CHANGE PASSWORD FUNCTION FOR LOGGED IN OFFICER */
+        async function changeMyPassword() {
+            if (!currentLoggedInOfficer) return;
+
+            const currPass = document.getElementById('change-pass-current').value.trim();
+            const newPass = document.getElementById('change-pass-new').value.trim();
+
+            if (!currPass || !newPass) {
+                alert("⚠️ Paki-lagay ang Kasalukuyang Password at Bagong Password!");
+                return;
+            }
+
+            if (OFFICER_ACCOUNTS[currentLoggedInOfficer].password !== currPass) {
+                alert("❌ Mali ang iyong Kasalukuyang Password!");
+                return;
+            }
+
+            OFFICER_ACCOUNTS[currentLoggedInOfficer].password = newPass;
+
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
+            }
+
+            alert(`🎉 Tagumpay! Naipalitan na ang iyong password, ${currentLoggedInOfficer}. Paki-tandaan ang iyong bagong password!`);
+            document.getElementById('change-pass-current').value = '';
+            document.getElementById('change-pass-new').value = '';
+        }
+
+        /* SUPERADMIN: REGISTER NEW ALLIANCE GUILD & GUILD MASTER */
+        async function registerAllianceAndGM() {
+            if (currentLoggedInOfficer !== "Fullclip" && currentLoggedInOfficer !== "kultura") return;
+
+            const guildName = document.getElementById('reg-guild-name').value.trim();
+            const gmUser = document.getElementById('reg-gm-username').value.trim();
+            const gmPass = document.getElementById('reg-gm-password').value.trim();
+            const gmClass = document.getElementById('reg-gm-class').value;
+            const gmQuest = document.getElementById('reg-gm-question').value.trim();
+            const gmAns = document.getElementById('reg-gm-answer').value.trim();
+
+            if (!guildName || !gmUser || !gmPass || !gmQuest || !gmAns) {
+                alert("⚠️ Paki-kumpleto ang lahat ng field para sa bagong Alliance Guild at Guild Master!");
+                return;
+            }
+
+            const divisionKey = `${guildName} Division (${gmUser})`;
+
+            if (OFFICER_ACCOUNTS[gmUser]) {
+                alert(`⚠️ Ang Username na "${gmUser}" ay umiiral na sa mga Officer accounts!`);
+                return;
+            }
+
+            // Register New Officer Account
+            OFFICER_ACCOUNTS[gmUser] = {
+                password: gmPass,
+                assignedDivision: divisionKey,
+                role: `${guildName} Guild Master`,
+                question: gmQuest,
+                secretAnswer: gmAns
+            };
+
+            PROTECTED_ADMIN_ACCOUNTS.push(gmUser.toLowerCase());
+
+            // Add new division to roster with Guildmaster as initial member
+            let data = getGuildData();
+            data[divisionKey] = [
+                { name: gmUser, class: gmClass, icon: "👑" }
+            ];
+
+            ALL_DIVISIONS = Object.keys(data);
+
+            // Sync SuperAdmin Access
+            OFFICER_ACCOUNTS["Fullclip"].assignedDivision = ALL_DIVISIONS;
+            OFFICER_ACCOUNTS["kultura"].assignedDivision = ALL_DIVISIONS;
+
+            // Save to Firebase
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
+                await saveGuildData(data);
+            }
+
+            alert(`🎉 Tagumpay! Nairegister ni ${currentLoggedInOfficer} ang bagong Alliance "${guildName}" at si Guild Master "${gmUser}" (${gmClass}).`);
+
+            // Clear inputs
+            document.getElementById('reg-guild-name').value = '';
+            document.getElementById('reg-gm-username').value = '';
+            document.getElementById('reg-gm-password').value = '';
+            document.getElementById('reg-gm-question').value = '';
+            document.getElementById('reg-gm-answer').value = '';
+
+            renderRosters();
+            openAdminModal();
+        }
+
+        /* FORGOT PASSWORD FUNCTIONS */
+        function openForgotPasswordModal() {
+            closeLoginModal();
+            document.getElementById('reset-username').value = '';
+            document.getElementById('reset-secret-answer').value = '';
+            document.getElementById('reset-new-password').value = '';
+            document.getElementById('secret-question-display').innerText = 'Pumili/Ilagay muna ang Username sa taas...';
+            document.getElementById('forgot-password-modal').style.display = 'flex';
+        }
+
+        function closeForgotPasswordModal() {
+            document.getElementById('forgot-password-modal').style.display = 'none';
+        }
+
+        function loadOfficerQuestion() {
+            const userVal = document.getElementById('reset-username').value.trim();
+            const qDisplay = document.getElementById('secret-question-display');
+            if (OFFICER_ACCOUNTS[userVal]) {
+                qDisplay.innerText = OFFICER_ACCOUNTS[userVal].question;
+                qDisplay.style.color = '#ffdd55';
+            } else {
+                qDisplay.innerText = '❌ Hindi mahanap ang Officer Username na ito.';
+                qDisplay.style.color = '#ff3333';
+            }
+        }
+
+        async function handlePasswordReset() {
+            const userVal = document.getElementById('reset-username').value.trim();
+            const answerVal = document.getElementById('reset-secret-answer').value.trim().toLowerCase();
+            const newPassVal = document.getElementById('reset-new-password').value.trim();
+
+            if (!OFFICER_ACCOUNTS[userVal]) {
+                alert("⚠️ Mali o hindi umiiral ang Officer Username!");
+                return;
+            }
+
+            if (!newPassVal) {
+                alert("⚠️ Paki-lagay ang iyong bagong password!");
+                return;
+            }
+
+            if (OFFICER_ACCOUNTS[userVal].secretAnswer.toLowerCase() === answerVal) {
+                OFFICER_ACCOUNTS[userVal].password = newPassVal;
+                
+                if (window.database) {
+                    await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
+                }
+
+                alert(`🎉 Tagumpay! Na-reset na ang password para sa account ni "${userVal}". Pwede ka nang mag-login gamit ang bagong password!`);
+                closeForgotPasswordModal();
+                openLoginModal();
+            } else {
+                alert("❌ Mali ang iyong Secret Answer! Hindi ma-reset ang password.");
+            }
+        }
+
+        /* SUPERADMIN MASTER RESET OVERRIDE */
+        async function superadminChangePassword() {
+            if (currentLoggedInOfficer !== "Fullclip" && currentLoggedInOfficer !== "kultura") return;
+
+            const targetOfficer = document.getElementById('superadmin-target-officer').value;
+            const newPass = document.getElementById('superadmin-override-pass').value.trim();
+
+            if (!newPass) {
+                alert("⚠️ Paki-lagay ang bagong password na itatakda para sa officer!");
+                return;
+            }
+
+            if (OFFICER_ACCOUNTS[targetOfficer]) {
+                OFFICER_ACCOUNTS[targetOfficer].password = newPass;
+
+                if (window.database) {
+                    await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
+                }
+
+                alert(`⚡ [SuperAdmin Override] Tagumpay na napalitan ni ${currentLoggedInOfficer} ang password ng officer na si "${targetOfficer}"!`);
+                document.getElementById('superadmin-override-pass').value = '';
+            }
+        }
+
         function openAdminModal() {
             if (!currentLoggedInOfficer) return;
 
             const officerInfo = OFFICER_ACCOUNTS[currentLoggedInOfficer];
             document.getElementById('logged-agm-display').innerText = `${currentLoggedInOfficer} (${officerInfo.role})`;
+
+            const superGuildRegPanel = document.getElementById('superadmin-guild-registration-panel');
+            const superPanel = document.getElementById('superadmin-master-panel');
+
+            if (currentLoggedInOfficer === "Fullclip" || currentLoggedInOfficer === "kultura") {
+                superGuildRegPanel.style.display = 'block';
+                superPanel.style.display = 'block';
+
+                // Populate target officers dropdown
+                const targetSelect = document.getElementById('superadmin-target-officer');
+                targetSelect.innerHTML = '';
+                for (let offName in OFFICER_ACCOUNTS) {
+                    targetSelect.innerHTML += `<option value="${offName}">${offName}</option>`;
+                }
+            } else {
+                superGuildRegPanel.style.display = 'none';
+                superPanel.style.display = 'none';
+            }
 
             const selectDiv = document.getElementById('admin-officer-select');
             selectDiv.innerHTML = '';
@@ -1500,11 +1772,17 @@
             }
 
             members.forEach(mObj => {
+                const isProtected = PROTECTED_ADMIN_ACCOUNTS.includes(mObj.name.toLowerCase());
                 const div = document.createElement('div');
                 div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;";
+                
+                const actionHTML = isProtected 
+                    ? `<span style="font-size:0.75rem; color:#e6b800; font-weight:bold; background:rgba(230,184,0,0.15); padding:2px 6px; border-radius:3px; border:1px solid #e6b800;">🛡️ Protected</span>`
+                    : `<button onclick="deleteMember('${mObj.name}')" class="delete-btn">❌ Delete</button>`;
+
                 div.innerHTML = `
                     <span>${mObj.icon} <strong>${mObj.name}</strong> <small style="color:var(--text-dim);">(${mObj.class})</small></span>
-                    <button onclick="deleteMember('${mObj.name}')" class="delete-btn">❌ Delete</button>
+                    ${actionHTML}
                 `;
                 listContainer.appendChild(div);
             });
@@ -1512,6 +1790,12 @@
 
         async function deleteMember(memberName) {
             if (!currentLoggedInOfficer) return;
+            
+            if (PROTECTED_ADMIN_ACCOUNTS.includes(memberName.toLowerCase())) {
+                alert(`🔒 Protektado ang account ni "${memberName}"! Hindi pwedeng burahin ang Admin o SuperAdmin sa roster.`);
+                return;
+            }
+
             const selectedDivision = document.getElementById('admin-officer-select').value;
 
             if (!confirm(`⚠️ Sigurado ka bang gusto mong burahin si "${memberName}" mula sa ${selectedDivision}?`)) {
@@ -1556,29 +1840,40 @@
 
         function renderRosters() {
             const data = getGuildData();
+            const dynamicGrid = document.getElementById('dynamic-roster-grid');
+            if (!dynamicGrid) return;
 
-            const divisionsMap = {
-                "fullclip-roster": "Fullclip Division (Fullclip)",
-                "warlock-roster": "Warlock Division (Warlock)",
-                "protect-roster": "PROTECT Division (Windtalker)",
-                "stealth-roster": "STEALTH Division (LordDwight)",
-                "anxiety-roster": "ANXIETY Division (iKapitana)"
-            };
+            dynamicGrid.innerHTML = '';
 
-            for (const [containerId, divKey] of Object.entries(divisionsMap)) {
-                const container = document.getElementById(containerId);
-                if (container) {
-                    container.innerHTML = '';
-                    (data[divKey] || []).forEach(m => {
-                        const cssClass = getClassCss(m.class);
-                        container.innerHTML += `
-                            <div class="roster-list-item">
-                                <span>${m.icon} <span class="${cssClass}">${m.name}</span></span>
-                                <span class="${cssClass}">${m.class}</span>
-                            </div>
-                        `;
-                    });
-                }
+            let idx = 0;
+            for (const divKey in data) {
+                const containerId = `roster-box-${idx}`;
+                const btnId = `roster-btn-${idx}`;
+                const members = data[divKey] || [];
+
+                let membersHTML = '';
+                members.forEach(m => {
+                    const cssClass = getClassCss(m.class);
+                    membersHTML += `
+                        <div class="roster-list-item">
+                            <span>${m.icon} <span class="${cssClass}">${m.name}</span></span>
+                            <span class="${cssClass}">${m.class}</span>
+                        </div>
+                    `;
+                });
+
+                dynamicGrid.innerHTML += `
+                    <div class="roster-box">
+                        <div class="roster-box-header" onclick="toggleDivision('${containerId}', '${btnId}')">
+                            <span class="roster-box-title">🛡️ ${divKey}</span>
+                            <button id="${btnId}" class="roster-toggle-btn">▼ Click to Expand</button>
+                        </div>
+                        <div id="${containerId}" class="roster-list-container">
+                            ${membersHTML}
+                        </div>
+                    </div>
+                `;
+                idx++;
             }
         }
 
