@@ -9,7 +9,7 @@
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAq_TzBp-Jjr3Wbp7RIHz05OW3IR5Iovmk",
@@ -29,6 +29,7 @@
         window.dbGet = get;
         window.dbChild = child;
         window.dbSet = set;
+        window.dbOnValue = onValue;
         window.database = db;
         
         window.dispatchEvent(new Event('firebase-ready'));
@@ -829,7 +830,7 @@
                             </tr>
                         </thead>
                         <tbody id="public-attendance-history">
-                            <tr><td colspan="5" style="padding: 10px; text-align: center; color: var(--text-dim);">Loading data from Cloud...</td></tr>
+                            <tr><td colspan="5" style="padding: 10px; text-align: center; color: var(--text-dim);">Connecting to Live Firebase Sync...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -945,12 +946,6 @@
                             <input type="text" class="dummy-input-field" placeholder="Dummy 2 (e.g. Papaliciou)" style="padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;">
                             <input type="text" class="dummy-input-field" placeholder="Dummy 3" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
                             <input type="text" class="dummy-input-field" placeholder="Dummy 4" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
-                            <input type="text" class="dummy-input-field" placeholder="Dummy 5" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
-                            <input type="text" class="dummy-input-field" placeholder="Dummy 6" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
-                            <input type="text" class="dummy-input-field" placeholder="Dummy 7" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
-                            <input type="text" class="dummy-input-field" placeholder="Dummy 8" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
-                            <input type="text" class="dummy-input-field" placeholder="Dummy 9" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
-                            <input type="text" class="dummy-input-field" placeholder="Dummy 10" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
                         </div>
 
                         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
@@ -1412,59 +1407,58 @@
         let cloudAttendanceHistory = null;
         let cloudResetTickets = [];
 
-        async function fetchCloudData() {
+        /* REAL-TIME LIVE FIREBASE LISTENERS (onValue) */
+        function initRealtimeListeners() {
             if (!window.database) return;
-            try {
-                const dbRef = window.dbRef(window.database);
-                
-                const passSnap = await window.dbGet(window.dbChild(dbRef, 'kultura_officer_accounts'));
-                if (passSnap.exists()) {
-                    OFFICER_ACCOUNTS = passSnap.val();
+            const dbRef = window.dbRef;
+            const dbOnValue = window.dbOnValue;
+
+            // 1. Live Officer Accounts Listener
+            dbOnValue(dbRef(window.database, 'kultura_officer_accounts'), (snap) => {
+                if (snap.exists()) {
+                    OFFICER_ACCOUNTS = snap.val();
                 } else {
-                    await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
+                    window.dbSet(dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
                 }
+            });
 
-                for (let key in OFFICER_ACCOUNTS) {
-                    if (!PROTECTED_ADMIN_ACCOUNTS.includes(key.toLowerCase())) {
-                        PROTECTED_ADMIN_ACCOUNTS.push(key.toLowerCase());
-                    }
-                }
-
-                const rosterSnap = await window.dbGet(window.dbChild(dbRef, 'kultura_roster'));
-                if (rosterSnap.exists()) {
-                    cloudGuildData = rosterSnap.val();
+            // 2. Live Roster & Migration Listener
+            dbOnValue(dbRef(window.database, 'kultura_roster'), (snap) => {
+                if (snap.exists()) {
+                    cloudGuildData = snap.val();
                 } else {
                     cloudGuildData = defaultDivisionMembers;
-                    await window.dbSet(window.dbRef(window.database, 'kultura_roster'), defaultDivisionMembers);
+                    window.dbSet(dbRef(window.database, 'kultura_roster'), defaultDivisionMembers);
                 }
+                renderRosters();
+                if (document.getElementById('attendance-admin-modal').style.display === 'flex') {
+                    onDivisionChange();
+                }
+            });
 
-                ALL_DIVISIONS = Object.keys(cloudGuildData);
-                if (OFFICER_ACCOUNTS["Fullclip"]) OFFICER_ACCOUNTS["Fullclip"].assignedDivision = ALL_DIVISIONS;
-                if (OFFICER_ACCOUNTS["kultura"]) OFFICER_ACCOUNTS["kultura"].assignedDivision = ALL_DIVISIONS;
-
-                const attSnap = await window.dbGet(window.dbChild(dbRef, 'kultura_attendance'));
-                if (attSnap.exists()) {
-                    cloudAttendanceHistory = attSnap.val();
+            // 3. Live Public Attendance Table Listener
+            dbOnValue(dbRef(window.database, 'kultura_attendance'), (snap) => {
+                if (snap.exists()) {
+                    cloudAttendanceHistory = snap.val();
                 } else {
                     cloudAttendanceHistory = [];
                 }
+                renderAttendanceHistory();
+            });
 
-                const ticketSnap = await window.dbGet(window.dbChild(dbRef, 'kultura_reset_tickets'));
-                if (ticketSnap.exists()) {
-                    cloudResetTickets = ticketSnap.val();
+            // 4. Live Tickets Listener
+            dbOnValue(dbRef(window.database, 'kultura_reset_tickets'), (snap) => {
+                if (snap.exists()) {
+                    cloudResetTickets = snap.val();
                 } else {
                     cloudResetTickets = [];
                 }
-
-                renderRosters();
-                renderAttendanceHistory();
-            } catch (error) {
-                console.error("Error fetching data from Firebase:", error);
-            }
+                renderSuperAdminInbox();
+            });
         }
 
         window.addEventListener('firebase-ready', () => {
-            fetchCloudData();
+            initRealtimeListeners();
         });
 
         function getGuildData() {
@@ -1654,11 +1648,16 @@
             if (!currentLoggedInOfficer) return;
 
             const selectedDivision = document.getElementById('admin-officer-select').value;
+            const eventType = document.getElementById('admin-event-type').value;
             const checklist = document.getElementById('admin-member-checklist');
             checklist.innerHTML = '';
 
             const data = getGuildData();
             const members = data[selectedDivision] || [];
+
+            const todayDate = new Date().toLocaleDateString();
+            let currentRecord = cloudAttendanceHistory ? cloudAttendanceHistory.find(r => r.dateKey === todayDate && r.event === eventType) : null;
+            let presentMainsSet = new Set(currentRecord && currentRecord.presents ? currentRecord.presents.map(p => p.name.toLowerCase()) : []);
 
             members.forEach((mObj, idx) => {
                 const div = document.createElement('div');
@@ -1667,12 +1666,14 @@
                 let isDummy = mObj.mainOwner && mObj.mainOwner.toLowerCase() !== mObj.name.toLowerCase();
                 let dummyLabel = isDummy ? `<small style="color:#ffaa33; font-weight:bold;">[Dummy of ${mObj.mainOwner}]</small>` : `<small style="color:#33cc33; font-weight:bold;">[Main]</small>`;
 
+                let isCurrentlyPresent = presentMainsSet.has((mObj.mainOwner || mObj.name).toLowerCase());
+
                 div.innerHTML = `
                     <span>${mObj.icon} <strong>${mObj.name}</strong> ${dummyLabel} <small style="color:var(--text-dim);">(${mObj.class})</small></span>
                     <select id="att-status-${idx}" data-name="${mObj.name}" data-main="${mObj.mainOwner || mObj.name}" style="background: #222; color: #fff; border: 1px solid #555; padding: 2px 6px; border-radius: 3px;">
-                        <option value="Present">Present</option>
+                        <option value="Present" ${isCurrentlyPresent ? 'selected' : ''}>Present</option>
                         <option value="Late">Late</option>
-                        <option value="Absent" selected>Absent</option>
+                        <option value="Absent" ${!isCurrentlyPresent ? 'selected' : ''}>Absent</option>
                     </select>
                 `;
                 checklist.appendChild(div);
@@ -1691,7 +1692,7 @@
             return null;
         }
 
-        /* ATTENDANCE ENTRY WITH AUTOMATIC CROSS-GUILD MAIN REROUTING */
+        /* ATTENDANCE ENTRY FIX: ABSENT FULL REMOVAL & REAL-TIME SYNC */
         async function saveAttendanceEntry() {
             if (!currentLoggedInOfficer) return;
 
@@ -1702,7 +1703,9 @@
             
             const todayDate = new Date().toLocaleDateString(); 
             let allRecords = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
-            let existingRecord = allRecords.find(r => r.dateKey === todayDate && r.event === eventType);
+            let existingRecordIndex = allRecords.findIndex(r => r.dateKey === todayDate && r.event === eventType);
+
+            let existingRecord = existingRecordIndex !== -1 ? allRecords[existingRecordIndex] : null;
 
             if (!existingRecord) {
                 existingRecord = {
@@ -1715,7 +1718,11 @@
                 allRecords.unshift(existingRecord);
             }
 
-            let acknowledgedMains = new Set(existingRecord.presents.map(p => p.name.toLowerCase()));
+            // DYNAMIC LIST RE-BUILD: Sinisimulan sa mga hindi apektado ng kasalukuyang division check
+            let currentDivMembers = (getGuildData()[currentCheckingGM] || []).map(m => (m.mainOwner || m.name).toLowerCase());
+            
+            let updatedPresents = existingRecord.presents.filter(p => !currentDivMembers.includes(p.name.toLowerCase()));
+            let acknowledgedMains = new Set(updatedPresents.map(p => p.name.toLowerCase()));
 
             selects.forEach(sel => {
                 const status = sel.value;
@@ -1726,19 +1733,19 @@
                     if (!acknowledgedMains.has(mainChar.toLowerCase())) {
                         acknowledgedMains.add(mainChar.toLowerCase());
                         
-                        // AUTOMATIC CROSS-DIVISION DISPLAY REROUTING:
                         let registeredMainGuild = findMainGuildDivision(mainChar);
                         let targetDivisionForDisplay = registeredMainGuild ? registeredMainGuild : currentCheckingGM;
 
-                        existingRecord.presents.push({
-                            name: mainChar, // Eremes ang lalabas na pangalan
-                            loggedIgn: loggedChar, // Kreios ang dummy account
-                            officer: targetDivisionForDisplay // Fullclip Division sa display output!
+                        updatedPresents.push({
+                            name: mainChar,
+                            loggedIgn: loggedChar,
+                            officer: targetDivisionForDisplay
                         });
                     }
                 }
             });
 
+            existingRecord.presents = updatedPresents;
             existingRecord.solPool = totalSolPool;
             existingRecord.timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
@@ -1747,9 +1754,8 @@
                 await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), allRecords);
             }
 
-            alert(`🎉 Attendance updated! Ang dummy "${selects[0]?.getAttribute('data-name')}" ay direktang inilagay at ipinakita sa Division ng kanyang Main Character!`);
+            alert(`🎉 Attendance Updated! Lahat ng ginawang "Absent" ay opisyal nang natanggal sa Live Log.`);
             closeAdminModal();
-            renderAttendanceHistory();
         }
 
         /* PUBLIC ATTENDANCE LOG DISPLAY OUTPUT */
