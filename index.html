@@ -21,12 +21,10 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            /* MU Online Custom Cursor (Gauntlet / Sword Pointer) */
             cursor: url('https://muonline.webzen.com/Cont/images/common/cursor.cur'), auto !important;
         }
 
-        /* Specific pointer style for buttons/links/cards */
-        a, button, .member-card, .server-logo-link, #music-control, .close-modal, .rotating-alliance-badge {
+        a, button, .server-logo-link, #music-control, .rotating-alliance-badge, .roster-toggle-btn {
             cursor: url('https://muonline.webzen.com/Cont/images/common/cursor_select.cur'), pointer !important;
         }
 
@@ -41,7 +39,6 @@
             overflow-x: hidden;
         }
 
-        /* Floating Audio Control Button */
         #music-control {
             position: fixed;
             bottom: 25px;
@@ -70,14 +67,12 @@
             transform: translateY(-2px);
         }
 
-        /* Typography */
         h1, h2, h3, h4 {
             font-family: 'Cinzel', serif;
             letter-spacing: 2px;
             text-transform: uppercase;
         }
 
-        /* Medieval Font specifically for Kultura Guild Logo */
         .guild-logo {
             font-family: 'MedievalSharp', cursive, serif;
             font-size: 4.2rem;
@@ -92,7 +87,6 @@
             color: var(--primary);
         }
 
-        /* Rotating Alliance Badge in Header */
         .rotating-alliance-container {
             margin: 10px auto 20px;
             display: inline-block;
@@ -135,7 +129,6 @@
             100% { box-shadow: 0 0 10px rgba(230, 184, 0, 0.3); }
         }
 
-        /* Header / Hero */
         header {
             position: relative;
             padding: 60px 20px 50px;
@@ -188,6 +181,8 @@
             border-radius: 4px;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+            display: inline-block;
+            text-align: center;
         }
 
         .btn:hover {
@@ -197,14 +192,12 @@
             transform: translateY(-2px);
         }
 
-        /* Container */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 40px 20px;
         }
 
-        /* Section Styling */
         section {
             margin-bottom: 60px;
         }
@@ -240,7 +233,55 @@
             text-shadow: 0 2px 5px rgba(0,0,0,0.8);
         }
 
-        /* Stats Grid */
+        .schedule-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-gold);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(8px);
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+        }
+
+        .schedule-title {
+            font-size: 1.2rem;
+            color: var(--primary-glow);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .schedule-time {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .req-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .req-list li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .req-list li::before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -272,7 +313,6 @@
             letter-spacing: 1px;
         }
 
-        /* Guild Grid */
         .roster-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -308,61 +348,27 @@
             box-shadow: 0 0 15px rgba(230, 184, 0, 0.25);
         }
 
-        /* Alternate Card Border Blinking/Glowing Animations */
         @keyframes battleBlink1 {
-            0% {
-                border-color: rgba(255, 51, 51, 0.4);
-                box-shadow: 0 0 10px rgba(255, 51, 51, 0.2);
-            }
-            50% {
-                border-color: #ff3333;
-                box-shadow: 0 0 25px rgba(255, 51, 51, 0.8), inset 0 0 15px rgba(255, 51, 51, 0.4);
-            }
-            100% {
-                border-color: rgba(255, 51, 51, 0.4);
-                box-shadow: 0 0 10px rgba(255, 51, 51, 0.2);
-            }
+            0% { border-color: rgba(255, 51, 51, 0.4); box-shadow: 0 0 10px rgba(255, 51, 51, 0.2); }
+            50% { border-color: #ff3333; box-shadow: 0 0 25px rgba(255, 51, 51, 0.8), inset 0 0 15px rgba(255, 51, 51, 0.4); }
+            100% { border-color: rgba(255, 51, 51, 0.4); box-shadow: 0 0 10px rgba(255, 51, 51, 0.2); }
         }
 
         @keyframes battleBlink2 {
-            0% {
-                border-color: rgba(230, 184, 0, 0.4);
-                box-shadow: 0 0 10px rgba(230, 184, 0, 0.2);
-            }
-            50% {
-                border-color: var(--primary-glow);
-                box-shadow: 0 0 25px rgba(230, 184, 0, 0.8), inset 0 0 15px rgba(230, 184, 0, 0.4);
-            }
-            100% {
-                border-color: rgba(230, 184, 0, 0.4);
-                box-shadow: 0 0 10px rgba(230, 184, 0, 0.2);
-            }
+            0% { border-color: rgba(230, 184, 0, 0.4); box-shadow: 0 0 10px rgba(230, 184, 0, 0.2); }
+            50% { border-color: var(--primary-glow); box-shadow: 0 0 25px rgba(230, 184, 0, 0.8), inset 0 0 15px rgba(230, 184, 0, 0.4); }
+            100% { border-color: rgba(230, 184, 0, 0.4); box-shadow: 0 0 10px rgba(230, 184, 0, 0.2); }
         }
 
-        .battle-card-1 {
-            animation: battleBlink1 3s infinite ease-in-out;
-        }
+        .battle-card-1 { animation: battleBlink1 3s infinite ease-in-out; }
+        .battle-card-2 { animation: battleBlink2 3s infinite ease-in-out; animation-delay: 1.5s; }
 
-        .battle-card-2 {
-            animation: battleBlink2 3s infinite ease-in-out;
-            animation-delay: 1.5s;
-        }
-
-        /* Avatar Flashing Animation (Nawawala at Babalik) */
         @keyframes avatarFlash {
-            0%, 100% {
-                opacity: 1;
-                filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7));
-            }
-            50% {
-                opacity: 0;
-                filter: none;
-            }
+            0%, 100% { opacity: 1; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7)); }
+            50% { opacity: 0; filter: none; }
         }
 
-        .battle-avatar-flash {
-            animation: avatarFlash 1.5s infinite ease-in-out;
-        }
+        .battle-avatar-flash { animation: avatarFlash 1.5s infinite ease-in-out; }
 
         .role-badge {
             position: absolute;
@@ -418,14 +424,85 @@
             width: 100%;
         }
 
-        .click-hint {
-            font-size: 0.75rem;
-            color: var(--primary);
-            margin-top: 10px;
-            font-style: italic;
+        .class-summoner { color: #ff3333 !important; }
+        .class-blademaster { color: #3399ff !important; }
+        .class-darklord { color: #ff9900 !important; }
+        .class-dimensionmaster { color: #cc66ff !important; }
+        .class-elf { color: #33cc33 !important; }
+        .class-soulmaster { color: #ffff33 !important; }
+
+        .roster-grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            align-items: start;
         }
 
-        /* Keepers of the Flame Section Specific Styles */
+        .roster-box {
+            background: rgba(15, 15, 22, 0.85);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border-gold);
+            backdrop-filter: blur(6px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+
+        .roster-box-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(230, 184, 0, 0.3);
+            user-select: none;
+        }
+
+        .roster-box-title {
+            color: var(--primary-glow);
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .roster-toggle-btn {
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.7), rgba(40, 0, 0, 0.9));
+            border: 1px solid var(--primary);
+            color: var(--primary-glow);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .roster-list-container {
+            display: none;
+            margin-top: 15px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .roster-list-item {
+            padding: 8px 12px;
+            margin-bottom: 6px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid var(--primary);
+            font-size: 0.9rem;
+        }
+
         .flame-section {
             background: linear-gradient(145deg, rgba(20, 10, 5, 0.85), rgba(10, 10, 15, 0.95));
             border: 2px solid #ff7700;
@@ -490,7 +567,6 @@
             animation: flameGlow 3s infinite ease-in-out;
         }
 
-        /* YouTube Video Player Section Styling */
         .video-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -517,7 +593,7 @@
         .video-container {
             position: relative;
             width: 100%;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            padding-bottom: 56.25%;
             height: 0;
         }
 
@@ -542,191 +618,6 @@
             font-weight: 700;
         }
 
-        /* Modal Popup Styling */
-        #member-modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 10000;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(6px);
-        }
-
-        .modal-content {
-            background: linear-gradient(145deg, #12121c, #0a0a0f);
-            border: 2px solid var(--primary);
-            width: 90%;
-            max-width: 600px;
-            padding: 30px;
-            border-radius: 14px;
-            position: relative;
-            box-shadow: 0 0 30px rgba(230, 184, 0, 0.4);
-            animation: modalFadeIn 0.3s ease;
-        }
-
-        @keyframes modalFadeIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px; right: 20px;
-            font-size: 1.8rem;
-            color: var(--primary);
-            font-weight: bold;
-            z-index: 10;
-        }
-
-        .close-modal:hover { color: #fff; }
-
-        .modal-title {
-            font-family: 'Cinzel', serif;
-            color: var(--primary-glow);
-            font-size: 1.6rem;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .modal-subtitle {
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 10px;
-        }
-
-        .members-container {
-            max-height: 350px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            position: relative;
-            border-radius: 10px;
-            padding-right: 5px;
-        }
-
-        /* Curved / Rounded Custom Scrollbar styling */
-        .members-container::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .members-container::-webkit-scrollbar-track {
-            background: rgba(10, 10, 15, 0.5);
-            border-radius: 10px;
-        }
-
-        .members-container::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
-            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
-        }
-
-        .members-container::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-glow);
-        }
-
-        .members-list {
-            list-style: none;
-            animation: scrollUp 12s linear infinite;
-        }
-
-        .members-list:hover {
-            animation-play-state: paused;
-        }
-
-        @keyframes scrollUp {
-            0% {
-                transform: translateY(0);
-            }
-            100% {
-                transform: translateY(-50%);
-            }
-        }
-
-        .members-list li {
-            background: rgba(255, 255, 255, 0.05);
-            margin-bottom: 10px;
-            padding: 12px 15px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 3px solid var(--secondary);
-        }
-
-        .members-list li span:first-child {
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Class-based Font Colors */
-        .class-summoner { color: #ff3333 !important; }
-        .class-blademaster { color: #3399ff !important; }
-        .class-darklord { color: #ff9900 !important; }
-        .class-duelmaster { color: #ffffff !important; }
-        .class-elf { color: #33cc33 !important; }
-        .class-soulmaster { color: #ffff33 !important; }
-
-        .members-list li span:last-child {
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        /* Upcoming Events Section Styling */
-        .events-single-container {
-            max-width: 800px;
-            margin: 0 auto 60px;
-        }
-
-        .events-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .event-card {
-            background: rgba(255, 255, 255, 0.04);
-            border-left: 4px solid var(--primary);
-            padding: 20px;
-            border-radius: 6px;
-        }
-
-        .event-title {
-            font-family: 'Cinzel', serif;
-            color: var(--primary-glow);
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-        }
-
-        .event-time {
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            margin-bottom: 8px;
-        }
-
-        .event-desc {
-            font-size: 0.95rem;
-            color: var(--text-light);
-        }
-
-        /* Rules & Recruitment */
-        .two-col {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        @media (max-width: 768px) {
-            .two-col { grid-template-columns: 1fr; }
-            .guild-logo { font-size: 3rem; }
-            .server-logo { max-width: 220px; }
-            .rotating-alliance-badge { font-size: 0.8rem; padding: 6px 16px; }
-        }
-
         .panel {
             background: var(--bg-card);
             border: 1px solid var(--border-gold);
@@ -744,27 +635,28 @@
             padding-bottom: 10px;
         }
 
-        .panel ul {
-            list-style: none;
+        .division-group-title {
+            color: var(--primary-glow);
+            font-weight: 700;
+            margin-top: 8px;
+            margin-bottom: 4px;
+            border-bottom: 1px solid rgba(230, 184, 0, 0.2);
+            display: inline-block;
+            font-size: 0.85rem;
         }
 
-        .panel li {
-            position: relative;
-            padding-left: 25px;
-            margin-bottom: 15px;
-            color: var(--text-light);
+        .two-col-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
         }
 
-        .panel li::before {
-            content: '◆';
-            position: absolute;
-            left: 0;
-            color: var(--primary);
-            font-size: 0.8rem;
-            top: 2px;
+        @media (max-width: 768px) {
+            .guild-logo { font-size: 3rem; }
+            .server-logo { max-width: 220px; }
+            .rotating-alliance-badge { font-size: 0.8rem; padding: 6px 16px; }
         }
 
-        /* Footer */
         footer {
             text-align: center;
             padding: 30px 20px;
@@ -793,20 +685,6 @@
         <source src="kultura_music.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- Modal Popup for Guild Members -->
-    <div id="member-modal" onclick="closeModalOnOutside(event)">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal()">&times;</span>
-            <h3 id="modal-guild-name" class="modal-title">Guild Members</h3>
-            <p id="modal-guild-master" class="modal-subtitle">Led by Guild Master</p>
-            <div class="members-container">
-                <ul id="modal-members-list" class="members-list">
-                    <!-- Dynamically populated members -->
-                </ul>
-            </div>
-        </div>
-    </div>
-
     <!-- Header Section -->
     <header>
         <a href="https://nolimit.lv/" target="_blank" rel="noopener noreferrer" class="server-logo-link">
@@ -814,7 +692,6 @@
         </a>
         <h1 class="guild-logo">KULTURA <span>GUILD</span></h1>
         
-        <!-- Rotating Alliance Badge Header Element -->
         <div class="rotating-alliance-container">
             <a href="#guild" class="rotating-alliance-badge">
                 <span id="rotating-icon">🛡️</span> <span id="rotating-text">PROTECT GUILD</span>
@@ -836,12 +713,12 @@
                 <div class="stat-label">Castle Owner Guild</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">50+</div>
+                <div class="stat-value">95+</div>
                 <div class="stat-label">Active Warriors</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">100%</div>
-                <div class="stat-label">PvP Loyalty</div>
+                <div class="stat-value">100k SOL</div>
+                <div class="stat-label">CS Prize Pool</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value">Valley</div>
@@ -849,84 +726,176 @@
             </div>
         </div>
 
-        <!-- Guild Section -->
+        <!-- ATTENDANCE SYSTEM SECTION -->
+        <section id="attendance-system" class="panel" style="margin-bottom: 60px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-gold); padding-bottom: 10px; margin-bottom: 20px;">
+                <h3 style="margin: 0; color: var(--primary);">📋 Live Attendance & SOL Distribution Summary</h3>
+                <button onclick="openLoginModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem;">
+                    🔐 Mark Attendance / Add Member (Officer Login)
+                </button>
+            </div>
+
+            <!-- Public Attendance Log -->
+            <div>
+                <h4 style="color: var(--primary-glow); margin-bottom: 10px;">Castle Siege Live SOL Shares (Sorted per Division)</h4>
+                <div style="max-height: 400px; overflow-y: auto; background: rgba(0,0,0,0.4); border-radius: 6px; padding: 10px;">
+                    <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.85rem;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--primary); color: var(--primary-glow);">
+                                <th style="padding: 8px;">Date (Event)</th>
+                                <th style="padding: 8px;">Total Present</th>
+                                <th style="padding: 8px;">SOL Pool</th>
+                                <th style="padding: 8px;">SOL Share / Member</th>
+                                <th style="padding: 8px;">Present Members (Grouped by Division)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="public-attendance-history">
+                            <tr><td colspan="5" style="padding: 10px; text-align: center; color: var(--text-dim);">No attendance recorded yet.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- LOGIN MODAL FOR OFFICERS -->
+        <div id="login-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10001; justify-content: center; align-items: center;">
+            <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 400px; padding: 25px; border-radius: 10px; color: #fff; text-align: center;">
+                <h3 style="color: var(--primary-glow); margin-bottom: 15px;">🔐 Officer Authentication</h3>
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Mag-login bilang Guild Master o Officer upang mag-mark ng attendance o mag-add ng miyembro.</p>
+                
+                <div style="margin-bottom: 12px; text-align: left;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Officer Username:</label>
+                    <input type="text" id="login-username" placeholder="Enter Username" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                </div>
+
+                <div style="margin-bottom: 20px; text-align: left;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Password:</label>
+                    <input type="password" id="login-password" placeholder="Enter Password" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button onclick="closeLoginModal()" class="btn" style="background: #444;">Cancel</button>
+                    <button onclick="handleLogin()" class="btn">Login</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN ATTENDANCE & MEMBER REGISTRATION MODAL -->
+        <div id="attendance-admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center;">
+            <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 600px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto;">
+                <h3 style="color: var(--primary-glow); margin-bottom: 10px;">🔒 Authorized Officer Portal</h3>
+                <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">ANXIETY (Officer)</strong></p>
+
+                <div style="margin-bottom: 15px; padding: 12px; background: rgba(230, 184, 0, 0.05); border: 1px solid var(--border-gold); border-radius: 6px;">
+                    <h4 style="color: var(--primary-glow); font-size: 0.95rem; margin-bottom: 8px;">➕ Register New Guild Member</h4>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
+                        <input type="text" id="new-member-ign" placeholder="IGN Member Name" style="flex: 1; min-width: 150px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                        <select id="new-member-class" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                            <option value="Summoner">Summoner</option>
+                            <option value="Blade Master">Blade Master</option>
+                            <option value="Elf">Elf</option>
+                            <option value="Dark Lord">Dark Lord</option>
+                            <option value="Dimension Master">Dimension Master</option>
+                            <option value="Soul Master">Soul Master</option>
+                        </select>
+                    </div>
+                    <button onclick="registerNewMember()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">➕ Save Member to Roster</button>
+                </div>
+
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 0.85rem;">Assigned Division:</label>
+                    <select id="admin-officer-select" disabled style="width: 100%; padding: 8px; background: #222; border: 1px solid var(--border-gold); color: var(--primary-glow); border-radius: 4px; font-weight: bold; cursor: not-allowed !important;">
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 0.85rem;">Event Type:</label>
+                    <select id="admin-event-type" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
+                        <option value="Castle Siege War">Castle Siege War (100,000 SOL Pool)</option>
+                        <option value="Boss Hunt Raid">Boss Hunt Raid</option>
+                        <option value="Guild Event">Guild Event</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="font-size: 0.85rem;">Prize Pool (SOL):</label>
+                    <input type="number" id="admin-sol-pool" value="100000" style="width: 100%; padding: 8px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
+                </div>
+
+                <h4 style="color: var(--primary-glow); margin: 15px 0 10px;">Check Member Attendance:</h4>
+                <div id="admin-member-checklist" style="max-height: 220px; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button onclick="closeAdminModal()" class="btn" style="background: #444;">Cancel</button>
+                    <button onclick="saveAttendanceEntry()" class="btn">Submit Attendance</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guild Leadership Section -->
         <section id="guild">
             <h2 class="section-title">Guild Leadership & Alliance</h2>
             
-            <!-- ROW 1: GUILD MASTERS -->
-            <h3 class="category-title">Guild Masters (Click card to view members)</h3>
+            <!-- ROW 1: GUILD MASTERS & ASSISTANT GMs -->
+            <h3 class="category-title">Guild Masters & Assistant GMs</h3>
             <div class="roster-grid">
-                
-                <div class="member-card master" onclick="openGuildMembers('Kultura', 'Fullclip')">
+                <div class="member-card master">
                     <span class="role-badge role-master">Guild Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png" alt="Guild Master Fullclip" class="member-avatar battle-avatar-flash">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png" alt="Fullclip" class="member-avatar battle-avatar-flash">
                     <h3 class="member-name">Fullclip</h3>
                     <div class="member-class">Kultura Guild Master</div>
-                    <div class="member-details">
-                        <span>Role: Leader / Sealer</span>
-                        <span>Resets: Max</span>
-                    </div>
-                    <span class="click-hint">🖱️ Click to view members</span>
+                    <div class="member-details"><span>Role: Leader / Sealer</span><span>Resets: Max</span></div>
                 </div>
 
-                <div class="member-card master" onclick="openGuildMembers('Kultura (Warlock Division)', 'Warlock')">
+                <div class="member-card master">
                     <span class="role-badge role-master">Guild Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-07-4f35248b-2602-408c-8175-3e37cc1e0977.png" alt="Guild Master Warlock" class="member-avatar battle-avatar-flash">
+                    <img src="https://cdn.phototourl.com/member/2026-10-07-4f35248b-2602-408c-8175-3e37cc1e0977.png" alt="Warlock" class="member-avatar battle-avatar-flash">
                     <h3 class="member-name">Warlock</h3>
                     <div class="member-class">Kultura Guild Master</div>
-                    <div class="member-details">
-                        <span>Role: Leader / Shotcaller</span>
-                        <span>Resets: Max</span>
-                    </div>
-                    <span class="click-hint">🖱️ Click to view members</span>
+                    <div class="member-details"><span>Role: Leader / Shotcaller</span><span>Resets: Max</span></div>
                 </div>
 
-                <div class="member-card master" onclick="openGuildMembers('Stealth', 'LordDwight')">
+                <div class="member-card master">
                     <span class="role-badge role-master">Guild Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-f86e67c4-ab50-45e0-8c0b-38490e52c60c.png" alt="Guild Master LordDwight" class="member-avatar battle-avatar-flash">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-f86e67c4-ab50-45e0-8c0b-38490e52c60c.png" alt="LordDwight" class="member-avatar battle-avatar-flash">
                     <h3 class="member-name">LordDwight</h3>
                     <div class="member-class">Stealth Guild Master</div>
-                    <div class="member-details">
-                        <span>Role: Leader / Shotcaller</span>
-                        <span>Resets: Max</span>
-                    </div>
-                    <span class="click-hint">🖱️ Click to view members</span>
+                    <div class="member-details"><span>Role: Leader / Shotcaller</span><span>Resets: Max</span></div>
                 </div>
 
-                <div class="member-card master" onclick="openGuildMembers('Protect', 'WindTalker')">
+                <div class="member-card master">
                     <span class="role-badge role-master">Guild Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-a6619f00-88bb-4a5b-b244-715b129a4c1e.png" alt="Guild Master WindTalker" class="member-avatar battle-avatar-flash">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-a6619f00-88bb-4a5b-b244-715b129a4c1e.png" alt="WindTalker" class="member-avatar battle-avatar-flash">
                     <h3 class="member-name">WindTalker</h3>
                     <div class="member-class">Protect Guild Master</div>
-                    <div class="member-details">
-                        <span>Role: Leader / Support Leader</span>
-                        <span>Resets: Max</span>
-                    </div>
-                    <span class="click-hint">🖱️ Click to view members</span>
+                    <div class="member-details"><span>Role: Leader / Support Leader</span><span>Resets: Max</span></div>
                 </div>
 
-                <div class="member-card master" onclick="openGuildMembers('Anxiety', 'iKapitana')">
+                <div class="member-card master">
                     <span class="role-badge role-master">Guild Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-9594006c-6428-4b19-a7a4-e6f1e807e489.png" alt="Guild Master iKapitana" class="member-avatar battle-avatar-flash">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-9594006c-6428-4b19-a7a4-e6f1e807e489.png" alt="iKapitana" class="member-avatar battle-avatar-flash">
                     <h3 class="member-name">iKapitana</h3>
                     <div class="member-class">Anxiety Guild Master</div>
-                    <div class="member-details">
-                        <span>Role: Leader / Support Leader</span>
-                        <span>Resets: Max</span>
-                    </div>
-                    <span class="click-hint">🖱️ Click to view members</span>
+                    <div class="member-details"><span>Role: Leader / Support Leader</span><span>Resets: Max</span></div>
                 </div>
 
-                <div class="member-card master" onclick="openGuildMembers('Leadership Command', 'Tsukushi')">
+                <!-- Mechado AGM Fullclip -->
+                <div class="member-card master">
                     <span class="role-badge role-master">Assistant GM</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-07-5cb85190-c10a-47a1-8b08-870ed366d52f.png" alt="Assistant GM Tsukushi" class="member-avatar battle-avatar-flash">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-0b3aef55-bea9-4b9e-935a-12629c594da5.png" alt="Mechado" class="member-avatar battle-avatar-flash">
+                    <h3 class="member-name">Mechado</h3>
+                    <div class="member-class">Assistant Guild Master</div>
+                    <div class="member-details"><span>Fullclip Division AGM</span><span>Resets: Max</span></div>
+                </div>
+
+                <!-- Tsukushi AGM Warlock -->
+                <div class="member-card master">
+                    <span class="role-badge role-master">Assistant GM</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-07-5cb85190-c10a-47a1-8b08-870ed366d52f.png" alt="Tsukushi" class="member-avatar battle-avatar-flash">
                     <h3 class="member-name">Tsukushi</h3>
                     <div class="member-class">Assistant Guild Master</div>
-                    <div class="member-details">
-                        <span>Role: Moderator / Shotcaller</span>
-                        <span>Resets: Max</span>
-                    </div>
-                    <span class="click-hint">🖱️ Click to view members</span>
+                    <div class="member-details"><span>Warlock Division AGM</span><span>Resets: Max</span></div>
                 </div>
             </div>
 
@@ -935,226 +904,682 @@
             <div class="roster-grid">
                 <div class="member-card battle-card-1">
                     <span class="role-badge role-bm">Battle Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-0b3aef55-bea9-4b9e-935a-12629c594da5.png" alt="Battle Master Crafted" class="member-avatar battle-avatar-blink-1">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-0b3aef55-bea9-4b9e-935a-12629c594da5.png" alt="Battle Master Crafted" class="member-avatar">
                     <h3 class="member-name">Crafted</h3>
                     <div class="member-class">Blade Master (BM)</div>
-                    <div class="member-details">
-                        <span>Role: Frontline / PvP</span>
-                        <span>Resets: Max</span>
-                    </div>
+                    <div class="member-details"><span>Role: Frontline / PvP</span><span>Resets: Max</span></div>
                 </div>
 
                 <div class="member-card battle-card-2">
                     <span class="role-badge role-bm">Battle Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-c3395667-4870-47b9-9bfa-59edf9189938.png" alt="Battle Master TognaluK" class="member-avatar battle-avatar-blink-2">
-                    <h3 class="member-name">TognaluK</h3>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-c3395667-4870-47b9-9bfa-59edf9189938.png" alt="Battle Master Tognaluk" class="member-avatar">
+                    <h3 class="member-name">Tognaluk</h3>
                     <div class="member-class class-blademaster">Blade Master (BM)</div>
-                    <div class="member-details">
-                        <span>Role: Vanguard / Frontline</span>
-                        <span>Resets: Max</span>
-                    </div>
+                    <div class="member-details"><span>Role: Vanguard / Frontline</span><span>Resets: Max</span></div>
                 </div>
 
                 <div class="member-card battle-card-1">
                     <span class="role-badge role-bm">Battle Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-9594006c-6428-4b19-a7a4-e6f1e807e489.png" alt="Battle Master Gail" class="member-avatar battle-avatar-blink-1">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-9594006c-6428-4b19-a7a4-e6f1e807e489.png" alt="Battle Master Gail" class="member-avatar">
                     <h3 class="member-name">Gail</h3>
                     <div class="member-class">Bloody Summoner (BS)</div>
-                    <div class="member-details">
-                        <span>Role: Support Leader</span>
-                        <span>Resets: Max</span>
-                    </div>
+                    <div class="member-details"><span>Role: Support Leader</span><span>Resets: Max</span></div>
                 </div>
 
                 <div class="member-card battle-card-2">
                     <span class="role-badge role-bm">Battle Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-4bf45f09-a4bb-4ca2-b9d1-d8dd804a47fc.png" alt="Battle Master Eremes" class="member-avatar battle-avatar-blink-2">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-4bf45f09-a4bb-4ca2-b9d1-d8dd804a47fc.png" alt="Battle Master Eremes" class="member-avatar">
                     <h3 class="member-name">Eremes</h3>
                     <div class="member-class class-soulmaster">Soul Master (SM)</div>
-                    <div class="member-details">
-                        <span>Role: Main Crowd Control/Support</span>
-                        <span>Resets: Max</span>
-                    </div>
+                    <div class="member-details"><span>Role: Main Crowd Control/Support</span><span>Resets: Max</span></div>
                 </div>
 
                 <div class="member-card battle-card-1">
                     <span class="role-badge role-bm">Battle Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-c3395667-4870-47b9-9bfa-59edf9189938.png" alt="Battle Master DeelanPaul" class="member-avatar battle-avatar-blink-1">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-c3395667-4870-47b9-9bfa-59edf9189938.png" alt="Battle Master DeelanPaul" class="member-avatar">
                     <h3 class="member-name">DeelanPaul</h3>
                     <div class="member-class">Battle Master</div>
-                    <div class="member-details">
-                        <span>Role: Vanguard / PvP</span>
-                        <span>Resets: Max</span>
-                    </div>
+                    <div class="member-details"><span>Role: Vanguard / PvP</span><span>Resets: Max</span></div>
                 </div>
 
                 <div class="member-card battle-card-2">
                     <span class="role-badge role-bm">Battle Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-4bf45f09-a4bb-4ca2-b9d1-d8dd804a47fc.png" alt="Battle Master WarHeadz" class="member-avatar battle-avatar-blink-2">
-                    <h3 class="member-name">WarHeadz</h3>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-4bf45f09-a4bb-4ca2-b9d1-d8dd804a47fc.png" alt="Battle Master Warheadz" class="member-avatar">
+                    <h3 class="member-name">Warheadz</h3>
                     <div class="member-class">Battle Master</div>
-                    <div class="member-details">
-                        <span>Role: Assault / Frontline</span>
-                        <span>Resets: Max</span>
-                    </div>
+                    <div class="member-details"><span>Role: Assault / Frontline</span><span>Resets: Max</span></div>
                 </div>
 
                 <div class="member-card battle-card-1">
                     <span class="role-badge role-bm">Battle Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png" alt="Battle Master Misthios" class="member-avatar battle-avatar-blink-1">
+                    <img src="https://cdn.phototourl.com/member/2026-10-09-c667fbee-0b34-4336-9f29-7e868651fa23.png" alt="Battle Master Misthios" class="member-avatar">
                     <h3 class="member-name">Misthios</h3>
                     <div class="member-class">Battle Master</div>
-                    <div class="member-details">
-                        <span>Role: Tactical Striker</span>
-                        <span>Resets: Max</span>
-                    </div>
+                    <div class="member-details"><span>Role: Tactical Striker</span><span>Resets: Max</span></div>
                 </div>
 
                 <div class="member-card battle-card-2">
                     <span class="role-badge role-bm">Battle Master</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-a6619f00-88bb-4a5b-b244-715b129a4c1e.png" alt="Battle Master R4LYKS" class="member-avatar battle-avatar-blink-2">
-                    <h3 class="member-name">R4LYKS</h3>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-a6619f00-88bb-4a5b-b244-715b129a4c1e.png" alt="Battle Master R4LykS" class="member-avatar">
+                    <h3 class="member-name">R4LykS</h3>
                     <div class="member-class">Battle Master</div>
-                    <div class="member-details">
-                        <span>Role: Vanguard / Sealer Support</span>
-                        <span>Resets: Max</span>
+                    <div class="member-details"><span>Role: Vanguard / Sealer Support</span><span>Resets: Max</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GUILD MEMBERS ROSTER SECTION -->
+        <section id="members-roster-section">
+            <h2 class="section-title">Guild Members Roster</h2>
+            
+            <div class="roster-grid-container">
+                <div class="roster-box">
+                    <div class="roster-box-header" onclick="toggleDivision('fullclip-roster', 'btn-fullclip')">
+                        <span class="roster-box-title">👑 Kultura Main (Fullclip Division)</span>
+                        <button id="btn-fullclip" class="roster-toggle-btn">▼ Click to Expand</button>
+                    </div>
+                    <div id="fullclip-roster" class="roster-list-container">
+                        <!-- Dynamic Fullclip Members -->
+                    </div>
+                </div>
+
+                <div class="roster-box">
+                    <div class="roster-box-header" onclick="toggleDivision('warlock-roster', 'btn-warlock')">
+                        <span class="roster-box-title">👑 Kultura (Warlock Division)</span>
+                        <button id="btn-warlock" class="roster-toggle-btn">▼ Click to Expand</button>
+                    </div>
+                    <div id="warlock-roster" class="roster-list-container">
+                        <!-- Dynamic Warlock Members -->
+                    </div>
+                </div>
+
+                <div class="roster-box">
+                    <div class="roster-box-header" onclick="toggleDivision('protect-roster', 'btn-protect')">
+                        <span class="roster-box-title">🛡️ Alliance (PROTECT Guild)</span>
+                        <button id="btn-protect" class="roster-toggle-btn">▼ Click to Expand</button>
+                    </div>
+                    <div id="protect-roster" class="roster-list-container">
+                        <!-- Dynamic PROTECT Members -->
+                    </div>
+                </div>
+
+                <div class="roster-box">
+                    <div class="roster-box-header" onclick="toggleDivision('stealth-roster', 'btn-stealth')">
+                        <span class="roster-box-title">⚔️ Alliance (STEALTH Guild)</span>
+                        <button id="btn-stealth" class="roster-toggle-btn">▼ Click to Expand</button>
+                    </div>
+                    <div id="stealth-roster" class="roster-list-container">
+                        <!-- Dynamic STEALTH Members -->
+                    </div>
+                </div>
+
+                <div class="roster-box">
+                    <div class="roster-box-header" onclick="toggleDivision('anxiety-roster', 'btn-anxiety')">
+                        <span class="roster-box-title">⚡ Alliance (ANXIETY Guild)</span>
+                        <button id="btn-anxiety" class="roster-toggle-btn">▼ Click to Expand</button>
+                    </div>
+                    <div id="anxiety-roster" class="roster-list-container">
+                        <!-- Dynamic ANXIETY Members -->
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- KEEPERS OF THE FLAME SECTION -->
+        <!-- UPCOMING GUILD SCHEDULE SECTION -->
+        <section id="schedule-section">
+            <h2 class="section-title">Upcoming Guild Schedule</h2>
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div class="schedule-box">
+                    <div class="schedule-title">CASTLE SIEGE WAR</div>
+                    <div class="schedule-time">📅 Saturday | 6:00 PM PH Time</div>
+                    <p style="font-size: 0.9rem; color: var(--text-light);">Mandatory attendance for all main members and alliance rosters. Be ready 30 mins prior.</p>
+                </div>
+
+                <div class="schedule-box">
+                    <div class="schedule-title">GUILD EVENTS</div>
+                    <div class="schedule-time">📅 Saturday | 8:00 PM PH Time</div>
+                    <p style="font-size: 0.9rem; color: var(--text-light);">All Guild Leaders will host an Event.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- GUILD REQUIREMENTS & JOIN US SECTION -->
+        <section id="requirements-and-join-section">
+            <div class="two-col-grid">
+                <!-- GUILD REQUIREMENTS -->
+                <div class="panel">
+                    <h3>GUILD REQUIREMENTS</h3>
+                    <ul class="req-list">
+                        <li>Must be active in daily events, Boss Hunts, and weekly Castle Siege.</li>
+                        <li>Discord with working microphone is required during Siege and PvP raids.</li>
+                        <li>Respect all guildmates and allies; external drama is strictly forbidden.</li>
+                        <li>Minimum Resets: 50+ (Exceptions made for dedicated support classes like Elves).</li>
+                    </ul>
+                </div>
+
+                <!-- JOIN KULTURA TODAY -->
+                <div class="panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <h3>JOIN KULTURA TODAY</h3>
+                        <p style="font-size: 0.9rem; margin-bottom: 25px; line-height: 1.6; color: var(--text-light);">
+                            We are always looking for dedicated players who thrive in high-stakes PvP, Castle Siege strategies, and endgame farming in NoLimit MU Online.
+                        </p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <a href="https://discord.gg/ZwZcUPaMP" target="_blank" rel="noopener noreferrer" class="btn" style="width: 100%;">JOIN OUR DISCORD</a>
+                        <a href="#guild" class="btn" style="width: 100%; background: linear-gradient(135deg, rgba(60,0,0,0.9), rgba(20,0,0,0.95)); border-color: rgba(139, 0, 0, 0.8);">MESSAGE TSUKUSHI IN GAME</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Keepers of the Flame -->
         <section class="flame-section">
             <h2 class="flame-title">🔥 Keepers of the Flame 🔥</h2>
-            <p class="flame-subtitle">A tribute to the loyal and unwavering supporters who continue to contribute to the success of Kultura Guild.</p>
-            
+            <p class="flame-subtitle">A tribute to loyal and unwavering supporters.</p>
             <div class="flame-grid">
                 <div class="flame-card">
                     <span class="role-badge role-supporter">Loyalist</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png" alt="Supporter" class="flame-avatar">
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png" alt="Pillar" class="flame-avatar">
                     <h3 class="member-name" style="font-size: 1.2rem;">Loyal Pillar I</h3>
                     <div class="member-class">Unwavering Supporter</div>
-                    <div class="member-details">
-                        <span>Status: Active</span>
-                        <span>Dedication: 100%</span>
-                    </div>
-                </div>
-
-                <div class="flame-card">
-                    <span class="role-badge role-supporter">Loyalist</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-4bf45f09-a4bb-4ca2-b9d1-d8dd804a47fc.png" alt="Supporter" class="flame-avatar">
-                    <h3 class="member-name" style="font-size: 1.2rem;">Loyal Pillar II</h3>
-                    <div class="member-class">Community Back Bone</div>
-                    <div class="member-details">
-                        <span>Status: Active</span>
-                        <span>Dedication: 100%</span>
-                    </div>
-                </div>
-
-                <div class="flame-card">
-                    <span class="role-badge role-supporter">Loyalist</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-c3395667-4870-47b9-9bfa-59edf9189938.png" alt="Supporter" class="flame-avatar">
-                    <h3 class="member-name" style="font-size: 1.2rem;">Loyal Pillar III</h3>
-                    <div class="member-class">Flame Keeper</div>
-                    <div class="member-details">
-                        <span>Status: Active</span>
-                        <span>Dedication: 100%</span>
-                    </div>
-                </div>
-
-                <div class="flame-card">
-                    <span class="role-badge role-supporter">Loyalist</span>
-                    <img src="https://cdn.phototourl.com/member/2026-10-08-9594006c-6428-4b19-a7a4-e6f1e807e489.png" alt="Supporter" class="flame-avatar">
-                    <h3 class="member-name" style="font-size: 1.2rem;">Loyal Pillar IV</h3>
-                    <div class="member-class">Steadfast Guardian</div>
-                    <div class="member-details">
-                        <span>Status: Active</span>
-                        <span>Dedication: 100%</span>
-                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Castle Siege Wars Media Player Section -->
+        <!-- Castle Siege Media Player -->
         <section id="media-player">
             <h2 class="section-title">Castle Siege Wars</h2>
             <div class="video-grid">
-                <!-- Video 1 (Castle Siege Defense Highlights) -->
                 <div class="video-card">
                     <div class="video-container">
-                        <iframe src="https://www.youtube.com/embed/C7_WnodZ9SE" title="Castle Siege Defense Highlights" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/C7_WnodZ9SE" title="Defense" allowfullscreen></iframe>
                     </div>
-                    <div class="video-info">
-                        <div class="video-title">Castle Siege Defense Highlights</div>
-                    </div>
+                    <div class="video-info"><div class="video-title">Castle Siege Defense Highlights</div></div>
                 </div>
-                <!-- Video 2 (Crown Sealing & Final Push) -->
                 <div class="video-card">
                     <div class="video-container">
-                        <iframe src="https://www.youtube.com/embed/odEg-UWoY7s" title="Crown Sealing & Final Push" allowfullscreen></iframe>
+                        <iframe src="https://www.youtube.com/embed/odEg-UWoY7s" title="Push" allowfullscreen></iframe>
                     </div>
-                    <div class="video-info">
-                        <div class="video-title">Crown Sealing & Final Push</div>
-                    </div>
+                    <div class="video-info"><div class="video-title">Crown Sealing & Final Push</div></div>
                 </div>
             </div>
         </section>
-
-        <!-- Upcoming Events Section -->
-        <section class="events-single-container">
-            <h2 class="section-title">Upcoming Guild Schedule</h2>
-            <div class="panel">
-                <div class="events-list">
-                    <div class="event-card">
-                        <div class="event-title">Castle Siege War</div>
-                        <div class="event-time">📅 Saturday | 6:00 PM PH Time</div>
-                        <div class="event-desc">Mandatory attendance for all main members and alliance rosters. Be ready 30 mins prior.</div>
-                    </div>
-                    <div class="event-card">
-                        <div class="event-title">Guild Events</div>
-                        <div class="event-time">📅 Saturday | 8:00 PM PH Time</div>
-                        <div class="event-desc">All Guild Leaders will host an Event.</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Rules & Recruitment Section -->
-        <section id="recruitment" class="two-col">
-            
-            <div class="panel">
-                <h3>Guild Requirements</h3>
-                <ul>
-                    <li>Must be active in daily events, Boss Hunts, and weekly Castle Siege.</li>
-                    <li>Discord with working microphone is required during Siege and PvP raids.</li>
-                    <li>Respect all guildmates and allies; external drama is strictly forbidden.</li>
-                    <li>Minimum Resets: 50+ (Exceptions made for dedicated support classes like Elves).</li>
-                </ul>
-            </div>
-
-            <div class="panel">
-                <h3>Join Kultura Today</h3>
-                <p style="margin-bottom: 20px; color: var(--text-dim);">
-                    We are always looking for dedicated players who thrive in high-stakes PvP, Castle Siege strategies, and endgame farming in NoLimit MU Online.
-                </p>
-                <div style="display: flex; flex-direction: column; gap: 15px;">
-                    <a href="https://discord.gg/ZwZcUPaMP" target="_blank" rel="noopener noreferrer" class="btn" style="text-align: center;">Join Our Discord</a>
-                    <a href="#" class="btn btn-secondary" style="text-align: center;">Message Tsukushi in Game</a>
-                </div>
-            </div>
-
-        </section>
-
     </div>
 
-    <!-- Footer -->
     <footer>
         <p>&copy; 2026 <span>Kultura Guild</span> — NoLimit MU Online Community. All Rights Reserved.</p>
     </footer>
 
     <!-- Interactive Scripts -->
     <script>
-        // Rotating Alliance Database
+        const OFFICER_ACCOUNTS = {
+            "Tsukushi": {
+                password: "blademasteragm",
+                assignedDivision: "Warlock Division (Warlock)",
+                role: "Assistant GM"
+            },
+            "Mechado": {
+                password: "blademasterkultura",
+                assignedDivision: "Fullclip Division (Fullclip)",
+                role: "Assistant GM"
+            },
+            "PROTECT": {
+                password: "GMlordjepz",
+                assignedDivision: "PROTECT Division (Windtalker)",
+                role: "Guild Officer / GM"
+            },
+            "LordDwight": {
+                password: "GMStealth",
+                assignedDivision: "STEALTH Division (LordDwight)",
+                role: "Guild Master"
+            },
+            "ANXIETY": {
+                password: "GMKapitana",
+                assignedDivision: "ANXIETY Division (iKapitana)",
+                role: "Guild Master"
+            }
+        };
+
+        const defaultDivisionMembers = {
+            "Fullclip Division (Fullclip)": [
+                { name: "Fullclip", class: "Blade Master", icon: "👑" },
+                { name: "Mechado", class: "Blade Master", icon: "⚔️" },
+                { name: "Gail", class: "Summoner", icon: "✨" },
+                { name: "Warheadz", class: "Soul Master", icon: "🌠" },
+                { name: "LordJepz", class: "Dark Lord", icon: "♛" },
+                { name: "oOKirovOo", class: "Soul Master", icon: "🌠" },
+                { name: "Shockuragi", class: "Dark Lord", icon: "♛" },
+                { name: "DeelanPaul", class: "Blade Master", icon: "⚔️" },
+                { name: "BKChung11", class: "Blade Master", icon: "⚔️" },
+                { name: "Tognaluk", class: "Blade Master", icon: "⚔️" },
+                { name: "IRONMAN", class: "Blade Master", icon: "⚔️" },
+                { name: "Greenhill", class: "Elf", icon: "🏹" },
+                { name: "Misthios", class: "Blade Master", icon: "⚔️" },
+                { name: "Sypha", class: "Summoner", icon: "✨" },
+                { name: "Hiereya", class: "Summoner", icon: "✨" },
+                { name: "Relic", class: "Soul Master", icon: "🌠" },
+                { name: "Blankz", class: "Dark Lord", icon: "♛" },
+                { name: "Retrospect", class: "Summoner", icon: "✨" },
+                { name: "R4LykS", class: "Elf", icon: "🏹" },
+                { name: "Pastillas", class: "Elf", icon: "🏹" },
+                { name: "Crafted", class: "Blade Master", icon: "⚔️" },
+                { name: "Eremes", class: "Soul Master", icon: "🌠" },
+                { name: "Scarecrows", class: "Summoner", icon: "✨" },
+                { name: "Yllyonna", class: "Elf", icon: "🏹" },
+                { name: "xPONG", class: "Blade Master", icon: "⚔️" },
+                { name: "VERMOUTH", class: "Summoner", icon: "✨" },
+                { name: "Sedation", class: "Summoner", icon: "✨" }
+            ],
+            "Warlock Division (Warlock)": [
+                { name: "Warlock", class: "Blade Master", icon: "👑" },
+                { name: "Tsukushi", class: "Blade Master", icon: "🛡️" },
+                { name: "Carloz31", class: "Blade Master", icon: "⚔️" },
+                { name: "NoobxDL", class: "Dark Lord", icon: "♛" },
+                { name: "xEKOMSx", class: "Blade Master", icon: "⚔️" },
+                { name: "Tr3nity", class: "Blade Master", icon: "⚔️" },
+                { name: "Chief", class: "Dark Lord", icon: "♛" },
+                { name: "NoobxBM", class: "Blade Master", icon: "⚔️" },
+                { name: "Hubbi", class: "Soul Master", icon: "🌠" },
+                { name: "Kreios", class: "Blade Master", icon: "⚔️" },
+                { name: "PureIGOROT", class: "Dark Lord", icon: "♛" },
+                { name: "Aurion", class: "Soul Master", icon: "🌠" },
+                { name: "FreeToGo", class: "Blade Master", icon: "⚔️" },
+                { name: "UraGonzSM", class: "Soul Master", icon: "🌠" },
+                { name: "Kaibigan", class: "Blade Master", icon: "⚔️" },
+                { name: "Papaliciou", class: "Soul Master", icon: "🌠" },
+                { name: "xSMOKERx", class: "Blade Master", icon: "⚔️" },
+                { name: "SMcai", class: "Soul Master", icon: "🌠" },
+                { name: "MegaDeath", class: "Dimension Master", icon: "🌌" },
+                { name: "asdgyhqrqt", class: "Blade Master", icon: "⚔️" },
+                { name: "James21", class: "Soul Master", icon: "🌠" },
+                { name: "Azzzo", class: "Elf", icon: "🏹" },
+                { name: "Gatubela", class: "Summoner", icon: "✨" },
+                { name: "BadAzz", class: "Blade Master", icon: "⚔️" },
+                { name: "BATONGBKL", class: "Blade Master", icon: "⚔️" },
+                { name: "WindsoR", class: "Soul Master", icon: "🌠" },
+                { name: "VYyllah", class: "Elf", icon: "🏹" },
+                { name: "Boss04", class: "Soul Master", icon: "🌠" },
+                { name: "BKROSE", class: "Blade Master", icon: "⚔️" },
+                { name: "RAG3", class: "Soul Master", icon: "🌠" },
+                { name: "Levis501", class: "Soul Master", icon: "🌠" },
+                { name: "PizzaSlice BM", class: "Blade Master", icon: "⚔️" },
+                { name: "Sizam12", class: "Soul Master", icon: "🌠" },
+                { name: "krisjo", class: "Soul Master", icon: "🌠" },
+                { name: "Fakeclip", class: "Blade Master", icon: "⚔️" },
+                { name: "Maritezz", class: "Elf", icon: "🏹" },
+                { name: "Bosvell23", class: "Blade Master", icon: "⚔️" },
+                { name: "Bumbuang", class: "Soul Master", icon: "🌠" },
+                { name: "Hundredick", class: "Dark Lord", icon: "♛" },
+                { name: "Dakotah", class: "Soul Master", icon: "🌠" },
+                { name: "SMcornBEEF", class: "Soul Master", icon: "🌠" },
+                { name: "Hachi", class: "Soul Master", icon: "🌠" },
+                { name: "NAYAR", class: "Blade Master", icon: "⚔️" },
+                { name: "UnXaveD", class: "Dimension Master", icon: "🌌" },
+                { name: "xMello", class: "Elf", icon: "🏹" },
+                { name: "SmCEIMOUN", class: "Soul Master", icon: "🌠" },
+                { name: "oOShreeDoo", class: "Soul Master", icon: "🌠" },
+                { name: "GodMeraxes", class: "Elf", icon: "🏹" },
+                { name: "BunnyBabe", class: "Elf", icon: "🏹" },
+                { name: "TankBK", class: "Blade Master", icon: "⚔️" },
+                { name: "Moondancer", class: "Soul Master", icon: "🌠" },
+                { name: "NOOBxx", class: "Blade Master", icon: "⚔️" },
+                { name: "TheBoogey", class: "Blade Master", icon: "⚔️" },
+                { name: "Zireael", class: "Elf", icon: "🏹" },
+                { name: "Siilent", class: "Soul Master", icon: "🌠" },
+                { name: "xVanguard", class: "Soul Master", icon: "🌠" },
+                { name: "EkamaMoko", class: "Elf", icon: "🏹" },
+                { name: "PH16", class: "Soul Master", icon: "🌠" },
+                { name: "Tr1gun", class: "Soul Master", icon: "🌠" },
+                { name: "Vonn", class: "Blade Master", icon: "⚔️" },
+                { name: "Godis", class: "Blade Master", icon: "⚔️" }
+            ],
+            "PROTECT Division (Windtalker)": [
+                { name: "Windtalker", class: "Blade Master", icon: "👑" },
+                { name: "Khloe", class: "Summoner", icon: "✨" },
+                { name: "Thunder09", class: "Soul Master", icon: "🌠" },
+                { name: "HolyMage", class: "Soul Master", icon: "🌠" },
+                { name: "Kodakblu", class: "Summoner", icon: "✨" }
+            ],
+            "STEALTH Division (LordDwight)": [
+                { name: "LordDwight", class: "Dark Lord", icon: "👑" }
+            ],
+            // ANXIETY Guild Members List
+            "ANXIETY Division (iKapitana)": [
+                { name: "iKapitana", class: "Summoner", icon: "👑" },
+                { name: "VIVINT", class: "Elf", icon: "🏹" },
+                { name: "KIZASHI", class: "Summoner", icon: "✨" }
+            ]
+        };
+
+        function getGuildData() {
+            const saved = localStorage.getItem('kultura_guild_roster_v17');
+            return saved ? JSON.parse(saved) : defaultDivisionMembers;
+        }
+
+        function saveGuildData(data) {
+            localStorage.setItem('kultura_guild_roster_v17', JSON.stringify(data));
+        }
+
+        let currentLoggedInOfficer = null;
+
+        function openLoginModal() {
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+            document.getElementById('login-modal').style.display = 'flex';
+        }
+
+        function closeLoginModal() {
+            document.getElementById('login-modal').style.display = 'none';
+        }
+
+        function handleLogin() {
+            const userVal = document.getElementById('login-username').value.trim();
+            const passVal = document.getElementById('login-password').value.trim();
+
+            if (OFFICER_ACCOUNTS[userVal] && OFFICER_ACCOUNTS[userVal].password === passVal) {
+                currentLoggedInOfficer = userVal;
+                alert(`✅ Welcome Officer ${userVal}! Access Granted to ${OFFICER_ACCOUNTS[userVal].assignedDivision}.`);
+                closeLoginModal();
+                openAdminModal();
+            } else {
+                alert("❌ Mali ang Username o Password! Paki-subukan muli.");
+            }
+        }
+
+        function openAdminModal() {
+            if (!currentLoggedInOfficer) return;
+
+            const officerInfo = OFFICER_ACCOUNTS[currentLoggedInOfficer];
+            document.getElementById('logged-agm-display').innerText = `${currentLoggedInOfficer} (${officerInfo.role})`;
+
+            const selectDiv = document.getElementById('admin-officer-select');
+            selectDiv.innerHTML = `<option value="${officerInfo.assignedDivision}">${officerInfo.assignedDivision}</option>`;
+            selectDiv.value = officerInfo.assignedDivision;
+
+            renderMemberChecklist();
+            document.getElementById('attendance-admin-modal').style.display = 'flex';
+        }
+
+        function getClassIcon(className) {
+            switch(className) {
+                case 'Summoner': return '✨';
+                case 'Blade Master': return '⚔️';
+                case 'Elf': return '🏹';
+                case 'Dark Lord': return '♛';
+                case 'Dimension Master': return '🌌';
+                case 'Soul Master': return '🌠';
+                default: return '🛡️';
+            }
+        }
+
+        function getClassCss(className) {
+            switch(className) {
+                case 'Summoner': return 'class-summoner';
+                case 'Blade Master': return 'class-blademaster';
+                case 'Elf': return 'class-elf';
+                case 'Dark Lord': return 'class-darklord';
+                case 'Dimension Master': return 'class-dimensionmaster';
+                case 'Soul Master': return 'class-soulmaster';
+                default: return '';
+            }
+        }
+
+        function registerNewMember() {
+            if (!currentLoggedInOfficer) return;
+
+            const ign = document.getElementById('new-member-ign').value.trim();
+            const charClass = document.getElementById('new-member-class').value;
+            const assignedDivision = OFFICER_ACCOUNTS[currentLoggedInOfficer].assignedDivision;
+
+            if (!ign) {
+                alert("⚠️ Paki-lagay ang IGN Member Name!");
+                return;
+            }
+
+            let data = getGuildData();
+            let membersList = data[assignedDivision] || [];
+
+            if (membersList.some(m => m.name.toLowerCase() === ign.toLowerCase())) {
+                alert("⚠️ Ang IGN na ito ay nairegister na sa roster!");
+                return;
+            }
+
+            const newMemberObj = {
+                name: ign,
+                class: charClass,
+                icon: getClassIcon(charClass)
+            };
+
+            membersList.push(newMemberObj);
+            data[assignedDivision] = membersList;
+
+            saveGuildData(data);
+
+            alert(`🎉 Tagumpay na naisaayos ni Officer ${currentLoggedInOfficer}! Na-register si ${ign} (${charClass}) sa ${assignedDivision}.`);
+
+            document.getElementById('new-member-ign').value = '';
+            
+            renderRosters();
+            renderMemberChecklist();
+        }
+
+        function renderMemberChecklist() {
+            if (!currentLoggedInOfficer) return;
+
+            const officerInfo = OFFICER_ACCOUNTS[currentLoggedInOfficer];
+            const assignedDivision = officerInfo.assignedDivision;
+            const checklist = document.getElementById('admin-member-checklist');
+            checklist.innerHTML = '';
+
+            const data = getGuildData();
+            const members = data[assignedDivision] || [];
+
+            members.forEach((mObj, idx) => {
+                const div = document.createElement('div');
+                div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;";
+                div.innerHTML = `
+                    <span>${mObj.icon} ${mObj.name} <small style="color:var(--text-dim);">(${mObj.class})</small></span>
+                    <select id="att-status-${idx}" data-name="${mObj.name}" style="background: #222; color: #fff; border: 1px solid #555; padding: 2px 6px; border-radius: 3px;">
+                        <option value="Present">Present</option>
+                        <option value="Late">Late</option>
+                        <option value="Absent" selected>Absent</option>
+                    </select>
+                `;
+                checklist.appendChild(div);
+            });
+        }
+
+        function renderRosters() {
+            const data = getGuildData();
+
+            // Fullclip Division
+            const fullclipContainer = document.getElementById('fullclip-roster');
+            if (fullclipContainer) {
+                fullclipContainer.innerHTML = '';
+                (data["Fullclip Division (Fullclip)"] || []).forEach(m => {
+                    const cssClass = getClassCss(m.class);
+                    fullclipContainer.innerHTML += `
+                        <div class="roster-list-item">
+                            <span>${m.icon} <span class="${cssClass}">${m.name}</span></span>
+                            <span class="${cssClass}">${m.class}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            // Warlock Division
+            const warlockContainer = document.getElementById('warlock-roster');
+            if (warlockContainer) {
+                warlockContainer.innerHTML = '';
+                (data["Warlock Division (Warlock)"] || []).forEach(m => {
+                    const cssClass = getClassCss(m.class);
+                    warlockContainer.innerHTML += `
+                        <div class="roster-list-item">
+                            <span>${m.icon} <span class="${cssClass}">${m.name}</span></span>
+                            <span class="${cssClass}">${m.class}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            // PROTECT Guild Roster
+            const protectContainer = document.getElementById('protect-roster');
+            if (protectContainer) {
+                protectContainer.innerHTML = '';
+                (data["PROTECT Division (Windtalker)"] || []).forEach(m => {
+                    const cssClass = getClassCss(m.class);
+                    protectContainer.innerHTML += `
+                        <div class="roster-list-item">
+                            <span>${m.icon} <span class="${cssClass}">${m.name}</span></span>
+                            <span class="${cssClass}">${m.class}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            // STEALTH Guild Roster
+            const stealthContainer = document.getElementById('stealth-roster');
+            if (stealthContainer) {
+                stealthContainer.innerHTML = '';
+                (data["STEALTH Division (LordDwight)"] || []).forEach(m => {
+                    const cssClass = getClassCss(m.class);
+                    stealthContainer.innerHTML += `
+                        <div class="roster-list-item">
+                            <span>${m.icon} <span class="${cssClass}">${m.name}</span></span>
+                            <span class="${cssClass}">${m.class}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            // ANXIETY Guild Roster
+            const anxietyContainer = document.getElementById('anxiety-roster');
+            if (anxietyContainer) {
+                anxietyContainer.innerHTML = '';
+                (data["ANXIETY Division (iKapitana)"] || []).forEach(m => {
+                    const cssClass = getClassCss(m.class);
+                    anxietyContainer.innerHTML += `
+                        <div class="roster-list-item">
+                            <span>${m.icon} <span class="${cssClass}">${m.name}</span></span>
+                            <span class="${cssClass}">${m.class}</span>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function closeAdminModal() {
+            document.getElementById('attendance-admin-modal').style.display = 'none';
+        }
+
+        function saveAttendanceEntry() {
+            if (!currentLoggedInOfficer) return;
+
+            const officerInfo = OFFICER_ACCOUNTS[currentLoggedInOfficer];
+            const selectedGM = officerInfo.assignedDivision;
+            const eventType = document.getElementById('admin-event-type').value;
+            const totalSolPool = parseFloat(document.getElementById('admin-sol-pool').value) || 100000;
+            const selects = document.querySelectorAll('#admin-member-checklist select');
+            
+            let presentMembersList = [];
+            selects.forEach(sel => {
+                const status = sel.value;
+                const name = sel.getAttribute('data-name');
+                if (status === 'Present' || status === 'Late') {
+                    presentMembersList.push({ name: name, officer: selectedGM });
+                }
+            });
+
+            const todayDate = new Date().toLocaleDateString(); 
+
+            let allRecords = JSON.parse(localStorage.getItem('kultura_sol_live_v17') || '[]');
+            
+            let existingRecord = allRecords.find(r => r.dateKey === todayDate && r.event === eventType);
+
+            if (existingRecord) {
+                presentMembersList.forEach(newM => {
+                    if (!existingRecord.presents.some(p => p.name === newM.name)) {
+                        existingRecord.presents.push(newM);
+                    }
+                });
+            } else {
+                allRecords.unshift({
+                    dateKey: todayDate,
+                    timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                    event: eventType,
+                    solPool: totalSolPool,
+                    presents: presentMembersList
+                });
+            }
+
+            localStorage.setItem('kultura_sol_live_v17', JSON.stringify(allRecords));
+
+            alert(`🎉 Tagumpay na na-save ni Officer ${currentLoggedInOfficer}! Naisaayos ang attendance para sa ${selectedGM}.`);
+            closeAdminModal();
+            renderAttendanceHistory();
+        }
+
+        function renderAttendanceHistory() {
+            const tbody = document.getElementById('public-attendance-history');
+            let history = JSON.parse(localStorage.getItem('kultura_sol_live_v17') || '[]');
+
+            if (history.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="padding: 10px; text-align: center; color: var(--text-dim);">No attendance recorded yet.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            history.forEach(rec => {
+                const totalPresent = rec.presents.length;
+                const solPerMember = totalPresent > 0 ? Math.round(rec.solPool / totalPresent).toLocaleString() : 0;
+                
+                const groupedByDivision = {};
+                rec.presents.forEach(p => {
+                    if (!groupedByDivision[p.officer]) {
+                        groupedByDivision[p.officer] = [];
+                    }
+                    groupedByDivision[p.officer].push(p.name);
+                });
+
+                let formattedMembersHTML = '';
+                if (totalPresent > 0) {
+                    for (let divName in groupedByDivision) {
+                        formattedMembersHTML += `<div class="division-group-title">👑 ${divName} (${groupedByDivision[divName].length} Present):</div><br>`;
+                        groupedByDivision[divName].forEach(mName => {
+                            formattedMembersHTML += `💎 <strong>${mName}</strong> — <span style="color:var(--primary-glow);">${solPerMember} SOL</span><br>`;
+                        });
+                        formattedMembersHTML += `<div style="margin-bottom:6px;"></div>`;
+                    }
+                } else {
+                    formattedMembersHTML = '<span style="color:var(--text-dim);">Wala pang nakatalang present.</span>';
+                }
+
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = "1px solid rgba(255,255,255,0.08)";
+                tr.innerHTML = `
+                    <td style="padding: 10px; color: var(--text-dim); white-space: nowrap;">${rec.dateKey}<br><small>Huling update: ${rec.timestamp}</small></td>
+                    <td style="padding: 10px; font-weight: 600; color:var(--primary);">${rec.event}</td>
+                    <td style="padding: 10px; color: #ffdd55; font-weight: bold;">${totalPresent} Members</td>
+                    <td style="padding: 10px; color: #ffdd55;">${rec.solPool.toLocaleString()} SOL<br><span style="color:#33cc33; font-weight:bold;">${solPerMember} SOL / ea</span></td>
+                    <td style="padding: 10px; color: #33cc33; line-height: 1.5;">${formattedMembersHTML}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function toggleDivision(rosterId, btnId) {
+            const rosterContainer = document.getElementById(rosterId);
+            const btn = document.getElementById(btnId);
+            if (rosterContainer.style.display === "block") {
+                rosterContainer.style.display = "none";
+                btn.innerText = "▼ Click to Expand";
+            } else {
+                rosterContainer.style.display = "block";
+                btn.innerText = "▲ Click to Hide";
+            }
+        }
+
         const allianceGuilds = [
             { name: "PROTECT GUILD", icon: "🛡️" },
             { name: "ANXIETY GUILD", icon: "⚡" },
@@ -1168,218 +1593,34 @@
         function rotateAllianceBadge() {
             currentIndex = (currentIndex + 1) % allianceGuilds.length;
             const guild = allianceGuilds[currentIndex];
-            
             const iconElem = document.getElementById('rotating-icon');
             const textElem = document.getElementById('rotating-text');
-            
             if (iconElem && textElem) {
                 iconElem.innerText = guild.icon;
                 textElem.innerText = guild.name;
             }
         }
-
-        // Rotate every 3 seconds
         setInterval(rotateAllianceBadge, 3000);
 
-        // Guild Members Database with specific classes
-        const guildData = {
-            "Fullclip": [
-                { name: "Crafted", class: "Blade Master" },
-                { name: "Mechado", class: "Blade Master" },
-                { name: "BKCHUNG11", class: "Blade Master" },
-                { name: "GreenHill", class: "Elf" },
-                { name: "Scarecrows", class: "Summoner" },
-                { name: "LordJepz", class: "Dark Lord" },
-                { name: "Sypha", class: "Summoner" },
-                { name: "Blankz", class: "Dark Lord" },
-                { name: "Eremes", class: "Soul Master" },
-                { name: "Yllyona", class: "Elf" },
-                { name: "xPONG", class: "Blade Master" },
-                { name: "Sedation", class: "Summoner" },
-                { name: "VERMOUTH", class: "Summoner" },
-		{ name: "Herieya", class: "Summoner" },
-		{ name: "IRONMAN", class: "Blade Master" },
-		{ name: "TognaluK", class: "Blade Master" },
-		{ name: "Relic", class: "Soul Master" },
-		{ name: "RetroSpect", class: "Summoner" }
-            ],
-            "Warlock": [
-                { name: "Tr3nity", class: "Blade Master" },
-                { name: "Kreios", class: "Blade Master" },
-                { name: "PUREIgorot", class: "Dark Lord" },
-                { name: "Aurion", class: "Soul Master" },
-                { name: "Papaliciou", class: "Soul Master" },
-                { name: "SMCai", class: "Soul Master" },
-                { name: "asdgyhqrqt", class: "Blade Master" },
-		{ name: "James", class: "Soul Master" },
-		{ name: "BATONGBKL", class: "Blade Master" },
-		{ name: "VyyLlah", class: "Elf" },
-		{ name: "krisjo", class: "Soul Master" },
-		{ name: "Bosvell23", class: "Blade Master" },
-		{ name: "BUMBUANG", class: "Soul Master" },
-		{ name: "Hundredick", class: "Dark Lord" },
-		{ name: "NAYAR", class: "Blade Master" },
-		{ name: "PizzaSlice", class: "Blade Master" },
-		{ name: "SMCeimoun", class: "Soul Master" },
-		{ name: "Moondancer", class: "Soul Master" },
-		{ name: "TankBK", class: "Blade Master" },
-		{ name: "TR1Gun", class: "Soul Master" },
-		{ name: "Vonn", class: "Blade Master" },
-		{ name: "Godis", class: "Blade Master" },
-		{ name: "Ekamamoko", class: "Elf" },
-		{ name: "RAG3", class: "Soul Master" },
-		{ name: "Levis501", class: "Soul Master" },
-		{ name: "FreeToGo", class: "Blade Master" },
-		{ name: "Gatubela", class: "Summoner" }	
-            ],
-            "LordDwight": [
-                { name: "StealthGhost", class: "Blade Master" },
-                { name: "NightStalker", class: "Dark Lord" },
-                { name: "SilentAim", class: "Elf" },
-                { name: "CursedSoul", class: "Soul Master" }
-            ],
-            "WindTalker": [
-                { name: "ProtectShield", class: "Blade Master" },
-                { name: "AuraHealer", class: "Elf" },
-                { name: "Guardian", class: "Dark Lord" },
-                { name: "IronWall", class: "Blade Master" }
-            ],
-            "iKapitana": [
-                { name: "CalmStorm", class: "Soul Master" },
-                { name: "Zenith", class: "Blade Master" },
-                { name: "Serenity", class: "Elf" },
-                { name: "Pacifist", class: "Summoner" }
-            ],
-            "Tsukushi": [
-                { name: "CommandHQ", class: "Dark Lord" },
-                { name: "Tactician", class: "Soul Master" },
-                { name: "Vanguard", class: "Blade Master" }
-            ]
-        };
-
-        // Function to get the correct weapon icon based on character class
-        function getWeaponIcon(className) {
-            switch(className) {
-                case 'Elf':
-                    return '🏹';
-                case 'Summoner':
-                    return '✨';
-                case 'Dark Lord':
-                    return '♛';
-                case 'Soul Master':
-                    return '🌠';
-                case 'Blade Master':
-                    return '⚔️';
-                case 'Duel Master':
-                    return '🗡️';
-                case 'Magic Gladiator':
-                    return '🗡️';
-                default:
-                    return '⚔️';
-            }
-        }
-
-        // Function to get class color CSS class
-        function getClassColorClass(className) {
-            switch(className) {
-                case 'Summoner':
-                    return 'class-summoner';
-                case 'Blade Master':
-                    return 'class-blademaster';
-                case 'Dark Lord':
-                    return 'class-darklord';
-                case 'Duel Master':
-                    return 'class-duelmaster';
-                case 'Elf':
-                    return 'class-elf';
-                case 'Soul Master':
-                    return 'class-soulmaster';
-                default:
-                    return '';
-            }
-        }
-
-        // Open Modal Function
-        function openGuildMembers(guildName, gmName) {
-            const modal = document.getElementById('member-modal');
-            const title = document.getElementById('modal-guild-name');
-            const subtitle = document.getElementById('modal-guild-master');
-            const list = document.getElementById('modal-members-list');
-
-            title.innerText = `${guildName} Guild`;
-            subtitle.innerText = `Guild Master: ${gmName}`;
-            list.innerHTML = '';
-
-            let members = guildData[gmName] || [
-                { name: "Active Warrior 1", class: "Blade Master" },
-                { name: "Active Warrior 2", class: "Soul Master" }
-            ];
-
-            const scrollingMembers = [...members, ...members];
-
-            scrollingMembers.forEach(member => {
-                const li = document.createElement('li');
-                const weaponIcon = getWeaponIcon(member.class);
-                const colorClass = getClassColorClass(member.class);
-                li.innerHTML = `<span>${weaponIcon} <span class="${colorClass}">${member.name}</span></span><span class="${colorClass}">${member.class}</span>`;
-                list.appendChild(li);
-            });
-
-            modal.style.display = 'flex';
-        }
-
-        // Close Modal Function
-        function closeModal() {
-            document.getElementById('member-modal').style.display = 'none';
-        }
-
-        function closeModalOnOutside(event) {
-            if (event.target.id === 'member-modal') {
-                closeModal();
-            }
-        }
-
-        // Audio Player Logic
         const audio = document.getElementById('bg-audio');
         let isPlaying = false;
-
         function playMusic() {
-            audio.play().then(() => {
-                isPlaying = true;
-                updateButton();
-            }).catch((err) => {
-                isPlaying = false;
-                updateButton();
-            });
+            audio.play().then(() => { isPlaying = true; updateButton(); }).catch(() => { isPlaying = false; updateButton(); });
         }
-
         function toggleMusic() {
-            if (isPlaying) {
-                audio.pause();
-                isPlaying = false;
-            } else {
-                playMusic();
-            }
+            if (isPlaying) { audio.pause(); isPlaying = false; } else { playMusic(); }
             updateButton();
         }
-
-        document.addEventListener('click', function startAudio() {
-            if (!isPlaying) {
-                playMusic();
-            }
-        }, { once: true });
-
         function updateButton() {
             const icon = document.getElementById('music-icon');
             const text = document.getElementById('music-text');
-            if (isPlaying) {
-                icon.innerText = '🔊';
-                text.innerText = 'Pause Music';
-            } else {
-                icon.innerText = '🔇';
-                text.innerText = 'Play Music';
-            }
+            if (isPlaying) { icon.innerText = '🔊'; text.innerText = 'Pause Music'; } else { icon.innerText = '🔇'; text.innerText = 'Play Music'; }
         }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderRosters();
+            renderAttendanceHistory();
+        });
     </script>
 
 </body>
