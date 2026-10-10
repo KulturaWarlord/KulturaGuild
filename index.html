@@ -792,8 +792,9 @@
                 <div class="stat-value" style="font-size: 1.8rem; margin-top: 5px;">KULTURA</div>
                 <div class="stat-label">Castle Owner Guild</div>
             </div>
+            <!-- DYNAMIC ACTIVE WARRIORS CARD -->
             <div class="stat-card">
-                <div class="stat-value">95+</div>
+                <div class="stat-value" id="active-warriors-count">--</div>
                 <div class="stat-label">Active Warriors</div>
             </div>
             <div class="stat-card">
@@ -1065,7 +1066,7 @@
                             <button onclick="registerNewMember()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">➕ Save Member to Roster</button>
                         </div>
 
-                        <!-- PANEL 2: SEPARATE ACCORDION FOR DELETE MEMBER (SAFETY PREVENT ACCIDENTAL CLICKS) -->
+                        <!-- PANEL 2: SEPARATE ACCORDION FOR DELETE MEMBER -->
                         <div class="admin-section-block" style="margin-bottom: 15px; border-color: rgba(255, 51, 51, 0.4);">
                             <button onclick="toggleAdminSection('sec-delete-member')" class="admin-collapsible-btn" style="color: #ffaa33; background: rgba(139, 0, 0, 0.2);">
                                 <span>🗑️ Remove / Delete Member from Roster</span>
@@ -1464,6 +1465,7 @@
                     window.dbSet(dbRef(window.database, 'kultura_roster'), defaultDivisionMembers);
                 }
                 renderRosters();
+                updateLiveActiveWarriors();
                 if (document.getElementById('attendance-admin-modal').style.display === 'flex') {
                     onDivisionChange();
                 }
@@ -1478,6 +1480,7 @@
                 }
                 renderAttendanceHistory();
                 renderAdminAttendanceLogList();
+                updateLiveActiveWarriors();
             });
 
             // 4. Live Tickets Listener
@@ -1505,6 +1508,30 @@
                 await window.dbSet(window.dbRef(window.database, 'kultura_roster'), data);
             }
             renderRosters();
+            updateLiveActiveWarriors();
+        }
+
+        /* DYNAMIC ACTIVE WARRIORS STAT BOX UPDATE FUNCTION */
+        function updateLiveActiveWarriors() {
+            const countElem = document.getElementById('active-warriors-count');
+            if (!countElem) return;
+
+            let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
+            let latestCS = history.find(r => r.event === "Castle Siege War");
+
+            if (latestCS && latestCS.presents && latestCS.presents.length > 0) {
+                countElem.innerText = `${latestCS.presents.length}`;
+            } else {
+                // FALLBACK: Kukuha mula sa kabuuang Roster Members kapag wala pang CS attendance record
+                let data = getGuildData();
+                let totalMembers = 0;
+                for (let divKey in data) {
+                    if (Array.isArray(data[divKey])) {
+                        totalMembers += data[divKey].length;
+                    }
+                }
+                countElem.innerText = totalMembers > 0 ? `${totalMembers}+` : "95+";
+            }
         }
 
         let currentLoggedInOfficer = null;
@@ -1790,7 +1817,8 @@
 
             renderAttendanceHistory();
             renderAdminAttendanceLogList();
-            alert(`🎉 Live Attendance Updated! Na-sync na agad ang mga pagbabago sa Live Log.`);
+            updateLiveActiveWarriors();
+            alert(`🎉 Live Attendance Updated! Na-sync na agad ang mga pagbabago sa Live Log at Stat Box.`);
             closeAdminModal();
         }
 
@@ -1898,6 +1926,7 @@
 
                 renderAttendanceHistory();
                 renderAdminAttendanceLogList();
+                updateLiveActiveWarriors();
                 alert(`🗑️ Nabura na nang tuluyan ang attendance log record!`);
             }
         }
@@ -2308,6 +2337,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             renderRosters();
+            updateLiveActiveWarriors();
         });
     </script>
 
