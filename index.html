@@ -5,6 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kultura Guild & Alliance | NoLimit MU Online</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=MedievalSharp&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAq_TzBp-Jjr3Wbp7RIHz05OW3IR5Iovmk",
+            authDomain: "kulturaguildattendance.firebaseapp.com",
+            databaseURL: "https://kulturaguildattendance-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "kulturaguildattendance",
+            storageBucket: "kulturaguildattendance.firebasestorage.app",
+            messagingSenderId: "198261862227",
+            appId: "1:198261862227:web:48a5c4e59af017af70bba6",
+            measurementId: "G-TE07YVT2D5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Make database functions globally accessible
+        window.dbRef = ref;
+        window.dbGet = get;
+        window.dbChild = child;
+        window.dbSet = set;
+        window.database = db;
+        
+        // Trigger initial data load once Firebase is ready
+        window.dispatchEvent(new Event('firebase-ready'));
+    </script>
+
     <style>
         :root {
             --primary: #e6b800;
@@ -750,7 +781,7 @@
                             </tr>
                         </thead>
                         <tbody id="public-attendance-history">
-                            <tr><td colspan="5" style="padding: 10px; text-align: center; color: var(--text-dim);">No attendance recorded yet.</td></tr>
+                            <tr><td colspan="5" style="padding: 10px; text-align: center; color: var(--text-dim);">Loading data from Cloud...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -784,7 +815,7 @@
         <div id="attendance-admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center;">
             <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 600px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto;">
                 <h3 style="color: var(--primary-glow); margin-bottom: 10px;">🔒 Authorized Officer Portal</h3>
-                <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">Fullclip (Main Guild Master)</strong></p>
+                <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">Officer</strong></p>
 
                 <div style="margin-bottom: 15px; padding: 12px; background: rgba(230, 184, 0, 0.05); border: 1px solid var(--border-gold); border-radius: 6px;">
                     <h4 style="color: var(--primary-glow); font-size: 0.95rem; margin-bottom: 8px;">➕ Register New Guild Member</h4>
@@ -1111,7 +1142,7 @@
         <p>&copy; 2026 <span>Kultura Guild</span> — NoLimit MU Online Community. All Rights Reserved.</p>
     </footer>
 
-    <!-- Interactive Scripts -->
+    <!-- Interactive Scripts with Firebase Integration -->
     <script>
         const ALL_DIVISIONS = [
             "Fullclip Division (Fullclip)",
@@ -1124,7 +1155,7 @@
         const OFFICER_ACCOUNTS = {
             "Fullclip": {
                 password: "GMKulturamain",
-                assignedDivision: ALL_DIVISIONS, // Full access to all divisions
+                assignedDivision: ALL_DIVISIONS,
                 role: "Main Guild Master (Super Admin)"
             },
             "Tsukushi": {
@@ -1264,13 +1295,52 @@
             ]
         };
 
-        function getGuildData() {
-            const saved = localStorage.getItem('kultura_guild_roster_v18');
-            return saved ? JSON.parse(saved) : defaultDivisionMembers;
+        let cloudGuildData = null;
+        let cloudAttendanceHistory = null;
+
+        // Fetch data from Firebase
+        async function fetchCloudData() {
+            if (!window.database) return;
+            try {
+                const dbRef = window.dbRef(window.database);
+                
+                // Fetch Roster
+                const rosterSnap = await window.dbGet(window.dbChild(dbRef, 'kultura_roster'));
+                if (rosterSnap.exists()) {
+                    cloudGuildData = rosterSnap.val();
+                } else {
+                    cloudGuildData = defaultDivisionMembers;
+                    await window.dbSet(window.dbRef(window.database, 'kultura_roster'), defaultDivisionMembers);
+                }
+
+                // Fetch Attendance
+                const attSnap = await window.dbGet(window.dbChild(dbRef, 'kultura_attendance'));
+                if (attSnap.exists()) {
+                    cloudAttendanceHistory = attSnap.val();
+                } else {
+                    cloudAttendanceHistory = [];
+                }
+
+                renderRosters();
+                renderAttendanceHistory();
+            } catch (error) {
+                console.error("Error fetching data from Firebase:", error);
+            }
         }
 
-        function saveGuildData(data) {
-            localStorage.setItem('kultura_guild_roster_v18', JSON.stringify(data));
+        window.addEventListener('firebase-ready', () => {
+            fetchCloudData();
+        });
+
+        function getGuildData() {
+            return cloudGuildData ? cloudGuildData : defaultDivisionMembers;
+        }
+
+        async function saveGuildData(data) {
+            cloudGuildData = data;
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_roster'), data);
+            }
         }
 
         let currentLoggedInOfficer = null;
@@ -1309,14 +1379,12 @@
             selectDiv.innerHTML = '';
 
             if (Array.isArray(officerInfo.assignedDivision)) {
-                // Super Admin Full Access
                 selectDiv.disabled = false;
                 selectDiv.style.cursor = "pointer";
                 officerInfo.assignedDivision.forEach(divName => {
                     selectDiv.innerHTML += `<option value="${divName}">${divName}</option>`;
                 });
             } else {
-                // Single Guild Officer
                 selectDiv.disabled = true;
                 selectDiv.style.cursor = "not-allowed";
                 selectDiv.innerHTML = `<option value="${officerInfo.assignedDivision}">${officerInfo.assignedDivision}</option>`;
@@ -1350,7 +1418,7 @@
             }
         }
 
-        function registerNewMember() {
+        async function registerNewMember() {
             if (!currentLoggedInOfficer) return;
 
             const ign = document.getElementById('new-member-ign').value.trim();
@@ -1379,7 +1447,7 @@
             membersList.push(newMemberObj);
             data[assignedDivision] = membersList;
 
-            saveGuildData(data);
+            await saveGuildData(data);
 
             alert(`🎉 Tagumpay na naisaayos ni Officer ${currentLoggedInOfficer}! Na-register si ${ign} (${charClass}) sa ${assignedDivision}.`);
 
@@ -1417,79 +1485,28 @@
         function renderRosters() {
             const data = getGuildData();
 
-            // Fullclip Division
-            const fullclipContainer = document.getElementById('fullclip-roster');
-            if (fullclipContainer) {
-                fullclipContainer.innerHTML = '';
-                (data["Fullclip Division (Fullclip)"] || []).forEach(m => {
-                    const cssClass = getClassCss(m.class);
-                    fullclipContainer.innerHTML += `
-                        <div class="roster-list-item">
-                            <span>${m.icon} <span class="${cssClass}">${m.name}</span></span>
-                            <span class="${cssClass}">${m.class}</span>
-                        </div>
-                    `;
-                });
-            }
+            const divisionsMap = {
+                "fullclip-roster": "Fullclip Division (Fullclip)",
+                "warlock-roster": "Warlock Division (Warlock)",
+                "protect-roster": "PROTECT Division (Windtalker)",
+                "stealth-roster": "STEALTH Division (LordDwight)",
+                "anxiety-roster": "ANXIETY Division (iKapitana)"
+            };
 
-            // Warlock Division
-            const warlockContainer = document.getElementById('warlock-roster');
-            if (warlockContainer) {
-                warlockContainer.innerHTML = '';
-                (data["Warlock Division (Warlock)"] || []).forEach(m => {
-                    const cssClass = getClassCss(m.class);
-                    warlockContainer.innerHTML += `
-                        <div class="roster-list-item">
-                            <span>${m.icon} <span class="${cssClass}">${m.name}</span></span>
-                            <span class="${cssClass}">${m.class}</span>
-                        </div>
-                    `;
-                });
-            }
-
-            // PROTECT Guild Roster
-            const protectContainer = document.getElementById('protect-roster');
-            if (protectContainer) {
-                protectContainer.innerHTML = '';
-                (data["PROTECT Division (Windtalker)"] || []).forEach(m => {
-                    const cssClass = getClassCss(m.class);
-                    protectContainer.innerHTML += `
-                        <div class="roster-list-item">
-                            <span>${m.icon} <span class="${cssClass}">${m.name}</span></span>
-                            <span class="${cssClass}">${m.class}</span>
-                        </div>
-                    `;
-                });
-            }
-
-            // STEALTH Guild Roster
-            const stealthContainer = document.getElementById('stealth-roster');
-            if (stealthContainer) {
-                stealthContainer.innerHTML = '';
-                (data["STEALTH Division (LordDwight)"] || []).forEach(m => {
-                    const cssClass = getClassCss(m.class);
-                    stealthContainer.innerHTML += `
-                        <div class="roster-list-item">
-                            <span>${m.icon} <span class="${cssClass}">${m.name}</span></span>
-                            <span class="${cssClass}">${m.class}</span>
-                        </div>
-                    `;
-                });
-            }
-
-            // ANXIETY Guild Roster
-            const anxietyContainer = document.getElementById('anxiety-roster');
-            if (anxietyContainer) {
-                anxietyContainer.innerHTML = '';
-                (data["ANXIETY Division (iKapitana)"] || []).forEach(m => {
-                    const cssClass = getClassCss(m.class);
-                    anxietyContainer.innerHTML += `
-                        <div class="roster-list-item">
-                            <span>${m.icon} <span class="${cssClass}">${m.name}</span></span>
-                            <span class="${cssClass}">${m.class}</span>
-                        </div>
-                    `;
-                });
+            for (const [containerId, divKey] of Object.entries(divisionsMap)) {
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.innerHTML = '';
+                    (data[divKey] || []).forEach(m => {
+                        const cssClass = getClassCss(m.class);
+                        container.innerHTML += `
+                            <div class="roster-list-item">
+                                <span>${m.icon} <span class="${cssClass}">${m.name}</span></span>
+                                <span class="${cssClass}">${m.class}</span>
+                            </div>
+                        `;
+                    });
+                }
             }
         }
 
@@ -1497,7 +1514,7 @@
             document.getElementById('attendance-admin-modal').style.display = 'none';
         }
 
-        function saveAttendanceEntry() {
+        async function saveAttendanceEntry() {
             if (!currentLoggedInOfficer) return;
 
             const selectedGM = document.getElementById('admin-officer-select').value;
@@ -1516,8 +1533,7 @@
 
             const todayDate = new Date().toLocaleDateString(); 
 
-            let allRecords = JSON.parse(localStorage.getItem('kultura_sol_live_v18') || '[]');
-            
+            let allRecords = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
             let existingRecord = allRecords.find(r => r.dateKey === todayDate && r.event === eventType);
 
             if (existingRecord) {
@@ -1536,16 +1552,19 @@
                 });
             }
 
-            localStorage.setItem('kultura_sol_live_v18', JSON.stringify(allRecords));
+            cloudAttendanceHistory = allRecords;
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), allRecords);
+            }
 
-            alert(`🎉 Tagumpay na na-save ni Officer ${currentLoggedInOfficer}! Naisaayos ang attendance para sa ${selectedGM}.`);
+            alert(`🎉 Tagumpay na na-save sa Cloud ni Officer ${currentLoggedInOfficer}! Naisaayos ang attendance para sa ${selectedGM}.`);
             closeAdminModal();
             renderAttendanceHistory();
         }
 
         function renderAttendanceHistory() {
             const tbody = document.getElementById('public-attendance-history');
-            let history = JSON.parse(localStorage.getItem('kultura_sol_live_v18') || '[]');
+            let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
 
             if (history.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" style="padding: 10px; text-align: center; color: var(--text-dim);">No attendance recorded yet.</td></tr>`;
@@ -1554,16 +1573,18 @@
 
             tbody.innerHTML = '';
             history.forEach(rec => {
-                const totalPresent = rec.presents.length;
+                const totalPresent = rec.presents ? rec.presents.length : 0;
                 const solPerMember = totalPresent > 0 ? Math.round(rec.solPool / totalPresent).toLocaleString() : 0;
                 
                 const groupedByDivision = {};
-                rec.presents.forEach(p => {
-                    if (!groupedByDivision[p.officer]) {
-                        groupedByDivision[p.officer] = [];
-                    }
-                    groupedByDivision[p.officer].push(p.name);
-                });
+                if (rec.presents) {
+                    rec.presents.forEach(p => {
+                        if (!groupedByDivision[p.officer]) {
+                            groupedByDivision[p.officer] = [];
+                        }
+                        groupedByDivision[p.officer].push(p.name);
+                    });
+                }
 
                 let formattedMembersHTML = '';
                 if (totalPresent > 0) {
@@ -1641,8 +1662,8 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            // Initial render fallback if firebase takes a second
             renderRosters();
-            renderAttendanceHistory();
         });
     </script>
 
