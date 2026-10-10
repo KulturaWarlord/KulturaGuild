@@ -534,6 +534,21 @@
             font-size: 0.9rem;
         }
 
+        .delete-btn {
+            background: rgba(255, 51, 51, 0.2);
+            border: 1px solid #ff3333;
+            color: #ffaa33;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .delete-btn:hover {
+            background: #ff3333;
+            color: #fff;
+        }
+
         .flame-section {
             background: linear-gradient(145deg, rgba(20, 10, 5, 0.85), rgba(10, 10, 15, 0.95));
             border: 2px solid #ff7700;
@@ -762,7 +777,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-gold); padding-bottom: 10px; margin-bottom: 20px;">
                 <h3 style="margin: 0; color: var(--primary);">📋 Live Attendance & SOL Distribution Summary</h3>
                 <button onclick="openLoginModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem;">
-                    🔐 Mark Attendance / Add Member (Officer Login)
+                    🔐 Mark Attendance / Add or Delete Member
                 </button>
             </div>
 
@@ -792,7 +807,7 @@
         <div id="login-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10001; justify-content: center; align-items: center;">
             <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 400px; padding: 25px; border-radius: 10px; color: #fff; text-align: center;">
                 <h3 style="color: var(--primary-glow); margin-bottom: 15px;">🔐 Officer Authentication</h3>
-                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Mag-login bilang Guild Master o Officer upang mag-mark ng attendance o mag-add ng miyembro.</p>
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Mag-login bilang Guild Master o Officer upang mag-mark ng attendance o mag-manage ng miyembro.</p>
                 
                 <div style="margin-bottom: 12px; text-align: left;">
                     <label style="font-size: 0.8rem; color: var(--primary-glow);">Officer Username:</label>
@@ -811,12 +826,19 @@
             </div>
         </div>
 
-        <!-- ADMIN ATTENDANCE & MEMBER REGISTRATION MODAL -->
+        <!-- ADMIN ATTENDANCE & MEMBER REGISTRATION/DELETE MODAL -->
         <div id="attendance-admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center;">
-            <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 600px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto;">
+            <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 650px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto;">
                 <h3 style="color: var(--primary-glow); margin-bottom: 10px;">🔒 Authorized Officer Portal</h3>
                 <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">Officer</strong></p>
 
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 0.85rem; color: var(--primary-glow);">Select Division / Guild to Manage:</label>
+                    <select id="admin-officer-select" onchange="onDivisionChange()" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: var(--primary-glow); border-radius: 4px; font-weight: bold;">
+                    </select>
+                </div>
+
+                <!-- ADD MEMBER BOX -->
                 <div style="margin-bottom: 15px; padding: 12px; background: rgba(230, 184, 0, 0.05); border: 1px solid var(--border-gold); border-radius: 6px;">
                     <h4 style="color: var(--primary-glow); font-size: 0.95rem; margin-bottom: 8px;">➕ Register New Guild Member</h4>
                     <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
@@ -833,12 +855,13 @@
                     <button onclick="registerNewMember()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">➕ Save Member to Roster</button>
                 </div>
 
-                <div style="margin-bottom: 12px;">
-                    <label style="font-size: 0.85rem;">Select Division / Guild to Manage:</label>
-                    <select id="admin-officer-select" onchange="renderMemberChecklist()" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: var(--primary-glow); border-radius: 4px; font-weight: bold;">
-                    </select>
+                <!-- DELETE / MANAGE ROSTER BOX -->
+                <div style="margin-bottom: 15px; padding: 12px; background: rgba(139, 0, 0, 0.15); border: 1px solid rgba(255, 51, 51, 0.4); border-radius: 6px;">
+                    <h4 style="color: #ffaa33; font-size: 0.95rem; margin-bottom: 8px;">🗑️ Delete / Manage Current Members</h4>
+                    <div id="admin-delete-member-list" style="max-height: 120px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px;">
+                    </div>
                 </div>
-                
+
                 <div style="margin-bottom: 12px;">
                     <label style="font-size: 0.85rem;">Event Type:</label>
                     <select id="admin-event-type" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
@@ -854,7 +877,7 @@
                 </div>
 
                 <h4 style="color: var(--primary-glow); margin: 15px 0 10px;">Check Member Attendance:</h4>
-                <div id="admin-member-checklist" style="max-height: 220px; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+                <div id="admin-member-checklist" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; margin-bottom: 15px;">
                 </div>
 
                 <div style="display: flex; gap: 10px; justify-content: flex-end;">
@@ -1142,7 +1165,7 @@
         <p>&copy; 2026 <span>Kultura Guild</span> — NoLimit MU Online Community. All Rights Reserved.</p>
     </footer>
 
-    <!-- Interactive Scripts with Firebase Integration & Updated Attendance Logic -->
+    <!-- Interactive Scripts with Firebase Integration & Delete Member Logic -->
     <script>
         const ALL_DIVISIONS = [
             "Fullclip Division (Fullclip)",
@@ -1390,8 +1413,13 @@
                 selectDiv.innerHTML = `<option value="${officerInfo.assignedDivision}">${officerInfo.assignedDivision}</option>`;
             }
 
-            renderMemberChecklist();
+            onDivisionChange();
             document.getElementById('attendance-admin-modal').style.display = 'flex';
+        }
+
+        function onDivisionChange() {
+            renderDeleteMemberList();
+            renderMemberChecklist();
         }
 
         function getClassIcon(className) {
@@ -1449,12 +1477,56 @@
 
             await saveGuildData(data);
 
-            alert(`🎉 Tagumpay na naisaayos ni Officer ${currentLoggedInOfficer}! Na-register si ${ign} (${charClass}) sa ${assignedDivision}.`);
+            alert(`🎉 Tagumpay na na-add ni Officer ${currentLoggedInOfficer}! Na-register si ${ign} (${charClass}) sa ${assignedDivision}.`);
 
             document.getElementById('new-member-ign').value = '';
             
             renderRosters();
-            renderMemberChecklist();
+            onDivisionChange();
+        }
+
+        function renderDeleteMemberList() {
+            if (!currentLoggedInOfficer) return;
+            const selectedDivision = document.getElementById('admin-officer-select').value;
+            const listContainer = document.getElementById('admin-delete-member-list');
+            listContainer.innerHTML = '';
+
+            const data = getGuildData();
+            const members = data[selectedDivision] || [];
+
+            if (members.length === 0) {
+                listContainer.innerHTML = `<span style="font-size:0.8rem; color: var(--text-dim);">Walang miyembro sa division na ito.</span>`;
+                return;
+            }
+
+            members.forEach(mObj => {
+                const div = document.createElement('div');
+                div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;";
+                div.innerHTML = `
+                    <span>${mObj.icon} <strong>${mObj.name}</strong> <small style="color:var(--text-dim);">(${mObj.class})</small></span>
+                    <button onclick="deleteMember('${mObj.name}')" class="delete-btn">❌ Delete</button>
+                `;
+                listContainer.appendChild(div);
+            });
+        }
+
+        async function deleteMember(memberName) {
+            if (!currentLoggedInOfficer) return;
+            const selectedDivision = document.getElementById('admin-officer-select').value;
+
+            if (!confirm(`⚠️ Sigurado ka bang gusto mong burahin si "${memberName}" mula sa ${selectedDivision}?`)) {
+                return;
+            }
+
+            let data = getGuildData();
+            if (data[selectedDivision]) {
+                data[selectedDivision] = data[selectedDivision].filter(m => m.name.toLowerCase() !== memberName.toLowerCase());
+                await saveGuildData(data);
+
+                alert(`🗑️ Tagumpay na nabura si ${memberName} mula sa Cloud Database.`);
+                renderRosters();
+                onDivisionChange();
+            }
         }
 
         function renderMemberChecklist() {
@@ -1537,7 +1609,6 @@
             let existingRecord = allRecords.find(r => r.dateKey === todayDate && r.event === eventType);
 
             if (existingRecord) {
-                // Alisin ang lumang listahan ng division na ito at palitan ng bago (para masama ang pagpalit patungong Absent)
                 existingRecord.presents = (existingRecord.presents || []).filter(p => p.officer !== selectedGM);
                 existingRecord.presents = existingRecord.presents.concat(updatedDivisionPresents);
                 
