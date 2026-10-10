@@ -825,7 +825,7 @@
                                 <th style="padding: 8px;">Total Main Present</th>
                                 <th style="padding: 8px;">SOL Pool</th>
                                 <th style="padding: 8px;">SOL Share / Main Member</th>
-                                <th style="padding: 8px;">Acknowledged Main Characters</th>
+                                <th style="padding: 8px;">Acknowledged Main Characters (Credited to Main Guild)</th>
                             </tr>
                         </thead>
                         <tbody id="public-attendance-history">
@@ -941,7 +941,6 @@
                         <!-- MULTI DUMMY BOXES GRID -->
                         <label style="font-size: 0.8rem; color: #ffaa33; font-weight: bold;">🎭 Dummy / Alt Character Accounts:</label>
                         <div id="dummy-boxes-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; margin-bottom: 10px; max-height: 220px; overflow-y: auto; padding-right: 5px;">
-                            <!-- 10 Default Dummy Input Boxes -->
                             <input type="text" class="dummy-input-field" placeholder="Dummy 1 (e.g. Kreios)" style="padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;">
                             <input type="text" class="dummy-input-field" placeholder="Dummy 2 (e.g. Papaliciou)" style="padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;">
                             <input type="text" class="dummy-input-field" placeholder="Dummy 3" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
@@ -1076,7 +1075,7 @@
                             <input type="number" id="admin-sol-pool" value="100000" style="width: 100%; padding: 8px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
                         </div>
 
-                        <h4 style="color: var(--primary-glow); margin: 15px 0 10px;">Check Member Attendance (Auto Main/Dummy Enforced):</h4>
+                        <h4 style="color: var(--primary-glow); margin: 15px 0 10px;">Check Member Attendance (Auto Cross-Guild Main Routing Enforced):</h4>
                         <div id="admin-member-checklist" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; margin-bottom: 15px;">
                         </div>
 
@@ -1661,57 +1660,75 @@
             });
         }
 
+        /* HELPER: FIND MAIN CHARACTER'S REGISTERED GUILD DIVISION */
+        function findMainGuildDivision(mainIgn) {
+            const data = getGuildData();
+            for (let divKey in data) {
+                let found = data[divKey].find(m => m.name.toLowerCase() === mainIgn.toLowerCase());
+                if (found) {
+                    return divKey;
+                }
+            }
+            return null;
+        }
+
+        /* ATTENDANCE ENTRY WITH CROSS-GUILD AUTO ROUTING */
         async function saveAttendanceEntry() {
             if (!currentLoggedInOfficer) return;
 
-            const selectedGM = document.getElementById('admin-officer-select').value;
+            const currentCheckingGM = document.getElementById('admin-officer-select').value;
             const eventType = document.getElementById('admin-event-type').value;
             const totalSolPool = parseFloat(document.getElementById('admin-sol-pool').value) || 100000;
             const selects = document.querySelectorAll('#admin-member-checklist select');
             
-            let acknowledgedMains = new Set();
-            let updatedDivisionPresents = [];
-
-            selects.forEach(sel => {
-                const status = sel.value;
-                const mainChar = sel.getAttribute('data-main');
-                const charName = sel.getAttribute('data-name');
-
-                if (status === 'Present' || status === 'Late') {
-                    if (!acknowledgedMains.has(mainChar.toLowerCase())) {
-                        acknowledgedMains.add(mainChar.toLowerCase());
-                        updatedDivisionPresents.push({ name: mainChar, loggedIgn: charName, officer: selectedGM });
-                    }
-                }
-            });
-
             const todayDate = new Date().toLocaleDateString(); 
-
             let allRecords = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
             let existingRecord = allRecords.find(r => r.dateKey === todayDate && r.event === eventType);
 
-            if (existingRecord) {
-                existingRecord.presents = (existingRecord.presents || []).filter(p => p.officer !== selectedGM);
-                existingRecord.presents = existingRecord.presents.concat(updatedDivisionPresents);
-                
-                existingRecord.solPool = totalSolPool;
-                existingRecord.timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            } else {
-                allRecords.unshift({
+            if (!existingRecord) {
+                existingRecord = {
                     dateKey: todayDate,
                     timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
                     event: eventType,
                     solPool: totalSolPool,
-                    presents: updatedDivisionPresents
-                });
+                    presents: []
+                };
+                allRecords.unshift(existingRecord);
             }
+
+            let acknowledgedMains = new Set(existingRecord.presents.map(p => p.name.toLowerCase()));
+
+            selects.forEach(sel => {
+                const status = sel.value;
+                const mainChar = sel.getAttribute('data-main');
+                const loggedChar = sel.getAttribute('data-name');
+
+                if (status === 'Present' || status === 'Late') {
+                    if (!acknowledgedMains.has(mainChar.toLowerCase())) {
+                        acknowledgedMains.add(mainChar.toLowerCase());
+                        
+                        // AUTOMATIC CROSS-GUILD ROUTING: Credit to Main Character's registered Guild!
+                        let registeredMainGuild = findMainGuildDivision(mainChar);
+                        let creditedOfficer = registeredMainGuild ? registeredMainGuild : currentCheckingGM;
+
+                        existingRecord.presents.push({
+                            name: mainChar,
+                            loggedIgn: loggedChar,
+                            officer: creditedOfficer
+                        });
+                    }
+                }
+            });
+
+            existingRecord.solPool = totalSolPool;
+            existingRecord.timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
             cloudAttendanceHistory = allRecords;
             if (window.database) {
                 await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), allRecords);
             }
 
-            alert(`🎉 Attendance status updated for ${selectedGM}! Strictly 1 share calculated per Main Character.`);
+            alert(`🎉 Attendance updated! Any Present Dummies were automatically routed and credited as 1 Share under their Main Character's registered Guild.`);
             closeAdminModal();
             renderAttendanceHistory();
         }
@@ -1743,9 +1760,9 @@
                 let formattedMembersHTML = '';
                 if (totalPresent > 0) {
                     for (let divName in groupedByDivision) {
-                        formattedMembersHTML += `<div class="division-group-title">👑 ${divName} (${groupedByDivision[divName].length} Mains):</div><br>`;
+                        formattedMembersHTML += `<div class="division-group-title">👑 ${divName} (${groupedByDivision[divName].length} Mains Credited):</div><br>`;
                         groupedByDivision[divName].forEach(pObj => {
-                            let altNote = (pObj.loggedIgn && pObj.loggedIgn.toLowerCase() !== pObj.name.toLowerCase()) ? ` <small style="color:#ffaa33;">(Logged via ${pObj.loggedIgn})</small>` : '';
+                            let altNote = (pObj.loggedIgn && pObj.loggedIgn.toLowerCase() !== pObj.name.toLowerCase()) ? ` <small style="color:#ffaa33;">(Attended via Dummy ${pObj.loggedIgn})</small>` : '';
                             formattedMembersHTML += `💎 <strong>${pObj.name}</strong>${altNote} — <span style="color:var(--primary-glow);">${solPerMember} SOL</span><br>`;
                         });
                         formattedMembersHTML += `<div style="margin-bottom:6px;"></div>`;
