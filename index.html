@@ -54,7 +54,7 @@
             cursor: url('https://muonline.webzen.com/Cont/images/common/cursor.cur'), auto !important;
         }
 
-        a, button, .server-logo-link, #music-control, .rotating-alliance-badge, .roster-toggle-btn, .admin-collapsible-btn {
+        a, button, .server-logo-link, #music-control, .rotating-alliance-badge, .roster-toggle-btn, .admin-collapsible-btn, .modal-win-btn {
             cursor: url('https://muonline.webzen.com/Cont/images/common/cursor_select.cur'), pointer !important;
         }
 
@@ -904,207 +904,219 @@
             </div>
         </div>
 
-        <!-- AUTHORIZED OFFICER PORTAL -->
+        <!-- AUTHORIZED OFFICER PORTAL WITH MINIMIZE / MAXIMIZE WINDOW CONTROLS -->
         <div id="attendance-admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center;">
-            <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 680px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto;">
-                <h3 style="color: var(--primary-glow); margin-bottom: 5px;">🔒 Authorized Officer Portal</h3>
-                <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">Officer</strong></p>
-
-                <!-- SECTION 1: SUPERADMIN INBOX -->
-                <div id="superadmin-inbox-block" class="admin-section-block" style="display: none;">
-                    <button onclick="toggleAdminSection('sec-inbox')" class="admin-collapsible-btn">
-                        <span>📬 SuperAdmin Inbox (Password Reset Requests)</span>
-                        <span id="icon-sec-inbox">▼ Expand</span>
-                    </button>
-                    <div id="sec-inbox" class="admin-collapsible-content">
-                        <div id="superadmin-inbox-list" style="max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
-                            <span style="color: var(--text-dim);">Walang nakareserbang ticket sa inbox.</span>
-                        </div>
+            <div id="admin-modal-card" style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 680px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto; position: relative; transition: all 0.3s ease;">
+                
+                <!-- WINDOW HEADER CONTROLS (MINIMIZE & CLOSE) -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(230,184,0,0.3); padding-bottom: 8px; margin-bottom: 12px;">
+                    <h3 style="color: var(--primary-glow); margin: 0; font-size: 1.1rem;">🔒 Authorized Officer Portal</h3>
+                    <div style="display: flex; gap: 6px;">
+                        <button onclick="toggleMinimizeAdminModal()" id="modal-min-btn" class="modal-win-btn" title="Minimize / Restore" style="background: #333; border: 1px solid var(--primary); color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: bold; font-size: 0.8rem;">➖</button>
+                        <button onclick="closeAdminModal()" class="modal-win-btn" title="Close" style="background: #8b0000; border: 1px solid #ff3333; color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: bold; font-size: 0.8rem;">✖</button>
                     </div>
                 </div>
 
-                <!-- SUPERADMIN EXCLUSIVE PANEL: MULTI-DUMMY INPUT MAPPER -->
-                <div id="superadmin-main-dummy-block" class="admin-section-block" style="display: none;">
-                    <button onclick="toggleAdminSection('sec-main-dummy-linker')" class="admin-collapsible-btn">
-                        <span>🎭 SuperAdmin: Multi-Dummy Character Mapper (Link Dummies to Main)</span>
-                        <span id="icon-sec-main-dummy-linker">▼ Expand</span>
-                    </button>
-                    <div id="sec-main-dummy-linker" class="admin-collapsible-content">
-                        <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
-                            I-type ang <strong>Main Character IGN</strong> at ilagay sa mga boxes ang kanyang <strong>Dummy Accounts</strong>. Magiging <strong>naka-link</strong> lamang sila sa Main pero **mananatili (stay) sila sa kani-kanilang kasalukuyang Guild/Division**.
-                        </p>
-                        
-                        <!-- MAIN IGN FIELD -->
-                        <div style="margin-bottom: 12px; background: rgba(51,204,51,0.1); padding: 10px; border: 1px solid #33cc33; border-radius: 6px;">
-                            <label style="font-size: 0.8rem; color: #33cc33; font-weight: bold;">👑 Main Character IGN:</label>
-                            <input type="text" id="type-main-ign" placeholder="e.g. Eremes" style="width: 100%; padding: 8px; background: #111; border: 1px solid #33cc33; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
-                        </div>
+                <!-- MODAL BODY CONTENT CONTAINER -->
+                <div id="admin-modal-body-content">
+                    <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">Officer</strong></p>
 
-                        <!-- MULTI DUMMY BOXES GRID -->
-                        <label style="font-size: 0.8rem; color: #ffaa33; font-weight: bold;">🎭 Dummy / Alt Character Accounts:</label>
-                        <div id="dummy-boxes-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; margin-bottom: 10px; max-height: 220px; overflow-y: auto; padding-right: 5px;">
-                            <input type="text" class="dummy-input-field" placeholder="Dummy 1 (e.g. Kreios)" style="padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;">
-                            <input type="text" class="dummy-input-field" placeholder="Dummy 2 (e.g. Papaliciou)" style="padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;">
-                            <input type="text" class="dummy-input-field" placeholder="Dummy 3" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
-                            <input type="text" class="dummy-input-field" placeholder="Dummy 4" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
-                        </div>
-
-                        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-                            <button onclick="addMoreDummyBox()" class="btn" style="padding: 5px 12px; font-size: 0.75rem; background: #333; border-color: #777;">➕ Add More Dummy Box</button>
-                        </div>
-
-                        <button onclick="saveSuperAdminMultiLinkage()" class="btn" style="padding: 8px 14px; font-size: 0.85rem; width: 100%; background: linear-gradient(135deg, #8b0000, #ffaa33); color: #000;">🔗 Link Dummies to Main (Keep Current Guild Position)</button>
-                    </div>
-                </div>
-
-                <!-- SUPERADMIN EXCLUSIVE: DELETE PAST ATTENDANCE LOGS -->
-                <div id="superadmin-delete-logs-block" class="admin-section-block" style="display: none;">
-                    <button onclick="toggleAdminSection('sec-delete-attendance')" class="admin-collapsible-btn">
-                        <span>🗑️ SuperAdmin: Delete Past Attendance Logs</span>
-                        <span id="icon-sec-delete-attendance">▼ Expand</span>
-                    </button>
-                    <div id="sec-delete-attendance" class="admin-collapsible-content">
-                        <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
-                            Pumili ng nakalipas na attendance log mula sa listahan sa ibaba at i-click ang <strong>❌ Delete Log</strong> para tuluyang mabura ito sa database.
-                        </p>
-                        <div id="admin-attendance-logs-list" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
-                            <span style="color: var(--text-dim);">Walang nakareserbang attendance logs.</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SECTION 2: SUPERADMIN GUILD REGISTRATION -->
-                <div id="superadmin-guild-reg-block" class="admin-section-block" style="display: none;">
-                    <button onclick="toggleAdminSection('sec-guild-reg')" class="admin-collapsible-btn">
-                        <span>🏰 SuperAdmin: Register New Alliance & Guild Master</span>
-                        <span id="icon-sec-guild-reg">▼ Expand</span>
-                    </button>
-                    <div id="sec-guild-reg" class="admin-collapsible-content">
-                        <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">Note: Ang **Guild Name** ay awtomatikong magiging **Username** din ng bagong Guild Master.</p>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-                            <input type="text" id="reg-guild-name" placeholder="Guild Name & Username (e.g., SPIDEY)" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem; grid-column: span 2;">
-                            <input type="password" id="reg-gm-password" placeholder="GM Account Password" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                            <select id="reg-gm-class" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                                <option value="Blade Master">GM Class: Blade Master</option>
-                                <option value="Dark Lord">GM Class: Dark Lord</option>
-                                <option value="Summoner">GM Class: Summoner</option>
-                                <option value="Soul Master">GM Class: Soul Master</option>
-                                <option value="Elf">GM Class: Elf</option>
-                                <option value="Dimension Master">GM Class: Dimension Master</option>
-                            </select>
-                            <input type="text" id="reg-gm-question" placeholder="Secret Recovery Question" style="grid-column: span 2; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                            <input type="text" id="reg-gm-answer" placeholder="Secret Question Answer" style="grid-column: span 2; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                        </div>
-                        <button onclick="registerAllianceAndGM()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%; background: linear-gradient(135deg, #0055ff, #002288);">🚀 Create Guild & Register Guild Master</button>
-                    </div>
-                </div>
-
-                <!-- SECTION 3: OFFICER ACCOUNT & PASSWORDS & CHANGE USERNAME -->
-                <div class="admin-section-block">
-                    <button onclick="toggleAdminSection('sec-account-settings')" class="admin-collapsible-btn">
-                        <span>⚙️ Account Settings, Username & Password Manager</span>
-                        <span id="icon-sec-account-settings">▼ Expand</span>
-                    </button>
-                    <div id="sec-account-settings" class="admin-collapsible-content">
-                        
-                        <div style="margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px dashed rgba(230,184,0,0.3);">
-                            <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">✏️ Change My Username:</h4>
-                            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
-                                <input type="text" id="change-username-new" placeholder="Enter New Guild Username" style="flex: 1; min-width: 150px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                    <!-- SECTION 1: SUPERADMIN INBOX -->
+                    <div id="superadmin-inbox-block" class="admin-section-block" style="display: none;">
+                        <button onclick="toggleAdminSection('sec-inbox')" class="admin-collapsible-btn">
+                            <span>📬 SuperAdmin Inbox (Password Reset Requests)</span>
+                            <span id="icon-sec-inbox">▼ Expand</span>
+                        </button>
+                        <div id="sec-inbox" class="admin-collapsible-content">
+                            <div id="superadmin-inbox-list" style="max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
+                                <span style="color: var(--text-dim);">Walang nakareserbang ticket sa inbox.</span>
                             </div>
-                            <button onclick="changeMyUsername()" class="btn" style="padding: 6px 14px; font-size: 0.75rem; width: 100%; background: linear-gradient(135deg, #0088cc, #004488);">✏️ Update My Username</button>
-                        </div>
-
-                        <div style="margin-bottom: 15px;">
-                            <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">🔑 Change My Password:</h4>
-                            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
-                                <input type="password" id="change-pass-current" placeholder="Current Password" style="flex: 1; min-width: 130px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                                <input type="password" id="change-pass-new" placeholder="New Password" style="flex: 1; min-width: 130px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                            </div>
-                            <button onclick="changeMyPassword()" class="btn" style="padding: 6px 14px; font-size: 0.75rem; width: 100%;">⚙️ Update My Password</button>
-                        </div>
-
-                        <div id="superadmin-override-box" style="display: none; border-top: 1px dashed rgba(230,184,0,0.3); padding-top: 10px;">
-                            <h4 style="color: #ffaa33; font-size: 0.85rem; margin-bottom: 6px;">⚡ SuperAdmin Officer Password Direct Override:</h4>
-                            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
-                                <select id="superadmin-target-officer" style="padding: 8px; background: #111; border: 1px solid #555; color: var(--primary-glow); border-radius: 4px; font-size: 0.85rem;">
-                                </select>
-                                <input type="text" id="superadmin-override-pass" placeholder="New Password for Officer" style="flex: 1; min-width: 140px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                            </div>
-                            <button onclick="superadminChangePassword()" class="btn" style="padding: 6px 14px; font-size: 0.75rem; width: 100%; background: linear-gradient(135deg, #8b0000, #ffaa33); color: #000;">⚡ Directly Override Password</button>
                         </div>
                     </div>
-                </div>
 
-                <!-- SECTION 4: MEMBER MANAGEMENT & ATTENDANCE -->
-                <div class="admin-section-block">
-                    <button onclick="toggleAdminSection('sec-attendance-roster')" class="admin-collapsible-btn">
-                        <span>📋 Member Management & Anti-Double Compensation Attendance</span>
-                        <span id="icon-sec-attendance-roster">▲ Hide</span>
-                    </button>
-                    <div id="sec-attendance-roster" class="admin-collapsible-content" style="display: block;">
-                        <div style="margin-bottom: 12px;">
-                            <label style="font-size: 0.85rem; color: var(--primary-glow);">Select Division / Guild to Manage:</label>
-                            <select id="admin-officer-select" onchange="onDivisionChange()" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: var(--primary-glow); border-radius: 4px; font-weight: bold;">
-                            </select>
+                    <!-- SUPERADMIN EXCLUSIVE PANEL: MULTI-DUMMY INPUT MAPPER -->
+                    <div id="superadmin-main-dummy-block" class="admin-section-block" style="display: none;">
+                        <button onclick="toggleAdminSection('sec-main-dummy-linker')" class="admin-collapsible-btn">
+                            <span>🎭 SuperAdmin: Multi-Dummy Character Mapper (Link Dummies to Main)</span>
+                            <span id="icon-sec-main-dummy-linker">▼ Expand</span>
+                        </button>
+                        <div id="sec-main-dummy-linker" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
+                                I-type ang <strong>Main Character IGN</strong> at ilagay sa mga boxes ang kanyang <strong>Dummy Accounts</strong>. Magiging <strong>naka-link</strong> lamang sila sa Main pero **mananatili (stay) sila sa kani-kanilang kasalukuyang Guild/Division**.
+                            </p>
+                            
+                            <!-- MAIN IGN FIELD -->
+                            <div style="margin-bottom: 12px; background: rgba(51,204,51,0.1); padding: 10px; border: 1px solid #33cc33; border-radius: 6px;">
+                                <label style="font-size: 0.8rem; color: #33cc33; font-weight: bold;">👑 Main Character IGN:</label>
+                                <input type="text" id="type-main-ign" placeholder="e.g. Eremes" style="width: 100%; padding: 8px; background: #111; border: 1px solid #33cc33; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
+                            </div>
+
+                            <!-- MULTI DUMMY BOXES GRID -->
+                            <label style="font-size: 0.8rem; color: #ffaa33; font-weight: bold;">🎭 Dummy / Alt Character Accounts:</label>
+                            <div id="dummy-boxes-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; margin-bottom: 10px; max-height: 220px; overflow-y: auto; padding-right: 5px;">
+                                <input type="text" class="dummy-input-field" placeholder="Dummy 1 (e.g. Kreios)" style="padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                                <input type="text" class="dummy-input-field" placeholder="Dummy 2 (e.g. Papaliciou)" style="padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                                <input type="text" class="dummy-input-field" placeholder="Dummy 3" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                                <input type="text" class="dummy-input-field" placeholder="Dummy 4" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                            </div>
+
+                            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                                <button onclick="addMoreDummyBox()" class="btn" style="padding: 5px 12px; font-size: 0.75rem; background: #333; border-color: #777;">➕ Add More Dummy Box</button>
+                            </div>
+
+                            <button onclick="saveSuperAdminMultiLinkage()" class="btn" style="padding: 8px 14px; font-size: 0.85rem; width: 100%; background: linear-gradient(135deg, #8b0000, #ffaa33); color: #000;">🔗 Link Dummies to Main (Keep Current Guild Position)</button>
                         </div>
+                    </div>
 
-                        <!-- PANEL 1: ADD NEW MEMBER ONLY -->
-                        <div style="margin-bottom: 15px; padding: 12px; background: rgba(230, 184, 0, 0.05); border: 1px solid var(--border-gold); border-radius: 6px;">
-                            <h4 style="color: var(--primary-glow); font-size: 0.9rem; margin-bottom: 8px;">➕ Register New Guild Member</h4>
+                    <!-- SUPERADMIN EXCLUSIVE: DELETE PAST ATTENDANCE LOGS -->
+                    <div id="superadmin-delete-logs-block" class="admin-section-block" style="display: none;">
+                        <button onclick="toggleAdminSection('sec-delete-attendance')" class="admin-collapsible-btn">
+                            <span>🗑️ SuperAdmin: Delete Past Attendance Logs</span>
+                            <span id="icon-sec-delete-attendance">▼ Expand</span>
+                        </button>
+                        <div id="sec-delete-attendance" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
+                                Pumili ng nakalipas na attendance log mula sa listahan sa ibaba at i-click ang <strong>❌ Delete Log</strong> para tuluyang mabura ito sa database.
+                            </p>
+                            <div id="admin-attendance-logs-list" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
+                                <span style="color: var(--text-dim);">Walang nakareserbang attendance logs.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 2: SUPERADMIN GUILD REGISTRATION -->
+                    <div id="superadmin-guild-reg-block" class="admin-section-block" style="display: none;">
+                        <button onclick="toggleAdminSection('sec-guild-reg')" class="admin-collapsible-btn">
+                            <span>🏰 SuperAdmin: Register New Alliance & Guild Master</span>
+                            <span id="icon-sec-guild-reg">▼ Expand</span>
+                        </button>
+                        <div id="sec-guild-reg" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">Note: Ang **Guild Name** ay awtomatikong magiging **Username** din ng bagong Guild Master.</p>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-                                <input type="text" id="new-member-ign" placeholder="IGN Member Name" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                                <select id="new-member-class" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                                    <option value="Blade Master">Blade Master</option>
-                                    <option value="Dark Lord">Dark Lord</option>
-                                    <option value="Summoner">Summoner</option>
-                                    <option value="Soul Master">Soul Master</option>
-                                    <option value="Elf">Elf</option>
-                                    <option value="Dimension Master">Dimension Master</option>
+                                <input type="text" id="reg-guild-name" placeholder="Guild Name & Username (e.g., SPIDEY)" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem; grid-column: span 2;">
+                                <input type="password" id="reg-gm-password" placeholder="GM Account Password" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                <select id="reg-gm-class" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                    <option value="Blade Master">GM Class: Blade Master</option>
+                                    <option value="Dark Lord">GM Class: Dark Lord</option>
+                                    <option value="Summoner">GM Class: Summoner</option>
+                                    <option value="Soul Master">GM Class: Soul Master</option>
+                                    <option value="Elf">GM Class: Elf</option>
+                                    <option value="Dimension Master">GM Class: Dimension Master</option>
+                                </select>
+                                <input type="text" id="reg-gm-question" placeholder="Secret Recovery Question" style="grid-column: span 2; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                <input type="text" id="reg-gm-answer" placeholder="Secret Question Answer" style="grid-column: span 2; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                            </div>
+                            <button onclick="registerAllianceAndGM()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%; background: linear-gradient(135deg, #0055ff, #002288);">🚀 Create Guild & Register Guild Master</button>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 3: OFFICER ACCOUNT & PASSWORDS & CHANGE USERNAME -->
+                    <div class="admin-section-block">
+                        <button onclick="toggleAdminSection('sec-account-settings')" class="admin-collapsible-btn">
+                            <span>⚙️ Account Settings, Username & Password Manager</span>
+                            <span id="icon-sec-account-settings">▼ Expand</span>
+                        </button>
+                        <div id="sec-account-settings" class="admin-collapsible-content">
+                            
+                            <div style="margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px dashed rgba(230,184,0,0.3);">
+                                <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">✏️ Change My Username:</h4>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                                    <input type="text" id="change-username-new" placeholder="Enter New Guild Username" style="flex: 1; min-width: 150px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                </div>
+                                <button onclick="changeMyUsername()" class="btn" style="padding: 6px 14px; font-size: 0.75rem; width: 100%; background: linear-gradient(135deg, #0088cc, #004488);">✏️ Update My Username</button>
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">🔑 Change My Password:</h4>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                                    <input type="password" id="change-pass-current" placeholder="Current Password" style="flex: 1; min-width: 130px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                    <input type="password" id="change-pass-new" placeholder="New Password" style="flex: 1; min-width: 130px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                </div>
+                                <button onclick="changeMyPassword()" class="btn" style="padding: 6px 14px; font-size: 0.75rem; width: 100%;">⚙️ Update My Password</button>
+                            </div>
+
+                            <div id="superadmin-override-box" style="display: none; border-top: 1px dashed rgba(230,184,0,0.3); padding-top: 10px;">
+                                <h4 style="color: #ffaa33; font-size: 0.85rem; margin-bottom: 6px;">⚡ SuperAdmin Officer Password Direct Override:</h4>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                                    <select id="superadmin-target-officer" style="padding: 8px; background: #111; border: 1px solid #555; color: var(--primary-glow); border-radius: 4px; font-size: 0.85rem;">
+                                    </select>
+                                    <input type="text" id="superadmin-override-pass" placeholder="New Password for Officer" style="flex: 1; min-width: 140px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                </div>
+                                <button onclick="superadminChangePassword()" class="btn" style="padding: 6px 14px; font-size: 0.75rem; width: 100%; background: linear-gradient(135deg, #8b0000, #ffaa33); color: #000;">⚡ Directly Override Password</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 4: MEMBER MANAGEMENT & ATTENDANCE -->
+                    <div class="admin-section-block">
+                        <button onclick="toggleAdminSection('sec-attendance-roster')" class="admin-collapsible-btn">
+                            <span>📋 Member Management & Anti-Double Compensation Attendance</span>
+                            <span id="icon-sec-attendance-roster">▲ Hide</span>
+                        </button>
+                        <div id="sec-attendance-roster" class="admin-collapsible-content" style="display: block;">
+                            <div style="margin-bottom: 12px;">
+                                <label style="font-size: 0.85rem; color: var(--primary-glow);">Select Division / Guild to Manage:</label>
+                                <select id="admin-officer-select" onchange="onDivisionChange()" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: var(--primary-glow); border-radius: 4px; font-weight: bold;">
                                 </select>
                             </div>
-                            <button onclick="registerNewMember()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">➕ Save Member to Roster</button>
-                        </div>
 
-                        <!-- PANEL 2: SEPARATE ACCORDION FOR DELETE MEMBER -->
-                        <div class="admin-section-block" style="margin-bottom: 15px; border-color: rgba(255, 51, 51, 0.4);">
-                            <button onclick="toggleAdminSection('sec-delete-member')" class="admin-collapsible-btn" style="color: #ffaa33; background: rgba(139, 0, 0, 0.2);">
-                                <span>🗑️ Remove / Delete Member from Roster</span>
-                                <span id="icon-sec-delete-member">▼ Expand</span>
-                            </button>
-                            <div id="sec-delete-member" class="admin-collapsible-content">
-                                <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 8px;">
-                                    Mag-ingat sa pag-click. Ang mga naburang miyembro ay mawawala sa talaan ng napiling division.
-                                </p>
-                                <div id="admin-delete-member-list" style="max-height: 140px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px;">
+                            <!-- PANEL 1: ADD NEW MEMBER ONLY -->
+                            <div style="margin-bottom: 15px; padding: 12px; background: rgba(230, 184, 0, 0.05); border: 1px solid var(--border-gold); border-radius: 6px;">
+                                <h4 style="color: var(--primary-glow); font-size: 0.9rem; margin-bottom: 8px;">➕ Register New Guild Member</h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                                    <input type="text" id="new-member-ign" placeholder="IGN Member Name" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                    <select id="new-member-class" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                        <option value="Blade Master">Blade Master</option>
+                                        <option value="Dark Lord">Dark Lord</option>
+                                        <option value="Summoner">Summoner</option>
+                                        <option value="Soul Master">Soul Master</option>
+                                        <option value="Elf">Elf</option>
+                                        <option value="Dimension Master">Dimension Master</option>
+                                    </select>
+                                </div>
+                                <button onclick="registerNewMember()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">➕ Save Member to Roster</button>
+                            </div>
+
+                            <!-- PANEL 2: SEPARATE ACCORDION FOR DELETE MEMBER -->
+                            <div class="admin-section-block" style="margin-bottom: 15px; border-color: rgba(255, 51, 51, 0.4);">
+                                <button onclick="toggleAdminSection('sec-delete-member')" class="admin-collapsible-btn" style="color: #ffaa33; background: rgba(139, 0, 0, 0.2);">
+                                    <span>🗑️ Remove / Delete Member from Roster</span>
+                                    <span id="icon-sec-delete-member">▼ Expand</span>
+                                </button>
+                                <div id="sec-delete-member" class="admin-collapsible-content">
+                                    <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 8px;">
+                                        Mag-ingat sa pag-click. Ang mga naburang miyembro ay mawawala sa talaan ng napiling division.
+                                    </p>
+                                    <div id="admin-delete-member-list" style="max-height: 140px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px;">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div style="margin-bottom: 12px;">
-                            <label style="font-size: 0.85rem;">Event Type:</label>
-                            <select id="admin-event-type" onchange="renderMemberChecklist()" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
-                                <option value="Castle Siege War">Castle Siege War (100,000 SOL Pool)</option>
-                                <option value="Boss Hunt Raid">Boss Hunt Raid</option>
-                                <option value="Guild Event">Guild Event</option>
-                            </select>
-                        </div>
+                            <div style="margin-bottom: 12px;">
+                                <label style="font-size: 0.85rem;">Event Type:</label>
+                                <select id="admin-event-type" onchange="renderMemberChecklist()" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
+                                    <option value="Castle Siege War">Castle Siege War (100,000 SOL Pool)</option>
+                                    <option value="Boss Hunt Raid">Boss Hunt Raid</option>
+                                    <option value="Guild Event">Guild Event</option>
+                                </select>
+                            </div>
 
-                        <div style="margin-bottom: 15px;">
-                            <label style="font-size: 0.85rem;">Prize Pool (SOL):</label>
-                            <input type="number" id="admin-sol-pool" value="100000" style="width: 100%; padding: 8px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
-                        </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="font-size: 0.85rem;">Prize Pool (SOL):</label>
+                                <input type="number" id="admin-sol-pool" value="100000" style="width: 100%; padding: 8px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
+                            </div>
 
-                        <h4 style="color: var(--primary-glow); margin: 15px 0 10px;">Check Member Attendance (Auto Cross-Guild Main Routing Enforced):</h4>
-                        <div id="admin-member-checklist" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; margin-bottom: 15px;">
-                        </div>
+                            <h4 style="color: var(--primary-glow); margin: 15px 0 10px;">Check Member Attendance (Auto Cross-Guild Main Routing Enforced):</h4>
+                            <div id="admin-member-checklist" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+                            </div>
 
-                        <button onclick="saveAttendanceEntry()" class="btn" style="width: 100%;">Submit Attendance</button>
+                            <button onclick="saveAttendanceEntry()" class="btn" style="width: 100%;">Submit Attendance</button>
+                        </div>
                     </div>
-                </div>
 
-                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px;">
-                    <button onclick="closeAdminModal()" class="btn" style="background: #444;">Close Portal</button>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px;">
+                        <button onclick="closeAdminModal()" class="btn" style="background: #444;">Close Portal</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1573,6 +1585,23 @@
             }
         }
 
+        /* TOGGLE MINIMIZE / MAXIMIZE FOR ADMIN PORTAL MODAL */
+        function toggleMinimizeAdminModal() {
+            const bodyContent = document.getElementById('admin-modal-body-content');
+            const minBtn = document.getElementById('modal-min-btn');
+            const modalCard = document.getElementById('admin-modal-card');
+
+            if (bodyContent.style.display === "none") {
+                bodyContent.style.display = "block";
+                minBtn.innerText = "➖";
+                modalCard.style.maxHeight = "85vh";
+            } else {
+                bodyContent.style.display = "none";
+                minBtn.innerText = "🗖";
+                modalCard.style.maxHeight = "auto";
+            }
+        }
+
         function addMoreDummyBox() {
             const container = document.getElementById('dummy-boxes-container');
             const totalCurrent = container.querySelectorAll('.dummy-input-field').length;
@@ -1584,7 +1613,7 @@
             container.appendChild(newInput);
         }
 
-        /* SUPERADMIN SAVE MULTI-DUMMY LINKAGE ONLY (NO GUILD MIGRATION) */
+        /* SUPERADMIN SAVE MULTI-DUMMY LINKAGE ONLY */
         async function saveSuperAdminMultiLinkage() {
             if (currentLoggedInOfficer !== "Fullclip" && currentLoggedInOfficer !== "kultura") return;
 
@@ -1611,7 +1640,6 @@
 
             let data = getGuildData();
             
-            // Verify Main Character exists anywhere in roster
             let mainFound = false;
             for (let divKey in data) {
                 if (data[divKey].some(m => m.name.toLowerCase() === mainIgn.toLowerCase())) {
@@ -1628,7 +1656,6 @@
             let linkedCount = 0;
             let missingDummies = [];
 
-            // Directly link dummy accounts without moving them from their current guild
             dummyList.forEach(dummyIgn => {
                 let foundDummyObj = null;
 
@@ -1752,7 +1779,7 @@
             return null;
         }
 
-        /* ATTENDANCE ENTRY FIX: STANDARDIZED DATE & ABSENT CLEAN-UP RE-RENDER */
+        /* ATTENDANCE ENTRY FIX: HINDI NA AUTOMATIC MAG-CLOSE/LOG OUT ANG MODAL */
         async function saveAttendanceEntry() {
             if (!currentLoggedInOfficer) return;
 
@@ -1816,8 +1843,9 @@
             renderAttendanceHistory();
             renderAdminAttendanceLogList();
             updateLiveActiveWarriors();
-            alert(`🎉 Live Attendance Updated! Na-sync na agad ang mga pagbabago sa Live Log at Stat Box.`);
-            closeAdminModal();
+            
+            // MANATILING BUKAS ANG PORTAL (HINDI NA NAG-CLOSE) PARA SA CONTINUOUS CHECKING
+            alert(`🎉 Live Attendance Updated successfully! Nakasave na ang attendance at nananatiling bukas ang portal para sa inyo.`);
         }
 
         /* PUBLIC ATTENDANCE LOG DISPLAY OUTPUT */
@@ -2164,6 +2192,10 @@
             }
 
             onDivisionChange();
+            
+            // Siguraduhing naka-restore/maximize state kapag binuksan ang modal
+            document.getElementById('admin-modal-body-content').style.display = 'block';
+            document.getElementById('modal-min-btn').innerText = "➖";
             document.getElementById('attendance-admin-modal').style.display = 'flex';
         }
 
@@ -2254,7 +2286,7 @@
                 members.forEach(m => {
                     const cssClass = getClassCss(m.class);
                     let isDummy = m.mainOwner && m.mainOwner.toLowerCase() !== m.name.toLowerCase();
-                    let displayName = m.name; // Keep character's own name on display in roster
+                    let displayName = m.name;
                     let altTag = isDummy ? ` <small style="color:#ffaa33; font-weight:bold;">[Dummy of ${m.mainOwner}]</small>` : '';
                     
                     membersHTML += `
