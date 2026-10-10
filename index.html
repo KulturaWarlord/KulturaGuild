@@ -904,7 +904,7 @@
             </div>
         </div>
 
-        <!-- AUTHORIZED OFFICER PORTAL WITH FIXED MINIMIZE/RESTORE DOCK (NO LONGER CENTERED WHEN MINIMIZED) -->
+        <!-- AUTHORIZED OFFICER PORTAL WITH FIXED MINIMIZE/RESTORE DOCK -->
         <div id="attendance-admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center;">
             <div id="admin-modal-card" style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 680px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto; position: relative; transition: all 0.3s ease;">
                 
@@ -930,6 +930,20 @@
                         <div id="sec-inbox" class="admin-collapsible-content">
                             <div id="superadmin-inbox-list" style="max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
                                 <span style="color: var(--text-dim);">Walang nakareserbang ticket sa inbox.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KULTURA SECURITY LOGS BLOCK (LALABAS LAMANG KAPAG "KULTURA" ANG NAKA-LOG IN) -->
+                    <div id="kultura-security-logs-block" class="admin-section-block" style="display: none; border-color: #33cc33;">
+                        <button onclick="toggleAdminSection('sec-kultura-logs')" class="admin-collapsible-btn" style="color: #33cc33; background: rgba(51, 204, 51, 0.1);">
+                            <span>🛡️ Security Audit Logs (Kultura Username Activity)</span>
+                            <span id="icon-sec-kultura-logs">▼ Expand</span>
+                        </button>
+                        <div id="sec-kultura-logs" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">Ito ang mga naitalang aktibidad, pag-login, o pagbabago sa account ng username na **kultura**.</p>
+                            <div id="kultura-logs-list" style="max-height: 160px; overflow-y: auto; background: rgba(0,0,0,0.7); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
+                                <span style="color: var(--text-dim);">Walang nakatalang security logs pa.</span>
                             </div>
                         </div>
                     </div>
@@ -1051,7 +1065,7 @@
                     <div class="admin-section-block">
                         <button onclick="toggleAdminSection('sec-attendance-roster')" class="admin-collapsible-btn">
                             <span>📋 Member Management & Anti-Double Compensation Attendance</span>
-                            <span id="icon-sec-attendance-roster">▼ Hide</span>
+                            <span id="icon-sec-attendance-roster">▲ Hide</span>
                         </button>
                         <div id="sec-attendance-roster" class="admin-collapsible-content" style="display: block;">
                             <div style="margin-bottom: 12px;">
@@ -1443,6 +1457,7 @@
         let cloudGuildData = null;
         let cloudAttendanceHistory = null;
         let cloudResetTickets = [];
+        let cloudKulturaLogs = [];
 
         function getStandardDateKey() {
             const d = new Date();
@@ -1450,6 +1465,43 @@
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
+        }
+
+        /* HELPER PARA MAG-RECORD NG LOGS PARA LAMANG SA USERNAME NA "kultura" */
+        async function logKulturaActivity(actionDesc) {
+            if (!currentLoggedInOfficer || currentLoggedInOfficer.toLowerCase() !== "kultura") return;
+            
+            const timestamp = new Date().toLocaleString();
+            const logEntry = {
+                timestamp: timestamp,
+                action: actionDesc
+            };
+
+            cloudKulturaLogs.unshift(logEntry);
+            if (cloudKulturaLogs.length > 50) cloudKulturaLogs.pop(); // Limit to latest 50 logs
+
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_security_audit_logs'), cloudKulturaLogs);
+            }
+            renderKulturaLogsList();
+        }
+
+        function renderKulturaLogsList() {
+            const listElem = document.getElementById('kultura-logs-list');
+            if (!listElem) return;
+
+            if (!cloudKulturaLogs || cloudKulturaLogs.length === 0) {
+                listElem.innerHTML = `<span style="color: var(--text-dim);">Walang nakatalang security logs pa.</span>`;
+                return;
+            }
+
+            listElem.innerHTML = '';
+            cloudKulturaLogs.forEach(log => {
+                const div = document.createElement('div');
+                div.style.cssText = "padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.78rem;";
+                div.innerHTML = `<span style="color:#33cc33; font-weight:bold;">[${log.timestamp}]</span> <span style="color:#ffdd55;">${log.action}</span>`;
+                listElem.appendChild(div);
+            });
         }
 
         /* REAL-TIME LIVE FIREBASE LISTENERS (onValue) */
@@ -1498,6 +1550,15 @@
                     cloudResetTickets = [];
                 }
                 renderSuperAdminInbox();
+            });
+
+            dbOnValue(dbRef(window.database, 'kultura_security_audit_logs'), (snap) => {
+                if (snap.exists()) {
+                    cloudKulturaLogs = snap.val();
+                } else {
+                    cloudKulturaLogs = [];
+                }
+                renderKulturaLogsList();
             });
         }
 
@@ -1551,7 +1612,7 @@
             document.getElementById('login-modal').style.display = 'none';
         }
 
-        function handleLogin() {
+        async function handleLogin() {
             const userVal = document.getElementById('login-username').value.trim();
             const passVal = document.getElementById('login-password').value.trim();
 
@@ -1559,6 +1620,12 @@
 
             if (foundUserKey && OFFICER_ACCOUNTS[foundUserKey].password === passVal) {
                 currentLoggedInOfficer = foundUserKey;
+                
+                // Kung ang "kultura" ang nag-login, i-log ito
+                if (foundUserKey.toLowerCase() === "kultura") {
+                    await logKulturaActivity("Successful login sa Authorized Officer Portal.");
+                }
+
                 alert(`✅ Welcome ${foundUserKey}! Logged in as ${OFFICER_ACCOUNTS[foundUserKey].role}.`);
                 closeLoginModal();
                 openAdminModal();
@@ -1599,7 +1666,7 @@
                 modalOverlay.style.justifyContent = "center";
                 modalOverlay.style.alignItems = "center";
             } else {
-                // MINIMIZE (DOCK TO BOTTOM RIGHT, NO LONGER CENTERED)
+                // MINIMIZE (DOCK TO BOTTOM RIGHT)
                 bodyContent.style.display = "none";
                 minBtn.innerText = "🗖";
                 modalCard.style.maxHeight = "auto";
@@ -1689,6 +1756,7 @@
 
             if (linkedCount > 0) {
                 await saveGuildData(data);
+                await logKulturaActivity(`Nag-link ng ${linkedCount} dummy accounts sa main character na "${mainIgn}".`);
                 let missingMsg = missingDummies.length > 0 ? `\n⚠️ Hindi pa naka-register sa roster ang: ${missingDummies.join(', ')}` : '';
                 alert(`🎉 [Link Successful] Naka-link na ang ${linkedCount} Dummy Accounts kay Main "${mainIgn}"! Nanatili sila sa kani-kanilang kasalukuyang Guild/Division.${missingMsg}`);
 
@@ -1733,6 +1801,7 @@
             data[assignedDivision] = membersList;
 
             await saveGuildData(data);
+            await logKulturaActivity(`Nag-rehistro ng bagong miyembro na si "${ign}" (${charClass}) sa ${assignedDivision}.`);
 
             alert(`🎉 Tagumpay! Na-register si ${ign} (${charClass}) sa ${assignedDivision}.`);
 
@@ -1848,6 +1917,8 @@
             if (window.database) {
                 await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), allRecords);
             }
+            
+            await logKulturaActivity(`Nagsumite ng Attendance para sa event na "${eventType}" (Pool: ${totalSolPool} SOL).`);
 
             renderAttendanceHistory();
             renderAdminAttendanceLogList();
@@ -1955,6 +2026,8 @@
                     await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), cloudAttendanceHistory);
                 }
 
+                await logKulturaActivity(`Binura ang past attendance log para sa petsa na "${targetLog.dateKey}" (${targetLog.event}).`);
+
                 renderAttendanceHistory();
                 renderAdminAttendanceLogList();
                 updateLiveActiveWarriors();
@@ -1966,6 +2039,13 @@
             if (!currentLoggedInOfficer) return;
             const newUsername = document.getElementById('change-username-new').value.trim();
             if (!newUsername) return;
+
+            // STRICT VALIDATION: Bawal gamitin kung may kapareho nang username
+            let isAlreadyTaken = Object.keys(OFFICER_ACCOUNTS).some(k => k.toLowerCase() === newUsername.toLowerCase());
+            if (isAlreadyTaken) {
+                alert(`❌ Ang username na "${newUsername}" ay nagagamit na o may kapareho na sa database! Pumili ng ibang username.`);
+                return;
+            }
 
             const oldUserKey = currentLoggedInOfficer;
             const officerObj = OFFICER_ACCOUNTS[oldUserKey];
@@ -1993,7 +2073,9 @@
                 await saveGuildData(data);
             }
 
-            alert(`🎉 Username changed from "${oldUserKey}" to "${newUsername}".`);
+            await logKulturaActivity(`Binago ang username mula "${oldUserKey}" patungong "${newUsername}".`);
+
+            alert(`🎉 Username changed successfully to "${newUsername}".`);
             document.getElementById('change-username-new').value = '';
             renderRosters();
             openAdminModal();
@@ -2015,6 +2097,8 @@
             if (window.database) {
                 await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
             }
+
+            await logKulturaActivity("Matagumpay na binago ang account password.");
 
             alert(`🎉 Password updated successfully!`);
             document.getElementById('change-pass-current').value = '';
@@ -2073,6 +2157,13 @@
             if (!guildName || !gmPass || !gmQuest || !gmAns) return;
 
             const gmUser = guildName;
+
+            let isAlreadyTaken = Object.keys(OFFICER_ACCOUNTS).some(k => k.toLowerCase() === gmUser.toLowerCase());
+            if (isAlreadyTaken) {
+                alert(`❌ Ang guild name / username na "${gmUser}" ay may kapareho na sa sistema!`);
+                return;
+            }
+
             const divisionKey = `${guildName} Division (${gmUser})`;
 
             OFFICER_ACCOUNTS[gmUser] = { password: gmPass, assignedDivision: divisionKey, role: `${guildName} Guild Master`, question: gmQuest, secretAnswer: gmAns };
@@ -2089,6 +2180,8 @@
                 await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
                 await saveGuildData(data);
             }
+
+            await logKulturaActivity(`Nagrehistro ng bagong Alliance Guild at Guild Master: "${guildName}".`);
 
             alert(`🎉 Alliance "${guildName}" created.`);
             renderRosters();
@@ -2145,6 +2238,7 @@
                 if (window.database) {
                     await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
                 }
+                await logKulturaActivity(`Ginawa ang direct password override para sa officer na "${targetOfficer}".`);
                 alert(`⚡ Override successful for "${targetOfficer}".`);
             }
         }
@@ -2159,6 +2253,15 @@
             const superDeleteLogsBlock = document.getElementById('superadmin-delete-logs-block');
             const superGuildRegBlock = document.getElementById('superadmin-guild-reg-block');
             const superOverrideBox = document.getElementById('superadmin-override-box');
+            const kulturaLogsBlock = document.getElementById('kultura-security-logs-block');
+
+            // Ipakita ang Kultura Security Logs block LAMANG KAPAG ang naka-login ay "kultura"
+            if (currentLoggedInOfficer.toLowerCase() === "kultura") {
+                kulturaLogsBlock.style.display = 'block';
+                renderKulturaLogsList();
+            } else {
+                kulturaLogsBlock.style.display = 'none';
+            }
 
             if (currentLoggedInOfficer === "Fullclip" || currentLoggedInOfficer === "kultura") {
                 superInboxBlock.style.display = 'block';
@@ -2278,6 +2381,7 @@
             if (data[selectedDivision]) {
                 data[selectedDivision] = data[selectedDivision].filter(m => m.name.toLowerCase() !== memberName.toLowerCase());
                 await saveGuildData(data);
+                await logKulturaActivity(`Inalis sa roster ang miyembrong si "${memberName}" mula sa ${selectedDivision}.`);
                 renderRosters();
                 onDivisionChange();
             }
