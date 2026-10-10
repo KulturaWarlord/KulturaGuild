@@ -1142,7 +1142,7 @@
         <p>&copy; 2026 <span>Kultura Guild</span> — NoLimit MU Online Community. All Rights Reserved.</p>
     </footer>
 
-    <!-- Interactive Scripts with Firebase Integration -->
+    <!-- Interactive Scripts with Firebase Integration & Updated Attendance Logic -->
     <script>
         const ALL_DIVISIONS = [
             "Fullclip Division (Fullclip)",
@@ -1522,12 +1522,12 @@
             const totalSolPool = parseFloat(document.getElementById('admin-sol-pool').value) || 100000;
             const selects = document.querySelectorAll('#admin-member-checklist select');
             
-            let presentMembersList = [];
+            let updatedDivisionPresents = [];
             selects.forEach(sel => {
                 const status = sel.value;
                 const name = sel.getAttribute('data-name');
                 if (status === 'Present' || status === 'Late') {
-                    presentMembersList.push({ name: name, officer: selectedGM });
+                    updatedDivisionPresents.push({ name: name, officer: selectedGM });
                 }
             });
 
@@ -1537,18 +1537,19 @@
             let existingRecord = allRecords.find(r => r.dateKey === todayDate && r.event === eventType);
 
             if (existingRecord) {
-                presentMembersList.forEach(newM => {
-                    if (!existingRecord.presents.some(p => p.name === newM.name)) {
-                        existingRecord.presents.push(newM);
-                    }
-                });
+                // Alisin ang lumang listahan ng division na ito at palitan ng bago (para masama ang pagpalit patungong Absent)
+                existingRecord.presents = (existingRecord.presents || []).filter(p => p.officer !== selectedGM);
+                existingRecord.presents = existingRecord.presents.concat(updatedDivisionPresents);
+                
+                existingRecord.solPool = totalSolPool;
+                existingRecord.timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             } else {
                 allRecords.unshift({
                     dateKey: todayDate,
                     timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
                     event: eventType,
                     solPool: totalSolPool,
-                    presents: presentMembersList
+                    presents: updatedDivisionPresents
                 });
             }
 
@@ -1557,7 +1558,7 @@
                 await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), allRecords);
             }
 
-            alert(`🎉 Tagumpay na na-save sa Cloud ni Officer ${currentLoggedInOfficer}! Naisaayos ang attendance para sa ${selectedGM}.`);
+            alert(`🎉 Tagumpay na na-update sa Cloud ni Officer ${currentLoggedInOfficer}! Naisaayos at na-sync na ang status ng ${selectedGM}.`);
             closeAdminModal();
             renderAttendanceHistory();
         }
@@ -1662,7 +1663,6 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            // Initial render fallback if firebase takes a second
             renderRosters();
         });
     </script>
