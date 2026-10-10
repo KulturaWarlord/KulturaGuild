@@ -53,7 +53,7 @@
             cursor: url('https://muonline.webzen.com/Cont/images/common/cursor.cur'), auto !important;
         }
 
-        a, button, .server-logo-link, #music-control, .rotating-alliance-badge, .roster-toggle-btn {
+        a, button, .server-logo-link, #music-control, .rotating-alliance-badge, .roster-toggle-btn, .admin-collapsible-btn {
             cursor: url('https://muonline.webzen.com/Cont/images/common/cursor_select.cur'), pointer !important;
         }
 
@@ -547,6 +547,41 @@
             color: #fff;
         }
 
+        .admin-section-block {
+            margin-bottom: 12px;
+            border: 1px solid var(--border-gold);
+            border-radius: 6px;
+            overflow: hidden;
+            background: rgba(10, 10, 15, 0.6);
+        }
+
+        .admin-collapsible-btn {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            color: var(--primary-glow);
+            padding: 12px 15px;
+            text-align: left;
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .admin-collapsible-btn:hover {
+            background: rgba(230, 184, 0, 0.15);
+        }
+
+        .admin-collapsible-content {
+            display: none;
+            padding: 15px;
+            border-top: 1px solid rgba(230, 184, 0, 0.2);
+            animation: fadeIn 0.3s ease;
+        }
+
         .flame-section {
             background: linear-gradient(145deg, rgba(20, 10, 5, 0.85), rgba(10, 10, 15, 0.95));
             border: 2px solid #ff7700;
@@ -773,24 +808,24 @@
         <!-- ATTENDANCE SYSTEM SECTION -->
         <section id="attendance-system" class="panel" style="margin-bottom: 60px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-gold); padding-bottom: 10px; margin-bottom: 20px;">
-                <h3 style="margin: 0; color: var(--primary);">📋 Live Attendance & SOL Distribution Summary</h3>
+                <h3 style="margin: 0; color: var(--primary);">📋 Live Attendance & Anti-Double Compensation Log</h3>
                 <button onclick="openLoginModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem;">
-                    🔐 Mark Attendance / Add or Delete Member
+                    🔐 Open Authorized Officer Portal
                 </button>
             </div>
 
             <!-- Public Attendance Log -->
             <div>
-                <h4 style="color: var(--primary-glow); margin-bottom: 10px;">Castle Siege Live SOL Shares (Sorted per Division)</h4>
+                <h4 style="color: var(--primary-glow); margin-bottom: 10px;">Castle Siege Live SOL Shares (Strictly 1 Share per Main Character)</h4>
                 <div style="max-height: 400px; overflow-y: auto; background: rgba(0,0,0,0.4); border-radius: 6px; padding: 10px;">
                     <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.85rem;">
                         <thead>
                             <tr style="border-bottom: 1px solid var(--primary); color: var(--primary-glow);">
                                 <th style="padding: 8px;">Date (Event)</th>
-                                <th style="padding: 8px;">Total Present</th>
+                                <th style="padding: 8px;">Total Main Present</th>
                                 <th style="padding: 8px;">SOL Pool</th>
-                                <th style="padding: 8px;">SOL Share / Member</th>
-                                <th style="padding: 8px;">Present Members (Grouped by Division)</th>
+                                <th style="padding: 8px;">SOL Share / Main Member</th>
+                                <th style="padding: 8px;">Acknowledged Main Characters</th>
                             </tr>
                         </thead>
                         <tbody id="public-attendance-history">
@@ -805,11 +840,11 @@
         <div id="login-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10001; justify-content: center; align-items: center;">
             <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 400px; padding: 25px; border-radius: 10px; color: #fff; text-align: center;">
                 <h3 style="color: var(--primary-glow); margin-bottom: 15px;">🔐 Officer Authentication</h3>
-                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Mag-login bilang Guild Master o Officer upang mag-mark ng attendance o mag-manage ng miyembro.</p>
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Mag-login gamit ang inyong Registered Guild Name bilang Username.</p>
                 
                 <div style="margin-bottom: 12px; text-align: left;">
-                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Officer Username:</label>
-                    <input type="text" id="login-username" placeholder="Enter Username" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Registered Guild Username:</label>
+                    <input type="text" id="login-username" placeholder="Enter Registered Guild Name" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
                 </div>
 
                 <div style="margin-bottom: 15px; text-align: left;">
@@ -828,20 +863,20 @@
             </div>
         </div>
 
-        <!-- FORGOT PASSWORD MODAL (Secret Question System) -->
+        <!-- FORGOT PASSWORD MODAL -->
         <div id="forgot-password-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10002; justify-content: center; align-items: center;">
             <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 450px; padding: 25px; border-radius: 10px; color: #fff; text-align: center;">
                 <h3 style="color: var(--primary-glow); margin-bottom: 10px;">🔑 Password Recovery Portal</h3>
-                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Sagutin ang iyong Secret Question upang ma-reset ang iyong Officer Password.</p>
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Sagutin ang Secret Question o mag-iwan ng Ticket sa SuperAdmin.</p>
                 
                 <div style="margin-bottom: 12px; text-align: left;">
-                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Officer Username:</label>
-                    <input type="text" id="reset-username" placeholder="Enter Username (e.g., kultura)" onchange="loadOfficerQuestion()" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Registered Guild Name (Username):</label>
+                    <input type="text" id="reset-username" placeholder="Enter Registered Guild Name" onchange="loadOfficerQuestion()" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
                 </div>
 
                 <div style="margin-bottom: 12px; text-align: left;">
                     <label style="font-size: 0.8rem; color: #33cc33;">Secret Question:</label>
-                    <div id="secret-question-display" style="font-size: 0.85rem; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; color: #fff; margin-top: 3px;">Pumili/Ilagay muna ang Username sa taas...</div>
+                    <div id="secret-question-display" style="font-size: 0.85rem; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; color: #fff; margin-top: 3px;">Ilagay muna ang Guild Username sa taas...</div>
                 </div>
 
                 <div style="margin-bottom: 12px; text-align: left;">
@@ -849,117 +884,208 @@
                     <input type="text" id="reset-secret-answer" placeholder="Enter your Secret Answer" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
                 </div>
 
-                <div style="margin-bottom: 20px; text-align: left;">
+                <div style="margin-bottom: 15px; text-align: left;">
                     <label style="font-size: 0.8rem; color: var(--primary-glow);">Bagong Password (New Password):</label>
                     <input type="password" id="reset-new-password" placeholder="Enter New Password" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
                 </div>
 
-                <div style="display: flex; gap: 10px; justify-content: center;">
+                <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px;">
                     <button onclick="closeForgotPasswordModal()" class="btn" style="background: #444;">Cancel</button>
                     <button onclick="handlePasswordReset()" class="btn">Reset Password</button>
+                </div>
+
+                <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; text-align: left;">
+                    <label style="font-size: 0.75rem; color: #ffaa33;">Nakalimutan mo rin ang Secret Answer? Mag-iwan ng mensahe sa SuperAdmin Inbox:</label>
+                    <textarea id="reset-ticket-msg" placeholder="Mensahe sa SuperAdmin..." style="width: 100%; height: 50px; background: #111; border: 1px solid #555; color: #fff; font-size: 0.75rem; padding: 6px; border-radius: 4px; margin-top: 4px; resize: none;"></textarea>
+                    <button onclick="sendPasswordResetTicket()" class="btn" style="width: 100%; padding: 6px; font-size: 0.75rem; background: linear-gradient(135deg, #8b0000, #ff3333); margin-top: 4px;">📩 Ipadala ang Request sa SuperAdmin Inbox</button>
                 </div>
             </div>
         </div>
 
-        <!-- ADMIN ATTENDANCE & MEMBER REGISTRATION/DELETE MODAL -->
+        <!-- AUTHORIZED OFFICER PORTAL -->
         <div id="attendance-admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center;">
-            <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 650px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto;">
-                <h3 style="color: var(--primary-glow); margin-bottom: 10px;">🔒 Authorized Officer Portal</h3>
+            <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 680px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto;">
+                <h3 style="color: var(--primary-glow); margin-bottom: 5px;">🔒 Authorized Officer Portal</h3>
                 <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">Officer</strong></p>
 
-                <!-- CHANGE PASSWORD PANEL -->
-                <div style="margin-bottom: 15px; padding: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-gold); border-radius: 6px;">
-                    <h4 style="color: var(--primary-glow); font-size: 0.95rem; margin-bottom: 8px;">🔑 Change My Password</h4>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
-                        <input type="password" id="change-pass-current" placeholder="Current Password" style="flex: 1; min-width: 140px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                        <input type="password" id="change-pass-new" placeholder="New Password" style="flex: 1; min-width: 140px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                    </div>
-                    <button onclick="changeMyPassword()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">⚙️ Update My Password</button>
-                </div>
-
-                <!-- SUPERADMIN PANEL: REGISTER NEW ALLIANCE GUILD & GUILDMASTER -->
-                <div id="superadmin-guild-registration-panel" style="display: none; margin-bottom: 15px; padding: 12px; background: rgba(0, 150, 255, 0.1); border: 1px solid #3399ff; border-radius: 6px;">
-                    <h4 style="color: #33ccff; font-size: 0.95rem; margin-bottom: 8px;">🏰 SuperAdmin: Register New Alliance Guild & Guild Master</h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-                        <input type="text" id="reg-guild-name" placeholder="Guild Name (e.g., SPIDEY)" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                        <input type="text" id="reg-gm-username" placeholder="New GM Username (e.g., PeterParker)" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                        <input type="password" id="reg-gm-password" placeholder="GM Account Password" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                        <select id="reg-gm-class" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                            <option value="Blade Master">GM Class: Blade Master</option>
-                            <option value="Dark Lord">GM Class: Dark Lord</option>
-                            <option value="Summoner">GM Class: Summoner</option>
-                            <option value="Soul Master">GM Class: Soul Master</option>
-                            <option value="Elf">GM Class: Elf</option>
-                            <option value="Dimension Master">GM Class: Dimension Master</option>
-                        </select>
-                        <input type="text" id="reg-gm-question" placeholder="Secret Recovery Question" style="grid-column: span 2; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                        <input type="text" id="reg-gm-answer" placeholder="Secret Question Answer" style="grid-column: span 2; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                    </div>
-                    <button onclick="registerAllianceAndGM()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%; background: linear-gradient(135deg, #0055ff, #002288);">🚀 Create Guild & Register Guild Master</button>
-                </div>
-
-                <!-- SUPERADMIN MASTER RESET PANEL -->
-                <div id="superadmin-master-panel" style="display: none; margin-bottom: 15px; padding: 12px; background: rgba(230, 184, 0, 0.1); border: 1px solid var(--primary); border-radius: 6px;">
-                    <h4 style="color: var(--primary-glow); font-size: 0.95rem; margin-bottom: 8px;">🔑 SuperAdmin Officer Password Override</h4>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
-                        <select id="superadmin-target-officer" style="padding: 8px; background: #111; border: 1px solid #555; color: var(--primary-glow); border-radius: 4px; font-size: 0.85rem;">
-                        </select>
-                        <input type="text" id="superadmin-override-pass" placeholder="New Password for Officer" style="flex: 1; min-width: 150px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                    </div>
-                    <button onclick="superadminChangePassword()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">⚡ Directly Override Officer Password</button>
-                </div>
-
-                <div style="margin-bottom: 12px;">
-                    <label style="font-size: 0.85rem; color: var(--primary-glow);">Select Division / Guild to Manage:</label>
-                    <select id="admin-officer-select" onchange="onDivisionChange()" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: var(--primary-glow); border-radius: 4px; font-weight: bold;">
-                    </select>
-                </div>
-
-                <!-- ADD MEMBER BOX -->
-                <div style="margin-bottom: 15px; padding: 12px; background: rgba(230, 184, 0, 0.05); border: 1px solid var(--border-gold); border-radius: 6px;">
-                    <h4 style="color: var(--primary-glow); font-size: 0.95rem; margin-bottom: 8px;">➕ Register New Guild Member</h4>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
-                        <input type="text" id="new-member-ign" placeholder="IGN Member Name" style="flex: 1; min-width: 150px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                        <select id="new-member-class" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
-                            <option value="Summoner">Summoner</option>
-                            <option value="Blade Master">Blade Master</option>
-                            <option value="Elf">Elf</option>
-                            <option value="Dark Lord">Dark Lord</option>
-                            <option value="Dimension Master">Dimension Master</option>
-                            <option value="Soul Master">Soul Master</option>
-                        </select>
-                    </div>
-                    <button onclick="registerNewMember()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">➕ Save Member to Roster</button>
-                </div>
-
-                <!-- DELETE / MANAGE ROSTER BOX -->
-                <div style="margin-bottom: 15px; padding: 12px; background: rgba(139, 0, 0, 0.15); border: 1px solid rgba(255, 51, 51, 0.4); border-radius: 6px;">
-                    <h4 style="color: #ffaa33; font-size: 0.95rem; margin-bottom: 8px;">🗑️ Delete / Manage Current Members</h4>
-                    <div id="admin-delete-member-list" style="max-height: 120px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px;">
+                <!-- SECTION 1: SUPERADMIN INBOX -->
+                <div id="superadmin-inbox-block" class="admin-section-block" style="display: none;">
+                    <button onclick="toggleAdminSection('sec-inbox')" class="admin-collapsible-btn">
+                        <span>📬 SuperAdmin Inbox (Password Reset Requests)</span>
+                        <span id="icon-sec-inbox">▼ Expand</span>
+                    </button>
+                    <div id="sec-inbox" class="admin-collapsible-content">
+                        <div id="superadmin-inbox-list" style="max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
+                            <span style="color: var(--text-dim);">Walang nakareserbang ticket sa inbox.</span>
+                        </div>
                     </div>
                 </div>
 
-                <div style="margin-bottom: 12px;">
-                    <label style="font-size: 0.85rem;">Event Type:</label>
-                    <select id="admin-event-type" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
-                        <option value="Castle Siege War">Castle Siege War (100,000 SOL Pool)</option>
-                        <option value="Boss Hunt Raid">Boss Hunt Raid</option>
-                        <option value="Guild Event">Guild Event</option>
-                    </select>
+                <!-- SUPERADMIN EXCLUSIVE PANEL: MULTI-DUMMY INPUT MAPPER -->
+                <div id="superadmin-main-dummy-block" class="admin-section-block" style="display: none;">
+                    <button onclick="toggleAdminSection('sec-main-dummy-linker')" class="admin-collapsible-btn">
+                        <span>🎭 SuperAdmin: Multi-Dummy Character Mapper (Up to 10+ Accounts)</span>
+                        <span id="icon-sec-main-dummy-linker">▼ Expand</span>
+                    </button>
+                    <div id="sec-main-dummy-linker" class="admin-collapsible-content">
+                        <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
+                            I-type ang <strong>Main Character IGN</strong> (halimbawa: <code>Eremes</code>) at ilagay sa mga boxes sa ibaba ang lahat ng kanyang <strong>Dummy Accounts</strong> (halimbawa: <code>Kreios</code>, <code>Papaliciou</code>, atbp.).
+                        </p>
+                        
+                        <!-- MAIN IGN FIELD -->
+                        <div style="margin-bottom: 12px; background: rgba(51,204,51,0.1); padding: 10px; border: 1px solid #33cc33; border-radius: 6px;">
+                            <label style="font-size: 0.8rem; color: #33cc33; font-weight: bold;">👑 Main Character IGN:</label>
+                            <input type="text" id="type-main-ign" placeholder="e.g. Eremes" style="width: 100%; padding: 8px; background: #111; border: 1px solid #33cc33; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
+                        </div>
+
+                        <!-- MULTI DUMMY BOXES GRID -->
+                        <label style="font-size: 0.8rem; color: #ffaa33; font-weight: bold;">🎭 Dummy / Alt Character Accounts:</label>
+                        <div id="dummy-boxes-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; margin-bottom: 10px; max-height: 220px; overflow-y: auto; padding-right: 5px;">
+                            <!-- 10 Default Dummy Input Boxes -->
+                            <input type="text" class="dummy-input-field" placeholder="Dummy 1 (e.g. Kreios)" style="padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                            <input type="text" class="dummy-input-field" placeholder="Dummy 2 (e.g. Papaliciou)" style="padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                            <input type="text" class="dummy-input-field" placeholder="Dummy 3" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                            <input type="text" class="dummy-input-field" placeholder="Dummy 4" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                            <input type="text" class="dummy-input-field" placeholder="Dummy 5" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                            <input type="text" class="dummy-input-field" placeholder="Dummy 6" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                            <input type="text" class="dummy-input-field" placeholder="Dummy 7" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                            <input type="text" class="dummy-input-field" placeholder="Dummy 8" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                            <input type="text" class="dummy-input-field" placeholder="Dummy 9" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                            <input type="text" class="dummy-input-field" placeholder="Dummy 10" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                        </div>
+
+                        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                            <button onclick="addMoreDummyBox()" class="btn" style="padding: 5px 12px; font-size: 0.75rem; background: #333; border-color: #777;">➕ Add More Dummy Box</button>
+                        </div>
+
+                        <button onclick="saveSuperAdminMultiLinkage()" class="btn" style="padding: 8px 14px; font-size: 0.85rem; width: 100%; background: linear-gradient(135deg, #8b0000, #ffaa33); color: #000;">🔗 Link All Dummy Accounts to Main</button>
+                    </div>
                 </div>
 
-                <div style="margin-bottom: 15px;">
-                    <label style="font-size: 0.85rem;">Prize Pool (SOL):</label>
-                    <input type="number" id="admin-sol-pool" value="100000" style="width: 100%; padding: 8px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
+                <!-- SECTION 2: SUPERADMIN GUILD REGISTRATION -->
+                <div id="superadmin-guild-reg-block" class="admin-section-block" style="display: none;">
+                    <button onclick="toggleAdminSection('sec-guild-reg')" class="admin-collapsible-btn">
+                        <span>🏰 SuperAdmin: Register New Alliance & Guild Master</span>
+                        <span id="icon-sec-guild-reg">▼ Expand</span>
+                    </button>
+                    <div id="sec-guild-reg" class="admin-collapsible-content">
+                        <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">Note: Ang **Guild Name** ay awtomatikong magiging **Username** din ng bagong Guild Master.</p>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                            <input type="text" id="reg-guild-name" placeholder="Guild Name & Username (e.g., SPIDEY)" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem; grid-column: span 2;">
+                            <input type="password" id="reg-gm-password" placeholder="GM Account Password" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                            <select id="reg-gm-class" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                <option value="Blade Master">GM Class: Blade Master</option>
+                                <option value="Dark Lord">GM Class: Dark Lord</option>
+                                <option value="Summoner">GM Class: Summoner</option>
+                                <option value="Soul Master">GM Class: Soul Master</option>
+                                <option value="Elf">GM Class: Elf</option>
+                                <option value="Dimension Master">GM Class: Dimension Master</option>
+                            </select>
+                            <input type="text" id="reg-gm-question" placeholder="Secret Recovery Question" style="grid-column: span 2; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                            <input type="text" id="reg-gm-answer" placeholder="Secret Question Answer" style="grid-column: span 2; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                        </div>
+                        <button onclick="registerAllianceAndGM()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%; background: linear-gradient(135deg, #0055ff, #002288);">🚀 Create Guild & Register Guild Master</button>
+                    </div>
                 </div>
 
-                <h4 style="color: var(--primary-glow); margin: 15px 0 10px;">Check Member Attendance:</h4>
-                <div id="admin-member-checklist" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+                <!-- SECTION 3: OFFICER ACCOUNT & PASSWORDS & CHANGE USERNAME -->
+                <div class="admin-section-block">
+                    <button onclick="toggleAdminSection('sec-account-settings')" class="admin-collapsible-btn">
+                        <span>⚙️ Account Settings, Username & Password Manager</span>
+                        <span id="icon-sec-account-settings">▼ Expand</span>
+                    </button>
+                    <div id="sec-account-settings" class="admin-collapsible-content">
+                        
+                        <div style="margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px dashed rgba(230,184,0,0.3);">
+                            <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">✏️ Change My Username:</h4>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                                <input type="text" id="change-username-new" placeholder="Enter New Guild Username" style="flex: 1; min-width: 150px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                            </div>
+                            <button onclick="changeMyUsername()" class="btn" style="padding: 6px 14px; font-size: 0.75rem; width: 100%; background: linear-gradient(135deg, #0088cc, #004488);">✏️ Update My Username</button>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">🔑 Change My Password:</h4>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                                <input type="password" id="change-pass-current" placeholder="Current Password" style="flex: 1; min-width: 130px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                <input type="password" id="change-pass-new" placeholder="New Password" style="flex: 1; min-width: 130px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                            </div>
+                            <button onclick="changeMyPassword()" class="btn" style="padding: 6px 14px; font-size: 0.75rem; width: 100%;">⚙️ Update My Password</button>
+                        </div>
+
+                        <div id="superadmin-override-box" style="display: none; border-top: 1px dashed rgba(230,184,0,0.3); padding-top: 10px;">
+                            <h4 style="color: #ffaa33; font-size: 0.85rem; margin-bottom: 6px;">⚡ SuperAdmin Officer Password Direct Override:</h4>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                                <select id="superadmin-target-officer" style="padding: 8px; background: #111; border: 1px solid #555; color: var(--primary-glow); border-radius: 4px; font-size: 0.85rem;">
+                                </select>
+                                <input type="text" id="superadmin-override-pass" placeholder="New Password for Officer" style="flex: 1; min-width: 140px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                            </div>
+                            <button onclick="superadminChangePassword()" class="btn" style="padding: 6px 14px; font-size: 0.75rem; width: 100%; background: linear-gradient(135deg, #8b0000, #ffaa33); color: #000;">⚡ Directly Override Password</button>
+                        </div>
+                    </div>
                 </div>
 
-                <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                    <button onclick="closeAdminModal()" class="btn" style="background: #444;">Cancel</button>
-                    <button onclick="saveAttendanceEntry()" class="btn">Submit Attendance</button>
+                <!-- SECTION 4: MEMBER MANAGEMENT & ATTENDANCE -->
+                <div class="admin-section-block">
+                    <button onclick="toggleAdminSection('sec-attendance-roster')" class="admin-collapsible-btn">
+                        <span>📋 Member Management & Anti-Double Compensation Attendance</span>
+                        <span id="icon-sec-attendance-roster">▲ Hide</span>
+                    </button>
+                    <div id="sec-attendance-roster" class="admin-collapsible-content" style="display: block;">
+                        <div style="margin-bottom: 12px;">
+                            <label style="font-size: 0.85rem; color: var(--primary-glow);">Select Division / Guild to Manage:</label>
+                            <select id="admin-officer-select" onchange="onDivisionChange()" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: var(--primary-glow); border-radius: 4px; font-weight: bold;">
+                            </select>
+                        </div>
+
+                        <!-- ADD MEMBER BOX -->
+                        <div style="margin-bottom: 15px; padding: 12px; background: rgba(230, 184, 0, 0.05); border: 1px solid var(--border-gold); border-radius: 6px;">
+                            <h4 style="color: var(--primary-glow); font-size: 0.9rem; margin-bottom: 8px;">➕ Register New Guild Member</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                                <input type="text" id="new-member-ign" placeholder="IGN Member Name" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                <select id="new-member-class" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                    <option value="Blade Master">Blade Master</option>
+                                    <option value="Dark Lord">Dark Lord</option>
+                                    <option value="Summoner">Summoner</option>
+                                    <option value="Soul Master">Soul Master</option>
+                                    <option value="Elf">Elf</option>
+                                    <option value="Dimension Master">Dimension Master</option>
+                                </select>
+                            </div>
+                            <button onclick="registerNewMember()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">➕ Save Member to Roster</button>
+                        </div>
+
+                        <!-- DELETE / MANAGE ROSTER BOX -->
+                        <div style="margin-bottom: 15px; padding: 12px; background: rgba(139, 0, 0, 0.15); border: 1px solid rgba(255, 51, 51, 0.4); border-radius: 6px;">
+                            <h4 style="color: #ffaa33; font-size: 0.9rem; margin-bottom: 8px;">🗑️ Delete / Manage Current Members</h4>
+                            <div id="admin-delete-member-list" style="max-height: 120px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px;">
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 12px;">
+                            <label style="font-size: 0.85rem;">Event Type:</label>
+                            <select id="admin-event-type" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
+                                <option value="Castle Siege War">Castle Siege War (100,000 SOL Pool)</option>
+                                <option value="Boss Hunt Raid">Boss Hunt Raid</option>
+                                <option value="Guild Event">Guild Event</option>
+                            </select>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-size: 0.85rem;">Prize Pool (SOL):</label>
+                            <input type="number" id="admin-sol-pool" value="100000" style="width: 100%; padding: 8px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
+                        </div>
+
+                        <h4 style="color: var(--primary-glow); margin: 15px 0 10px;">Check Member Attendance (Auto Main/Dummy Enforced):</h4>
+                        <div id="admin-member-checklist" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+                        </div>
+
+                        <button onclick="saveAttendanceEntry()" class="btn" style="width: 100%;">Submit Attendance</button>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px;">
+                    <button onclick="closeAdminModal()" class="btn" style="background: #444;">Close Portal</button>
                 </div>
             </div>
         </div>
@@ -968,7 +1094,6 @@
         <section id="guild">
             <h2 class="section-title">Guild Leadership & Alliance</h2>
             
-            <!-- ROW 1: GUILD MASTERS & ASSISTANT GMs -->
             <h3 class="category-title">Guild Masters & Assistant GMs</h3>
             <div class="roster-grid">
                 <div class="member-card master">
@@ -1011,7 +1136,6 @@
                     <div class="member-details"><span>Role: Leader / Support Leader</span><span>Resets: Max</span></div>
                 </div>
 
-                <!-- Mechado AGM Fullclip -->
                 <div class="member-card master">
                     <span class="role-badge role-master">Assistant GM</span>
                     <img src="https://cdn.phototourl.com/member/2026-10-08-0b3aef55-bea9-4b9e-935a-12629c594da5.png" alt="Mechado" class="member-avatar battle-avatar-flash">
@@ -1020,7 +1144,6 @@
                     <div class="member-details"><span>Fullclip Division AGM</span><span>Resets: Max</span></div>
                 </div>
 
-                <!-- Tsukushi AGM Warlock -->
                 <div class="member-card master">
                     <span class="role-badge role-master">Assistant GM</span>
                     <img src="https://cdn.phototourl.com/member/2026-10-07-5cb85190-c10a-47a1-8b08-870ed366d52f.png" alt="Tsukushi" class="member-avatar battle-avatar-flash">
@@ -1030,7 +1153,6 @@
                 </div>
             </div>
 
-            <!-- ROW 2: BATTLE MASTERS & COMMANDERS -->
             <h3 class="category-title">Battle Masters & Commanders</h3>
             <div class="roster-grid">
                 <div class="member-card battle-card-1">
@@ -1102,9 +1224,7 @@
         <!-- GUILD MEMBERS ROSTER SECTION -->
         <section id="members-roster-section">
             <h2 class="section-title">Guild Members Roster</h2>
-            
             <div class="roster-grid-container" id="dynamic-roster-grid">
-                <!-- Dynamic Rosters rendered via JS -->
             </div>
         </section>
 
@@ -1129,7 +1249,6 @@
         <!-- GUILD REQUIREMENTS & JOIN US SECTION -->
         <section id="requirements-and-join-section">
             <div class="two-col-grid">
-                <!-- GUILD REQUIREMENTS -->
                 <div class="panel">
                     <h3>GUILD REQUIREMENTS</h3>
                     <ul class="req-list">
@@ -1140,7 +1259,6 @@
                     </ul>
                 </div>
 
-                <!-- JOIN KULTURA TODAY -->
                 <div class="panel" style="display: flex; flex-direction: column; justify-content: space-between;">
                     <div>
                         <h3>JOIN KULTURA TODAY</h3>
@@ -1194,7 +1312,7 @@
         <p>&copy; 2026 <span>Kultura Guild</span> — NoLimit MU Online Community. All Rights Reserved.</p>
     </footer>
 
-    <!-- Interactive Scripts with Dynamic Alliance/GM Registration -->
+    <!-- Interactive Scripts -->
     <script>
         let ALL_DIVISIONS = [
             "Fullclip Division (Fullclip)",
@@ -1251,7 +1369,7 @@
                 question: "Sino ang Alliance Guild Master ng PROTECT?",
                 secretAnswer: "windtalker"
             },
-            "LordDwight": {
+            "STEALTH": {
                 password: "GMStealth",
                 assignedDivision: "STEALTH Division (LordDwight)",
                 role: "Guild Master",
@@ -1269,124 +1387,37 @@
 
         const defaultDivisionMembers = {
             "Fullclip Division (Fullclip)": [
-                { name: "Fullclip", class: "Blade Master", icon: "👑" },
-                { name: "Mechado", class: "Blade Master", icon: "⚔️" },
-                { name: "Gail", class: "Summoner", icon: "✨" },
-                { name: "Warheadz", class: "Soul Master", icon: "🌠" },
-                { name: "LordJepz", class: "Dark Lord", icon: "♛" },
-                { name: "oOKirovOo", class: "Soul Master", icon: "🌠" },
-                { name: "Shockuragi", class: "Dark Lord", icon: "♛" },
-                { name: "DeelanPaul", class: "Blade Master", icon: "⚔️" },
-                { name: "BKChung11", class: "Blade Master", icon: "⚔️" },
-                { name: "Tognaluk", class: "Blade Master", icon: "⚔️" },
-                { name: "IRONMAN", class: "Blade Master", icon: "⚔️" },
-                { name: "Greenhill", class: "Elf", icon: "🏹" },
-                { name: "Misthios", class: "Blade Master", icon: "⚔️" },
-                { name: "Sypha", class: "Summoner", icon: "✨" },
-                { name: "Hiereya", class: "Summoner", icon: "✨" },
-                { name: "Relic", class: "Soul Master", icon: "🌠" },
-                { name: "Blankz", class: "Dark Lord", icon: "♛" },
-                { name: "Retrospect", class: "Summoner", icon: "✨" },
-                { name: "R4LykS", class: "Elf", icon: "🏹" },
-                { name: "Pastillas", class: "Elf", icon: "🏹" },
-                { name: "Crafted", class: "Blade Master", icon: "⚔️" },
-                { name: "Eremes", class: "Soul Master", icon: "🌠" },
-                { name: "Scarecrows", class: "Summoner", icon: "✨" },
-                { name: "Yllyonna", class: "Elf", icon: "🏹" },
-                { name: "xPONG", class: "Blade Master", icon: "⚔️" },
-                { name: "VERMOUTH", class: "Summoner", icon: "✨" },
-                { name: "Sedation", class: "Summoner", icon: "✨" }
+                { name: "Fullclip", class: "Blade Master", icon: "👑", mainOwner: "Fullclip" },
+                { name: "Mechado", class: "Blade Master", icon: "⚔️", mainOwner: "Mechado" },
+                { name: "Eremes", class: "Soul Master", icon: "🌠", mainOwner: "Eremes" },
+                { name: "Gail", class: "Summoner", icon: "✨", mainOwner: "Gail" }
             ],
             "Warlock Division (Warlock)": [
-                { name: "Warlock", class: "Blade Master", icon: "👑" },
-                { name: "Tsukushi", class: "Blade Master", icon: "🛡️" },
-                { name: "Carloz31", class: "Blade Master", icon: "⚔️" },
-                { name: "NoobxDL", class: "Dark Lord", icon: "♛" },
-                { name: "xEKOMSx", class: "Blade Master", icon: "⚔️" },
-                { name: "Tr3nity", class: "Blade Master", icon: "⚔️" },
-                { name: "Chief", class: "Dark Lord", icon: "♛" },
-                { name: "NoobxBM", class: "Blade Master", icon: "⚔️" },
-                { name: "Hubbi", class: "Soul Master", icon: "🌠" },
-                { name: "Kreios", class: "Blade Master", icon: "⚔️" },
-                { name: "PureIGOROT", class: "Dark Lord", icon: "♛" },
-                { name: "Aurion", class: "Soul Master", icon: "🌠" },
-                { name: "FreeToGo", class: "Blade Master", icon: "⚔️" },
-                { name: "UraGonzSM", class: "Soul Master", icon: "🌠" },
-                { name: "Kaibigan", class: "Blade Master", icon: "⚔️" },
-                { name: "Papaliciou", class: "Soul Master", icon: "🌠" },
-                { name: "xSMOKERx", class: "Blade Master", icon: "⚔️" },
-                { name: "SMcai", class: "Soul Master", icon: "🌠" },
-                { name: "MegaDeath", class: "Dimension Master", icon: "🌌" },
-                { name: "asdgyhqrqt", class: "Blade Master", icon: "⚔️" },
-                { name: "James21", class: "Soul Master", icon: "🌠" },
-                { name: "Azzzo", class: "Elf", icon: "🏹" },
-                { name: "Gatubela", class: "Summoner", icon: "✨" },
-                { name: "BadAzz", class: "Blade Master", icon: "⚔️" },
-                { name: "BATONGBKL", class: "Blade Master", icon: "⚔️" },
-                { name: "WindsoR", class: "Soul Master", icon: "🌠" },
-                { name: "VYyllah", class: "Elf", icon: "🏹" },
-                { name: "Boss04", class: "Soul Master", icon: "🌠" },
-                { name: "BKROSE", class: "Blade Master", icon: "⚔️" },
-                { name: "RAG3", class: "Soul Master", icon: "🌠" },
-                { name: "Levis501", class: "Soul Master", icon: "🌠" },
-                { name: "PizzaSlice BM", class: "Blade Master", icon: "⚔️" },
-                { name: "Sizam12", class: "Soul Master", icon: "🌠" },
-                { name: "krisjo", class: "Soul Master", icon: "🌠" },
-                { name: "Fakeclip", class: "Blade Master", icon: "⚔️" },
-                { name: "Maritezz", class: "Elf", icon: "🏹" },
-                { name: "Bosvell23", class: "Blade Master", icon: "⚔️" },
-                { name: "Bumbuang", class: "Soul Master", icon: "🌠" },
-                { name: "Hundredick", class: "Dark Lord", icon: "♛" },
-                { name: "Dakotah", class: "Soul Master", icon: "🌠" },
-                { name: "SMcornBEEF", class: "Soul Master", icon: "🌠" },
-                { name: "Hachi", class: "Soul Master", icon: "🌠" },
-                { name: "NAYAR", class: "Blade Master", icon: "⚔️" },
-                { name: "UnXaveD", class: "Dimension Master", icon: "🌌" },
-                { name: "xMello", class: "Elf", icon: "🏹" },
-                { name: "SmCEIMOUN", class: "Soul Master", icon: "🌠" },
-                { name: "oOShreeDoo", class: "Soul Master", icon: "🌠" },
-                { name: "GodMeraxes", class: "Elf", icon: "🏹" },
-                { name: "BunnyBabe", class: "Elf", icon: "🏹" },
-                { name: "TankBK", class: "Blade Master", icon: "⚔️" },
-                { name: "Moondancer", class: "Soul Master", icon: "🌠" },
-                { name: "NOOBxx", class: "Blade Master", icon: "⚔️" },
-                { name: "TheBoogey", class: "Blade Master", icon: "⚔️" },
-                { name: "Zireael", class: "Elf", icon: "🏹" },
-                { name: "Siilent", class: "Soul Master", icon: "🌠" },
-                { name: "xVanguard", class: "Soul Master", icon: "🌠" },
-                { name: "EkamaMoko", class: "Elf", icon: "🏹" },
-                { name: "PH16", class: "Soul Master", icon: "🌠" },
-                { name: "Tr1gun", class: "Soul Master", icon: "🌠" },
-                { name: "Vonn", class: "Blade Master", icon: "⚔️" },
-                { name: "Godis", class: "Blade Master", icon: "⚔️" }
+                { name: "Warlock", class: "Blade Master", icon: "👑", mainOwner: "Warlock" },
+                { name: "Tsukushi", class: "Blade Master", icon: "🛡️", mainOwner: "Tsukushi" },
+                { name: "Kreios", class: "Blade Master", icon: "🎭", mainOwner: "Eremes" },
+                { name: "Papaliciou", class: "Soul Master", icon: "🎭", mainOwner: "Eremes" }
             ],
             "PROTECT Division (Windtalker)": [
-                { name: "Windtalker", class: "Blade Master", icon: "👑" },
-                { name: "Khloe", class: "Summoner", icon: "✨" },
-                { name: "Thunder09", class: "Soul Master", icon: "🌠" },
-                { name: "HolyMage", class: "Soul Master", icon: "🌠" },
-                { name: "Kodakblu", class: "Summoner", icon: "✨" }
+                { name: "Windtalker", class: "Blade Master", icon: "👑", mainOwner: "Windtalker" }
             ],
             "STEALTH Division (LordDwight)": [
-                { name: "LordDwight", class: "Dark Lord", icon: "👑" }
+                { name: "LordDwight", class: "Dark Lord", icon: "👑", mainOwner: "LordDwight" }
             ],
             "ANXIETY Division (iKapitana)": [
-                { name: "iKapitana", class: "Summoner", icon: "👑" },
-                { name: "VIVINT", class: "Elf", icon: "🏹" },
-                { name: "KIZASHI", class: "Summoner", icon: "✨" }
+                { name: "iKapitana", class: "Summoner", icon: "👑", mainOwner: "iKapitana" }
             ]
         };
 
         let cloudGuildData = null;
         let cloudAttendanceHistory = null;
+        let cloudResetTickets = [];
 
-        // Fetch data from Firebase
         async function fetchCloudData() {
             if (!window.database) return;
             try {
                 const dbRef = window.dbRef(window.database);
                 
-                // Fetch Passwords
                 const passSnap = await window.dbGet(window.dbChild(dbRef, 'kultura_officer_accounts'));
                 if (passSnap.exists()) {
                     OFFICER_ACCOUNTS = passSnap.val();
@@ -1394,14 +1425,12 @@
                     await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
                 }
 
-                // Sync ALL_DIVISIONS and PROTECTED_ADMIN_ACCOUNTS dynamically
                 for (let key in OFFICER_ACCOUNTS) {
                     if (!PROTECTED_ADMIN_ACCOUNTS.includes(key.toLowerCase())) {
                         PROTECTED_ADMIN_ACCOUNTS.push(key.toLowerCase());
                     }
                 }
 
-                // Fetch Roster
                 const rosterSnap = await window.dbGet(window.dbChild(dbRef, 'kultura_roster'));
                 if (rosterSnap.exists()) {
                     cloudGuildData = rosterSnap.val();
@@ -1410,19 +1439,22 @@
                     await window.dbSet(window.dbRef(window.database, 'kultura_roster'), defaultDivisionMembers);
                 }
 
-                // Update Divisions from Roster Keys
                 ALL_DIVISIONS = Object.keys(cloudGuildData);
-
-                // Sync SuperAdmins (Fullclip & kultura) assignedDivision array
                 if (OFFICER_ACCOUNTS["Fullclip"]) OFFICER_ACCOUNTS["Fullclip"].assignedDivision = ALL_DIVISIONS;
                 if (OFFICER_ACCOUNTS["kultura"]) OFFICER_ACCOUNTS["kultura"].assignedDivision = ALL_DIVISIONS;
 
-                // Fetch Attendance
                 const attSnap = await window.dbGet(window.dbChild(dbRef, 'kultura_attendance'));
                 if (attSnap.exists()) {
                     cloudAttendanceHistory = attSnap.val();
                 } else {
                     cloudAttendanceHistory = [];
+                }
+
+                const ticketSnap = await window.dbGet(window.dbChild(dbRef, 'kultura_reset_tickets'));
+                if (ticketSnap.exists()) {
+                    cloudResetTickets = ticketSnap.val();
+                } else {
+                    cloudResetTickets = [];
                 }
 
                 renderRosters();
@@ -1463,9 +1495,11 @@
             const userVal = document.getElementById('login-username').value.trim();
             const passVal = document.getElementById('login-password').value.trim();
 
-            if (OFFICER_ACCOUNTS[userVal] && OFFICER_ACCOUNTS[userVal].password === passVal) {
-                currentLoggedInOfficer = userVal;
-                alert(`✅ Welcome ${userVal}! Logged in as ${OFFICER_ACCOUNTS[userVal].role}.`);
+            let foundUserKey = Object.keys(OFFICER_ACCOUNTS).find(k => k.toLowerCase() === userVal.toLowerCase());
+
+            if (foundUserKey && OFFICER_ACCOUNTS[foundUserKey].password === passVal) {
+                currentLoggedInOfficer = foundUserKey;
+                alert(`✅ Welcome ${foundUserKey}! Logged in as ${OFFICER_ACCOUNTS[foundUserKey].role}.`);
                 closeLoginModal();
                 openAdminModal();
             } else {
@@ -1473,20 +1507,311 @@
             }
         }
 
-        /* CHANGE PASSWORD FUNCTION FOR LOGGED IN OFFICER */
-        async function changeMyPassword() {
-            if (!currentLoggedInOfficer) return;
+        function toggleAdminSection(sectionId) {
+            const elem = document.getElementById(sectionId);
+            const iconElem = document.getElementById(`icon-${sectionId}`);
+            if (elem.style.display === "block") {
+                elem.style.display = "none";
+                if (iconElem) iconElem.innerText = "▼ Expand";
+            } else {
+                elem.style.display = "block";
+                if (iconElem) iconElem.innerText = "▲ Hide";
+            }
+        }
 
-            const currPass = document.getElementById('change-pass-current').value.trim();
-            const newPass = document.getElementById('change-pass-new').value.trim();
+        /* SUPERADMIN DYNAMIC DUMMY BOX ADDER */
+        function addMoreDummyBox() {
+            const container = document.getElementById('dummy-boxes-container');
+            const totalCurrent = container.querySelectorAll('.dummy-input-field').length;
+            const newInput = document.createElement('input');
+            newInput.type = "text";
+            newInput.className = "dummy-input-field";
+            newInput.placeholder = `Dummy ${totalCurrent + 1}`;
+            newInput.style.cssText = "padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;";
+            container.appendChild(newInput);
+        }
 
-            if (!currPass || !newPass) {
-                alert("⚠️ Paki-lagay ang Kasalukuyang Password at Bagong Password!");
+        /* SUPERADMIN SAVE MULTI-DUMMY LINKAGE */
+        async function saveSuperAdminMultiLinkage() {
+            if (currentLoggedInOfficer !== "Fullclip" && currentLoggedInOfficer !== "kultura") return;
+
+            const mainIgn = document.getElementById('type-main-ign').value.trim();
+            const dummyInputs = document.querySelectorAll('.dummy-input-field');
+
+            if (!mainIgn) {
+                alert("⚠️ Paki-type muna ang Main Character IGN!");
                 return;
             }
 
+            let dummyList = [];
+            dummyInputs.forEach(input => {
+                let val = input.value.trim();
+                if (val && val.toLowerCase() !== mainIgn.toLowerCase()) {
+                    dummyList.push(val);
+                }
+            });
+
+            if (dummyList.length === 0) {
+                alert("⚠️ Maglagay ng kahit isang Dummy IGN sa mga boxes!");
+                return;
+            }
+
+            let data = getGuildData();
+            let linkedCount = 0;
+            let missingDummies = [];
+
+            dummyList.forEach(dummyIgn => {
+                let found = false;
+                for (let divKey in data) {
+                    data[divKey].forEach(m => {
+                        if (m.name.toLowerCase() === dummyIgn.toLowerCase()) {
+                            m.mainOwner = mainIgn;
+                            m.icon = '🎭';
+                            found = true;
+                            linkedCount++;
+                        }
+                    });
+                }
+                if (!found) {
+                    missingDummies.push(dummyIgn);
+                }
+            });
+
+            if (linkedCount > 0) {
+                await saveGuildData(data);
+                let missingMsg = missingDummies.length > 0 ? `\n⚠️ Hindi pa naka-register sa roster: ${missingDummies.join(', ')}` : '';
+                alert(`🎉 [SuperAdmin Multi-Linker] Tagumpay na na-link ang ${linkedCount} Dummy Accounts para kay Main "${mainIgn}"!${missingMsg}`);
+
+                document.getElementById('type-main-ign').value = '';
+                dummyInputs.forEach(i => i.value = '');
+
+                renderRosters();
+                onDivisionChange();
+            } else {
+                alert(`⚠️ Walang na-link! Siguraduhing na-register muna sa Roster ang mga Dummy Accounts na: ${missingDummies.join(', ')}`);
+            }
+        }
+
+        async function registerNewMember() {
+            if (!currentLoggedInOfficer) return;
+
+            const ign = document.getElementById('new-member-ign').value.trim();
+            const charClass = document.getElementById('new-member-class').value;
+            const assignedDivision = document.getElementById('admin-officer-select').value;
+
+            if (!ign) {
+                alert("⚠️ Paki-lagay ang IGN Member Name!");
+                return;
+            }
+
+            let data = getGuildData();
+            let membersList = data[assignedDivision] || [];
+
+            if (membersList.some(m => m.name.toLowerCase() === ign.toLowerCase())) {
+                alert("⚠️ Ang IGN na ito ay nairegister na sa roster!");
+                return;
+            }
+
+            const newMemberObj = {
+                name: ign,
+                class: charClass,
+                icon: getClassIcon(charClass),
+                mainOwner: ign
+            };
+
+            membersList.push(newMemberObj);
+            data[assignedDivision] = membersList;
+
+            await saveGuildData(data);
+
+            alert(`🎉 Tagumpay! Na-register si ${ign} (${charClass}) sa ${assignedDivision}.`);
+
+            document.getElementById('new-member-ign').value = '';
+            
+            renderRosters();
+            onDivisionChange();
+        }
+
+        function renderMemberChecklist() {
+            if (!currentLoggedInOfficer) return;
+
+            const selectedDivision = document.getElementById('admin-officer-select').value;
+            const checklist = document.getElementById('admin-member-checklist');
+            checklist.innerHTML = '';
+
+            const data = getGuildData();
+            const members = data[selectedDivision] || [];
+
+            members.forEach((mObj, idx) => {
+                const div = document.createElement('div');
+                div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;";
+                
+                let isDummy = mObj.mainOwner && mObj.mainOwner.toLowerCase() !== mObj.name.toLowerCase();
+                let dummyLabel = isDummy ? `<small style="color:#ffaa33; font-weight:bold;">[Dummy of ${mObj.mainOwner}]</small>` : `<small style="color:#33cc33; font-weight:bold;">[Main]</small>`;
+
+                div.innerHTML = `
+                    <span>${mObj.icon} <strong>${mObj.name}</strong> ${dummyLabel} <small style="color:var(--text-dim);">(${mObj.class})</small></span>
+                    <select id="att-status-${idx}" data-name="${mObj.name}" data-main="${mObj.mainOwner || mObj.name}" style="background: #222; color: #fff; border: 1px solid #555; padding: 2px 6px; border-radius: 3px;">
+                        <option value="Present">Present</option>
+                        <option value="Late">Late</option>
+                        <option value="Absent" selected>Absent</option>
+                    </select>
+                `;
+                checklist.appendChild(div);
+            });
+        }
+
+        async function saveAttendanceEntry() {
+            if (!currentLoggedInOfficer) return;
+
+            const selectedGM = document.getElementById('admin-officer-select').value;
+            const eventType = document.getElementById('admin-event-type').value;
+            const totalSolPool = parseFloat(document.getElementById('admin-sol-pool').value) || 100000;
+            const selects = document.querySelectorAll('#admin-member-checklist select');
+            
+            let acknowledgedMains = new Set();
+            let updatedDivisionPresents = [];
+
+            selects.forEach(sel => {
+                const status = sel.value;
+                const mainChar = sel.getAttribute('data-main');
+                const charName = sel.getAttribute('data-name');
+
+                if (status === 'Present' || status === 'Late') {
+                    if (!acknowledgedMains.has(mainChar.toLowerCase())) {
+                        acknowledgedMains.add(mainChar.toLowerCase());
+                        updatedDivisionPresents.push({ name: mainChar, loggedIgn: charName, officer: selectedGM });
+                    }
+                }
+            });
+
+            const todayDate = new Date().toLocaleDateString(); 
+
+            let allRecords = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
+            let existingRecord = allRecords.find(r => r.dateKey === todayDate && r.event === eventType);
+
+            if (existingRecord) {
+                existingRecord.presents = (existingRecord.presents || []).filter(p => p.officer !== selectedGM);
+                existingRecord.presents = existingRecord.presents.concat(updatedDivisionPresents);
+                
+                existingRecord.solPool = totalSolPool;
+                existingRecord.timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            } else {
+                allRecords.unshift({
+                    dateKey: todayDate,
+                    timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                    event: eventType,
+                    solPool: totalSolPool,
+                    presents: updatedDivisionPresents
+                });
+            }
+
+            cloudAttendanceHistory = allRecords;
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), allRecords);
+            }
+
+            alert(`🎉 Attendance status updated for ${selectedGM}! Strictly 1 share calculated per Main Character.`);
+            closeAdminModal();
+            renderAttendanceHistory();
+        }
+
+        function renderAttendanceHistory() {
+            const tbody = document.getElementById('public-attendance-history');
+            let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
+
+            if (history.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="padding: 10px; text-align: center; color: var(--text-dim);">No attendance recorded yet.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            history.forEach(rec => {
+                const totalPresent = rec.presents ? rec.presents.length : 0;
+                const solPerMember = totalPresent > 0 ? Math.round(rec.solPool / totalPresent).toLocaleString() : 0;
+                
+                const groupedByDivision = {};
+                if (rec.presents) {
+                    rec.presents.forEach(p => {
+                        if (!groupedByDivision[p.officer]) {
+                            groupedByDivision[p.officer] = [];
+                        }
+                        groupedByDivision[p.officer].push(p);
+                    });
+                }
+
+                let formattedMembersHTML = '';
+                if (totalPresent > 0) {
+                    for (let divName in groupedByDivision) {
+                        formattedMembersHTML += `<div class="division-group-title">👑 ${divName} (${groupedByDivision[divName].length} Mains):</div><br>`;
+                        groupedByDivision[divName].forEach(pObj => {
+                            let altNote = (pObj.loggedIgn && pObj.loggedIgn.toLowerCase() !== pObj.name.toLowerCase()) ? ` <small style="color:#ffaa33;">(Logged via ${pObj.loggedIgn})</small>` : '';
+                            formattedMembersHTML += `💎 <strong>${pObj.name}</strong>${altNote} — <span style="color:var(--primary-glow);">${solPerMember} SOL</span><br>`;
+                        });
+                        formattedMembersHTML += `<div style="margin-bottom:6px;"></div>`;
+                    }
+                } else {
+                    formattedMembersHTML = '<span style="color:var(--text-dim);">Wala pang nakatalang present.</span>';
+                }
+
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = "1px solid rgba(255,255,255,0.08)";
+                tr.innerHTML = `
+                    <td style="padding: 10px; color: var(--text-dim); white-space: nowrap;">${rec.dateKey}<br><small>Huling update: ${rec.timestamp}</small></td>
+                    <td style="padding: 10px; font-weight: 600; color:var(--primary);">${rec.event}</td>
+                    <td style="padding: 10px; color: #ffdd55; font-weight: bold;">${totalPresent} Main Warriors</td>
+                    <td style="padding: 10px; color: #ffdd55;">${rec.solPool.toLocaleString()} SOL<br><span style="color:#33cc33; font-weight:bold;">${solPerMember} SOL / ea</span></td>
+                    <td style="padding: 10px; color: #33cc33; line-height: 1.5;">${formattedMembersHTML}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function changeMyUsername() {
+            if (!currentLoggedInOfficer) return;
+            const newUsername = document.getElementById('change-username-new').value.trim();
+            if (!newUsername) return;
+
+            const oldUserKey = currentLoggedInOfficer;
+            const officerObj = OFFICER_ACCOUNTS[oldUserKey];
+
+            delete OFFICER_ACCOUNTS[oldUserKey];
+            OFFICER_ACCOUNTS[newUsername] = officerObj;
+            currentLoggedInOfficer = newUsername;
+
+            let data = getGuildData();
+            let oldDivKey = `${oldUserKey} Division (${oldUserKey})`;
+            let newDivKey = `${newUsername} Division (${newUsername})`;
+
+            if (data[oldDivKey]) {
+                data[newDivKey] = data[oldDivKey];
+                delete data[oldDivKey];
+                OFFICER_ACCOUNTS[newUsername].assignedDivision = newDivKey;
+            }
+
+            ALL_DIVISIONS = Object.keys(data);
+            if (OFFICER_ACCOUNTS["Fullclip"]) OFFICER_ACCOUNTS["Fullclip"].assignedDivision = ALL_DIVISIONS;
+            if (OFFICER_ACCOUNTS["kultura"]) OFFICER_ACCOUNTS["kultura"].assignedDivision = ALL_DIVISIONS;
+
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
+                await saveGuildData(data);
+            }
+
+            alert(`🎉 Username changed from "${oldUserKey}" to "${newUsername}".`);
+            document.getElementById('change-username-new').value = '';
+            renderRosters();
+            openAdminModal();
+        }
+
+        async function changeMyPassword() {
+            if (!currentLoggedInOfficer) return;
+            const currPass = document.getElementById('change-pass-current').value.trim();
+            const newPass = document.getElementById('change-pass-new').value.trim();
+            if (!currPass || !newPass) return;
+
             if (OFFICER_ACCOUNTS[currentLoggedInOfficer].password !== currPass) {
-                alert("❌ Mali ang iyong Kasalukuyang Password!");
+                alert("❌ Mali ang kasalukuyang password!");
                 return;
             }
 
@@ -1496,83 +1821,87 @@
                 await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
             }
 
-            alert(`🎉 Tagumpay! Naipalitan na ang iyong password, ${currentLoggedInOfficer}. Paki-tandaan ang iyong bagong password!`);
+            alert(`🎉 Password updated successfully!`);
             document.getElementById('change-pass-current').value = '';
             document.getElementById('change-pass-new').value = '';
         }
 
-        /* SUPERADMIN: REGISTER NEW ALLIANCE GUILD & GUILD MASTER */
+        async function sendPasswordResetTicket() {
+            const userVal = document.getElementById('reset-username').value.trim();
+            const msgVal = document.getElementById('reset-ticket-msg').value.trim();
+            let foundKey = Object.keys(OFFICER_ACCOUNTS).find(k => k.toLowerCase() === userVal.toLowerCase());
+            if (!userVal || !foundKey || !msgVal) return;
+
+            const newTicket = { id: Date.now(), username: foundKey, message: msgVal, timestamp: new Date().toLocaleString() };
+            cloudResetTickets.unshift(newTicket);
+
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_reset_tickets'), cloudResetTickets);
+            }
+
+            alert(`📩 Request sent to SuperAdmin Inbox!`);
+            closeForgotPasswordModal();
+        }
+
+        function renderSuperAdminInbox() {
+            const inboxList = document.getElementById('superadmin-inbox-list');
+            if (!inboxList) return;
+            if (cloudResetTickets.length === 0) {
+                inboxList.innerHTML = `<span style="color: var(--text-dim);">Walang nakareserbang ticket sa inbox.</span>`;
+                return;
+            }
+            inboxList.innerHTML = '';
+            cloudResetTickets.forEach(ticket => {
+                const div = document.createElement('div');
+                div.style.cssText = "padding: 6px; margin-bottom: 6px; background: rgba(0,0,0,0.5); border-left: 3px solid #ff3333; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;";
+                div.innerHTML = `<div><strong>👤 ${ticket.username}</strong> <small style="color:var(--text-dim);">(${ticket.timestamp})</small><br><span style="color:#ffdd55;">💬 "${ticket.message}"</span></div><button onclick="resolveTicket(${ticket.id}, '${ticket.username}')" class="btn" style="padding: 4px 8px; font-size: 0.7rem; background: #33cc33; color: #000;">✅ Done</button>`;
+                inboxList.appendChild(div);
+            });
+        }
+
+        async function resolveTicket(ticketId, username) {
+            cloudResetTickets = cloudResetTickets.filter(t => t.id !== ticketId);
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_reset_tickets'), cloudResetTickets);
+            }
+            renderSuperAdminInbox();
+        }
+
         async function registerAllianceAndGM() {
             if (currentLoggedInOfficer !== "Fullclip" && currentLoggedInOfficer !== "kultura") return;
-
             const guildName = document.getElementById('reg-guild-name').value.trim();
-            const gmUser = document.getElementById('reg-gm-username').value.trim();
             const gmPass = document.getElementById('reg-gm-password').value.trim();
             const gmClass = document.getElementById('reg-gm-class').value;
             const gmQuest = document.getElementById('reg-gm-question').value.trim();
             const gmAns = document.getElementById('reg-gm-answer').value.trim();
 
-            if (!guildName || !gmUser || !gmPass || !gmQuest || !gmAns) {
-                alert("⚠️ Paki-kumpleto ang lahat ng field para sa bagong Alliance Guild at Guild Master!");
-                return;
-            }
+            if (!guildName || !gmPass || !gmQuest || !gmAns) return;
 
+            const gmUser = guildName;
             const divisionKey = `${guildName} Division (${gmUser})`;
 
-            if (OFFICER_ACCOUNTS[gmUser]) {
-                alert(`⚠️ Ang Username na "${gmUser}" ay umiiral na sa mga Officer accounts!`);
-                return;
-            }
-
-            // Register New Officer Account
-            OFFICER_ACCOUNTS[gmUser] = {
-                password: gmPass,
-                assignedDivision: divisionKey,
-                role: `${guildName} Guild Master`,
-                question: gmQuest,
-                secretAnswer: gmAns
-            };
-
+            OFFICER_ACCOUNTS[gmUser] = { password: gmPass, assignedDivision: divisionKey, role: `${guildName} Guild Master`, question: gmQuest, secretAnswer: gmAns };
             PROTECTED_ADMIN_ACCOUNTS.push(gmUser.toLowerCase());
 
-            // Add new division to roster with Guildmaster as initial member
             let data = getGuildData();
-            data[divisionKey] = [
-                { name: gmUser, class: gmClass, icon: "👑" }
-            ];
+            data[divisionKey] = [{ name: gmUser, class: gmClass, icon: "👑", mainOwner: gmUser }];
 
             ALL_DIVISIONS = Object.keys(data);
+            if (OFFICER_ACCOUNTS["Fullclip"]) OFFICER_ACCOUNTS["Fullclip"].assignedDivision = ALL_DIVISIONS;
+            if (OFFICER_ACCOUNTS["kultura"]) OFFICER_ACCOUNTS["kultura"].assignedDivision = ALL_DIVISIONS;
 
-            // Sync SuperAdmin Access
-            OFFICER_ACCOUNTS["Fullclip"].assignedDivision = ALL_DIVISIONS;
-            OFFICER_ACCOUNTS["kultura"].assignedDivision = ALL_DIVISIONS;
-
-            // Save to Firebase
             if (window.database) {
                 await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
                 await saveGuildData(data);
             }
 
-            alert(`🎉 Tagumpay! Nairegister ni ${currentLoggedInOfficer} ang bagong Alliance "${guildName}" at si Guild Master "${gmUser}" (${gmClass}).`);
-
-            // Clear inputs
-            document.getElementById('reg-guild-name').value = '';
-            document.getElementById('reg-gm-username').value = '';
-            document.getElementById('reg-gm-password').value = '';
-            document.getElementById('reg-gm-question').value = '';
-            document.getElementById('reg-gm-answer').value = '';
-
+            alert(`🎉 Alliance "${guildName}" created.`);
             renderRosters();
             openAdminModal();
         }
 
-        /* FORGOT PASSWORD FUNCTIONS */
         function openForgotPasswordModal() {
             closeLoginModal();
-            document.getElementById('reset-username').value = '';
-            document.getElementById('reset-secret-answer').value = '';
-            document.getElementById('reset-new-password').value = '';
-            document.getElementById('secret-question-display').innerText = 'Pumili/Ilagay muna ang Username sa taas...';
             document.getElementById('forgot-password-modal').style.display = 'flex';
         }
 
@@ -1583,12 +1912,11 @@
         function loadOfficerQuestion() {
             const userVal = document.getElementById('reset-username').value.trim();
             const qDisplay = document.getElementById('secret-question-display');
-            if (OFFICER_ACCOUNTS[userVal]) {
-                qDisplay.innerText = OFFICER_ACCOUNTS[userVal].question;
-                qDisplay.style.color = '#ffdd55';
+            let foundKey = Object.keys(OFFICER_ACCOUNTS).find(k => k.toLowerCase() === userVal.toLowerCase());
+            if (foundKey) {
+                qDisplay.innerText = OFFICER_ACCOUNTS[foundKey].question;
             } else {
-                qDisplay.innerText = '❌ Hindi mahanap ang Officer Username na ito.';
-                qDisplay.style.color = '#ff3333';
+                qDisplay.innerText = '❌ Hindi mahanap ang Guild Username.';
             }
         }
 
@@ -1597,77 +1925,63 @@
             const answerVal = document.getElementById('reset-secret-answer').value.trim().toLowerCase();
             const newPassVal = document.getElementById('reset-new-password').value.trim();
 
-            if (!OFFICER_ACCOUNTS[userVal]) {
-                alert("⚠️ Mali o hindi umiiral ang Officer Username!");
-                return;
-            }
+            let foundKey = Object.keys(OFFICER_ACCOUNTS).find(k => k.toLowerCase() === userVal.toLowerCase());
+            if (!foundKey || !newPassVal) return;
 
-            if (!newPassVal) {
-                alert("⚠️ Paki-lagay ang iyong bagong password!");
-                return;
-            }
-
-            if (OFFICER_ACCOUNTS[userVal].secretAnswer.toLowerCase() === answerVal) {
-                OFFICER_ACCOUNTS[userVal].password = newPassVal;
-                
+            if (OFFICER_ACCOUNTS[foundKey].secretAnswer.toLowerCase() === answerVal) {
+                OFFICER_ACCOUNTS[foundKey].password = newPassVal;
                 if (window.database) {
                     await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
                 }
-
-                alert(`🎉 Tagumpay! Na-reset na ang password para sa account ni "${userVal}". Pwede ka nang mag-login gamit ang bagong password!`);
+                alert(`🎉 Password reset for "${foundKey}".`);
                 closeForgotPasswordModal();
                 openLoginModal();
-            } else {
-                alert("❌ Mali ang iyong Secret Answer! Hindi ma-reset ang password.");
             }
         }
 
-        /* SUPERADMIN MASTER RESET OVERRIDE */
         async function superadminChangePassword() {
             if (currentLoggedInOfficer !== "Fullclip" && currentLoggedInOfficer !== "kultura") return;
-
             const targetOfficer = document.getElementById('superadmin-target-officer').value;
             const newPass = document.getElementById('superadmin-override-pass').value.trim();
-
-            if (!newPass) {
-                alert("⚠️ Paki-lagay ang bagong password na itatakda para sa officer!");
-                return;
-            }
+            if (!newPass) return;
 
             if (OFFICER_ACCOUNTS[targetOfficer]) {
                 OFFICER_ACCOUNTS[targetOfficer].password = newPass;
-
                 if (window.database) {
                     await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
                 }
-
-                alert(`⚡ [SuperAdmin Override] Tagumpay na napalitan ni ${currentLoggedInOfficer} ang password ng officer na si "${targetOfficer}"!`);
-                document.getElementById('superadmin-override-pass').value = '';
+                alert(`⚡ Override successful for "${targetOfficer}".`);
             }
         }
 
         function openAdminModal() {
             if (!currentLoggedInOfficer) return;
-
             const officerInfo = OFFICER_ACCOUNTS[currentLoggedInOfficer];
             document.getElementById('logged-agm-display').innerText = `${currentLoggedInOfficer} (${officerInfo.role})`;
 
-            const superGuildRegPanel = document.getElementById('superadmin-guild-registration-panel');
-            const superPanel = document.getElementById('superadmin-master-panel');
+            const superInboxBlock = document.getElementById('superadmin-inbox-block');
+            const superMainDummyBlock = document.getElementById('superadmin-main-dummy-block');
+            const superGuildRegBlock = document.getElementById('superadmin-guild-reg-block');
+            const superOverrideBox = document.getElementById('superadmin-override-box');
 
             if (currentLoggedInOfficer === "Fullclip" || currentLoggedInOfficer === "kultura") {
-                superGuildRegPanel.style.display = 'block';
-                superPanel.style.display = 'block';
+                superInboxBlock.style.display = 'block';
+                superMainDummyBlock.style.display = 'block';
+                superGuildRegBlock.style.display = 'block';
+                superOverrideBox.style.display = 'block';
+                
+                renderSuperAdminInbox();
 
-                // Populate target officers dropdown
                 const targetSelect = document.getElementById('superadmin-target-officer');
                 targetSelect.innerHTML = '';
                 for (let offName in OFFICER_ACCOUNTS) {
                     targetSelect.innerHTML += `<option value="${offName}">${offName}</option>`;
                 }
             } else {
-                superGuildRegPanel.style.display = 'none';
-                superPanel.style.display = 'none';
+                superInboxBlock.style.display = 'none';
+                superMainDummyBlock.style.display = 'none';
+                superGuildRegBlock.style.display = 'none';
+                superOverrideBox.style.display = 'none';
             }
 
             const selectDiv = document.getElementById('admin-officer-select');
@@ -1675,13 +1989,11 @@
 
             if (Array.isArray(officerInfo.assignedDivision)) {
                 selectDiv.disabled = false;
-                selectDiv.style.cursor = "pointer";
                 officerInfo.assignedDivision.forEach(divName => {
                     selectDiv.innerHTML += `<option value="${divName}">${divName}</option>`;
                 });
             } else {
                 selectDiv.disabled = true;
-                selectDiv.style.cursor = "not-allowed";
                 selectDiv.innerHTML = `<option value="${officerInfo.assignedDivision}">${officerInfo.assignedDivision}</option>`;
             }
 
@@ -1718,45 +2030,6 @@
             }
         }
 
-        async function registerNewMember() {
-            if (!currentLoggedInOfficer) return;
-
-            const ign = document.getElementById('new-member-ign').value.trim();
-            const charClass = document.getElementById('new-member-class').value;
-            const assignedDivision = document.getElementById('admin-officer-select').value;
-
-            if (!ign) {
-                alert("⚠️ Paki-lagay ang IGN Member Name!");
-                return;
-            }
-
-            let data = getGuildData();
-            let membersList = data[assignedDivision] || [];
-
-            if (membersList.some(m => m.name.toLowerCase() === ign.toLowerCase())) {
-                alert("⚠️ Ang IGN na ito ay nairegister na sa roster!");
-                return;
-            }
-
-            const newMemberObj = {
-                name: ign,
-                class: charClass,
-                icon: getClassIcon(charClass)
-            };
-
-            membersList.push(newMemberObj);
-            data[assignedDivision] = membersList;
-
-            await saveGuildData(data);
-
-            alert(`🎉 Tagumpay na na-add ni Officer ${currentLoggedInOfficer}! Na-register si ${ign} (${charClass}) sa ${assignedDivision}.`);
-
-            document.getElementById('new-member-ign').value = '';
-            
-            renderRosters();
-            onDivisionChange();
-        }
-
         function renderDeleteMemberList() {
             if (!currentLoggedInOfficer) return;
             const selectedDivision = document.getElementById('admin-officer-select').value;
@@ -1765,11 +2038,6 @@
 
             const data = getGuildData();
             const members = data[selectedDivision] || [];
-
-            if (members.length === 0) {
-                listContainer.innerHTML = `<span style="font-size:0.8rem; color: var(--text-dim);">Walang miyembro sa division na ito.</span>`;
-                return;
-            }
 
             members.forEach(mObj => {
                 const isProtected = PROTECTED_ADMIN_ACCOUNTS.includes(mObj.name.toLowerCase());
@@ -1780,62 +2048,23 @@
                     ? `<span style="font-size:0.75rem; color:#e6b800; font-weight:bold; background:rgba(230,184,0,0.15); padding:2px 6px; border-radius:3px; border:1px solid #e6b800;">🛡️ Protected</span>`
                     : `<button onclick="deleteMember('${mObj.name}')" class="delete-btn">❌ Delete</button>`;
 
-                div.innerHTML = `
-                    <span>${mObj.icon} <strong>${mObj.name}</strong> <small style="color:var(--text-dim);">(${mObj.class})</small></span>
-                    ${actionHTML}
-                `;
+                let altTag = (mObj.mainOwner && mObj.mainOwner.toLowerCase() !== mObj.name.toLowerCase()) ? ` <small style="color:#ffaa33;">(Dummy of ${mObj.mainOwner})</small>` : ' <small style="color:#33cc33;">(Main)</small>';
+
+                div.innerHTML = `<span>${mObj.icon} <strong>${mObj.name}</strong>${altTag} <small style="color:var(--text-dim);">(${mObj.class})</small></span>${actionHTML}`;
                 listContainer.appendChild(div);
             });
         }
 
         async function deleteMember(memberName) {
             if (!currentLoggedInOfficer) return;
-            
-            if (PROTECTED_ADMIN_ACCOUNTS.includes(memberName.toLowerCase())) {
-                alert(`🔒 Protektado ang account ni "${memberName}"! Hindi pwedeng burahin ang Admin o SuperAdmin sa roster.`);
-                return;
-            }
-
             const selectedDivision = document.getElementById('admin-officer-select').value;
-
-            if (!confirm(`⚠️ Sigurado ka bang gusto mong burahin si "${memberName}" mula sa ${selectedDivision}?`)) {
-                return;
-            }
-
             let data = getGuildData();
             if (data[selectedDivision]) {
                 data[selectedDivision] = data[selectedDivision].filter(m => m.name.toLowerCase() !== memberName.toLowerCase());
                 await saveGuildData(data);
-
-                alert(`🗑️ Tagumpay na nabura si ${memberName} mula sa Cloud Database.`);
                 renderRosters();
                 onDivisionChange();
             }
-        }
-
-        function renderMemberChecklist() {
-            if (!currentLoggedInOfficer) return;
-
-            const selectedDivision = document.getElementById('admin-officer-select').value;
-            const checklist = document.getElementById('admin-member-checklist');
-            checklist.innerHTML = '';
-
-            const data = getGuildData();
-            const members = data[selectedDivision] || [];
-
-            members.forEach((mObj, idx) => {
-                const div = document.createElement('div');
-                div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;";
-                div.innerHTML = `
-                    <span>${mObj.icon} ${mObj.name} <small style="color:var(--text-dim);">(${mObj.class})</small></span>
-                    <select id="att-status-${idx}" data-name="${mObj.name}" style="background: #222; color: #fff; border: 1px solid #555; padding: 2px 6px; border-radius: 3px;">
-                        <option value="Present">Present</option>
-                        <option value="Late">Late</option>
-                        <option value="Absent" selected>Absent</option>
-                    </select>
-                `;
-                checklist.appendChild(div);
-            });
         }
 
         function renderRosters() {
@@ -1844,7 +2073,6 @@
             if (!dynamicGrid) return;
 
             dynamicGrid.innerHTML = '';
-
             let idx = 0;
             for (const divKey in data) {
                 const containerId = `roster-box-${idx}`;
@@ -1854,9 +2082,10 @@
                 let membersHTML = '';
                 members.forEach(m => {
                     const cssClass = getClassCss(m.class);
+                    let altTag = (m.mainOwner && m.mainOwner.toLowerCase() !== m.name.toLowerCase()) ? ` <small style="color:#ffaa33;">[Dummy of ${m.mainOwner}]</small>` : '';
                     membersHTML += `
                         <div class="roster-list-item">
-                            <span>${m.icon} <span class="${cssClass}">${m.name}</span></span>
+                            <span>${m.icon} <span class="${cssClass}">${m.name}</span>${altTag}</span>
                             <span class="${cssClass}">${m.class}</span>
                         </div>
                     `;
@@ -1879,104 +2108,6 @@
 
         function closeAdminModal() {
             document.getElementById('attendance-admin-modal').style.display = 'none';
-        }
-
-        async function saveAttendanceEntry() {
-            if (!currentLoggedInOfficer) return;
-
-            const selectedGM = document.getElementById('admin-officer-select').value;
-            const eventType = document.getElementById('admin-event-type').value;
-            const totalSolPool = parseFloat(document.getElementById('admin-sol-pool').value) || 100000;
-            const selects = document.querySelectorAll('#admin-member-checklist select');
-            
-            let updatedDivisionPresents = [];
-            selects.forEach(sel => {
-                const status = sel.value;
-                const name = sel.getAttribute('data-name');
-                if (status === 'Present' || status === 'Late') {
-                    updatedDivisionPresents.push({ name: name, officer: selectedGM });
-                }
-            });
-
-            const todayDate = new Date().toLocaleDateString(); 
-
-            let allRecords = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
-            let existingRecord = allRecords.find(r => r.dateKey === todayDate && r.event === eventType);
-
-            if (existingRecord) {
-                existingRecord.presents = (existingRecord.presents || []).filter(p => p.officer !== selectedGM);
-                existingRecord.presents = existingRecord.presents.concat(updatedDivisionPresents);
-                
-                existingRecord.solPool = totalSolPool;
-                existingRecord.timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            } else {
-                allRecords.unshift({
-                    dateKey: todayDate,
-                    timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                    event: eventType,
-                    solPool: totalSolPool,
-                    presents: updatedDivisionPresents
-                });
-            }
-
-            cloudAttendanceHistory = allRecords;
-            if (window.database) {
-                await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), allRecords);
-            }
-
-            alert(`🎉 Tagumpay na na-update sa Cloud ni Officer ${currentLoggedInOfficer}! Naisaayos at na-sync na ang status ng ${selectedGM}.`);
-            closeAdminModal();
-            renderAttendanceHistory();
-        }
-
-        function renderAttendanceHistory() {
-            const tbody = document.getElementById('public-attendance-history');
-            let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
-
-            if (history.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="padding: 10px; text-align: center; color: var(--text-dim);">No attendance recorded yet.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = '';
-            history.forEach(rec => {
-                const totalPresent = rec.presents ? rec.presents.length : 0;
-                const solPerMember = totalPresent > 0 ? Math.round(rec.solPool / totalPresent).toLocaleString() : 0;
-                
-                const groupedByDivision = {};
-                if (rec.presents) {
-                    rec.presents.forEach(p => {
-                        if (!groupedByDivision[p.officer]) {
-                            groupedByDivision[p.officer] = [];
-                        }
-                        groupedByDivision[p.officer].push(p.name);
-                    });
-                }
-
-                let formattedMembersHTML = '';
-                if (totalPresent > 0) {
-                    for (let divName in groupedByDivision) {
-                        formattedMembersHTML += `<div class="division-group-title">👑 ${divName} (${groupedByDivision[divName].length} Present):</div><br>`;
-                        groupedByDivision[divName].forEach(mName => {
-                            formattedMembersHTML += `💎 <strong>${mName}</strong> — <span style="color:var(--primary-glow);">${solPerMember} SOL</span><br>`;
-                        });
-                        formattedMembersHTML += `<div style="margin-bottom:6px;"></div>`;
-                    }
-                } else {
-                    formattedMembersHTML = '<span style="color:var(--text-dim);">Wala pang nakatalang present.</span>';
-                }
-
-                const tr = document.createElement('tr');
-                tr.style.borderBottom = "1px solid rgba(255,255,255,0.08)";
-                tr.innerHTML = `
-                    <td style="padding: 10px; color: var(--text-dim); white-space: nowrap;">${rec.dateKey}<br><small>Huling update: ${rec.timestamp}</small></td>
-                    <td style="padding: 10px; font-weight: 600; color:var(--primary);">${rec.event}</td>
-                    <td style="padding: 10px; color: #ffdd55; font-weight: bold;">${totalPresent} Members</td>
-                    <td style="padding: 10px; color: #ffdd55;">${rec.solPool.toLocaleString()} SOL<br><span style="color:#33cc33; font-weight:bold;">${solPerMember} SOL / ea</span></td>
-                    <td style="padding: 10px; color: #33cc33; line-height: 1.5;">${formattedMembersHTML}</td>
-                `;
-                tbody.appendChild(tr);
-            });
         }
 
         function toggleDivision(rosterId, btnId) {
