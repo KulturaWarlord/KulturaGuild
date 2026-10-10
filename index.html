@@ -784,7 +784,7 @@
         <div id="attendance-admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center;">
             <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 600px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto;">
                 <h3 style="color: var(--primary-glow); margin-bottom: 10px;">🔒 Authorized Officer Portal</h3>
-                <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">ANXIETY (Officer)</strong></p>
+                <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">Fullclip (Main Guild Master)</strong></p>
 
                 <div style="margin-bottom: 15px; padding: 12px; background: rgba(230, 184, 0, 0.05); border: 1px solid var(--border-gold); border-radius: 6px;">
                     <h4 style="color: var(--primary-glow); font-size: 0.95rem; margin-bottom: 8px;">➕ Register New Guild Member</h4>
@@ -803,8 +803,8 @@
                 </div>
 
                 <div style="margin-bottom: 12px;">
-                    <label style="font-size: 0.85rem;">Assigned Division:</label>
-                    <select id="admin-officer-select" disabled style="width: 100%; padding: 8px; background: #222; border: 1px solid var(--border-gold); color: var(--primary-glow); border-radius: 4px; font-weight: bold; cursor: not-allowed !important;">
+                    <label style="font-size: 0.85rem;">Select Division / Guild to Manage:</label>
+                    <select id="admin-officer-select" onchange="renderMemberChecklist()" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: var(--primary-glow); border-radius: 4px; font-weight: bold;">
                     </select>
                 </div>
                 
@@ -1113,7 +1113,20 @@
 
     <!-- Interactive Scripts -->
     <script>
+        const ALL_DIVISIONS = [
+            "Fullclip Division (Fullclip)",
+            "Warlock Division (Warlock)",
+            "PROTECT Division (Windtalker)",
+            "STEALTH Division (LordDwight)",
+            "ANXIETY Division (iKapitana)"
+        ];
+
         const OFFICER_ACCOUNTS = {
+            "Fullclip": {
+                password: "GMKulturamain",
+                assignedDivision: ALL_DIVISIONS, // Full access to all divisions
+                role: "Main Guild Master (Super Admin)"
+            },
             "Tsukushi": {
                 password: "blademasteragm",
                 assignedDivision: "Warlock Division (Warlock)",
@@ -1244,7 +1257,6 @@
             "STEALTH Division (LordDwight)": [
                 { name: "LordDwight", class: "Dark Lord", icon: "👑" }
             ],
-            // ANXIETY Guild Members List
             "ANXIETY Division (iKapitana)": [
                 { name: "iKapitana", class: "Summoner", icon: "👑" },
                 { name: "VIVINT", class: "Elf", icon: "🏹" },
@@ -1253,12 +1265,12 @@
         };
 
         function getGuildData() {
-            const saved = localStorage.getItem('kultura_guild_roster_v17');
+            const saved = localStorage.getItem('kultura_guild_roster_v18');
             return saved ? JSON.parse(saved) : defaultDivisionMembers;
         }
 
         function saveGuildData(data) {
-            localStorage.setItem('kultura_guild_roster_v17', JSON.stringify(data));
+            localStorage.setItem('kultura_guild_roster_v18', JSON.stringify(data));
         }
 
         let currentLoggedInOfficer = null;
@@ -1279,7 +1291,7 @@
 
             if (OFFICER_ACCOUNTS[userVal] && OFFICER_ACCOUNTS[userVal].password === passVal) {
                 currentLoggedInOfficer = userVal;
-                alert(`✅ Welcome Officer ${userVal}! Access Granted to ${OFFICER_ACCOUNTS[userVal].assignedDivision}.`);
+                alert(`✅ Welcome ${userVal}! Logged in as ${OFFICER_ACCOUNTS[userVal].role}.`);
                 closeLoginModal();
                 openAdminModal();
             } else {
@@ -1294,8 +1306,21 @@
             document.getElementById('logged-agm-display').innerText = `${currentLoggedInOfficer} (${officerInfo.role})`;
 
             const selectDiv = document.getElementById('admin-officer-select');
-            selectDiv.innerHTML = `<option value="${officerInfo.assignedDivision}">${officerInfo.assignedDivision}</option>`;
-            selectDiv.value = officerInfo.assignedDivision;
+            selectDiv.innerHTML = '';
+
+            if (Array.isArray(officerInfo.assignedDivision)) {
+                // Super Admin Full Access
+                selectDiv.disabled = false;
+                selectDiv.style.cursor = "pointer";
+                officerInfo.assignedDivision.forEach(divName => {
+                    selectDiv.innerHTML += `<option value="${divName}">${divName}</option>`;
+                });
+            } else {
+                // Single Guild Officer
+                selectDiv.disabled = true;
+                selectDiv.style.cursor = "not-allowed";
+                selectDiv.innerHTML = `<option value="${officerInfo.assignedDivision}">${officerInfo.assignedDivision}</option>`;
+            }
 
             renderMemberChecklist();
             document.getElementById('attendance-admin-modal').style.display = 'flex';
@@ -1330,7 +1355,7 @@
 
             const ign = document.getElementById('new-member-ign').value.trim();
             const charClass = document.getElementById('new-member-class').value;
-            const assignedDivision = OFFICER_ACCOUNTS[currentLoggedInOfficer].assignedDivision;
+            const assignedDivision = document.getElementById('admin-officer-select').value;
 
             if (!ign) {
                 alert("⚠️ Paki-lagay ang IGN Member Name!");
@@ -1367,13 +1392,12 @@
         function renderMemberChecklist() {
             if (!currentLoggedInOfficer) return;
 
-            const officerInfo = OFFICER_ACCOUNTS[currentLoggedInOfficer];
-            const assignedDivision = officerInfo.assignedDivision;
+            const selectedDivision = document.getElementById('admin-officer-select').value;
             const checklist = document.getElementById('admin-member-checklist');
             checklist.innerHTML = '';
 
             const data = getGuildData();
-            const members = data[assignedDivision] || [];
+            const members = data[selectedDivision] || [];
 
             members.forEach((mObj, idx) => {
                 const div = document.createElement('div');
@@ -1476,8 +1500,7 @@
         function saveAttendanceEntry() {
             if (!currentLoggedInOfficer) return;
 
-            const officerInfo = OFFICER_ACCOUNTS[currentLoggedInOfficer];
-            const selectedGM = officerInfo.assignedDivision;
+            const selectedGM = document.getElementById('admin-officer-select').value;
             const eventType = document.getElementById('admin-event-type').value;
             const totalSolPool = parseFloat(document.getElementById('admin-sol-pool').value) || 100000;
             const selects = document.querySelectorAll('#admin-member-checklist select');
@@ -1493,7 +1516,7 @@
 
             const todayDate = new Date().toLocaleDateString(); 
 
-            let allRecords = JSON.parse(localStorage.getItem('kultura_sol_live_v17') || '[]');
+            let allRecords = JSON.parse(localStorage.getItem('kultura_sol_live_v18') || '[]');
             
             let existingRecord = allRecords.find(r => r.dateKey === todayDate && r.event === eventType);
 
@@ -1513,7 +1536,7 @@
                 });
             }
 
-            localStorage.setItem('kultura_sol_live_v17', JSON.stringify(allRecords));
+            localStorage.setItem('kultura_sol_live_v18', JSON.stringify(allRecords));
 
             alert(`🎉 Tagumpay na na-save ni Officer ${currentLoggedInOfficer}! Naisaayos ang attendance para sa ${selectedGM}.`);
             closeAdminModal();
@@ -1522,7 +1545,7 @@
 
         function renderAttendanceHistory() {
             const tbody = document.getElementById('public-attendance-history');
-            let history = JSON.parse(localStorage.getItem('kultura_sol_live_v17') || '[]');
+            let history = JSON.parse(localStorage.getItem('kultura_sol_live_v18') || '[]');
 
             if (history.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" style="padding: 10px; text-align: center; color: var(--text-dim);">No attendance recorded yet.</td></tr>`;
