@@ -881,7 +881,7 @@
                 <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">I-submit ang iyong Username at mensahe para sa SuperAdmin upang ma-reset ang iyong password.</p>
                 
                 <div style="margin-bottom: 12px; text-align: left;">
-                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Your Username / IGN:</label>
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Your Registered Username / Email:</label>
                     <input type="text" id="lost-pass-username" placeholder="e.g. fullclip o mechado" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
                 </div>
 
@@ -1007,8 +1007,19 @@
                             <!-- ADD NEW GUILD / ALLIANCE -->
                             <div style="margin-bottom: 15px; padding: 12px; background: rgba(230, 184, 0, 0.05); border: 1px solid var(--border-gold); border-radius: 6px;">
                                 <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 8px;">➕ Create New Alliance / Guild Division</h4>
-                                <input type="text" id="new-division-name" placeholder="e.g. SPIDEY Division (Spidey)" style="width: 100%; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-bottom: 8px;">
-                                <button onclick="addNewGuildDivision()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">🏰 Add New Guild / Alliance</button>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                                    <div>
+                                        <label style="font-size: 0.75rem; color: var(--primary-glow);">Alliance / Division Name:</label>
+                                        <input type="text" id="new-division-name" placeholder="e.g. SPIDEY Division" style="width: 100%; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 0.75rem; color: var(--primary-glow);">Guild Master (GM) IGN:</label>
+                                        <input type="text" id="new-division-gm" placeholder="e.g. Spidey" style="width: 100%; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
+                                    </div>
+                                </div>
+
+                                <button onclick="addNewGuildDivision()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">🏰 Add New Guild Alliance with GM</button>
                             </div>
 
                             <!-- DELETE GUILD / ALLIANCE -->
@@ -1489,18 +1500,29 @@
             document.getElementById('lost-password-modal').style.display = 'none';
         }
 
+        // STRICT VALIDATION FOR LOST PASSWORD REQUEST
         async function submitLostPasswordRequest() {
-            const usernameVal = document.getElementById('lost-pass-username').value.trim();
+            const inputVal = document.getElementById('lost-pass-username').value.trim().toLowerCase();
             const messageVal = document.getElementById('lost-pass-message').value.trim();
 
-            if (!usernameVal) {
-                alert("⚠️ Paki-lagay ang iyong username.");
+            if (!inputVal) {
+                alert("⚠️ Paki-lagay ang iyong Username o Email.");
+                return;
+            }
+
+            // SURIIN KUNG NAKAREHISTRO ANG USERNAME O EMAIL SA SYSTEM
+            const cleanUser = inputVal.split('@')[0];
+            const registeredOfficers = Object.keys(OFFICER_DIVISION_MAP);
+
+            if (!registeredOfficers.includes(cleanUser)) {
+                alert("❌ Action Denied: Hindi nakarehistro ang Username / Email na ito sa listahan ng mga Opisyal. Hindi ipinadala ang request.");
                 return;
             }
 
             let requests = cloudLostPasswordRequests ? [...cloudLostPasswordRequests] : [];
             requests.unshift({
-                username: usernameVal,
+                username: cleanUser,
+                fullInput: inputVal,
                 message: messageVal || "Walang mensahe",
                 timestamp: new Date().toLocaleString()
             });
@@ -1596,8 +1618,8 @@
             requests.forEach((req, idx) => {
                 inboxContainer.innerHTML += `
                     <div style="background: rgba(0,0,0,0.5); padding: 8px; margin-bottom: 6px; border-left: 3px solid #ff3333; border-radius: 4px;">
-                        <div>🔑 <strong>User:</strong> ${req.username} <small style="color:var(--text-dim);">(${req.timestamp})</small></div>
-                        <div style="color: #ffaa33; font-size: 0.75rem; margin-top: 2px;">💬 "${req.message}"</div>
+                        <div>🔑 <strong>Registered User:</strong> ${req.username} <small style="color:var(--text-dim);">(${req.timestamp})</small></div>
+                        <div style="color: #ffaa33; font-size: 0.75rem; margin-top: 2px;">💬 Message: "${req.message}"</div>
                         <button onclick="deleteLostPasswordRequest(${idx})" class="delete-btn" style="margin-top: 4px;">✔ Mark as Resolved / Clear</button>
                     </div>
                 `;
@@ -1715,23 +1737,33 @@
             }
         }
 
+        // UPDATED: CREATE DIVISION WITH GUILDMASTER
         async function addNewGuildDivision() {
             const divName = document.getElementById('new-division-name').value.trim();
-            if (!divName) {
-                alert("⚠️ Paki-lagay ang Pangalan ng Bagong Guild / Division!");
+            const gmName = document.getElementById('new-division-gm').value.trim();
+
+            if (!divName || !gmName) {
+                alert("⚠️ Paki-lagay pareho ang Division Name at ang Guild Master IGN!");
                 return;
             }
 
             let data = getGuildData();
-            if (data[divName]) {
+            const fullDivKey = `${divName} (${gmName})`;
+
+            if (data[fullDivKey] || data[divName]) {
                 alert("⚠️ Mayroon nang kaparehong Guild / Division name!");
                 return;
             }
 
-            data[divName] = [];
+            // GUMAWA NG BAGONG DIVISION AT ILAGAY ANG GUILD MASTER BILANG UNANG MEMBER
+            data[fullDivKey] = [
+                { name: gmName, class: "Blade Master", icon: "👑", mainOwner: gmName }
+            ];
+
             await saveGuildData(data);
-            alert(`🎉 Matagumpay na naidagdag ang "${divName}" sa Alliance Roster!`);
+            alert(`🎉 Matagumpay na naidagdag ang "${fullDivKey}" na pinamumunuan ni GM "${gmName}" sa Alliance Roster!`);
             document.getElementById('new-division-name').value = '';
+            document.getElementById('new-division-gm').value = '';
             openAdminModal();
         }
 
@@ -1972,7 +2004,7 @@
 
             document.getElementById('logged-agm-display').innerText = userRole.toUpperCase() || "OFFICER";
 
-            // SUPERADMIN EXCLUSIVE PANELS (INCLUDING THE NEW CREDENTIALS & LOST PASSWORD INBOX)
+            // SUPERADMIN EXCLUSIVE PANELS
             const isKulturaMainOnly = (userRole === "kulturamain");
             document.getElementById('superadmin-credentials-inbox-block').style.display = isKulturaMainOnly ? 'block' : 'none';
             document.getElementById('superadmin-main-dummy-block').style.display = isSuperAdmin ? 'block' : 'none';
