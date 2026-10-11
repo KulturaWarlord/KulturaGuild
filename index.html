@@ -885,10 +885,10 @@
 
                 <!-- MODAL BODY CONTENT CONTAINER -->
                 <div id="admin-modal-body-content">
-                    <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in securely as: <strong id="logged-agm-display">Officer</strong></p>
+                    <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in securely as: <strong id="logged-agm-display">OFFICER</strong></p>
 
-                    <!-- SUPERADMIN EXCLUSIVE PANEL: MULTI-DUMMY INPUT MAPPER -->
-                    <div id="superadmin-main-dummy-block" class="admin-section-block" style="display: block;">
+                    <!-- SUPERADMIN EXCLUSIVE PANEL 1: MULTI-DUMMY INPUT MAPPER -->
+                    <div id="superadmin-main-dummy-block" class="admin-section-block" style="display: none;">
                         <button onclick="toggleAdminSection('sec-main-dummy-linker')" class="admin-collapsible-btn">
                             <span>🎭 SuperAdmin: Multi-Dummy Character Mapper (Link Dummies to Main)</span>
                             <span id="icon-sec-main-dummy-linker">▼ Expand</span>
@@ -917,8 +917,31 @@
                         </div>
                     </div>
 
-                    <!-- SUPERADMIN EXCLUSIVE: DELETE PAST ATTENDANCE LOGS -->
-                    <div id="superadmin-delete-logs-block" class="admin-section-block" style="display: block;">
+                    <!-- SUPERADMIN EXCLUSIVE PANEL 2: ALLIANCE & GUILD DIVISION MANAGEMENT -->
+                    <div id="superadmin-alliance-mgmt-block" class="admin-section-block" style="display: none;">
+                        <button onclick="toggleAdminSection('sec-alliance-mgmt')" class="admin-collapsible-btn">
+                            <span>🏛️ SuperAdmin: Alliance & Guild Division Management</span>
+                            <span id="icon-sec-alliance-mgmt">▼ Expand</span>
+                        </button>
+                        <div id="sec-alliance-mgmt" class="admin-collapsible-content">
+                            <!-- ADD NEW GUILD / ALLIANCE -->
+                            <div style="margin-bottom: 15px; padding: 12px; background: rgba(230, 184, 0, 0.05); border: 1px solid var(--border-gold); border-radius: 6px;">
+                                <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 8px;">➕ Create New Alliance / Guild Division</h4>
+                                <input type="text" id="new-division-name" placeholder="e.g. SPIDEY Division (Spidey)" style="width: 100%; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-bottom: 8px;">
+                                <button onclick="addNewGuildDivision()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">🏰 Add New Guild / Alliance</button>
+                            </div>
+
+                            <!-- DELETE GUILD / ALLIANCE -->
+                            <div style="padding: 12px; background: rgba(139, 0, 0, 0.15); border: 1px solid rgba(255, 51, 51, 0.4); border-radius: 6px;">
+                                <h4 style="color: #ffaa33; font-size: 0.85rem; margin-bottom: 8px;">🗑️ Delete / Remove Alliance Division</h4>
+                                <div id="superadmin-delete-division-list" style="max-height: 140px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUPERADMIN EXCLUSIVE PANEL 3: DELETE PAST ATTENDANCE LOGS -->
+                    <div id="superadmin-delete-logs-block" class="admin-section-block" style="display: none;">
                         <button onclick="toggleAdminSection('sec-delete-attendance')" class="admin-collapsible-btn">
                             <span>🗑️ SuperAdmin: Delete Past Attendance Logs</span>
                             <span id="icon-sec-delete-attendance">▼ Expand</span>
@@ -1224,6 +1247,8 @@
 
     <!-- Interactive Scripts -->
     <script>
+        const PROTECTED_GUILDMASTERS = ["fullclip", "warlock", "lorddwight", "windtalker", "ikapitana", "mechado", "tsukushi"];
+
         let ALL_DIVISIONS = [
             "Fullclip Division (Fullclip)",
             "Warlock Division (Warlock)",
@@ -1452,7 +1477,7 @@
             newInput.type = "text";
             newInput.className = "dummy-input-field";
             newInput.placeholder = `Dummy ${totalCurrent + 1}`;
-            newInput.style.cssText = "padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;";
+            newInput.style.cssText = "padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;";
             container.appendChild(newInput);
         }
 
@@ -1498,6 +1523,36 @@
             } else {
                 alert(`⚠️ Walang nahanap na Dummy Accounts sa roster na may ganyang pangalan.`);
             }
+        }
+
+        async function addNewGuildDivision() {
+            const divName = document.getElementById('new-division-name').value.trim();
+            if (!divName) {
+                alert("⚠️ Paki-lagay ang Pangalan ng Bagong Guild / Division!");
+                return;
+            }
+
+            let data = getGuildData();
+            if (data[divName]) {
+                alert("⚠️ Mayroon nang kaparehong Guild / Division name!");
+                return;
+            }
+
+            data[divName] = [];
+            await saveGuildData(data);
+            alert(`🎉 matagumpay na naidagdag ang "${divName}" sa Alliance Roster!`);
+            document.getElementById('new-division-name').value = '';
+            openAdminModal();
+        }
+
+        async function deleteGuildDivision(divKey) {
+            if (!confirm(`⚠️ Sigurado ka bang gusto mong burahin ang Buong Division na "${divKey}"? Mabubura rin ang lahat ng miyembro nito!`)) return;
+
+            let data = getGuildData();
+            delete data[divKey];
+            await saveGuildData(data);
+            alert(`🗑️ Nabura na ang Division "${divKey}".`);
+            openAdminModal();
         }
 
         async function registerNewMember() {
@@ -1709,13 +1764,17 @@
             }
         }
 
-        // ROLE-BASED ACCESS CONTROL (VISIBLE NA ULIT ANG SUPERADMIN PANELS SA TAMANG USER)
         function openAdminModal() {
             const selectDiv = document.getElementById('admin-officer-select');
             selectDiv.innerHTML = '';
 
             const userRole = (currentLoggedInOfficer || "").toLowerCase();
-            const allowedDivisions = OFFICER_DIVISION_MAP[userRole] || ALL_DIVISIONS;
+            const isSuperAdmin = (userRole === "fullclip" || userRole === "kultura");
+
+            const guildData = getGuildData();
+            let currentDivisions = Object.keys(guildData);
+
+            let allowedDivisions = isSuperAdmin ? currentDivisions : (OFFICER_DIVISION_MAP[userRole] || currentDivisions);
 
             allowedDivisions.forEach(divName => {
                 selectDiv.innerHTML += `<option value="${divName}">${divName}</option>`;
@@ -1723,13 +1782,33 @@
 
             document.getElementById('logged-agm-display').innerText = userRole.toUpperCase() || "OFFICER";
 
-            // KUNG SUPERADMIN (Fullclip o Kultura), MAKITITA ANG MULTI-DUMMY MAPPER AT DELETE LOGS
-            const isSuperAdmin = (userRole === "fullclip" || userRole === "kultura");
+            // SUPERADMIN EXCLUSIVE PANELS
             document.getElementById('superadmin-main-dummy-block').style.display = isSuperAdmin ? 'block' : 'none';
+            document.getElementById('superadmin-alliance-mgmt-block').style.display = isSuperAdmin ? 'block' : 'none';
             document.getElementById('superadmin-delete-logs-block').style.display = isSuperAdmin ? 'block' : 'none';
+
+            if (isSuperAdmin) {
+                renderDeleteDivisionList();
+            }
 
             onDivisionChange();
             document.getElementById('attendance-admin-modal').style.display = 'flex';
+        }
+
+        function renderDeleteDivisionList() {
+            const container = document.getElementById('superadmin-delete-division-list');
+            if (!container) return;
+            container.innerHTML = '';
+            let data = getGuildData();
+
+            for (let divKey in data) {
+                container.innerHTML += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <span>🏰 <strong>${divKey}</strong></span>
+                        <button onclick="deleteGuildDivision('${divKey}')" class="delete-btn">❌ Delete Alliance</button>
+                    </div>
+                `;
+            }
         }
 
         function onDivisionChange() {
@@ -1742,19 +1821,38 @@
             const listContainer = document.getElementById('admin-delete-member-list');
             listContainer.innerHTML = '';
             const members = getGuildData()[selectedDivision] || [];
+            const userRole = (currentLoggedInOfficer || "").toLowerCase();
+            const isSuperAdmin = (userRole === "fullclip" || userRole === "kultura");
 
             members.forEach(mObj => {
                 let icon = getCharacterIcon(mObj.class, mObj.name);
+                let isProtected = PROTECTED_GUILDMASTERS.includes(mObj.name.toLowerCase());
+
+                let actionHTML = '';
+                if (isProtected && !isSuperAdmin) {
+                    actionHTML = `<span style="font-size: 0.75rem; color: #ffdd55; font-weight: bold; background: rgba(230,184,0,0.2); padding: 2px 6px; border-radius: 3px;">🔒 Protected GM</span>`;
+                } else {
+                    actionHTML = `<button onclick="deleteMember('${mObj.name}')" class="delete-btn">❌ Delete</button>`;
+                }
+
                 listContainer.innerHTML += `
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
                         <span>${icon} <strong>${mObj.name}</strong></span>
-                        <button onclick="deleteMember('${mObj.name}')" class="delete-btn">❌ Delete</button>
+                        ${actionHTML}
                     </div>
                 `;
             });
         }
 
         async function deleteMember(memberName) {
+            const userRole = (currentLoggedInOfficer || "").toLowerCase();
+            const isSuperAdmin = (userRole === "fullclip" || userRole === "kultura");
+
+            if (PROTECTED_GUILDMASTERS.includes(memberName.toLowerCase()) && !isSuperAdmin) {
+                alert("⛔ Action Denied: Naka-lock ang Guild Master account na ito. SuperAdmin lang ang may karapatang mag-alis sa kanila!");
+                return;
+            }
+
             if (!confirm(`Alisin si "${memberName}" sa roster?`)) return;
             const selectedDivision = document.getElementById('admin-officer-select').value;
             let data = getGuildData();
