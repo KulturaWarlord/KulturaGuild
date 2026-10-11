@@ -1532,7 +1532,7 @@
                     cloudGuildData = snap.val();
                 } else {
                     cloudGuildData = defaultDivisionMembers;
-                    window.dbSet(dbRef(window.database, 'kultura_roster'), defaultDivisionMembers);
+                    window.dbSet(window.dbRef(window.database, 'kultura_roster'), defaultDivisionMembers);
                 }
                 sanitizeGuildMastersAsMains();
                 renderRosters();
