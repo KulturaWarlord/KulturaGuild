@@ -888,7 +888,7 @@
                     <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in securely as: <strong id="logged-agm-display">Officer</strong></p>
 
                     <!-- SUPERADMIN EXCLUSIVE PANEL: MULTI-DUMMY INPUT MAPPER -->
-                    <div id="superadmin-main-dummy-block" class="admin-section-block" style="display: none;">
+                    <div id="superadmin-main-dummy-block" class="admin-section-block" style="display: block;">
                         <button onclick="toggleAdminSection('sec-main-dummy-linker')" class="admin-collapsible-btn">
                             <span>🎭 SuperAdmin: Multi-Dummy Character Mapper (Link Dummies to Main)</span>
                             <span id="icon-sec-main-dummy-linker">▼ Expand</span>
@@ -918,7 +918,7 @@
                     </div>
 
                     <!-- SUPERADMIN EXCLUSIVE: DELETE PAST ATTENDANCE LOGS -->
-                    <div id="superadmin-delete-logs-block" class="admin-section-block" style="display: none;">
+                    <div id="superadmin-delete-logs-block" class="admin-section-block" style="display: block;">
                         <button onclick="toggleAdminSection('sec-delete-attendance')" class="admin-collapsible-btn">
                             <span>🗑️ SuperAdmin: Delete Past Attendance Logs</span>
                             <span id="icon-sec-delete-attendance">▼ Expand</span>
@@ -1234,8 +1234,8 @@
 
         // MAPPING NG OFFICERS SA KANILANG GUILD / DIVISION ACCESS
         const OFFICER_DIVISION_MAP = {
-            "fullclip": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"], // SuperAdmin (All)
-            "kultura": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"],  // SuperAdmin (All)
+            "fullclip": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"],
+            "kultura": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"],
             "mechado": ["Fullclip Division (Fullclip)"],
             "tsukushi": ["Warlock Division (Warlock)"],
             "warlock": ["Warlock Division (Warlock)"],
@@ -1368,7 +1368,6 @@
             document.getElementById('login-modal').style.display = 'none';
         }
 
-        // SECURE FIREBASE LOGIN
         async function handleLogin() {
             const userVal = document.getElementById('login-username').value.trim();
             const passVal = document.getElementById('login-password').value.trim();
@@ -1710,21 +1709,21 @@
             }
         }
 
-        // ROLE-BASED ACCESS CONTROL SA OFFICERS
+        // ROLE-BASED ACCESS CONTROL (VISIBLE NA ULIT ANG SUPERADMIN PANELS SA TAMANG USER)
         function openAdminModal() {
             const selectDiv = document.getElementById('admin-officer-select');
             selectDiv.innerHTML = '';
 
-            const userRole = currentLoggedInOfficer || "officer";
+            const userRole = (currentLoggedInOfficer || "").toLowerCase();
             const allowedDivisions = OFFICER_DIVISION_MAP[userRole] || ALL_DIVISIONS;
 
             allowedDivisions.forEach(divName => {
                 selectDiv.innerHTML += `<option value="${divName}">${divName}</option>`;
             });
 
-            document.getElementById('logged-agm-display').innerText = userRole.toUpperCase();
+            document.getElementById('logged-agm-display').innerText = userRole.toUpperCase() || "OFFICER";
 
-            // KUNG SUPERADMIN (Fullclip / Kultura), I-DISPLAY ANG EXTRA PANELS; KUNG HINDI, ITAGO
+            // KUNG SUPERADMIN (Fullclip o Kultura), MAKITITA ANG MULTI-DUMMY MAPPER AT DELETE LOGS
             const isSuperAdmin = (userRole === "fullclip" || userRole === "kultura");
             document.getElementById('superadmin-main-dummy-block').style.display = isSuperAdmin ? 'block' : 'none';
             document.getElementById('superadmin-delete-logs-block').style.display = isSuperAdmin ? 'block' : 'none';
