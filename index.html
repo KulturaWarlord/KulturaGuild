@@ -10,7 +10,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAq_TzBp-Jjr3Wbp7RIHz05OW3IR5Iovmk",
@@ -37,6 +37,9 @@
         window.signInWithEmailAndPassword = signInWithEmailAndPassword;
         window.signOut = signOut;
         window.onAuthStateChanged = onAuthStateChanged;
+        window.updatePassword = updatePassword;
+        window.EmailAuthProvider = EmailAuthProvider;
+        window.reauthenticateWithCredential = reauthenticateWithCredential;
         
         window.dispatchEvent(new Event('firebase-ready'));
     </script>
@@ -855,7 +858,7 @@
                 
                 <div style="margin-bottom: 12px; text-align: left;">
                     <label style="font-size: 0.8rem; color: var(--primary-glow);">Username / Email:</label>
-                    <input type="text" id="login-username" placeholder="e.g. fullclip o fullclip@kulturaguild.com" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                    <input type="text" id="login-username" placeholder="e.g. kulturamain@alliance.com o fullclip" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
                 </div>
 
                 <div style="margin-bottom: 15px; text-align: left;">
@@ -886,6 +889,25 @@
                 <!-- MODAL BODY CONTENT CONTAINER -->
                 <div id="admin-modal-body-content">
                     <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in securely as: <strong id="logged-agm-display">OFFICER</strong></p>
+
+                    <!-- CHANGE PASSWORD FEATURE SECTION FOR ADMINS & SUPERADMIN -->
+                    <div class="admin-section-block">
+                        <button onclick="toggleAdminSection('sec-change-password')" class="admin-collapsible-btn">
+                            <span>🔑 Change Account Password</span>
+                            <span id="icon-sec-change-password">▼ Expand</span>
+                        </button>
+                        <div id="sec-change-password" class="admin-collapsible-content">
+                            <div style="margin-bottom: 10px;">
+                                <label style="font-size: 0.8rem; color: var(--primary-glow);">Current Password:</label>
+                                <input type="password" id="current-password-input" placeholder="Enter current password" style="width: 100%; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
+                            </div>
+                            <div style="margin-bottom: 12px;">
+                                <label style="font-size: 0.8rem; color: var(--primary-glow);">New Password:</label>
+                                <input type="password" id="new-password-input" placeholder="Enter new secure password" style="width: 100%; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
+                            </div>
+                            <button onclick="handleChangePassword()" class="btn" style="padding: 7px 14px; font-size: 0.8rem; width: 100%; background: linear-gradient(135deg, #e6b800, #b38f00); color: #000;">🔐 Update Password</button>
+                        </div>
+                    </div>
 
                     <!-- SUPERADMIN EXCLUSIVE PANEL 1: MULTI-DUMMY INPUT MAPPER -->
                     <div id="superadmin-main-dummy-block" class="admin-section-block" style="display: none;">
@@ -1247,7 +1269,7 @@
 
     <!-- Interactive Scripts -->
     <script>
-        const PROTECTED_GUILDMASTERS = ["fullclip", "warlock", "lorddwight", "windtalker", "ikapitana", "mechado", "tsukushi"];
+        const PROTECTED_GUILDMASTERS = ["fullclip", "warlock", "lorddwight", "windtalker", "ikapitana", "mechado", "tsukushi", "kulturamain"];
 
         let ALL_DIVISIONS = [
             "Fullclip Division (Fullclip)",
@@ -1259,8 +1281,9 @@
 
         // MAPPING NG OFFICERS SA KANILANG GUILD / DIVISION ACCESS
         const OFFICER_DIVISION_MAP = {
-            "fullclip": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"],
-            "kultura": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"],
+            "kulturamain": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"], // SuperAdmin
+            "fullclip": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"],    // SuperAdmin
+            "kultura": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"],     // SuperAdmin
             "mechado": ["Fullclip Division (Fullclip)"],
             "tsukushi": ["Warlock Division (Warlock)"],
             "warlock": ["Warlock Division (Warlock)"],
@@ -1273,7 +1296,7 @@
             const lowerClass = (charClass || "").toLowerCase();
             const lowerName = (charName || "").toLowerCase();
 
-            if (lowerName === "fullclip" || lowerName === "warlock" || lowerName === "lorddwight" || lowerName === "windtalker" || lowerName === "ikapitana") {
+            if (lowerName === "fullclip" || lowerName === "warlock" || lowerName === "lorddwight" || lowerName === "windtalker" || lowerName === "ikapitana" || lowerName === "kulturamain") {
                 return "👑";
             }
             if (lowerClass.includes("blade master") || lowerClass.includes("bm") || lowerClass.includes("knight")) {
@@ -1425,6 +1448,44 @@
             alert("🔒 Successfully logged out.");
         }
 
+        // FIREBASE CHANGE PASSWORD FUNCTION
+        async function handleChangePassword() {
+            const currentPass = document.getElementById('current-password-input').value;
+            const newPass = document.getElementById('new-password-input').value;
+
+            if (!currentPass || !newPass) {
+                alert("⚠️ Paki-lagay ang iyong current password at ang bagong password.");
+                return;
+            }
+
+            if (newPass.length < 6) {
+                alert("⚠️ Ang bagong password ay dapat may hindi bababa sa 6 na karakter.");
+                return;
+            }
+
+            const user = window.auth.currentUser;
+            if (!user) {
+                alert("❌ Walang active session. Mag-login muli.");
+                return;
+            }
+
+            try {
+                // Re-authenticate user muna para masigurong tama ang lumang password
+                const credential = window.EmailAuthProvider.credential(user.email, currentPass);
+                await window.reauthenticateWithCredential(user, credential);
+
+                // I-update ang password sa Firebase Auth
+                await window.updatePassword(user, newPass);
+                alert("🎉 Tagumpay! Na-update na ang iyong password.");
+                
+                document.getElementById('current-password-input').value = '';
+                document.getElementById('new-password-input').value = '';
+            } catch (error) {
+                console.error(error);
+                alert("❌ Nabigo ang pagpalit ng password. Siguruhing tama ang iyong Current Password.");
+            }
+        }
+
         function toggleAdminSection(sectionId) {
             const elem = document.getElementById(sectionId);
             const iconElem = document.getElementById(`icon-${sectionId}`);
@@ -1540,7 +1601,7 @@
 
             data[divName] = [];
             await saveGuildData(data);
-            alert(`🎉 matagumpay na naidagdag ang "${divName}" sa Alliance Roster!`);
+            alert(`🎉 Matagumpay na naidagdag ang "${divName}" sa Alliance Roster!`);
             document.getElementById('new-division-name').value = '';
             openAdminModal();
         }
@@ -1769,7 +1830,7 @@
             selectDiv.innerHTML = '';
 
             const userRole = (currentLoggedInOfficer || "").toLowerCase();
-            const isSuperAdmin = (userRole === "fullclip" || userRole === "kultura");
+            const isSuperAdmin = (userRole === "kulturamain" || userRole === "fullclip" || userRole === "kultura");
 
             const guildData = getGuildData();
             let currentDivisions = Object.keys(guildData);
@@ -1822,7 +1883,7 @@
             listContainer.innerHTML = '';
             const members = getGuildData()[selectedDivision] || [];
             const userRole = (currentLoggedInOfficer || "").toLowerCase();
-            const isSuperAdmin = (userRole === "fullclip" || userRole === "kultura");
+            const isSuperAdmin = (userRole === "kulturamain" || userRole === "fullclip" || userRole === "kultura");
 
             members.forEach(mObj => {
                 let icon = getCharacterIcon(mObj.class, mObj.name);
@@ -1846,7 +1907,7 @@
 
         async function deleteMember(memberName) {
             const userRole = (currentLoggedInOfficer || "").toLowerCase();
-            const isSuperAdmin = (userRole === "fullclip" || userRole === "kultura");
+            const isSuperAdmin = (userRole === "kulturamain" || userRole === "fullclip" || userRole === "kultura");
 
             if (PROTECTED_GUILDMASTERS.includes(memberName.toLowerCase()) && !isSuperAdmin) {
                 alert("⛔ Action Denied: Naka-lock ang Guild Master account na ito. SuperAdmin lang ang may karapatang mag-alis sa kanila!");
