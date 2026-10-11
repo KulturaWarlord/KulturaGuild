@@ -6,7 +6,7 @@
     <title>Kultura Guild & Alliance | NoLimit MU Online</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=MedievalSharp&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     
-    <!-- Firebase SDKs (Kasama na ang Auth) -->
+    <!-- Firebase SDKs (Kasama na ang Auth at Realtime DB) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -847,12 +847,12 @@
         <!-- LOGIN MODAL FOR OFFICERS -->
         <div id="login-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10001; justify-content: center; align-items: center;">
             <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 400px; padding: 25px; border-radius: 10px; color: #fff; text-align: center;">
-                <h3 style="color: var(--primary-glow); margin-bottom: 15px;">🔐 Secure Firebase Authentication</h3>
-                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Mag-login gamit ang iyong Firebase Account (Email o Username).</p>
+                <h3 style="color: var(--primary-glow); margin-bottom: 15px;">🔐 Officer Authentication</h3>
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Mag-login gamit ang inyong Registered Username / Email sa Firebase.</p>
                 
                 <div style="margin-bottom: 12px; text-align: left;">
-                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Email o Username:</label>
-                    <input type="text" id="login-username" placeholder="e.g. kulturamain@alliance.com o Fullclip" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Username o Email:</label>
+                    <input type="text" id="login-username" placeholder="Enter Registered Guild Name / Email" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
                 </div>
 
                 <div style="margin-bottom: 15px; text-align: left;">
@@ -884,17 +884,180 @@
                 <div id="admin-modal-body-content">
                     <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">Officer</strong></p>
 
-                    <!-- SECTION: MEMBER MANAGEMENT & ATTENDANCE -->
+                    <!-- SECTION 1: SUPERADMIN INBOX -->
+                    <div id="superadmin-inbox-block" class="admin-section-block" style="display: none;">
+                        <button onclick="toggleAdminSection('sec-inbox')" class="admin-collapsible-btn">
+                            <span>📬 SuperAdmin Inbox (Password Reset Requests)</span>
+                            <span id="icon-sec-inbox">▼ Expand</span>
+                        </button>
+                        <div id="sec-inbox" class="admin-collapsible-content">
+                            <div id="superadmin-inbox-list" style="max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
+                                <span style="color: var(--text-dim);">Walang nakareserbang ticket sa inbox.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KULTURA SECURITY LOGS BLOCK -->
+                    <div id="kultura-security-logs-block" class="admin-section-block" style="display: none; border-color: #33cc33;">
+                        <button onclick="toggleAdminSection('sec-kultura-logs')" class="admin-collapsible-btn" style="color: #33cc33; background: rgba(51, 204, 51, 0.1);">
+                            <span>🛡️ Security Audit Logs (Kultura Username Activity)</span>
+                            <span id="icon-sec-kultura-logs">▼ Expand</span>
+                        </button>
+                        <div id="sec-kultura-logs" class="admin-collapsible-content">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <p style="font-size:0.75rem; color:var(--text-dim); margin:0;">Realtime activity logs ng username na kultura.</p>
+                                <button onclick="viewAllCredentialsRealtime()" class="btn" style="padding: 4px 10px; font-size: 0.75rem; background: linear-gradient(135deg, #0088cc, #004488);">🔐 View Credentials</button>
+                            </div>
+                            <div id="kultura-logs-list" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.7); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
+                                <span style="color: var(--text-dim);">Walang nakatalang security logs pa.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUPERADMIN EXCLUSIVE PANEL: MULTI-DUMMY INPUT MAPPER -->
+                    <div id="superadmin-main-dummy-block" class="admin-section-block" style="display: none;">
+                        <button onclick="toggleAdminSection('sec-main-dummy-linker')" class="admin-collapsible-btn">
+                            <span>🎭 SuperAdmin: Multi-Dummy Character Mapper (Link Dummies to Main)</span>
+                            <span id="icon-sec-main-dummy-linker">▼ Expand</span>
+                        </button>
+                        <div id="sec-main-dummy-linker" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
+                                I-type ang <strong>Main Character IGN</strong> at ilagay sa mga boxes ang kanyang <strong>Dummy Accounts</strong>. Magiging <strong>naka-link</strong> lamang sila sa Main pero **mananatili (stay) sila sa kani-kanilang kasalukuyang Guild/Division**.
+                            </p>
+                            
+                            <!-- MAIN IGN FIELD -->
+                            <div style="margin-bottom: 12px; background: rgba(51,204,51,0.1); padding: 10px; border: 1px solid #33cc33; border-radius: 6px;">
+                                <label style="font-size: 0.8rem; color: #33cc33; font-weight: bold;">👑 Main Character IGN:</label>
+                                <input type="text" id="type-main-ign" placeholder="e.g. Eremes" style="width: 100%; padding: 8px; background: #111; border: 1px solid #33cc33; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
+                            </div>
+
+                            <!-- MULTI DUMMY BOXES GRID -->
+                            <label style="font-size: 0.8rem; color: #ffaa33; font-weight: bold;">🎭 Dummy / Alt Character Accounts:</label>
+                            <div id="dummy-boxes-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; margin-bottom: 10px; max-height: 220px; overflow-y: auto; padding-right: 5px;">
+                                <input type="text" class="dummy-input-field" placeholder="Dummy 1 (e.g. Kreios)" style="padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                                <input type="text" class="dummy-input-field" placeholder="Dummy 2 (e.g. Papaliciou)" style="padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                                <input type="text" class="dummy-input-field" placeholder="Dummy 3" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                                <input type="text" class="dummy-input-field" placeholder="Dummy 4" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                            </div>
+
+                            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                                <button onclick="addMoreDummyBox()" class="btn" style="padding: 5px 12px; font-size: 0.75rem; background: #333; border-color: #777;">➕ Add More Dummy Box</button>
+                            </div>
+
+                            <button onclick="saveSuperAdminMultiLinkage()" class="btn" style="padding: 8px 14px; font-size: 0.85rem; width: 100%; background: linear-gradient(135deg, #8b0000, #ffaa33); color: #000;">🔗 Link Dummies to Main (Keep Current Guild Position)</button>
+                        </div>
+                    </div>
+
+                    <!-- SUPERADMIN EXCLUSIVE: DELETE PAST ATTENDANCE LOGS -->
+                    <div id="superadmin-delete-logs-block" class="admin-section-block" style="display: none;">
+                        <button onclick="toggleAdminSection('sec-delete-attendance')" class="admin-collapsible-btn">
+                            <span>🗑️ SuperAdmin: Delete Past Attendance Logs</span>
+                            <span id="icon-sec-delete-attendance">▼ Expand</span>
+                        </button>
+                        <div id="sec-delete-attendance" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
+                                Pumili ng nakalipas na attendance log mula sa listahan sa ibaba at i-click ang <strong>❌ Delete Log</strong> para tuluyang mabura ito sa database.
+                            </p>
+                            <div id="admin-attendance-logs-list" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
+                                <span style="color: var(--text-dim);">Walang nakareserbang attendance logs.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 2: SUPERADMIN GUILD REGISTRATION -->
+                    <div id="superadmin-guild-reg-block" class="admin-section-block" style="display: none;">
+                        <button onclick="toggleAdminSection('sec-guild-reg')" class="admin-collapsible-btn">
+                            <span>🏰 SuperAdmin: Register New Alliance & Guild Master</span>
+                            <span id="icon-sec-guild-reg">▼ Expand</span>
+                        </button>
+                        <div id="sec-guild-reg" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">Note: Ang **Guild Name** ay awtomatikong magiging **Username** din ng bagong Guild Master.</p>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                                <input type="text" id="reg-guild-name" placeholder="Guild Name & Username (e.g., SPIDEY)" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem; grid-column: span 2;">
+                                <input type="password" id="reg-gm-password" placeholder="GM Account Password" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                <select id="reg-gm-class" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                    <option value="Blade Master">GM Class: Blade Master</option>
+                                    <option value="Dark Lord">GM Class: Dark Lord</option>
+                                    <option value="Summoner">GM Class: Summoner</option>
+                                    <option value="Soul Master">GM Class: Soul Master</option>
+                                    <option value="Elf">GM Class: Elf</option>
+                                    <option value="Dimension Master">GM Class: Dimension Master</option>
+                                </select>
+                            </div>
+                            <button onclick="registerAllianceAndGM()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%; background: linear-gradient(135deg, #0055ff, #002288);">🚀 Create Guild & Register Guild Master</button>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 3: ACCOUNT SETTINGS & PASSWORD MANAGER -->
+                    <div class="admin-section-block">
+                        <button onclick="toggleAdminSection('sec-account-settings')" class="admin-collapsible-btn">
+                            <span>⚙️ Account Settings, Username & Password Manager</span>
+                            <span id="icon-sec-account-settings">▼ Expand</span>
+                        </button>
+                        <div id="sec-account-settings" class="admin-collapsible-content">
+                            
+                            <div style="margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px dashed rgba(230,184,0,0.3);">
+                                <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">✏️ Change My Username:</h4>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                                    <input type="text" id="change-username-new" placeholder="Enter New Guild Username" style="flex: 1; min-width: 150px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                </div>
+                                <button onclick="changeMyUsername()" class="btn" style="padding: 6px 14px; font-size: 0.75rem; width: 100%; background: linear-gradient(135deg, #0088cc, #004488);">✏️ Update My Username</button>
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">🔑 Change My Password:</h4>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                                    <input type="password" id="change-pass-current" placeholder="Current Password" style="flex: 1; min-width: 130px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                    <input type="password" id="change-pass-new" placeholder="New Password" style="flex: 1; min-width: 130px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                </div>
+                                <button onclick="changeMyPassword()" class="btn" style="padding: 6px 14px; font-size: 0.75rem; width: 100%;">⚙️ Update My Password</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 4: MEMBER MANAGEMENT & ATTENDANCE -->
                     <div class="admin-section-block">
                         <button onclick="toggleAdminSection('sec-attendance-roster')" class="admin-collapsible-btn">
                             <span>📋 Member Management & Anti-Double Compensation Attendance</span>
-                            <span id="icon-sec-attendance-roster">▼ Hide</span>
+                            <span id="icon-sec-attendance-roster">▲ Hide</span>
                         </button>
                         <div id="sec-attendance-roster" class="admin-collapsible-content" style="display: block;">
                             <div style="margin-bottom: 12px;">
                                 <label style="font-size: 0.85rem; color: var(--primary-glow);">Select Division / Guild to Manage:</label>
                                 <select id="admin-officer-select" onchange="onDivisionChange()" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: var(--primary-glow); border-radius: 4px; font-weight: bold;">
                                 </select>
+                            </div>
+
+                            <!-- PANEL 1: ADD NEW MEMBER -->
+                            <div style="margin-bottom: 15px; padding: 12px; background: rgba(230, 184, 0, 0.05); border: 1px solid var(--border-gold); border-radius: 6px;">
+                                <h4 style="color: var(--primary-glow); font-size: 0.9rem; margin-bottom: 8px;">➕ Register New Guild Member</h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                                    <input type="text" id="new-member-ign" placeholder="IGN Member Name" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                    <select id="new-member-class" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                        <option value="Blade Master">Blade Master</option>
+                                        <option value="Dark Lord">Dark Lord</option>
+                                        <option value="Summoner">Summoner</option>
+                                        <option value="Soul Master">Soul Master</option>
+                                        <option value="Elf">Elf</option>
+                                        <option value="Dimension Master">Dimension Master</option>
+                                    </select>
+                                </div>
+                                <button onclick="registerNewMember()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">➕ Save Member to Roster</button>
+                            </div>
+
+                            <!-- PANEL 2: REMOVE MEMBER -->
+                            <div class="admin-section-block" style="margin-bottom: 15px; border-color: rgba(255, 51, 51, 0.4);">
+                                <button onclick="toggleAdminSection('sec-delete-member')" class="admin-collapsible-btn" style="color: #ffaa33; background: rgba(139, 0, 0, 0.2);">
+                                    <span>🗑️ Remove / Delete Member from Roster</span>
+                                    <span id="icon-sec-delete-member">▼ Expand</span>
+                                </button>
+                                <div id="sec-delete-member" class="admin-collapsible-content">
+                                    <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 8px;">
+                                        Mag-ingat sa pag-click. Ang mga naburang miyembro ay mawawala sa talaan ng napiling division.
+                                    </p>
+                                    <div id="admin-delete-member-list" style="max-height: 140px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px;">
+                                    </div>
+                                </div>
                             </div>
 
                             <div style="margin-bottom: 12px;">
@@ -911,7 +1074,7 @@
                                 <input type="number" id="admin-sol-pool" value="100000" style="width: 100%; padding: 8px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
                             </div>
 
-                            <h4 style="color: var(--primary-glow); margin: 15px 0 10px;">Check Member Attendance:</h4>
+                            <h4 style="color: var(--primary-glow); margin: 15px 0 10px;">Check Member Attendance (Auto Cross-Guild Main Routing Enforced):</h4>
                             <div id="admin-member-checklist" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; margin-bottom: 15px;">
                             </div>
 
@@ -929,6 +1092,8 @@
         <!-- Guild Leadership Section -->
         <section id="guild">
             <h2 class="section-title">Guild Leadership & Alliance</h2>
+            
+            <h3 class="category-title">Guild Masters & Assistant GMs</h3>
             <div class="roster-grid">
                 <div class="member-card master">
                     <span class="role-badge role-master">Guild Master</span>
@@ -936,6 +1101,121 @@
                     <h3 class="member-name">Fullclip</h3>
                     <div class="member-class">Kultura Guild Master</div>
                     <div class="member-details"><span>Role: Leader / Sealer</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card master">
+                    <span class="role-badge role-master">Guild Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-07-4f35248b-2602-408c-8175-3e37cc1e0977.png" alt="Warlock" class="member-avatar battle-avatar-flash">
+                    <h3 class="member-name">Warlock</h3>
+                    <div class="member-class">Kultura Guild Master</div>
+                    <div class="member-details"><span>Role: Leader / Shotcaller</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card master">
+                    <span class="role-badge role-master">Guild Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-f86e67c4-ab50-45e0-8c0b-38490e52c60c.png" alt="LordDwight" class="member-avatar battle-avatar-flash">
+                    <h3 class="member-name">LordDwight</h3>
+                    <div class="member-class">Stealth Guild Master</div>
+                    <div class="member-details"><span>Role: Leader / Shotcaller</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card master">
+                    <span class="role-badge role-master">Guild Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-a6619f00-88bb-4a5b-b244-715b129a4c1e.png" alt="WindTalker" class="member-avatar battle-avatar-flash">
+                    <h3 class="member-name">WindTalker</h3>
+                    <div class="member-class">Protect Guild Master</div>
+                    <div class="member-details"><span>Role: Leader / Support Leader</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card master">
+                    <span class="role-badge role-master">Guild Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-9594006c-6428-4b19-a7a4-e6f1e807e489.png" alt="iKapitana" class="member-avatar battle-avatar-flash">
+                    <h3 class="member-name">iKapitana</h3>
+                    <div class="member-class">Anxiety Guild Master</div>
+                    <div class="member-details"><span>Role: Leader / Support Leader</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card master">
+                    <span class="role-badge role-master">Assistant GM</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-0b3aef55-bea9-4b9e-935a-12629c594da5.png" alt="Mechado" class="member-avatar battle-avatar-flash">
+                    <h3 class="member-name">Mechado</h3>
+                    <div class="member-class">Assistant Guild Master</div>
+                    <div class="member-details"><span>Fullclip Division AGM</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card master">
+                    <span class="role-badge role-master">Assistant GM</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-07-5cb85190-c10a-47a1-8b08-870ed366d52f.png" alt="Tsukushi" class="member-avatar battle-avatar-flash">
+                    <h3 class="member-name">Tsukushi</h3>
+                    <div class="member-class">Assistant Guild Master</div>
+                    <div class="member-details"><span>Warlock Division AGM</span><span>Resets: Max</span></div>
+                </div>
+            </div>
+
+            <h3 class="category-title">Battle Masters & Commanders</h3>
+            <div class="roster-grid">
+                <div class="member-card battle-card-1">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-0b3aef55-bea9-4b9e-935a-12629c594da5.png" alt="Battle Master Crafted" class="member-avatar">
+                    <h3 class="member-name">Crafted</h3>
+                    <div class="member-class">Blade Master (BM)</div>
+                    <div class="member-details"><span>Role: Frontline / PvP</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card battle-card-2">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-c3395667-4870-47b9-9bfa-59edf9189938.png" alt="Battle Master Tognaluk" class="member-avatar">
+                    <h3 class="member-name">Tognaluk</h3>
+                    <div class="member-class class-blademaster">Blade Master (BM)</div>
+                    <div class="member-details"><span>Role: Vanguard / Frontline</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card battle-card-1">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-9594006c-6428-4b19-a7a4-e6f1e807e489.png" alt="Battle Master Gail" class="member-avatar">
+                    <h3 class="member-name">Gail</h3>
+                    <div class="member-class">Bloody Summoner (BS)</div>
+                    <div class="member-details"><span>Role: Support Leader</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card battle-card-2">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-4bf45f09-a4bb-4ca2-b9d1-d8dd804a47fc.png" alt="Battle Master Eremes" class="member-avatar">
+                    <h3 class="member-name">Eremes</h3>
+                    <div class="member-class class-soulmaster">Soul Master (SM)</div>
+                    <div class="member-details"><span>Role: Main Crowd Control/Support</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card battle-card-1">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-c3395667-4870-47b9-9bfa-59edf9189938.png" alt="Battle Master DeelanPaul" class="member-avatar">
+                    <h3 class="member-name">DeelanPaul</h3>
+                    <div class="member-class">Battle Master</div>
+                    <div class="member-details"><span>Role: Vanguard / PvP</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card battle-card-2">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-4bf45f09-a4bb-4ca2-b9d1-d8dd804a47fc.png" alt="Battle Master Warheadz" class="member-avatar">
+                    <h3 class="member-name">Warheadz</h3>
+                    <div class="member-class">Battle Master</div>
+                    <div class="member-details"><span>Role: Assault / Frontline</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card battle-card-1">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-09-c667fbee-0b34-4336-9f29-7e868651fa23.png" alt="Battle Master Misthios" class="member-avatar">
+                    <h3 class="member-name">Misthios</h3>
+                    <div class="member-class">Battle Master</div>
+                    <div class="member-details"><span>Role: Tactical Striker</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card battle-card-2">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-a6619f00-88bb-4a5b-b244-715b129a4c1e.png" alt="Battle Master R4LykS" class="member-avatar">
+                    <h3 class="member-name">R4LykS</h3>
+                    <div class="member-class">Battle Master</div>
+                    <div class="member-details"><span>Role: Vanguard / Sealer Support</span><span>Resets: Max</span></div>
                 </div>
             </div>
         </section>
@@ -947,6 +1227,84 @@
             </div>
         </section>
 
+        <!-- UPCOMING GUILD SCHEDULE SECTION -->
+        <section id="schedule-section">
+            <h2 class="section-title">Upcoming Guild Schedule</h2>
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div class="schedule-box">
+                    <div class="schedule-title">CASTLE SIEGE WAR</div>
+                    <div class="schedule-time">📅 Saturday | 6:00 PM PH Time</div>
+                    <p style="font-size: 0.9rem; color: var(--text-light);">Mandatory attendance for all main members and alliance rosters. Be ready 30 mins prior.</p>
+                </div>
+
+                <div class="schedule-box">
+                    <div class="schedule-title">GUILD EVENTS</div>
+                    <div class="schedule-time">📅 Saturday | 8:00 PM PH Time</div>
+                    <p style="font-size: 0.9rem; color: var(--text-light);">All Guild Leaders will host an Event.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- GUILD REQUIREMENTS & JOIN US SECTION -->
+        <section id="requirements-and-join-section">
+            <div class="two-col-grid">
+                <div class="panel">
+                    <h3>GUILD REQUIREMENTS</h3>
+                    <ul class="req-list">
+                        <li>Must be active in daily events, Boss Hunts, and weekly Castle Siege.</li>
+                        <li>Discord with working microphone is required during Siege and PvP raids.</li>
+                        <li>Respect all guildmates and allies; external drama is strictly forbidden.</li>
+                        <li>Minimum Resets: 50+ (Exceptions made for dedicated support classes like Elves).</li>
+                    </ul>
+                </div>
+
+                <div class="panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <h3>JOIN KULTURA TODAY</h3>
+                        <p style="font-size: 0.9rem; margin-bottom: 25px; line-height: 1.6; color: var(--text-light);">
+                            We are always looking for dedicated players who thrive in high-stakes PvP, Castle Siege strategies, and endgame farming in NoLimit MU Online.
+                        </p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <a href="https://discord.gg/ZwZcUPaMP" target="_blank" rel="noopener noreferrer" class="btn" style="width: 100%;">JOIN OUR DISCORD</a>
+                        <a href="#guild" class="btn" style="width: 100%; background: linear-gradient(135deg, rgba(60,0,0,0.9), rgba(20,0,0,0.95)); border-color: rgba(139, 0, 0, 0.8);">MESSAGE TSUKUSHI IN GAME</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Keepers of the Flame -->
+        <section class="flame-section">
+            <h2 class="flame-title">🔥 Keepers of the Flame 🔥</h2>
+            <p class="flame-subtitle">A tribute to loyal and unwavering supporters.</p>
+            <div class="flame-grid">
+                <div class="flame-card">
+                    <span class="role-badge role-supporter">Loyalist</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png" alt="Pillar" class="flame-avatar">
+                    <h3 class="member-name" style="font-size: 1.2rem;">Loyal Pillar I</h3>
+                    <div class="member-class">Unwavering Supporter</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Castle Siege Media Player -->
+        <section id="media-player">
+            <h2 class="section-title">Castle Siege Wars</h2>
+            <div class="video-grid">
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/C7_WnodZ9SE" title="Defense" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info"><div class="video-title">Castle Siege Defense Highlights</div></div>
+                </div>
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/odEg-UWoY7s" title="Push" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info"><div class="video-title">Crown Sealing & Final Push</div></div>
+                </div>
+            </div>
+        </section>
     </div>
 
     <footer>
@@ -963,6 +1321,18 @@
             "ANXIETY Division (iKapitana)"
         ];
 
+        let PROTECTED_ADMIN_ACCOUNTS = [
+            "fullclip", 
+            "warlock", 
+            "lorddwight", 
+            "windtalker", 
+            "ikapitana", 
+            "mechado", 
+            "tsukushi",
+            "kultura",
+            "kulturamain"
+        ];
+
         const defaultDivisionMembers = {
             "Fullclip Division (Fullclip)": [
                 { name: "Fullclip", class: "Blade Master", icon: "👑", mainOwner: "Fullclip" },
@@ -972,7 +1342,9 @@
             ],
             "Warlock Division (Warlock)": [
                 { name: "Warlock", class: "Blade Master", icon: "👑", mainOwner: "Warlock" },
-                { name: "Tsukushi", class: "Blade Master", icon: "🛡️", mainOwner: "Tsukushi" }
+                { name: "Tsukushi", class: "Blade Master", icon: "🛡️", mainOwner: "Tsukushi" },
+                { name: "Kreios", class: "Blade Master", icon: "🎭", mainOwner: "Eremes" },
+                { name: "Papaliciou", class: "Soul Master", icon: "🎭", mainOwner: "Eremes" }
             ],
             "PROTECT Division (Windtalker)": [
                 { name: "Windtalker", class: "Blade Master", icon: "👑", mainOwner: "Windtalker" }
@@ -987,6 +1359,8 @@
 
         let cloudGuildData = null;
         let cloudAttendanceHistory = null;
+        let cloudResetTickets = [];
+        let cloudKulturaLogs = [];
         let currentLoggedInOfficer = null;
 
         function getStandardDateKey() {
@@ -995,6 +1369,42 @@
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
+        }
+
+        async function logKulturaActivity(actionDesc) {
+            if (!currentLoggedInOfficer || (currentLoggedInOfficer.toLowerCase() !== "kultura" && currentLoggedInOfficer.toLowerCase() !== "kulturamain")) return;
+            
+            const timestamp = new Date().toLocaleString();
+            const logEntry = {
+                timestamp: timestamp,
+                action: actionDesc
+            };
+
+            cloudKulturaLogs.unshift(logEntry);
+            if (cloudKulturaLogs.length > 50) cloudKulturaLogs.pop();
+
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_security_audit_logs'), cloudKulturaLogs);
+            }
+            renderKulturaLogsList();
+        }
+
+        function renderKulturaLogsList() {
+            const listElem = document.getElementById('kultura-logs-list');
+            if (!listElem) return;
+
+            if (!cloudKulturaLogs || cloudKulturaLogs.length === 0) {
+                listElem.innerHTML = `<span style="color: var(--text-dim);">Walang nakatalang security logs pa.</span>`;
+                return;
+            }
+
+            listElem.innerHTML = '';
+            cloudKulturaLogs.forEach(log => {
+                const div = document.createElement('div');
+                div.style.cssText = "padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.78rem;";
+                div.innerHTML = `<span style="color:#33cc33; font-weight:bold;">[${log.timestamp}]</span> <span style="color:#ffdd55;">${log.action}</span>`;
+                listElem.appendChild(div);
+            });
         }
 
         function initRealtimeListeners() {
@@ -1011,6 +1421,9 @@
                 }
                 renderRosters();
                 updateLiveActiveWarriors();
+                if (document.getElementById('attendance-admin-modal').style.display === 'flex') {
+                    onDivisionChange();
+                }
             });
 
             dbOnValue(dbRef(window.database, 'kultura_attendance'), (snap) => {
@@ -1020,7 +1433,26 @@
                     cloudAttendanceHistory = [];
                 }
                 renderAttendanceHistory();
+                renderAdminAttendanceLogList();
                 updateLiveActiveWarriors();
+            });
+
+            dbOnValue(dbRef(window.database, 'kultura_reset_tickets'), (snap) => {
+                if (snap.exists()) {
+                    cloudResetTickets = snap.val();
+                } else {
+                    cloudResetTickets = [];
+                }
+                renderSuperAdminInbox();
+            });
+
+            dbOnValue(dbRef(window.database, 'kultura_security_audit_logs'), (snap) => {
+                if (snap.exists()) {
+                    cloudKulturaLogs = snap.val();
+                } else {
+                    cloudKulturaLogs = [];
+                }
+                renderKulturaLogsList();
             });
         }
 
@@ -1051,7 +1483,14 @@
             if (latestCS && latestCS.presents && latestCS.presents.length > 0) {
                 countElem.innerText = `${latestCS.presents.length}`;
             } else {
-                countElem.innerText = "95+";
+                let data = getGuildData();
+                let totalMembers = 0;
+                for (let divKey in data) {
+                    if (Array.isArray(data[divKey])) {
+                        totalMembers += data[divKey].length;
+                    }
+                }
+                countElem.innerText = totalMembers > 0 ? `${totalMembers}+` : "95+";
             }
         }
 
@@ -1075,11 +1514,11 @@
             }
 
             try {
-                // Pinapatunayan sa Firebase Authentication server
+                // Firebase Authentication Login
                 await window.signInWithEmailAndPassword(window.auth, loginEmail, passVal);
-                currentLoggedInOfficer = userVal;
+                currentLoggedInOfficer = userVal.includes('@') ? userVal.split('@')[0] : userVal;
 
-                alert(`✅ Welcome! Successfully authenticated via Firebase Auth.`);
+                alert(`✅ Welcome ${currentLoggedInOfficer}! Successfully authenticated via Firebase Auth.`);
                 closeLoginModal();
                 openAdminModal();
             } catch (error) {
@@ -1133,7 +1572,136 @@
             }
         }
 
+        function addMoreDummyBox() {
+            const container = document.getElementById('dummy-boxes-container');
+            const totalCurrent = container.querySelectorAll('.dummy-input-field').length;
+            const newInput = document.createElement('input');
+            newInput.type = "text";
+            newInput.className = "dummy-input-field";
+            newInput.placeholder = `Dummy ${totalCurrent + 1}`;
+            newInput.style.cssText = "padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;";
+            container.appendChild(newInput);
+        }
+
+        async function saveSuperAdminMultiLinkage() {
+            const mainIgn = document.getElementById('type-main-ign').value.trim();
+            const dummyInputs = document.querySelectorAll('.dummy-input-field');
+
+            if (!mainIgn) {
+                alert("⚠️ Paki-type muna ang Main Character IGN!");
+                return;
+            }
+
+            let dummyList = [];
+            dummyInputs.forEach(input => {
+                let val = input.value.trim();
+                if (val && val.toLowerCase() !== mainIgn.toLowerCase()) {
+                    dummyList.push(val);
+                }
+            });
+
+            if (dummyList.length === 0) {
+                alert("⚠️ Maglagay ng kahit isang Dummy IGN sa mga boxes!");
+                return;
+            }
+
+            let data = getGuildData();
+            
+            let mainFound = false;
+            for (let divKey in data) {
+                if (data[divKey].some(m => m.name.toLowerCase() === mainIgn.toLowerCase())) {
+                    mainFound = true;
+                    break;
+                }
+            }
+
+            if (!mainFound) {
+                alert(`⚠️ Ang Main Character na "${mainIgn}" ay hindi mahanap sa anumang Roster Division. I-register muna siya sa Roster!`);
+                return;
+            }
+
+            let linkedCount = 0;
+            let missingDummies = [];
+
+            dummyList.forEach(dummyIgn => {
+                let foundDummyObj = null;
+
+                for (let divKey in data) {
+                    let member = data[divKey].find(m => m.name.toLowerCase() === dummyIgn.toLowerCase());
+                    if (member) {
+                        foundDummyObj = member;
+                        break;
+                    }
+                }
+
+                if (foundDummyObj) {
+                    foundDummyObj.mainOwner = mainIgn;
+                    foundDummyObj.icon = '🎭';
+                    linkedCount++;
+                } else {
+                    missingDummies.push(dummyIgn);
+                }
+            });
+
+            if (linkedCount > 0) {
+                await saveGuildData(data);
+                await logKulturaActivity(`Nag-link ng ${linkedCount} dummy accounts sa main character na "${mainIgn}".`);
+                let missingMsg = missingDummies.length > 0 ? `\n⚠️ Hindi pa naka-register sa roster ang: ${missingDummies.join(', ')}` : '';
+                alert(`🎉 [Link Successful] Naka-link na ang ${linkedCount} Dummy Accounts kay Main "${mainIgn}"! Nanatili sila sa kani-kanilang kasalukuyang Guild/Division.${missingMsg}`);
+
+                document.getElementById('type-main-ign').value = '';
+                dummyInputs.forEach(i => i.value = '');
+
+                renderRosters();
+                onDivisionChange();
+            } else {
+                alert(`⚠️ Walang na-link! Siguraduhing na-register muna sa Roster ang mga Dummy Accounts na: ${missingDummies.join(', ')}`);
+            }
+        }
+
+        async function registerNewMember() {
+            if (!currentLoggedInOfficer) return;
+
+            const ign = document.getElementById('new-member-ign').value.trim();
+            const charClass = document.getElementById('new-member-class').value;
+            const assignedDivision = document.getElementById('admin-officer-select').value;
+
+            if (!ign) {
+                alert("⚠️ Paki-lagay ang IGN Member Name!");
+                return;
+            }
+
+            let data = getGuildData();
+            let membersList = data[assignedDivision] || [];
+
+            if (membersList.some(m => m.name.toLowerCase() === ign.toLowerCase())) {
+                alert("⚠️ Ang IGN na ito ay nairegister na sa roster!");
+                return;
+            }
+
+            const newMemberObj = {
+                name: ign,
+                class: charClass,
+                icon: getClassIcon(charClass),
+                mainOwner: ign
+            };
+
+            membersList.push(newMemberObj);
+            data[assignedDivision] = membersList;
+
+            await saveGuildData(data);
+            await logKulturaActivity(`Nag-rehistro ng bagong miyembro na si "${ign}" (${charClass}) sa ${assignedDivision}.`);
+
+            alert(`🎉 Tagumpay! Na-register si ${ign} (${charClass}) sa ${assignedDivision}.`);
+
+            document.getElementById('new-member-ign').value = '';
+            renderRosters();
+            onDivisionChange();
+        }
+
         function renderMemberChecklist() {
+            if (!currentLoggedInOfficer) return;
+
             const selectedDivision = document.getElementById('admin-officer-select').value;
             const eventType = document.getElementById('admin-event-type').value;
             const checklist = document.getElementById('admin-member-checklist');
@@ -1150,12 +1718,16 @@
                 const div = document.createElement('div');
                 div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;";
                 
+                let isDummy = mObj.mainOwner && mObj.mainOwner.toLowerCase() !== mObj.name.toLowerCase();
+                let dummyLabel = isDummy ? `<small style="color:#ffaa33; font-weight:bold;">[Dummy of ${mObj.mainOwner}]</small>` : `<small style="color:#33cc33; font-weight:bold;">[Main]</small>`;
+
                 let isCurrentlyPresent = presentMainsSet.has((mObj.mainOwner || mObj.name).toLowerCase());
 
                 div.innerHTML = `
-                    <span>${mObj.icon} <strong>${mObj.name}</strong> <small style="color:var(--text-dim);">(${mObj.class})</small></span>
+                    <span>${mObj.icon} <strong>${mObj.name}</strong> ${dummyLabel} <small style="color:var(--text-dim);">(${mObj.class})</small></span>
                     <select id="att-status-${idx}" data-name="${mObj.name}" data-main="${mObj.mainOwner || mObj.name}" style="background: #222; color: #fff; border: 1px solid #555; padding: 2px 6px; border-radius: 3px;">
                         <option value="Present" ${isCurrentlyPresent ? 'selected' : ''}>Present</option>
+                        <option value="Late">Late</option>
                         <option value="Absent" ${!isCurrentlyPresent ? 'selected' : ''}>Absent</option>
                     </select>
                 `;
@@ -1167,12 +1739,16 @@
             const data = getGuildData();
             for (let divKey in data) {
                 let found = data[divKey].find(m => m.name.toLowerCase() === mainIgn.toLowerCase());
-                if (found) return divKey;
+                if (found) {
+                    return divKey;
+                }
             }
             return null;
         }
 
         async function saveAttendanceEntry() {
+            if (!currentLoggedInOfficer) return;
+
             const currentCheckingGM = document.getElementById('admin-officer-select').value;
             const eventType = document.getElementById('admin-event-type').value;
             const totalSolPool = parseFloat(document.getElementById('admin-sol-pool').value) || 100000;
@@ -1205,7 +1781,7 @@
                 const mainChar = sel.getAttribute('data-main');
                 const loggedChar = sel.getAttribute('data-name');
 
-                if (status === 'Present') {
+                if (status === 'Present' || status === 'Late') {
                     if (!acknowledgedMains.has(mainChar.toLowerCase())) {
                         acknowledgedMains.add(mainChar.toLowerCase());
                         
@@ -1230,9 +1806,13 @@
                 await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), allRecords);
             }
             
+            await logKulturaActivity(`Nagsumite ng Attendance para sa event na "${eventType}" (Pool: ${totalSolPool} SOL).`);
+
             renderAttendanceHistory();
+            renderAdminAttendanceLogList();
             updateLiveActiveWarriors();
-            alert(`🎉 Attendance updated successfully!`);
+            
+            alert(`🎉 Live Attendance Updated successfully! Nakasave na ang attendance sa tamang division.`);
         }
 
         function renderAttendanceHistory() {
@@ -1267,7 +1847,8 @@
                     for (let divName in groupedByDivision) {
                         formattedMembersHTML += `<div class="division-group-title">👑 ${divName} (${groupedByDivision[divName].length} Mains Present):</div><br>`;
                         groupedByDivision[divName].forEach(pObj => {
-                            formattedMembersHTML += `💎 <strong>${pObj.name}</strong> — <span style="color:var(--primary-glow);">${solPerMember} SOL</span><br>`;
+                            let altNote = (pObj.loggedIgn && pObj.loggedIgn.toLowerCase() !== pObj.name.toLowerCase()) ? ` <small style="color:#ffaa33;">(Attended via Dummy ${pObj.loggedIgn})</small>` : '';
+                            formattedMembersHTML += `💎 <strong>${pObj.name}</strong>${altNote} — <span style="color:var(--primary-glow);">${solPerMember} SOL</span><br>`;
                         });
                         formattedMembersHTML += `<div style="margin-bottom:6px;"></div>`;
                     }
@@ -1278,7 +1859,7 @@
                 const tr = document.createElement('tr');
                 tr.style.borderBottom = "1px solid rgba(255,255,255,0.08)";
                 tr.innerHTML = `
-                    <td style="padding: 10px; color: var(--text-dim); white-space: nowrap;">${rec.dateKey}<br><small>Update: ${rec.timestamp}</small></td>
+                    <td style="padding: 10px; color: var(--text-dim); white-space: nowrap;">${rec.dateKey}<br><small>Huling update: ${rec.timestamp}</small></td>
                     <td style="padding: 10px; font-weight: 600; color:var(--primary);">${rec.event}</td>
                     <td style="padding: 10px; color: #ffdd55; font-weight: bold;">${totalPresent} Main Warriors</td>
                     <td style="padding: 10px; color: #ffdd55;">${rec.solPool.toLocaleString()} SOL<br><span style="color:#33cc33; font-weight:bold;">${solPerMember} SOL / ea</span></td>
@@ -1288,7 +1869,184 @@
             });
         }
 
+        function renderAdminAttendanceLogList() {
+            const listContainer = document.getElementById('admin-attendance-logs-list');
+            if (!listContainer) return;
+
+            let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
+
+            if (history.length === 0) {
+                listContainer.innerHTML = `<span style="color: var(--text-dim);">Walang nakareserbang attendance logs.</span>`;
+                return;
+            }
+
+            listContainer.innerHTML = '';
+            history.forEach((rec, index) => {
+                const totalPresent = rec.presents ? rec.presents.length : 0;
+                const div = document.createElement('div');
+                div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 6px; margin-bottom: 6px; background: rgba(0,0,0,0.5); border-left: 3px solid var(--primary); border-radius: 4px;";
+                
+                div.innerHTML = `
+                    <div>
+                        <strong>📅 ${rec.dateKey}</strong> - <span style="color:var(--primary-glow);">${rec.event}</span><br>
+                        <small style="color:var(--text-dim);">Presents: ${totalPresent} Members | Pool: ${rec.solPool.toLocaleString()} SOL</small>
+                    </div>
+                    <button onclick="deleteAttendanceLog(${index})" class="delete-btn" style="padding: 4px 8px;">❌ Delete Log</button>
+                `;
+                listContainer.appendChild(div);
+            });
+        }
+
+        async function deleteAttendanceLog(logIndex) {
+            let history = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
+            if (logIndex < 0 || logIndex >= history.length) return;
+
+            const targetLog = history[logIndex];
+            const confirmDelete = confirm(`⚠️ Sigurado ka bang gusto mong burahin ang attendance log noong "${targetLog.dateKey}" (${targetLog.event})?`);
+
+            if (confirmDelete) {
+                history.splice(logIndex, 1);
+                cloudAttendanceHistory = history;
+
+                if (window.database) {
+                    await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), cloudAttendanceHistory);
+                }
+
+                await logKulturaActivity(`Binura ang past attendance log para sa petsa na "${targetLog.dateKey}" (${targetLog.event}).`);
+
+                renderAttendanceHistory();
+                renderAdminAttendanceLogList();
+                updateLiveActiveWarriors();
+                alert(`🗑️ Nabura na nang tuluyan ang attendance log record!`);
+            }
+        }
+
+        async function changeMyUsername() {
+            if (!currentLoggedInOfficer) return;
+            const newUsername = document.getElementById('change-username-new').value.trim();
+            if (!newUsername) return;
+
+            const oldUserKey = currentLoggedInOfficer;
+            currentLoggedInOfficer = newUsername;
+
+            let data = getGuildData();
+            let oldDivKey = `${oldUserKey} Division (${oldUserKey})`;
+            let newDivKey = `${newUsername} Division (${newUsername})`;
+
+            if (data[oldDivKey]) {
+                data[newDivKey] = data[oldDivKey];
+                delete data[oldDivKey];
+            }
+
+            ALL_DIVISIONS = Object.keys(data);
+
+            if (window.database) {
+                await saveGuildData(data);
+            }
+
+            await logKulturaActivity(`Binago ang username mula "${oldUserKey}" patungong "${newUsername}".`);
+
+            alert(`🎉 Username changed successfully to "${newUsername}".`);
+            document.getElementById('change-username-new').value = '';
+            renderRosters();
+            openAdminModal();
+        }
+
+        async function changeMyPassword() {
+            if (!currentLoggedInOfficer) return;
+            const newPass = document.getElementById('change-pass-new').value.trim();
+            if (!newPass) return;
+
+            alert(`🎉 Password update requested. Pakipalitan din ito sa Firebase Authentication Console kung kinakailangan.`);
+            document.getElementById('change-pass-current').value = '';
+            document.getElementById('change-pass-new').value = '';
+        }
+
+        function renderSuperAdminInbox() {
+            const inboxList = document.getElementById('superadmin-inbox-list');
+            if (!inboxList) return;
+            if (cloudResetTickets.length === 0) {
+                inboxList.innerHTML = `<span style="color: var(--text-dim);">Walang nakareserbang ticket sa inbox.</span>`;
+                return;
+            }
+            inboxList.innerHTML = '';
+            cloudResetTickets.forEach(ticket => {
+                const div = document.createElement('div');
+                div.style.cssText = "padding: 6px; margin-bottom: 6px; background: rgba(0,0,0,0.5); border-left: 3px solid #ff3333; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;";
+                div.innerHTML = `<div><strong>👤 ${ticket.username}</strong> <small style="color:var(--text-dim);">(${ticket.timestamp})</small><br><span style="color:#ffdd55;">💬 "${ticket.message}"</span></div><button onclick="resolveTicket(${ticket.id}, '${ticket.username}')" class="btn" style="padding: 4px 8px; font-size: 0.7rem; background: #33cc33; color: #000;">✅ Done</button>`;
+                inboxList.appendChild(div);
+            });
+        }
+
+        async function resolveTicket(ticketId, username) {
+            cloudResetTickets = cloudResetTickets.filter(t => t.id !== ticketId);
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_reset_tickets'), cloudResetTickets);
+            }
+            renderSuperAdminInbox();
+        }
+
+        async function registerAllianceAndGM() {
+            const guildName = document.getElementById('reg-guild-name').value.trim();
+            const gmPass = document.getElementById('reg-gm-password').value.trim();
+            const gmClass = document.getElementById('reg-gm-class').value;
+
+            if (!guildName) return;
+
+            const gmUser = guildName;
+            const divisionKey = `${guildName} Division (${gmUser})`;
+
+            PROTECTED_ADMIN_ACCOUNTS.push(gmUser.toLowerCase());
+
+            let data = getGuildData();
+            data[divisionKey] = [{ name: gmUser, class: gmClass, icon: "👑", mainOwner: gmUser }];
+
+            ALL_DIVISIONS = Object.keys(data);
+
+            if (window.database) {
+                await saveGuildData(data);
+            }
+
+            await logKulturaActivity(`Nagrehistro ng bagong Alliance Guild at Guild Master: "${guildName}".`);
+
+            alert(`🎉 Alliance "${guildName}" created and added to Roster!`);
+            renderRosters();
+            openAdminModal();
+        }
+
         function openAdminModal() {
+            if (!currentLoggedInOfficer) return;
+            document.getElementById('logged-agm-display').innerText = `${currentLoggedInOfficer}`;
+
+            const superInboxBlock = document.getElementById('superadmin-inbox-block');
+            const superMainDummyBlock = document.getElementById('superadmin-main-dummy-block');
+            const superDeleteLogsBlock = document.getElementById('superadmin-delete-logs-block');
+            const superGuildRegBlock = document.getElementById('superadmin-guild-reg-block');
+            const kulturaLogsBlock = document.getElementById('kultura-security-logs-block');
+
+            let currentLower = currentLoggedInOfficer.toLowerCase();
+            if (currentLower === "kultura" || currentLower === "kulturamain") {
+                kulturaLogsBlock.style.display = 'block';
+                renderKulturaLogsList();
+            } else {
+                kulturaLogsBlock.style.display = 'none';
+            }
+
+            if (currentLower === "fullclip" || currentLower === "kultura" || currentLower === "kulturamain") {
+                superInboxBlock.style.display = 'block';
+                superMainDummyBlock.style.display = 'block';
+                superDeleteLogsBlock.style.display = 'block';
+                superGuildRegBlock.style.display = 'block';
+                
+                renderSuperAdminInbox();
+                renderAdminAttendanceLogList();
+            } else {
+                superInboxBlock.style.display = 'none';
+                superMainDummyBlock.style.display = 'none';
+                superDeleteLogsBlock.style.display = 'none';
+                superGuildRegBlock.style.display = 'none';
+            }
+
             const selectDiv = document.getElementById('admin-officer-select');
             selectDiv.innerHTML = '';
             ALL_DIVISIONS.forEach(divName => {
@@ -1313,7 +2071,74 @@
         }
 
         function onDivisionChange() {
+            renderDeleteMemberList();
             renderMemberChecklist();
+        }
+
+        function getClassIcon(className) {
+            switch(className) {
+                case 'Summoner': return '✨';
+                case 'Blade Master': return '⚔️';
+                case 'Elf': return '🏹';
+                case 'Dark Lord': return '♛';
+                case 'Dimension Master': return '🌌';
+                case 'Soul Master': return '🌠';
+                default: return '🛡️';
+            }
+        }
+
+        function getClassCss(className) {
+            switch(className) {
+                case 'Summoner': return 'class-summoner';
+                case 'Blade Master': return 'class-blademaster';
+                case 'Elf': return 'class-elf';
+                case 'Dark Lord': return 'class-darklord';
+                case 'Dimension Master': return 'class-dimensionmaster';
+                case 'Soul Master': return 'class-soulmaster';
+                default: return '';
+            }
+        }
+
+        function renderDeleteMemberList() {
+            if (!currentLoggedInOfficer) return;
+            const selectedDivision = document.getElementById('admin-officer-select').value;
+            const listContainer = document.getElementById('admin-delete-member-list');
+            listContainer.innerHTML = '';
+
+            const data = getGuildData();
+            const members = data[selectedDivision] || [];
+
+            members.forEach(mObj => {
+                const isProtected = PROTECTED_ADMIN_ACCOUNTS.includes(mObj.name.toLowerCase());
+                const div = document.createElement('div');
+                div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;";
+                
+                const actionHTML = isProtected 
+                    ? `<span style="font-size:0.75rem; color:#e6b800; font-weight:bold; background:rgba(230,184,0,0.15); padding:2px 6px; border-radius:3px; border:1px solid #e6b800;">🛡️ Protected</span>`
+                    : `<button onclick="deleteMember('${mObj.name}')" class="delete-btn">❌ Delete</button>`;
+
+                let altTag = (mObj.mainOwner && mObj.mainOwner.toLowerCase() !== mObj.name.toLowerCase()) ? ` <small style="color:#ffaa33;">(Dummy of ${mObj.mainOwner})</small>` : ' <small style="color:#33cc33;">(Main)</small>';
+
+                div.innerHTML = `<span>${mObj.icon} <strong>${mObj.name}</strong>${altTag} <small style="color:var(--text-dim);">(${mObj.class})</small></span>${actionHTML}`;
+                listContainer.appendChild(div);
+            });
+        }
+
+        async function deleteMember(memberName) {
+            if (!currentLoggedInOfficer) return;
+
+            const confirmDel = confirm(`⚠️ Sigurado ka bang gusto mong alisin si "${memberName}" sa roster?`);
+            if (!confirmDel) return;
+
+            const selectedDivision = document.getElementById('admin-officer-select').value;
+            let data = getGuildData();
+            if (data[selectedDivision]) {
+                data[selectedDivision] = data[selectedDivision].filter(m => m.name.toLowerCase() !== memberName.toLowerCase());
+                await saveGuildData(data);
+                await logKulturaActivity(`Inalis sa roster ang miyembrong si "${memberName}" mula sa ${selectedDivision}.`);
+                renderRosters();
+                onDivisionChange();
+            }
         }
 
         function renderRosters() {
@@ -1330,10 +2155,15 @@
 
                 let membersHTML = '';
                 members.forEach(m => {
+                    const cssClass = getClassCss(m.class);
+                    let isDummy = m.mainOwner && m.mainOwner.toLowerCase() !== m.name.toLowerCase();
+                    let displayName = m.name;
+                    let altTag = isDummy ? ` <small style="color:#ffaa33; font-weight:bold;">[Dummy of ${m.mainOwner}]</small>` : '';
+                    
                     membersHTML += `
                         <div class="roster-list-item">
-                            <span>${m.icon} <span>${m.name}</span></span>
-                            <span>${m.class}</span>
+                            <span>${m.icon} <span class="${cssClass}">${displayName}</span>${altTag}</span>
+                            <span class="${cssClass}">${m.class}</span>
                         </div>
                     `;
                 });
@@ -1367,6 +2197,43 @@
                 rosterContainer.style.display = "block";
                 btn.innerText = "▲ Click to Hide";
             }
+        }
+
+        const allianceGuilds = [
+            { name: "PROTECT GUILD", icon: "🛡️" },
+            { name: "ANXIETY GUILD", icon: "⚡" },
+            { name: "SPIDEY GUILD", icon: "🕷️" },
+            { name: "STEALTH GUILD", icon: "⚔️" },
+            { name: "VALKYRIE GUILD", icon: "✨" },
+            { name: "xNOTA GUILD", icon: "🔥" }
+        ];
+
+        let currentIndex = 0;
+        function rotateAllianceBadge() {
+            currentIndex = (currentIndex + 1) % allianceGuilds.length;
+            const guild = allianceGuilds[currentIndex];
+            const iconElem = document.getElementById('rotating-icon');
+            const textElem = document.getElementById('rotating-text');
+            if (iconElem && textElem) {
+                iconElem.innerText = guild.icon;
+                textElem.innerText = guild.name;
+            }
+        }
+        setInterval(rotateAllianceBadge, 3000);
+
+        const audio = document.getElementById('bg-audio');
+        let isPlaying = false;
+        function playMusic() {
+            audio.play().then(() => { isPlaying = true; updateButton(); }).catch(() => { isPlaying = false; updateButton(); });
+        }
+        function toggleMusic() {
+            if (isPlaying) { audio.pause(); isPlaying = false; } else { playMusic(); }
+            updateButton();
+        }
+        function updateButton() {
+            const icon = document.getElementById('music-icon');
+            const text = document.getElementById('music-text');
+            if (isPlaying) { icon.innerText = '🔊'; text.innerText = 'Pause Music'; } else { icon.innerText = '🔇'; text.innerText = 'Play Music'; }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
