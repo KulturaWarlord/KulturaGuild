@@ -793,7 +793,6 @@
         <p class="guild-motto">"Respect, Loyalty, Unity, and Victory."</p>
         <div class="hero-btns">
             <a href="https://discord.gg/ZwZcUPaMP" target="_blank" rel="noopener noreferrer" class="btn">Apply For Guild</a>
-            <button onclick="openLostPasswordModal()" class="btn" style="background: rgba(139,0,0,0.6); font-size: 0.85rem;">🔑 Lost Password?</button>
         </div>
     </header>
 
@@ -822,11 +821,17 @@
 
         <!-- ATTENDANCE SYSTEM SECTION -->
         <section id="attendance-system" class="panel" style="margin-bottom: 60px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-gold); padding-bottom: 10px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-gold); padding-bottom: 10px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
                 <h3 style="margin: 0; color: var(--primary);">📋 Live Attendance & Anti-Double Compensation Log</h3>
-                <button onclick="openLoginModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem;">
-                    🔐 Open Authorized Officer Portal
-                </button>
+                <!-- NAKALAGAY NA SA BABA NG OPEN AUTHORIZE O NASA KATABIB NITO NA MAGKASUNOD -->
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button onclick="openLoginModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem;">
+                        🔐 Open Authorized Officer Portal
+                    </button>
+                    <button onclick="openLostPasswordModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem; background: linear-gradient(135deg, #8b0000, #ff3333);">
+                        🔑 Lost Password?
+                    </button>
+                </div>
             </div>
 
             <!-- Public Attendance Log -->
@@ -1737,7 +1742,6 @@
             }
         }
 
-        // UPDATED: CREATE DIVISION WITH GUILDMASTER
         async function addNewGuildDivision() {
             const divName = document.getElementById('new-division-name').value.trim();
             const gmName = document.getElementById('new-division-gm').value.trim();
@@ -1755,7 +1759,6 @@
                 return;
             }
 
-            // GUMAWA NG BAGONG DIVISION AT ILAGAY ANG GUILD MASTER BILANG UNANG MEMBER
             data[fullDivKey] = [
                 { name: gmName, class: "Blade Master", icon: "👑", mainOwner: gmName }
             ];
@@ -2004,7 +2007,6 @@
 
             document.getElementById('logged-agm-display').innerText = userRole.toUpperCase() || "OFFICER";
 
-            // SUPERADMIN EXCLUSIVE PANELS
             const isKulturaMainOnly = (userRole === "kulturamain");
             document.getElementById('superadmin-credentials-inbox-block').style.display = isKulturaMainOnly ? 'block' : 'none';
             document.getElementById('superadmin-main-dummy-block').style.display = isSuperAdmin ? 'block' : 'none';
