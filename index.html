@@ -460,13 +460,6 @@
             width: 100%;
         }
 
-        .class-summoner { color: #ff3333 !important; }
-        .class-blademaster { color: #3399ff !important; }
-        .class-darklord { color: #ff9900 !important; }
-        .class-dimensionmaster { color: #cc66ff !important; }
-        .class-elf { color: #33cc33 !important; }
-        .class-soulmaster { color: #ffff33 !important; }
-
         .roster-grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -587,6 +580,25 @@
             padding: 15px;
             border-top: 1px solid rgba(230, 184, 0, 0.2);
             animation: fadeIn 0.3s ease;
+        }
+
+        .division-group-container {
+            margin-bottom: 10px;
+            background: rgba(20, 20, 30, 0.6);
+            border: 1px solid rgba(230, 184, 0, 0.25);
+            border-radius: 6px;
+            padding: 8px 12px;
+        }
+
+        .division-group-title-header {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            color: var(--primary-glow);
+            font-weight: 700;
+            border-bottom: 1px solid rgba(230, 184, 0, 0.3);
+            padding-bottom: 4px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
         }
 
         .flame-section {
@@ -721,16 +733,6 @@
             padding-bottom: 10px;
         }
 
-        .division-group-title {
-            color: var(--primary-glow);
-            font-weight: 700;
-            margin-top: 8px;
-            margin-bottom: 4px;
-            border-bottom: 1px solid rgba(230, 184, 0, 0.2);
-            display: inline-block;
-            font-size: 0.85rem;
-        }
-
         .two-col-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -826,15 +828,15 @@
             <!-- Public Attendance Log -->
             <div>
                 <h4 style="color: var(--primary-glow); margin-bottom: 10px;">Castle Siege Live SOL Shares (Strictly 1 Share per Main Character)</h4>
-                <div style="max-height: 400px; overflow-y: auto; background: rgba(0,0,0,0.4); border-radius: 6px; padding: 10px;">
+                <div style="max-height: 450px; overflow-y: auto; background: rgba(0,0,0,0.4); border-radius: 6px; padding: 10px;">
                     <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.85rem;">
                         <thead>
                             <tr style="border-bottom: 1px solid var(--primary); color: var(--primary-glow);">
-                                <th style="padding: 8px;">Date (Event)</th>
-                                <th style="padding: 8px;">Total Main Present</th>
-                                <th style="padding: 8px;">SOL Pool</th>
-                                <th style="padding: 8px;">SOL Share / Main Member</th>
-                                <th style="padding: 8px;">Acknowledged Main Characters (Credited to Main Guild)</th>
+                                <th style="padding: 8px; width: 15%;">Date (Event)</th>
+                                <th style="padding: 8px; width: 15%;">Total Main Present</th>
+                                <th style="padding: 8px; width: 12%;">SOL Pool</th>
+                                <th style="padding: 8px; width: 15%;">SOL Share / Main</th>
+                                <th style="padding: 8px; width: 44%;">Acknowledged Warriors (Sorted by Division)</th>
                             </tr>
                         </thead>
                         <tbody id="public-attendance-history">
@@ -1234,6 +1236,35 @@
             "fullclip", "warlock", "lorddwight", "windtalker", "ikapitana", "mechado", "tsukushi", "kultura"
         ];
 
+        // HELPER FUNCTION: KUHAIN ANG DAPAT NA ICON BATAY SA CHARACTER CLASS O NAME
+        function getCharacterIcon(charClass, charName = "") {
+            const lowerClass = (charClass || "").toLowerCase();
+            const lowerName = (charName || "").toLowerCase();
+
+            if (lowerName === "fullclip" || lowerName === "warlock" || lowerName === "lorddwight" || lowerName === "windtalker" || lowerName === "ikapitana") {
+                return "👑";
+            }
+            if (lowerClass.includes("blade master") || lowerClass.includes("bm") || lowerClass.includes("knight")) {
+                return "⚔️";
+            }
+            if (lowerClass.includes("soul master") || lowerClass.includes("sm") || lowerClass.includes("wizard")) {
+                return "🌠";
+            }
+            if (lowerClass.includes("summoner") || lowerClass.includes("bs")) {
+                return "✨";
+            }
+            if (lowerClass.includes("dark lord") || lowerClass.includes("dl")) {
+                return "👑";
+            }
+            if (lowerClass.includes("elf") || lowerClass.includes("me")) {
+                return "🧝‍♀️";
+            }
+            if (lowerClass.includes("dimension master") || lowerClass.includes("dm")) {
+                return "🔮";
+            }
+            return "🛡️";
+        }
+
         const defaultDivisionMembers = {
             "Fullclip Division (Fullclip)": [
                 { name: "Fullclip", class: "Blade Master", icon: "👑", mainOwner: "Fullclip" },
@@ -1243,9 +1274,9 @@
             ],
             "Warlock Division (Warlock)": [
                 { name: "Warlock", class: "Blade Master", icon: "👑", mainOwner: "Warlock" },
-                { name: "Tsukushi", class: "Blade Master", icon: "🛡️", mainOwner: "Tsukushi" },
-                { name: "Kreios", class: "Blade Master", icon: "🎭", mainOwner: "Eremes" },
-                { name: "Papaliciou", class: "Soul Master", icon: "🎭", mainOwner: "Eremes" }
+                { name: "Tsukushi", class: "Blade Master", icon: "⚔️", mainOwner: "Tsukushi" },
+                { name: "Kreios", class: "Blade Master", icon: "⚔️", mainOwner: "Eremes" },
+                { name: "Papaliciou", class: "Soul Master", icon: "🌠", mainOwner: "Eremes" }
             ],
             "PROTECT Division (Windtalker)": [
                 { name: "Windtalker", class: "Blade Master", icon: "👑", mainOwner: "Windtalker" }
@@ -1447,7 +1478,6 @@
                     let member = data[divKey].find(m => m.name.toLowerCase() === dummyIgn.toLowerCase());
                     if (member) {
                         member.mainOwner = mainIgn;
-                        member.icon = '🎭';
                         linkedCount++;
                         break;
                     }
@@ -1470,14 +1500,15 @@
             const assignedDivision = document.getElementById('admin-officer-select').value;
 
             if (!ign) {
-                alert("⚠️ Paki-lagay ang IGN Member Name!");
+                alert("⚠️ Paki-layag ang IGN Member Name!");
                 return;
             }
 
             let data = getGuildData();
             let membersList = data[assignedDivision] || [];
 
-            membersList.push({ name: ign, class: charClass, icon: '🛡️', mainOwner: ign });
+            const charIcon = getCharacterIcon(charClass, ign);
+            membersList.push({ name: ign, class: charClass, icon: charIcon, mainOwner: ign });
             data[assignedDivision] = membersList;
 
             await saveGuildData(data);
@@ -1503,10 +1534,11 @@
                 div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;";
                 
                 let isCurrentlyPresent = presentMainsSet.has((mObj.mainOwner || mObj.name).toLowerCase());
+                let correctIcon = getCharacterIcon(mObj.class, mObj.name);
 
                 div.innerHTML = `
-                    <span>${mObj.icon} <strong>${mObj.name}</strong> <small style="color:var(--text-dim);">(${mObj.class})</small></span>
-                    <select id="att-status-${idx}" data-name="${mObj.name}" data-main="${mObj.mainOwner || mObj.name}" style="background: #222; color: #fff; border: 1px solid #555; padding: 2px 6px; border-radius: 3px;">
+                    <span>${correctIcon} <strong>${mObj.name}</strong> <small style="color:var(--text-dim);">(${mObj.class})</small></span>
+                    <select id="att-status-${idx}" data-name="${mObj.name}" data-main="${mObj.mainOwner || mObj.name}" data-class="${mObj.class}" style="background: #222; color: #fff; border: 1px solid #555; padding: 2px 6px; border-radius: 3px;">
                         <option value="Present" ${isCurrentlyPresent ? 'selected' : ''}>Present</option>
                         <option value="Late">Late</option>
                         <option value="Absent" ${!isCurrentlyPresent ? 'selected' : ''}>Absent</option>
@@ -1543,9 +1575,10 @@
             selects.forEach(sel => {
                 if (sel.value === 'Present' || sel.value === 'Late') {
                     const mainChar = sel.getAttribute('data-main');
+                    const charClass = sel.getAttribute('data-class') || "";
                     if (!acknowledgedMains.has(mainChar.toLowerCase())) {
                         acknowledgedMains.add(mainChar.toLowerCase());
-                        updatedPresents.push({ name: mainChar, loggedIgn: sel.getAttribute('data-name'), officer: currentCheckingGM });
+                        updatedPresents.push({ name: mainChar, loggedIgn: sel.getAttribute('data-name'), officer: currentCheckingGM, charClass: charClass });
                     }
                 }
             });
@@ -1560,7 +1593,7 @@
             alert(`🎉 Attendance successfully saved!`);
         }
 
-        // UPDATED: DISPLAY CHARACTER NAMES AND DIVISIONS
+        // NAKA-SORT AT NAKA-GROUP NA DISPLAY NG WARRIORS AT TAMANG CLASS ICONS
         function renderAttendanceHistory() {
             const tbody = document.getElementById('public-attendance-history');
             let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
@@ -1570,29 +1603,63 @@
             }
             tbody.innerHTML = '';
             
+            const guildData = getGuildData();
+
             history.forEach(rec => {
                 const totalPresent = rec.presents ? rec.presents.length : 0;
                 const solPerMember = totalPresent > 0 ? Math.round(rec.solPool / totalPresent).toLocaleString() : 0;
                 
                 let memberDetailsHTML = '';
+
                 if (rec.presents && rec.presents.length > 0) {
-                    memberDetailsHTML = rec.presents.map(p => {
-                        let divisionName = p.officer ? p.officer.replace(/\s*\(.*\)/, '') : 'Guild';
-                        return `<span style="display: inline-block; background: rgba(230,184,0,0.1); border: 1px solid rgba(230,184,0,0.3); padding: 2px 8px; margin: 2px; border-radius: 4px; font-size: 0.78rem;">
-                            👑 <strong>${p.name}</strong> <small style="color: var(--primary-glow);">[${divisionName}]</small>
-                        </span>`;
-                    }).join(' ');
+                    // I-group ang mga members ayon sa kanilang Division
+                    let groupedPresents = {};
+
+                    rec.presents.forEach(p => {
+                        let divName = p.officer ? p.officer.replace(/\s*\(.*\)/, '') : 'Other Warriors';
+                        if (!groupedPresents[divName]) {
+                            groupedPresents[divName] = [];
+                        }
+
+                        // Hanapin ang tamang Class para makuha ang totoong Icon
+                        let memberClass = p.charClass || "";
+                        if (!memberClass) {
+                            for (let div in guildData) {
+                                let match = guildData[div].find(m => m.name.toLowerCase() === p.name.toLowerCase());
+                                if (match) { memberClass = match.class; break; }
+                            }
+                        }
+
+                        let icon = getCharacterIcon(memberClass, p.name);
+                        groupedPresents[divName].push({ name: p.name, icon: icon });
+                    });
+
+                    // I-render nang naka-sort at grupo
+                    for (let group in groupedPresents) {
+                        let membersInGroup = groupedPresents[group].map(m => `
+                            <span style="display: inline-block; background: rgba(230,184,0,0.1); border: 1px solid rgba(230,184,0,0.3); padding: 2px 8px; margin: 2px; border-radius: 4px; font-size: 0.8rem;">
+                                ${m.icon} <strong>${m.name}</strong>
+                            </span>
+                        `).join('');
+
+                        memberDetailsHTML += `
+                            <div class="division-group-container">
+                                <div class="division-group-title-header">🛡️ ${group}</div>
+                                <div>${membersInGroup}</div>
+                            </div>
+                        `;
+                    }
                 } else {
                     memberDetailsHTML = `<span style="color: var(--text-dim);">No members logged</span>`;
                 }
 
                 tbody.innerHTML += `
                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
-                        <td style="padding: 10px; color: var(--text-dim); font-weight: bold;">${rec.dateKey}</td>
-                        <td style="padding: 10px; color: var(--primary); font-weight: bold;">${rec.event}</td>
-                        <td style="padding: 10px; color: #ffdd55;">${totalPresent} Main Warriors</td>
-                        <td style="padding: 10px; color: #ffdd55;">${solPerMember} SOL / ea</td>
-                        <td style="padding: 10px; color: #33cc33; max-width: 380px;">
+                        <td style="padding: 10px; color: var(--text-dim); font-weight: bold; vertical-align: top;">${rec.dateKey}</td>
+                        <td style="padding: 10px; color: var(--primary); font-weight: bold; vertical-align: top;">${rec.event}</td>
+                        <td style="padding: 10px; color: #ffdd55; vertical-align: top;">${totalPresent} Main Warriors</td>
+                        <td style="padding: 10px; color: #ffdd55; vertical-align: top;">${solPerMember} SOL / ea</td>
+                        <td style="padding: 10px; color: #33cc33;">
                             ${memberDetailsHTML}
                         </td>
                     </tr>
@@ -1658,9 +1725,10 @@
             const members = getGuildData()[selectedDivision] || [];
 
             members.forEach(mObj => {
+                let icon = getCharacterIcon(mObj.class, mObj.name);
                 listContainer.innerHTML += `
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
-                        <span>${mObj.icon} <strong>${mObj.name}</strong></span>
+                        <span>${icon} <strong>${mObj.name}</strong></span>
                         <button onclick="deleteMember('${mObj.name}')" class="delete-btn">❌ Delete</button>
                     </div>
                 `;
@@ -1692,9 +1760,10 @@
                 let membersHTML = '';
 
                 members.forEach(m => {
+                    let icon = getCharacterIcon(m.class, m.name);
                     membersHTML += `
                         <div class="roster-list-item">
-                            <span>${m.icon} <span>${m.name}</span></span>
+                            <span>${icon} <span>${m.name}</span></span>
                             <span>${m.class}</span>
                         </div>
                     `;
