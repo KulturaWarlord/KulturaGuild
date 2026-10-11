@@ -76,6 +76,52 @@
             min-height: 100vh;
             line-height: 1.6;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* PINAGSAMANG FLOATING DRIFT & MAGIC PULSE GLOW ANIMATION */
+        @keyframes floatAndMagicPulse {
+            0% {
+                transform: translateY(0px) scale(1);
+                filter: drop-shadow(0 0 10px rgba(230, 184, 0, 0.4)) brightness(1);
+            }
+            50% {
+                transform: translateY(-8px) scale(1.02);
+                filter: drop-shadow(0 0 25px rgba(255, 221, 85, 0.85)) brightness(1.15);
+            }
+            100% {
+                transform: translateY(0px) scale(1);
+                filter: drop-shadow(0 0 10px rgba(230, 184, 0, 0.4)) brightness(1);
+            }
+        }
+
+        .side-floating-img {
+            position: fixed;
+            width: 300px;
+            height: auto;
+            z-index: 100;
+            object-fit: contain;
+            animation: floatAndMagicPulse 4s infinite ease-in-out;
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .side-floating-img:hover {
+            transform: scale(1.08) rotate(1deg);
+            filter: drop-shadow(0 0 30px #ffcc00) brightness(1.25);
+        }
+
+        /* KALIWA (3 Larawan: Nakapila nang patayo mula itaas hanggang baba) */
+        #floating-1-left { top: 20px;   left: 20px; }
+        #floating-2-left { top: 350px;  left: 20px; }
+        #floating-3-left { top: 680px;  left: 20px; }
+
+        /* KANAN (3 Larawan: Nakapila nang patayo mula itaas hanggang baba) */
+        #floating-1-right { top: 20px;   right: 20px; }
+        #floating-2-right { top: 350px;  right: 20px; }
+        #floating-3-right { top: 680px;  right: 20px; }
+
+        @media (max-width: 1700px) {
+            .side-floating-img { display: none; } /* Itinatago sa mas maliit na screen para hindi matakpan ang content */
         }
 
         #music-control {
@@ -745,7 +791,7 @@
         @media (max-width: 768px) {
             .guild-logo { font-size: 3rem; }
             .server-logo { max-width: 220px; }
-            .rotating-alliance-badge { font-size: 0.8rem; padding: 6px 16px; }
+            .rotating-alliance-badge { font-size: 0.80rem; padding: 6px 16px; }
         }
 
         footer {
@@ -763,6 +809,16 @@
     </style>
 </head>
 <body>
+
+    <!-- KALIWA (3 Larawan) -->
+    <img src="https://cdn.phototourl.com/member/2026-10-11-ba627157-bd2b-4b8b-bd9d-5cf77bbb8726.png" alt="Floating Left 1" id="floating-1-left" class="side-floating-img">
+    <img src="https://cdn.phototourl.com/member/2026-10-11-e72673f4-2386-4161-a95b-2f3c502ad1c6.png" alt="Floating Left 2" id="floating-2-left" class="side-floating-img">
+    <img src="https://cdn.phototourl.com/member/2026-10-11-99d38041-fa7e-4ec7-8355-f0dca3f6caf3.png" alt="Floating Left 3" id="floating-3-left" class="side-floating-img">
+
+    <!-- KANAN (3 Larawan) -->
+    <img src="https://cdn.phototourl.com/member/2026-10-11-9ff1f70b-d655-401f-a885-0df25fd98531.png" alt="Floating Right 1" id="floating-1-right" class="side-floating-img">
+    <img src="https://cdn.phototourl.com/member/2026-10-11-c4f20cc8-75a4-44b5-a8de-b83fc6c52493.png" alt="Floating Right 2" id="floating-2-right" class="side-floating-img">
+    <img src="https://cdn.phototourl.com/member/2026-10-11-b1138317-8bb5-4316-a5e6-946ccd7d0787.png" alt="Floating Right 3" id="floating-3-right" class="side-floating-img">
 
     <!-- Floating Audio Control Button -->
     <div id="music-control" onclick="toggleMusic()">
@@ -823,7 +879,6 @@
         <section id="attendance-system" class="panel" style="margin-bottom: 60px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-gold); padding-bottom: 10px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
                 <h3 style="margin: 0; color: var(--primary);">📋 Live Attendance & Anti-Double Compensation Log</h3>
-                <!-- NAKALAGAY NA SA BABA NG OPEN AUTHORIZE O NASA KATABIB NITO NA MAGKASUNOD -->
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button onclick="openLoginModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem;">
                         🔐 Open Authorized Officer Portal
@@ -1505,7 +1560,6 @@
             document.getElementById('lost-password-modal').style.display = 'none';
         }
 
-        // STRICT VALIDATION FOR LOST PASSWORD REQUEST
         async function submitLostPasswordRequest() {
             const inputVal = document.getElementById('lost-pass-username').value.trim().toLowerCase();
             const messageVal = document.getElementById('lost-pass-message').value.trim();
@@ -1515,7 +1569,6 @@
                 return;
             }
 
-            // SURIIN KUNG NAKAREHISTRO ANG USERNAME O EMAIL SA SYSTEM
             const cleanUser = inputVal.split('@')[0];
             const registeredOfficers = Object.keys(OFFICER_DIVISION_MAP);
 
