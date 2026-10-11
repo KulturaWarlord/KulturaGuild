@@ -836,7 +836,7 @@
                                 <th style="padding: 8px; width: 15%;">Total Main Present</th>
                                 <th style="padding: 8px; width: 12%;">SOL Pool</th>
                                 <th style="padding: 8px; width: 15%;">SOL Share / Main</th>
-                                <th style="padding: 8px; width: 44%;">Acknowledged Warriors (Sorted by Division)</th>
+                                <th style="padding: 8px; width: 44%;">Acknowledged Warriors (Mapped to Main Guild Division)</th>
                             </tr>
                         </thead>
                         <tbody id="public-attendance-history">
@@ -1500,7 +1500,7 @@
             const assignedDivision = document.getElementById('admin-officer-select').value;
 
             if (!ign) {
-                alert("⚠️ Paki-layag ang IGN Member Name!");
+                alert("⚠️ Paki-lagay ang IGN Member Name!");
                 return;
             }
 
@@ -1593,7 +1593,7 @@
             alert(`🎉 Attendance successfully saved!`);
         }
 
-        // NAKA-SORT AT NAKA-GROUP NA DISPLAY NG WARRIORS AT TAMANG CLASS ICONS
+        // NAKA-MAP PAPUNTA SA MAIN GUILD DIVISION ANG DUMMY PRESENCE
         function renderAttendanceHistory() {
             const tbody = document.getElementById('public-attendance-history');
             let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
@@ -1612,35 +1612,44 @@
                 let memberDetailsHTML = '';
 
                 if (rec.presents && rec.presents.length > 0) {
-                    // I-group ang mga members ayon sa kanilang Division
                     let groupedPresents = {};
 
                     rec.presents.forEach(p => {
-                        let divName = p.officer ? p.officer.replace(/\s*\(.*\)/, '') : 'Other Warriors';
-                        if (!groupedPresents[divName]) {
-                            groupedPresents[divName] = [];
-                        }
+                        // Hanapin ang Main Character object at ang kanyang Main Guild Division
+                        let mainDivision = "Other Warriors";
+                        let mainMemberObj = null;
 
-                        // Hanapin ang tamang Class para makuha ang totoong Icon
-                        let memberClass = p.charClass || "";
-                        if (!memberClass) {
-                            for (let div in guildData) {
-                                let match = guildData[div].find(m => m.name.toLowerCase() === p.name.toLowerCase());
-                                if (match) { memberClass = match.class; break; }
+                        for (let div in guildData) {
+                            let found = guildData[div].find(m => m.name.toLowerCase() === p.name.toLowerCase());
+                            if (found) {
+                                mainDivision = div.replace(/\s*\(.*\)/, '');
+                                mainMemberObj = found;
+                                break;
                             }
                         }
 
+                        if (!groupedPresents[mainDivision]) {
+                            groupedPresents[mainDivision] = [];
+                        }
+
+                        // Makuha ang tamang class
+                        let memberClass = p.charClass || (mainMemberObj ? mainMemberObj.class : "");
                         let icon = getCharacterIcon(memberClass, p.name);
-                        groupedPresents[divName].push({ name: p.name, icon: icon });
+
+                        groupedPresents[mainDivision].push({ name: p.name, icon: icon, loggedIgn: p.loggedIgn });
                     });
 
-                    // I-render nang naka-sort at grupo
+                    // Render bawat Main Guild Division
                     for (let group in groupedPresents) {
-                        let membersInGroup = groupedPresents[group].map(m => `
-                            <span style="display: inline-block; background: rgba(230,184,0,0.1); border: 1px solid rgba(230,184,0,0.3); padding: 2px 8px; margin: 2px; border-radius: 4px; font-size: 0.8rem;">
-                                ${m.icon} <strong>${m.name}</strong>
-                            </span>
-                        `).join('');
+                        let membersInGroup = groupedPresents[group].map(m => {
+                            let isDummyLogged = m.loggedIgn && m.loggedIgn.toLowerCase() !== m.name.toLowerCase();
+                            let subInfo = isDummyLogged ? `<small style="color:#ffaa33;"> (via ${m.loggedIgn})</small>` : '';
+                            return `
+                                <span style="display: inline-block; background: rgba(230,184,0,0.1); border: 1px solid rgba(230,184,0,0.3); padding: 2px 8px; margin: 2px; border-radius: 4px; font-size: 0.8rem;">
+                                    ${m.icon} <strong>${m.name}</strong>${subInfo}
+                                </span>
+                            `;
+                        }).join('');
 
                         memberDetailsHTML += `
                             <div class="division-group-container">
