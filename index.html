@@ -79,7 +79,6 @@
             position: relative;
         }
 
-        /* PINAGSAMANG FLOATING DRIFT & MAGIC PULSE GLOW ANIMATION */
         @keyframes floatAndMagicPulse {
             0% {
                 transform: translateY(0px) scale(1);
@@ -110,18 +109,16 @@
             filter: drop-shadow(0 0 30px #ffcc00) brightness(1.25);
         }
 
-        /* KALIWA (3 Larawan: Nakapila nang patayo mula itaas hanggang baba) */
         #floating-1-left { top: 20px;   left: 20px; }
         #floating-2-left { top: 350px;  left: 20px; }
         #floating-3-left { top: 680px;  left: 20px; }
 
-        /* KANAN (3 Larawan: Nakapila nang patayo mula itaas hanggang baba) */
         #floating-1-right { top: 20px;   right: 20px; }
         #floating-2-right { top: 350px;  right: 20px; }
         #floating-3-right { top: 680px;  right: 20px; }
 
         @media (max-width: 1700px) {
-            .side-floating-img { display: none; } /* Itinatago sa mas maliit na screen para hindi matakpan ang content */
+            .side-floating-img { display: none; }
         }
 
         #music-control {
@@ -890,9 +887,9 @@
             </div>
 
             <!-- Public Attendance Log -->
-            <div>
+            <div style="margin-bottom: 30px;">
                 <h4 style="color: var(--primary-glow); margin-bottom: 10px;">Castle Siege Live SOL Shares (Strictly 1 Share per Main Character)</h4>
-                <div style="max-height: 450px; overflow-y: auto; background: rgba(0,0,0,0.4); border-radius: 6px; padding: 10px;">
+                <div style="max-height: 350px; overflow-y: auto; background: rgba(0,0,0,0.4); border-radius: 6px; padding: 10px;">
                     <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.85rem;">
                         <thead>
                             <tr style="border-bottom: 1px solid var(--primary); color: var(--primary-glow);">
@@ -905,6 +902,35 @@
                         </thead>
                         <tbody id="public-attendance-history">
                             <tr><td colspan="5" style="padding: 10px; text-align: center; color: var(--text-dim);">Connecting to Live Firebase Sync...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 3-DAY AUTOMATIC COMPUTATION SUMMARY SECTION -->
+            <div style="border-top: 2px dashed var(--border-gold); padding-top: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+                    <div>
+                        <h4 style="color: var(--primary-glow); margin: 0; font-size: 1.1rem;">📊 Automatic 3-Day Attendance & Compensation Summary</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0;">Automated computation para sa huling 3 events na sumusunod sa Main-Dummy Linkage.</p>
+                    </div>
+                    <button onclick="download3DayReportTxt()" class="btn" style="padding: 8px 16px; font-size: 0.8rem; background: linear-gradient(135deg, #11998e, #38ef7d); color: #000; border: none; font-weight: bold;">
+                        📥 Download 3-Day Attendance Report (.txt)
+                    </button>
+                </div>
+
+                <div style="max-height: 400px; overflow-y: auto; background: rgba(0,0,0,0.5); border-radius: 6px; padding: 10px; border: 1px solid var(--border-gold);">
+                    <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.85rem;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--primary); color: var(--primary-glow);">
+                                <th style="padding: 8px;">Guild / Division</th>
+                                <th style="padding: 8px;">Main Character (IGN & Linked Dummies)</th>
+                                <th style="padding: 8px; text-align: center;">3-Day Attendance</th>
+                                <th style="padding: 8px; text-align: right;">Total SOL Payout</th>
+                            </tr>
+                        </thead>
+                        <tbody id="three-day-summary-tbody">
+                            <tr><td colspan="4" style="padding: 10px; text-align: center; color: var(--text-dim);">Kinukwenta ang 3-day data...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -1035,7 +1061,7 @@
                         </button>
                         <div id="sec-main-dummy-linker" class="admin-collapsible-content">
                             <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
-                                I-type ang <strong>Main Character IGN</strong> at ilagay sa mga boxes ang kanyang <strong>Dummy Accounts</strong>.
+                                I-type ang <strong>Main Character IGN</strong> at ilagay sa mga boxes ang kanyang <strong>Dummy Accounts</strong>. (Awtomatikong protektado ang mga Guild Master at hindi pwedeng maging dummy/alt).
                             </p>
                             
                             <div style="margin-bottom: 12px; background: rgba(51,204,51,0.1); padding: 10px; border: 1px solid #33cc33; border-radius: 6px;">
@@ -1305,9 +1331,17 @@
             </div>
         </section>
 
-        <!-- GUILD MEMBERS ROSTER SECTION -->
+        <!-- GUILD MEMBERS ROSTER SECTION WITH INTEGRATED SEARCH BAR -->
         <section id="members-roster-section">
             <h2 class="section-title">Guild Members Roster</h2>
+            
+            <!-- LIVE SEARCH BAR FOR ROSTER -->
+            <div style="margin-bottom: 25px; background: rgba(10, 10, 15, 0.85); border: 1px solid var(--border-gold); padding: 15px; border-radius: 8px; backdrop-filter: blur(8px);">
+                <label style="display: block; font-family: 'Cinzel', serif; color: var(--primary-glow); font-size: 0.95rem; margin-bottom: 8px;">🔍 Search Roster Member / IGN (Main/Alt Lookup):</label>
+                <input type="text" id="roster-search-input" onkeyup="searchRosterMember()" placeholder="Type character IGN (e.g. Eremes, Kreios, Windtalker)..." style="width: 100%; padding: 12px; background: #111; border: 1px solid var(--primary); color: #fff; border-radius: 6px; font-size: 0.95rem; outline: none;">
+                <div id="search-result-display" style="display: none; margin-top: 12px; padding: 12px; background: rgba(230, 184, 0, 0.1); border: 1px solid var(--primary); border-radius: 6px;"></div>
+            </div>
+
             <div class="roster-grid-container" id="dynamic-roster-grid">
             </div>
         </section>
@@ -1409,9 +1443,9 @@
         ];
 
         const OFFICER_DIVISION_MAP = {
-            "kulturamain": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"], // SuperAdmin
-            "fullclip": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"],    // SuperAdmin
-            "kultura": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"],     // SuperAdmin
+            "kulturamain": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"],
+            "fullclip": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"],
+            "kultura": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"],
             "mechado": ["Fullclip Division (Fullclip)"],
             "tsukushi": ["Warlock Division (Warlock)"],
             "warlock": ["Warlock Division (Warlock)"],
@@ -1482,6 +1516,12 @@
             return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         }
 
+        function isGuildMasterName(nameStr) {
+            if (!nameStr) return false;
+            let clean = nameStr.trim().toLowerCase();
+            return PROTECTED_GUILDMASTERS.includes(clean);
+        }
+
         function initRealtimeListeners() {
             if (!window.database) return;
             const dbRef = window.dbRef;
@@ -1494,6 +1534,7 @@
                     cloudGuildData = defaultDivisionMembers;
                     window.dbSet(dbRef(window.database, 'kultura_roster'), defaultDivisionMembers);
                 }
+                sanitizeGuildMastersAsMains();
                 renderRosters();
                 updateLiveActiveWarriors();
             });
@@ -1501,6 +1542,7 @@
             dbOnValue(dbRef(window.database, 'kultura_attendance'), (snap) => {
                 cloudAttendanceHistory = snap.exists() ? snap.val() : [];
                 renderAttendanceHistory();
+                render3DayComputationSummary(); 
                 renderAdminAttendanceLogList();
                 updateLiveActiveWarriors();
             });
@@ -1516,16 +1558,110 @@
         });
 
         function getGuildData() {
-            return cloudGuildData ? cloudGuildData : defaultDivisionMembers;
+            let data = cloudGuildData ? cloudGuildData : defaultDivisionMembers;
+            for (let divKey in data) {
+                data[divKey].forEach(m => {
+                    if (isGuildMasterName(m.name)) {
+                        m.mainOwner = m.name;
+                    }
+                });
+            }
+            return data;
+        }
+
+        function sanitizeGuildMastersAsMains() {
+            if (!cloudGuildData) return;
+            let modified = false;
+            for (let divKey in cloudGuildData) {
+                cloudGuildData[divKey].forEach(m => {
+                    if (isGuildMasterName(m.name) && m.mainOwner !== m.name) {
+                        m.mainOwner = m.name;
+                        modified = true;
+                    }
+                });
+            }
+            if (modified && window.database) {
+                window.dbSet(window.dbRef(window.database, 'kultura_roster'), cloudGuildData);
+            }
         }
 
         async function saveGuildData(data) {
+            for (let divKey in data) {
+                data[divKey].forEach(m => {
+                    if (isGuildMasterName(m.name)) {
+                        m.mainOwner = m.name;
+                    }
+                });
+            }
             cloudGuildData = data;
             if (window.database) {
                 await window.dbSet(window.dbRef(window.database, 'kultura_roster'), data);
             }
             renderRosters();
             updateLiveActiveWarriors();
+        }
+
+        function searchRosterMember() {
+            const query = document.getElementById('roster-search-input').value.trim().toLowerCase();
+            const displayBox = document.getElementById('search-result-display');
+
+            if (!query) {
+                displayBox.style.display = 'none';
+                displayBox.innerHTML = '';
+                return;
+            }
+
+            const data = getGuildData();
+            let matches = [];
+
+            for (let divKey in data) {
+                let cleanDiv = divKey.replace(/\s*\(.*\)/, '').trim();
+                data[divKey].forEach(m => {
+                    let nameMatch = m.name && m.name.toLowerCase().includes(query);
+                    let ownerMatch = m.mainOwner && m.mainOwner.toLowerCase().includes(query);
+
+                    if (nameMatch || ownerMatch) {
+                        let isGM = isGuildMasterName(m.name);
+                        let isMain = isGM || (!m.mainOwner || m.mainOwner.trim().toLowerCase() === m.name.trim().toLowerCase());
+                        let resolvedMain = isGM ? m.name : (m.mainOwner || m.name);
+
+                        matches.push({
+                            name: m.name,
+                            class: m.class,
+                            division: cleanDiv,
+                            isMain: isMain,
+                            mainOwner: resolvedMain,
+                            icon: getCharacterIcon(m.class, m.name)
+                        });
+                    }
+                });
+            }
+
+            displayBox.style.display = 'block';
+
+            if (matches.length === 0) {
+                displayBox.innerHTML = `<span style="color: #ffaa33;">⚠️ Walang nahanap na character na "<strong>${query}</strong>" sa roster.</span>`;
+                return;
+            }
+
+            let html = `<div style="font-size: 0.85rem; color: var(--primary-glow); font-weight: bold; margin-bottom: 6px;">Nahanap na Characters (${matches.length}):</div>`;
+            matches.forEach(res => {
+                let statusBadge = res.isMain 
+                    ? `<span style="background: rgba(51,204,51,0.2); color: #33cc33; border: 1px solid #33cc33; padding: 2px 6px; border-radius: 4px; font-weight: bold;">👑 Main Character</span>`
+                    : `<span style="background: rgba(255,170,51,0.2); color: #ffaa33; border: 1px solid #ffaa33; padding: 2px 6px; border-radius: 4px; font-weight: bold;">🎭 Dummy / Alt (Owner: ${res.mainOwner})</span>`;
+
+                html += `
+                    <div style="background: rgba(0,0,0,0.6); padding: 8px 12px; margin-bottom: 6px; border-left: 3px solid var(--primary); border-radius: 4px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                        <div>
+                            ${res.icon} <strong style="color:#fff; font-size:1rem;">${res.name}</strong> <small style="color:var(--text-dim);">(${res.class})</small>
+                            <br><span style="font-size: 0.8rem; color: var(--text-light);">Guild Division: <strong>🛡️ ${res.division}</strong></span>
+                        </div>
+                        <div>${statusBadge}</div>
+                    </div>
+                `;
+            });
+
+            displayBox.innerHTML = html;
         }
 
         function updateLiveActiveWarriors() {
@@ -1775,6 +1911,11 @@
             let linkedCount = 0;
 
             dummyList.forEach(dummyIgn => {
+                if (isGuildMasterName(dummyIgn)) {
+                    alert(`⚠️ Protektado si GM "${dummyIgn}"! Hindi siya pwedeng maging dummy account.`);
+                    return;
+                }
+
                 for (let divKey in data) {
                     let member = data[divKey].find(m => m.name.toLowerCase() === dummyIgn.toLowerCase());
                     if (member) {
@@ -1791,7 +1932,7 @@
                 document.getElementById('type-main-ign').value = '';
                 dummyInputs.forEach(i => i.value = '');
             } else {
-                alert(`⚠️ Walang nahanap na Dummy Accounts sa roster na may ganyang pangalan.`);
+                alert(`⚠️ Walang nahanap na valid Dummy Accounts sa roster na may ganyang pangalan.`);
             }
         }
 
@@ -1847,7 +1988,8 @@
             let membersList = data[assignedDivision] || [];
 
             const charIcon = getCharacterIcon(charClass, ign);
-            membersList.push({ name: ign, class: charClass, icon: charIcon, mainOwner: ign });
+            let ownerName = isGuildMasterName(ign) ? ign : ign;
+            membersList.push({ name: ign, class: charClass, icon: charIcon, mainOwner: ownerName });
             data[assignedDivision] = membersList;
 
             await saveGuildData(data);
@@ -1872,12 +2014,13 @@
                 const div = document.createElement('div');
                 div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;";
                 
-                let isCurrentlyPresent = presentMainsSet.has((mObj.mainOwner || mObj.name).toLowerCase());
+                let resolvedMain = isGuildMasterName(mObj.name) ? mObj.name : (mObj.mainOwner || mObj.name);
+                let isCurrentlyPresent = presentMainsSet.has(resolvedMain.toLowerCase());
                 let correctIcon = getCharacterIcon(mObj.class, mObj.name);
 
                 div.innerHTML = `
                     <span>${correctIcon} <strong>${mObj.name}</strong> <small style="color:var(--text-dim);">(${mObj.class})</small></span>
-                    <select id="att-status-${idx}" data-name="${mObj.name}" data-main="${mObj.mainOwner || mObj.name}" data-class="${mObj.class}" style="background: #222; color: #fff; border: 1px solid #555; padding: 2px 6px; border-radius: 3px;">
+                    <select id="att-status-${idx}" data-name="${mObj.name}" data-main="${resolvedMain}" data-class="${mObj.class}" style="background: #222; color: #fff; border: 1px solid #555; padding: 2px 6px; border-radius: 3px;">
                         <option value="Present" ${isCurrentlyPresent ? 'selected' : ''}>Present</option>
                         <option value="Late">Late</option>
                         <option value="Absent" ${!isCurrentlyPresent ? 'selected' : ''}>Absent</option>
@@ -1907,17 +2050,23 @@
 
             if (existingRecordIndex === -1) allRecords.unshift(existingRecord);
 
-            let currentDivMembers = (getGuildData()[currentCheckingGM] || []).map(m => (m.mainOwner || m.name).toLowerCase());
+            let currentDivMembers = (getGuildData()[currentCheckingGM] || []).map(m => {
+                return isGuildMasterName(m.name) ? m.name.toLowerCase() : (m.mainOwner || m.name).toLowerCase();
+            });
+
             let updatedPresents = existingRecord.presents.filter(p => !currentDivMembers.includes(p.name.toLowerCase()));
             let acknowledgedMains = new Set(updatedPresents.map(p => p.name.toLowerCase()));
 
             selects.forEach(sel => {
                 if (sel.value === 'Present' || sel.value === 'Late') {
-                    const mainChar = sel.getAttribute('data-main');
+                    const charName = sel.getAttribute('data-name');
+                    let mainChar = sel.getAttribute('data-main');
+                    if (isGuildMasterName(charName)) mainChar = charName;
+
                     const charClass = sel.getAttribute('data-class') || "";
                     if (!acknowledgedMains.has(mainChar.toLowerCase())) {
                         acknowledgedMains.add(mainChar.toLowerCase());
-                        updatedPresents.push({ name: mainChar, loggedIgn: sel.getAttribute('data-name'), officer: currentCheckingGM, charClass: charClass });
+                        updatedPresents.push({ name: mainChar, loggedIgn: charName, officer: currentCheckingGM, charClass: charClass });
                     }
                 }
             });
@@ -1953,14 +2102,21 @@
                     let groupedPresents = {};
 
                     rec.presents.forEach(p => {
+                        let rawName = (p.name || p.loggedIgn || "").trim();
                         let mainDivision = "Other Warriors";
+                        let resolvedMainName = rawName;
                         let mainMemberObj = null;
 
-                        for (let div in guildData) {
-                            let found = guildData[div].find(m => m.name.toLowerCase() === p.name.toLowerCase());
-                            if (found) {
-                                mainDivision = div.replace(/\s*\(.*\)/, '');
-                                mainMemberObj = found;
+                        for (let divKey in guildData) {
+                            let match = guildData[divKey].find(m => 
+                                (m.name && m.name.trim().toLowerCase() === rawName.toLowerCase()) ||
+                                (m.mainOwner && m.mainOwner.trim().toLowerCase() === rawName.toLowerCase())
+                            );
+
+                            if (match) {
+                                resolvedMainName = isGuildMasterName(match.name) ? match.name : (match.mainOwner || match.name).trim();
+                                mainDivision = divKey.replace(/\s*\(.*\)/, '').trim();
+                                mainMemberObj = match;
                                 break;
                             }
                         }
@@ -1970,14 +2126,14 @@
                         }
 
                         let memberClass = p.charClass || (mainMemberObj ? mainMemberObj.class : "");
-                        let icon = getCharacterIcon(memberClass, p.name);
+                        let icon = getCharacterIcon(memberClass, resolvedMainName);
 
-                        groupedPresents[mainDivision].push({ name: p.name, icon: icon, loggedIgn: p.loggedIgn });
+                        groupedPresents[mainDivision].push({ name: resolvedMainName, icon: icon, loggedIgn: p.loggedIgn });
                     });
 
                     for (let group in groupedPresents) {
                         let membersInGroup = groupedPresents[group].map(m => {
-                            let isDummyLogged = m.loggedIgn && m.loggedIgn.toLowerCase() !== m.name.toLowerCase();
+                            let isDummyLogged = m.loggedIgn && m.loggedIgn.trim().toLowerCase() !== m.name.trim().toLowerCase();
                             let subInfo = isDummyLogged ? `<small style="color:#ffaa33;"> (via ${m.loggedIgn})</small>` : '';
                             return `
                                 <span style="display: inline-block; background: rgba(230,184,0,0.1); border: 1px solid rgba(230,184,0,0.3); padding: 2px 8px; margin: 2px; border-radius: 4px; font-size: 0.8rem;">
@@ -2009,6 +2165,147 @@
                     </tr>
                 `;
             });
+        }
+
+        let computed3DayGuildData = {}; 
+
+        function render3DayComputationSummary() {
+            const tbody = document.getElementById('three-day-summary-tbody');
+            if (!tbody) return;
+
+            let history = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
+            if (history.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="padding: 10px; text-align: center; color: var(--text-dim);">Walang records ng attendance.</td></tr>`;
+                return;
+            }
+
+            let last3Events = history.slice(0, 3);
+            let guildData = getGuildData();
+            computed3DayGuildData = {};
+
+            for (let divKey in guildData) {
+                let cleanDivName = divKey.replace(/\s*\(.*\)/, '').trim();
+                if (!computed3DayGuildData[cleanDivName]) computed3DayGuildData[cleanDivName] = {};
+
+                guildData[divKey].forEach(m => {
+                    let mainName = isGuildMasterName(m.name) ? m.name : (m.mainOwner || m.name).trim();
+                    if (!computed3DayGuildData[cleanDivName][mainName]) {
+                        computed3DayGuildData[cleanDivName][mainName] = {
+                            name: mainName,
+                            attendCount: 0,
+                            totalSol: 0,
+                            loggedNames: new Set()
+                        };
+                    }
+                });
+            }
+
+            last3Events.forEach(rec => {
+                const totalPresent = rec.presents ? rec.presents.length : 0;
+                const solShare = totalPresent > 0 ? Math.round(rec.solPool / totalPresent) : 0;
+
+                if (rec.presents) {
+                    let eventCountedMains = new Set();
+
+                    rec.presents.forEach(p => {
+                        let rawName = (p.name || p.loggedIgn || "").trim();
+                        let mainName = rawName;
+                        let foundDiv = "Other Warriors";
+
+                        for (let divKey in guildData) {
+                            let match = guildData[divKey].find(m => 
+                                (m.name && m.name.trim().toLowerCase() === rawName.toLowerCase()) ||
+                                (m.mainOwner && m.mainOwner.trim().toLowerCase() === rawName.toLowerCase())
+                            );
+                            if (match) {
+                                mainName = isGuildMasterName(match.name) ? match.name : (match.mainOwner || match.name).trim();
+                                foundDiv = divKey.replace(/\s*\(.*\)/, '').trim();
+                                break;
+                            }
+                        }
+
+                        if (!eventCountedMains.has(mainName.toLowerCase())) {
+                            eventCountedMains.add(mainName.toLowerCase());
+
+                            if (!computed3DayGuildData[foundDiv]) computed3DayGuildData[foundDiv] = {};
+                            if (!computed3DayGuildData[foundDiv][mainName]) {
+                                computed3DayGuildData[foundDiv][mainName] = { name: mainName, attendCount: 0, totalSol: 0, loggedNames: new Set() };
+                            }
+
+                            computed3DayGuildData[foundDiv][mainName].attendCount += 1;
+                            computed3DayGuildData[foundDiv][mainName].totalSol += solShare;
+                            computed3DayGuildData[foundDiv][mainName].loggedNames.add(rawName);
+                        }
+                    });
+                }
+            });
+
+            tbody.innerHTML = '';
+            let hasRows = false;
+
+            for (let divName in computed3DayGuildData) {
+                let membersArr = Object.values(computed3DayGuildData[divName]).filter(m => m.attendCount > 0);
+                if (membersArr.length > 0) {
+                    hasRows = true;
+                    membersArr.forEach(m => {
+                        let altListStr = Array.from(m.loggedNames).filter(n => n.trim().toLowerCase() !== m.name.trim().toLowerCase()).join(', ');
+                        let altDisplay = altListStr ? `<br><small style="color:#ffaa33;">(Linked Dummies used: ${altListStr})</small>` : '';
+
+                        tbody.innerHTML += `
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <td style="padding: 8px; color: var(--primary-glow); font-weight: bold;">🛡️ ${divName}</td>
+                                <td style="padding: 8px; color: #fff;"><strong>${m.name}</strong>${altDisplay}</td>
+                                <td style="padding: 8px; text-align: center; color: #33cc33; font-weight: bold;">${m.attendCount} / ${last3Events.length} Days</td>
+                                <td style="padding: 8px; text-align: right; color: #ffdd55; font-weight: bold;">${m.totalSol.toLocaleString()} SOL</td>
+                            </tr>
+                        `;
+                    });
+                }
+            }
+
+            if (!hasRows) {
+                tbody.innerHTML = `<tr><td colspan="4" style="padding: 10px; text-align: center; color: var(--text-dim);">Walang dumalo sa huling 3 events.</td></tr>`;
+            }
+        }
+
+        function download3DayReportTxt() {
+            let history = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
+            if (history.length === 0) {
+                alert("⚠️ Walang kasalukuyang attendance data para ma-download.");
+                return;
+            }
+
+            let last3Events = history.slice(0, 3);
+            let reportText = `====================================================\n`;
+            reportText += `       KULTURA GUILD ALLIANCE - 3-DAY ATTENDANCE SUMMARY\n`;
+            reportText += `====================================================\n`;
+            reportText += `Date Generated: ${new Date().toLocaleString()}\n`;
+            reportText += `Events Covered (${last3Events.length}): ${last3Events.map(e => e.dateKey + ' (' + e.event + ')').join(', ')}\n\n`;
+
+            for (let divName in computed3DayGuildData) {
+                let membersArr = Object.values(computed3DayGuildData[divName]).filter(m => m.attendCount > 0);
+                if (membersArr.length > 0) {
+                    reportText += `----------------------------------------------------\n`;
+                    reportText += `🛡️ GUILD / DIVISION: ${divName.toUpperCase()}\n`;
+                    reportText += `----------------------------------------------------\n`;
+                    membersArr.forEach((m, idx) => {
+                        let alts = Array.from(m.loggedNames).filter(n => n.trim().toLowerCase() !== m.name.trim().toLowerCase());
+                        let altText = alts.length > 0 ? ` [Dummies: ${alts.join(', ')}]` : '';
+                        reportText += `${idx + 1}. Main: ${m.name.padEnd(14)}${altText.padEnd(24)} | Attendance: ${m.attendCount}/${last3Events.length} Days | Total: ${m.totalSol.toLocaleString()} SOL\n`;
+                    });
+                    reportText += `\n`;
+                }
+            }
+
+            reportText += `====================================================\n`;
+            reportText += `Generated automatically via Kultura Web Portal\n`;
+
+            const blob = new Blob([reportText], { type: "text/plain;charset=utf-8" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `Kultura_3Day_Attendance_Report_${getStandardDateKey()}.txt`;
+            link.click();
+            URL.revokeObjectURL(link.href);
         }
 
         function renderAdminAttendanceLogList() {
