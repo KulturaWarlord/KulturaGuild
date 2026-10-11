@@ -1232,11 +1232,18 @@
             "ANXIETY Division (iKapitana)"
         ];
 
-        let PROTECTED_ADMIN_ACCOUNTS = [
-            "fullclip", "warlock", "lorddwight", "windtalker", "ikapitana", "mechado", "tsukushi", "kultura"
-        ];
+        // MAPPING NG OFFICERS SA KANILANG GUILD / DIVISION ACCESS
+        const OFFICER_DIVISION_MAP = {
+            "fullclip": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"], // SuperAdmin (All)
+            "kultura": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"],  // SuperAdmin (All)
+            "mechado": ["Fullclip Division (Fullclip)"],
+            "tsukushi": ["Warlock Division (Warlock)"],
+            "warlock": ["Warlock Division (Warlock)"],
+            "windtalker": ["PROTECT Division (Windtalker)"],
+            "lorddwight": ["STEALTH Division (LordDwight)"],
+            "ikapitana": ["ANXIETY Division (iKapitana)"]
+        };
 
-        // HELPER FUNCTION: KUHAIN ANG DAPAT NA ICON BATAY SA CHARACTER CLASS O NAME
         function getCharacterIcon(charClass, charName = "") {
             const lowerClass = (charClass || "").toLowerCase();
             const lowerName = (charName || "").toLowerCase();
@@ -1375,8 +1382,8 @@
 
             try {
                 await window.signInWithEmailAndPassword(window.auth, emailFormat, passVal);
-                currentLoggedInOfficer = userVal.split('@')[0];
-                alert(`✅ Welcome ${currentLoggedInOfficer}! Successfully authenticated.`);
+                currentLoggedInOfficer = userVal.split('@')[0].toLowerCase();
+                alert(`✅ Welcome ${currentLoggedInOfficer.toUpperCase()}! Successfully authenticated.`);
                 closeLoginModal();
                 openAdminModal();
             } catch (error) {
@@ -1593,7 +1600,6 @@
             alert(`🎉 Attendance successfully saved!`);
         }
 
-        // NAKA-MAP PAPUNTA SA MAIN GUILD DIVISION ANG DUMMY PRESENCE
         function renderAttendanceHistory() {
             const tbody = document.getElementById('public-attendance-history');
             let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
@@ -1615,7 +1621,6 @@
                     let groupedPresents = {};
 
                     rec.presents.forEach(p => {
-                        // Hanapin ang Main Character object at ang kanyang Main Guild Division
                         let mainDivision = "Other Warriors";
                         let mainMemberObj = null;
 
@@ -1632,14 +1637,12 @@
                             groupedPresents[mainDivision] = [];
                         }
 
-                        // Makuha ang tamang class
                         let memberClass = p.charClass || (mainMemberObj ? mainMemberObj.class : "");
                         let icon = getCharacterIcon(memberClass, p.name);
 
                         groupedPresents[mainDivision].push({ name: p.name, icon: icon, loggedIgn: p.loggedIgn });
                     });
 
-                    // Render bawat Main Guild Division
                     for (let group in groupedPresents) {
                         let membersInGroup = groupedPresents[group].map(m => {
                             let isDummyLogged = m.loggedIgn && m.loggedIgn.toLowerCase() !== m.name.toLowerCase();
@@ -1707,16 +1710,24 @@
             }
         }
 
+        // ROLE-BASED ACCESS CONTROL SA OFFICERS
         function openAdminModal() {
             const selectDiv = document.getElementById('admin-officer-select');
             selectDiv.innerHTML = '';
-            ALL_DIVISIONS.forEach(divName => {
+
+            const userRole = currentLoggedInOfficer || "officer";
+            const allowedDivisions = OFFICER_DIVISION_MAP[userRole] || ALL_DIVISIONS;
+
+            allowedDivisions.forEach(divName => {
                 selectDiv.innerHTML += `<option value="${divName}">${divName}</option>`;
             });
 
-            document.getElementById('logged-agm-display').innerText = currentLoggedInOfficer || "Officer";
-            document.getElementById('superadmin-main-dummy-block').style.display = 'block';
-            document.getElementById('superadmin-delete-logs-block').style.display = 'block';
+            document.getElementById('logged-agm-display').innerText = userRole.toUpperCase();
+
+            // KUNG SUPERADMIN (Fullclip / Kultura), I-DISPLAY ANG EXTRA PANELS; KUNG HINDI, ITAGO
+            const isSuperAdmin = (userRole === "fullclip" || userRole === "kultura");
+            document.getElementById('superadmin-main-dummy-block').style.display = isSuperAdmin ? 'block' : 'none';
+            document.getElementById('superadmin-delete-logs-block').style.display = isSuperAdmin ? 'block' : 'none';
 
             onDivisionChange();
             document.getElementById('attendance-admin-modal').style.display = 'flex';
