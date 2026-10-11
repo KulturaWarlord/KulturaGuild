@@ -6,7 +6,7 @@
     <title>Kultura Guild & Alliance | NoLimit MU Online</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=MedievalSharp&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     
-    <!-- Firebase SDKs (Kasama na ang Auth at Realtime DB) -->
+    <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -72,6 +72,32 @@
             min-height: 100vh;
             line-height: 1.6;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* FLOATING SIDE EMBLEMS */
+        .side-crest {
+            position: fixed;
+            z-index: 9000;
+            width: 100px;
+            filter: drop-shadow(0 0 12px rgba(230, 184, 0, 0.6));
+            transition: transform 0.3s ease;
+        }
+
+        .side-crest:hover {
+            transform: scale(1.15);
+        }
+
+        .crest-left-1 { top: 20px; left: 20px; width: 130px; }
+        .crest-left-2 { top: 220px; left: 25px; }
+        .crest-left-3 { top: 430px; left: 25px; }
+
+        .crest-right-1 { top: 20px; right: 20px; }
+        .crest-right-2 { top: 220px; right: 25px; }
+        .crest-right-3 { top: 430px; right: 25px; }
+
+        @media (max-width: 1200px) {
+            .side-crest { display: none; }
         }
 
         #music-control {
@@ -758,6 +784,15 @@
 </head>
 <body>
 
+    <!-- FLOATING SIDE EMBLEMS (KALIWA AT KANAN) -->
+    <img src="https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png" class="side-crest crest-left-1" alt="Kultura Shield">
+    <img src="https://cdn.phototourl.com/member/2026-10-08-f86e67c4-ab50-45e0-8c0b-38490e52c60c.png" class="side-crest crest-left-2" alt="Stealth Guild">
+    <img src="https://cdn.phototourl.com/member/2026-10-07-5cb85190-c10a-47a1-8b08-870ed366d52f.png" class="side-crest crest-left-3" alt="Valkyrie Guild">
+
+    <img src="https://cdn.phototourl.com/member/2026-10-07-4f35248b-2602-408c-8175-3e37cc1e0977.png" class="side-crest crest-right-1" alt="xNOTA Guild">
+    <img src="https://cdn.phototourl.com/member/2026-10-08-a6619f00-88bb-4a5b-b244-715b129a4c1e.png" class="side-crest crest-right-2" alt="Spidey Guild">
+    <img src="https://cdn.phototourl.com/member/2026-10-08-9594006c-6428-4b19-a7a4-e6f1e807e489.png" class="side-crest crest-right-3" alt="Anxiety Guild">
+
     <!-- Floating Audio Control Button -->
     <div id="music-control" onclick="toggleMusic()">
         <span id="music-icon">🎵</span>
@@ -847,12 +882,12 @@
         <!-- LOGIN MODAL FOR OFFICERS -->
         <div id="login-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10001; justify-content: center; align-items: center;">
             <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 400px; padding: 25px; border-radius: 10px; color: #fff; text-align: center;">
-                <h3 style="color: var(--primary-glow); margin-bottom: 15px;">🔐 Officer Authentication</h3>
-                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Mag-login gamit ang inyong Registered Username / Email sa Firebase.</p>
+                <h3 style="color: var(--primary-glow); margin-bottom: 15px;">🔐 Secure Firebase Authentication</h3>
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Mag-login gamit ang inyong Registered Email / Username sa Firebase Console.</p>
                 
                 <div style="margin-bottom: 12px; text-align: left;">
-                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Username o Email:</label>
-                    <input type="text" id="login-username" placeholder="Enter Registered Guild Name / Email" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Registered Email o Username:</label>
+                    <input type="text" id="login-username" placeholder="e.g. kulturamain@alliance.com o Fullclip" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
                 </div>
 
                 <div style="margin-bottom: 15px; text-align: left;">
@@ -897,7 +932,7 @@
                         </div>
                     </div>
 
-                    <!-- KULTURA SECURITY LOGS BLOCK -->
+                    <!-- KULTURA SECURITY LOGS BLOCK WITH WORKING VIEW CREDENTIALS -->
                     <div id="kultura-security-logs-block" class="admin-section-block" style="display: none; border-color: #33cc33;">
                         <button onclick="toggleAdminSection('sec-kultura-logs')" class="admin-collapsible-btn" style="color: #33cc33; background: rgba(51, 204, 51, 0.1);">
                             <span>🛡️ Security Audit Logs (Kultura Username Activity)</span>
@@ -1333,6 +1368,8 @@
             "kulturamain"
         ];
 
+        let OFFICER_ACCOUNTS_SYNC = {};
+
         const defaultDivisionMembers = {
             "Fullclip Division (Fullclip)": [
                 { name: "Fullclip", class: "Blade Master", icon: "👑", mainOwner: "Fullclip" },
@@ -1407,10 +1444,39 @@
             });
         }
 
+        async function viewAllCredentialsRealtime() {
+            let currentLower = currentLoggedInOfficer ? currentLoggedInOfficer.toLowerCase() : "";
+            if (currentLower !== "kultura" && currentLower !== "kulturamain") return;
+
+            await logKulturaActivity(`Tiningnan ang lahat ng credentials (View Credentials).`);
+            
+            const listElem = document.getElementById('kultura-logs-list');
+            if (listElem) {
+                let displayHtml = `<div style="background: rgba(230,184,0,0.15); padding: 8px; border: 1px solid var(--primary); border-radius: 4px; margin-bottom: 6px;">
+                    <strong style="color: var(--primary-glow);">🔑 All Registered Accounts & Credentials (Realtime DB):</strong><br>`;
+                
+                if (Object.keys(OFFICER_ACCOUNTS_SYNC).length === 0) {
+                    displayHtml += `<span style="color:#ffaa33;">Naka-authenticate via Firebase Authentication Console (e.g. kulturamain@alliance.com).</span><br>`;
+                } else {
+                    for (let usr in OFFICER_ACCOUNTS_SYNC) {
+                        displayHtml += `<span style="color:#fff;">👤 <strong>${usr}</strong> : <code style="color:#33cc33;">${OFFICER_ACCOUNTS_SYNC[usr].password || "Firebase Auth Managed"}</code></span><br>`;
+                    }
+                }
+                displayHtml += `</div>`;
+                listElem.innerHTML = displayHtml + listElem.innerHTML;
+            }
+        }
+
         function initRealtimeListeners() {
             if (!window.database) return;
             const dbRef = window.dbRef;
             const dbOnValue = window.dbOnValue;
+
+            dbOnValue(dbRef(window.database, 'kultura_officer_accounts'), (snap) => {
+                if (snap.exists()) {
+                    OFFICER_ACCOUNTS_SYNC = snap.val();
+                }
+            });
 
             dbOnValue(dbRef(window.database, 'kultura_roster'), (snap) => {
                 if (snap.exists()) {
@@ -1514,13 +1580,17 @@
             }
 
             try {
-                // Firebase Authentication Login
                 await window.signInWithEmailAndPassword(window.auth, loginEmail, passVal);
                 currentLoggedInOfficer = userVal.includes('@') ? userVal.split('@')[0] : userVal;
 
                 alert(`✅ Welcome ${currentLoggedInOfficer}! Successfully authenticated via Firebase Auth.`);
                 closeLoginModal();
                 openAdminModal();
+
+                let lowerName = currentLoggedInOfficer.toLowerCase();
+                if (lowerName === "kultura" || lowerName === "kulturamain" || lowerName === "fullclip") {
+                    await logKulturaActivity(`Successful login sa Authorized Officer Portal.`);
+                }
             } catch (error) {
                 console.error(error);
                 alert("❌ Mali ang Email/Username o Password! Paki-subukan muli.");
