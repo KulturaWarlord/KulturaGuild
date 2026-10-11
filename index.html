@@ -1220,7 +1220,7 @@
         <p>&copy; 2026 <span>Kultura Guild</span> — NoLimit MU Online Community. All Rights Reserved.</p>
     </footer>
 
-    <!-- Interactive Scripts (Pinatibay gamit ang Firebase Auth) -->
+    <!-- Interactive Scripts -->
     <script>
         let ALL_DIVISIONS = [
             "Fullclip Division (Fullclip)",
@@ -1340,7 +1340,6 @@
                 return;
             }
 
-            // Ginagawang email format kung username lamang ang inilagay
             const emailFormat = userVal.includes('@') ? userVal : `${userVal.toLowerCase()}@kulturaguild.com`;
 
             try {
@@ -1561,6 +1560,7 @@
             alert(`🎉 Attendance successfully saved!`);
         }
 
+        // UPDATED: DISPLAY CHARACTER NAMES AND DIVISIONS
         function renderAttendanceHistory() {
             const tbody = document.getElementById('public-attendance-history');
             let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
@@ -1569,16 +1569,32 @@
                 return;
             }
             tbody.innerHTML = '';
+            
             history.forEach(rec => {
                 const totalPresent = rec.presents ? rec.presents.length : 0;
                 const solPerMember = totalPresent > 0 ? Math.round(rec.solPool / totalPresent).toLocaleString() : 0;
+                
+                let memberDetailsHTML = '';
+                if (rec.presents && rec.presents.length > 0) {
+                    memberDetailsHTML = rec.presents.map(p => {
+                        let divisionName = p.officer ? p.officer.replace(/\s*\(.*\)/, '') : 'Guild';
+                        return `<span style="display: inline-block; background: rgba(230,184,0,0.1); border: 1px solid rgba(230,184,0,0.3); padding: 2px 8px; margin: 2px; border-radius: 4px; font-size: 0.78rem;">
+                            👑 <strong>${p.name}</strong> <small style="color: var(--primary-glow);">[${divisionName}]</small>
+                        </span>`;
+                    }).join(' ');
+                } else {
+                    memberDetailsHTML = `<span style="color: var(--text-dim);">No members logged</span>`;
+                }
+
                 tbody.innerHTML += `
                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
-                        <td style="padding: 10px; color: var(--text-dim);">${rec.dateKey}</td>
-                        <td style="padding: 10px; color: var(--primary);">${rec.event}</td>
+                        <td style="padding: 10px; color: var(--text-dim); font-weight: bold;">${rec.dateKey}</td>
+                        <td style="padding: 10px; color: var(--primary); font-weight: bold;">${rec.event}</td>
                         <td style="padding: 10px; color: #ffdd55;">${totalPresent} Main Warriors</td>
                         <td style="padding: 10px; color: #ffdd55;">${solPerMember} SOL / ea</td>
-                        <td style="padding: 10px; color: #33cc33;">${totalPresent} Members Credited</td>
+                        <td style="padding: 10px; color: #33cc33; max-width: 380px;">
+                            ${memberDetailsHTML}
+                        </td>
                     </tr>
                 `;
             });
