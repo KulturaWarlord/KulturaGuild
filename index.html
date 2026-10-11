@@ -6,11 +6,10 @@
     <title>Kultura Guild & Alliance | NoLimit MU Online</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=MedievalSharp&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
     
-    <!-- Firebase SDKs with Authentication & Database -->
+    <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAq_TzBp-Jjr3Wbp7RIHz05OW3IR5Iovmk",
@@ -25,7 +24,6 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const auth = getAuth(app);
 
         window.dbRef = ref;
         window.dbGet = get;
@@ -33,13 +31,6 @@
         window.dbSet = set;
         window.dbOnValue = onValue;
         window.database = db;
-        window.auth = auth;
-        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
-        window.signOut = signOut;
-        window.onAuthStateChanged = onAuthStateChanged;
-        window.updatePassword = updatePassword;
-        window.EmailAuthProvider = EmailAuthProvider;
-        window.reauthenticateWithCredential = reauthenticateWithCredential;
         
         window.dispatchEvent(new Event('firebase-ready'));
     </script>
@@ -76,52 +67,6 @@
             min-height: 100vh;
             line-height: 1.6;
             overflow-x: hidden;
-            position: relative;
-        }
-
-        /* PINAGSAMANG FLOATING DRIFT & MAGIC PULSE GLOW ANIMATION */
-        @keyframes floatAndMagicPulse {
-            0% {
-                transform: translateY(0px) scale(1);
-                filter: drop-shadow(0 0 10px rgba(230, 184, 0, 0.4)) brightness(1);
-            }
-            50% {
-                transform: translateY(-8px) scale(1.02);
-                filter: drop-shadow(0 0 25px rgba(255, 221, 85, 0.85)) brightness(1.15);
-            }
-            100% {
-                transform: translateY(0px) scale(1);
-                filter: drop-shadow(0 0 10px rgba(230, 184, 0, 0.4)) brightness(1);
-            }
-        }
-
-        .side-floating-img {
-            position: fixed;
-            width: 300px;
-            height: auto;
-            z-index: 100;
-            object-fit: contain;
-            animation: floatAndMagicPulse 4s infinite ease-in-out;
-            transition: transform 0.3s ease, filter 0.3s ease;
-        }
-
-        .side-floating-img:hover {
-            transform: scale(1.08) rotate(1deg);
-            filter: drop-shadow(0 0 30px #ffcc00) brightness(1.25);
-        }
-
-        /* KALIWA (3 Larawan: Nakapila nang patayo mula itaas hanggang baba) */
-        #floating-1-left { top: 20px;   left: 20px; }
-        #floating-2-left { top: 350px;  left: 20px; }
-        #floating-3-left { top: 680px;  left: 20px; }
-
-        /* KANAN (3 Larawan: Nakapila nang patayo mula itaas hanggang baba) */
-        #floating-1-right { top: 20px;   right: 20px; }
-        #floating-2-right { top: 350px;  right: 20px; }
-        #floating-3-right { top: 680px;  right: 20px; }
-
-        @media (max-width: 1700px) {
-            .side-floating-img { display: none; } /* Itinatago sa mas maliit na screen para hindi matakpan ang content */
         }
 
         #music-control {
@@ -509,6 +454,13 @@
             width: 100%;
         }
 
+        .class-summoner { color: #ff3333 !important; }
+        .class-blademaster { color: #3399ff !important; }
+        .class-darklord { color: #ff9900 !important; }
+        .class-dimensionmaster { color: #cc66ff !important; }
+        .class-elf { color: #33cc33 !important; }
+        .class-soulmaster { color: #ffff33 !important; }
+
         .roster-grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -629,25 +581,6 @@
             padding: 15px;
             border-top: 1px solid rgba(230, 184, 0, 0.2);
             animation: fadeIn 0.3s ease;
-        }
-
-        .division-group-container {
-            margin-bottom: 10px;
-            background: rgba(20, 20, 30, 0.6);
-            border: 1px solid rgba(230, 184, 0, 0.25);
-            border-radius: 6px;
-            padding: 8px 12px;
-        }
-
-        .division-group-title-header {
-            font-family: 'Cinzel', serif;
-            font-size: 0.85rem;
-            color: var(--primary-glow);
-            font-weight: 700;
-            border-bottom: 1px solid rgba(230, 184, 0, 0.3);
-            padding-bottom: 4px;
-            margin-bottom: 6px;
-            text-transform: uppercase;
         }
 
         .flame-section {
@@ -782,6 +715,16 @@
             padding-bottom: 10px;
         }
 
+        .division-group-title {
+            color: var(--primary-glow);
+            font-weight: 700;
+            margin-top: 8px;
+            margin-bottom: 4px;
+            border-bottom: 1px solid rgba(230, 184, 0, 0.2);
+            display: inline-block;
+            font-size: 0.85rem;
+        }
+
         .two-col-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -791,7 +734,7 @@
         @media (max-width: 768px) {
             .guild-logo { font-size: 3rem; }
             .server-logo { max-width: 220px; }
-            .rotating-alliance-badge { font-size: 0.80rem; padding: 6px 16px; }
+            .rotating-alliance-badge { font-size: 0.8rem; padding: 6px 16px; }
         }
 
         footer {
@@ -809,16 +752,6 @@
     </style>
 </head>
 <body>
-
-    <!-- KALIWA (3 Larawan) -->
-    <img src="https://cdn.phototourl.com/member/2026-10-11-ba627157-bd2b-4b8b-bd9d-5cf77bbb8726.png" alt="Floating Left 1" id="floating-1-left" class="side-floating-img">
-    <img src="https://cdn.phototourl.com/member/2026-10-11-e72673f4-2386-4161-a95b-2f3c502ad1c6.png" alt="Floating Left 2" id="floating-2-left" class="side-floating-img">
-    <img src="https://cdn.phototourl.com/member/2026-10-11-99d38041-fa7e-4ec7-8355-f0dca3f6caf3.png" alt="Floating Left 3" id="floating-3-left" class="side-floating-img">
-
-    <!-- KANAN (3 Larawan) -->
-    <img src="https://cdn.phototourl.com/member/2026-10-11-9ff1f70b-d655-401f-a885-0df25fd98531.png" alt="Floating Right 1" id="floating-1-right" class="side-floating-img">
-    <img src="https://cdn.phototourl.com/member/2026-10-11-c4f20cc8-75a4-44b5-a8de-b83fc6c52493.png" alt="Floating Right 2" id="floating-2-right" class="side-floating-img">
-    <img src="https://cdn.phototourl.com/member/2026-10-11-b1138317-8bb5-4316-a5e6-946ccd7d0787.png" alt="Floating Right 3" id="floating-3-right" class="side-floating-img">
 
     <!-- Floating Audio Control Button -->
     <div id="music-control" onclick="toggleMusic()">
@@ -877,30 +810,25 @@
 
         <!-- ATTENDANCE SYSTEM SECTION -->
         <section id="attendance-system" class="panel" style="margin-bottom: 60px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-gold); padding-bottom: 10px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-gold); padding-bottom: 10px; margin-bottom: 20px;">
                 <h3 style="margin: 0; color: var(--primary);">📋 Live Attendance & Anti-Double Compensation Log</h3>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button onclick="openLoginModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem;">
-                        🔐 Open Authorized Officer Portal
-                    </button>
-                    <button onclick="openLostPasswordModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem; background: linear-gradient(135deg, #8b0000, #ff3333);">
-                        🔑 Lost Password?
-                    </button>
-                </div>
+                <button onclick="openLoginModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem;">
+                    🔐 Open Authorized Officer Portal
+                </button>
             </div>
 
             <!-- Public Attendance Log -->
             <div>
                 <h4 style="color: var(--primary-glow); margin-bottom: 10px;">Castle Siege Live SOL Shares (Strictly 1 Share per Main Character)</h4>
-                <div style="max-height: 450px; overflow-y: auto; background: rgba(0,0,0,0.4); border-radius: 6px; padding: 10px;">
+                <div style="max-height: 400px; overflow-y: auto; background: rgba(0,0,0,0.4); border-radius: 6px; padding: 10px;">
                     <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.85rem;">
                         <thead>
                             <tr style="border-bottom: 1px solid var(--primary); color: var(--primary-glow);">
-                                <th style="padding: 8px; width: 15%;">Date (Event)</th>
-                                <th style="padding: 8px; width: 15%;">Total Main Present</th>
-                                <th style="padding: 8px; width: 12%;">SOL Pool</th>
-                                <th style="padding: 8px; width: 15%;">SOL Share / Main</th>
-                                <th style="padding: 8px; width: 44%;">Acknowledged Warriors (Mapped to Main Guild Division)</th>
+                                <th style="padding: 8px;">Date (Event)</th>
+                                <th style="padding: 8px;">Total Main Present</th>
+                                <th style="padding: 8px;">SOL Pool</th>
+                                <th style="padding: 8px;">SOL Share / Main Member</th>
+                                <th style="padding: 8px;">Acknowledged Main Characters (Credited to Main Guild)</th>
                             </tr>
                         </thead>
                         <tbody id="public-attendance-history">
@@ -911,20 +839,24 @@
             </div>
         </section>
 
-        <!-- LOGIN MODAL FOR OFFICERS (SECURE FIREBASE AUTH) -->
+        <!-- LOGIN MODAL FOR OFFICERS -->
         <div id="login-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10001; justify-content: center; align-items: center;">
             <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 400px; padding: 25px; border-radius: 10px; color: #fff; text-align: center;">
-                <h3 style="color: var(--primary-glow); margin-bottom: 15px;">🔐 Secure Officer Authentication</h3>
-                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Ilagay ang iyong Guild Username o Email at Secure Password.</p>
+                <h3 style="color: var(--primary-glow); margin-bottom: 15px;">🔐 Officer Authentication</h3>
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Mag-login gamit ang inyong Registered Guild Name bilang Username.</p>
                 
                 <div style="margin-bottom: 12px; text-align: left;">
-                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Username / Email:</label>
-                    <input type="text" id="login-username" placeholder="e.g. kulturamain@alliance.com o fullclip" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Registered Guild Username:</label>
+                    <input type="text" id="login-username" placeholder="Enter Registered Guild Name" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
                 </div>
 
                 <div style="margin-bottom: 15px; text-align: left;">
                     <label style="font-size: 0.8rem; color: var(--primary-glow);">Password:</label>
-                    <input type="password" id="login-password" placeholder="Enter Secure Password" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                    <input type="password" id="login-password" placeholder="Enter Password" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                </div>
+
+                <div style="margin-bottom: 18px; text-align: right;">
+                    <a href="javascript:void(0)" onclick="openForgotPasswordModal()" style="color: var(--primary-glow); font-size: 0.8rem; text-decoration: underline;">🔑 Nakalimutan ang Password?</a>
                 </div>
 
                 <div style="display: flex; gap: 10px; justify-content: center;">
@@ -934,25 +866,41 @@
             </div>
         </div>
 
-        <!-- LOST PASSWORD MODAL FOR USERS -->
-        <div id="lost-password-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10002; justify-content: center; align-items: center;">
-            <div style="background: var(--bg-card); border: 2px solid #ff3333; width: 90%; max-width: 400px; padding: 25px; border-radius: 10px; color: #fff; text-align: center;">
-                <h3 style="color: #ffaa33; margin-bottom: 15px;">🔑 Request Lost Password</h3>
-                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">I-submit ang iyong Username at mensahe para sa SuperAdmin upang ma-reset ang iyong password.</p>
+        <!-- FORGOT PASSWORD MODAL -->
+        <div id="forgot-password-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10002; justify-content: center; align-items: center;">
+            <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 450px; padding: 25px; border-radius: 10px; color: #fff; text-align: center;">
+                <h3 style="color: var(--primary-glow); margin-bottom: 10px;">🔑 Password Recovery Portal</h3>
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Sagutin ang Secret Question o mag-iwan ng Ticket sa SuperAdmin.</p>
                 
                 <div style="margin-bottom: 12px; text-align: left;">
-                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Your Registered Username / Email:</label>
-                    <input type="text" id="lost-pass-username" placeholder="e.g. fullclip o mechado" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Registered Guild Name (Username):</label>
+                    <input type="text" id="reset-username" placeholder="Enter Registered Guild Name" onchange="loadOfficerQuestion()" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                </div>
+
+                <div style="margin-bottom: 12px; text-align: left;">
+                    <label style="font-size: 0.8rem; color: #33cc33;">Secret Question:</label>
+                    <div id="secret-question-display" style="font-size: 0.85rem; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; color: #fff; margin-top: 3px;">Ilagay muna ang Guild Username sa taas...</div>
+                </div>
+
+                <div style="margin-bottom: 12px; text-align: left;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Secret Answer:</label>
+                    <input type="text" id="reset-secret-answer" placeholder="Enter your Secret Answer" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
                 </div>
 
                 <div style="margin-bottom: 15px; text-align: left;">
-                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Message / Details:</label>
-                    <textarea id="lost-pass-message" placeholder="Bakit mo kailangan i-reset ang password?" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px; height: 80px; resize: none;"></textarea>
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Bagong Password (New Password):</label>
+                    <input type="password" id="reset-new-password" placeholder="Enter New Password" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
                 </div>
 
-                <div style="display: flex; gap: 10px; justify-content: center;">
-                    <button onclick="closeLostPasswordModal()" class="btn" style="background: #444;">Cancel</button>
-                    <button onclick="submitLostPasswordRequest()" class="btn" style="background: linear-gradient(135deg, #8b0000, #ff3333);">Submit Request</button>
+                <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px;">
+                    <button onclick="closeForgotPasswordModal()" class="btn" style="background: #444;">Cancel</button>
+                    <button onclick="handlePasswordReset()" class="btn">Reset Password</button>
+                </div>
+
+                <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; text-align: left;">
+                    <label style="font-size: 0.75rem; color: #ffaa33;">Nakalimutan mo rin ang Secret Answer? Mag-iwan ng mensahe sa SuperAdmin Inbox:</label>
+                    <textarea id="reset-ticket-msg" placeholder="Mensahe sa SuperAdmin..." style="width: 100%; height: 50px; background: #111; border: 1px solid #555; color: #fff; font-size: 0.75rem; padding: 6px; border-radius: 4px; margin-top: 4px; resize: none;"></textarea>
+                    <button onclick="sendPasswordResetTicket()" class="btn" style="width: 100%; padding: 6px; font-size: 0.75rem; background: linear-gradient(135deg, #8b0000, #ff3333); margin-top: 4px;">📩 Ipadala ang Request sa SuperAdmin Inbox</button>
                 </div>
             </div>
         </div>
@@ -972,62 +920,39 @@
 
                 <!-- MODAL BODY CONTENT CONTAINER -->
                 <div id="admin-modal-body-content">
-                    <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in securely as: <strong id="logged-agm-display">OFFICER</strong></p>
+                    <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">Officer</strong></p>
 
-                    <!-- CHANGE PASSWORD FEATURE SECTION FOR ADMINS & SUPERADMIN -->
-                    <div class="admin-section-block">
-                        <button onclick="toggleAdminSection('sec-change-password')" class="admin-collapsible-btn">
-                            <span>🔑 Change Account Password</span>
-                            <span id="icon-sec-change-password">▼ Expand</span>
+                    <!-- SECTION 1: SUPERADMIN INBOX -->
+                    <div id="superadmin-inbox-block" class="admin-section-block" style="display: none;">
+                        <button onclick="toggleAdminSection('sec-inbox')" class="admin-collapsible-btn">
+                            <span>📬 SuperAdmin Inbox (Password Reset Requests)</span>
+                            <span id="icon-sec-inbox">▼ Expand</span>
                         </button>
-                        <div id="sec-change-password" class="admin-collapsible-content">
-                            <div style="margin-bottom: 10px;">
-                                <label style="font-size: 0.8rem; color: var(--primary-glow);">Current Password:</label>
-                                <input type="password" id="current-password-input" placeholder="Enter current password" style="width: 100%; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
-                            </div>
-                            <div style="margin-bottom: 12px;">
-                                <label style="font-size: 0.8rem; color: var(--primary-glow);">New Password:</label>
-                                <input type="password" id="new-password-input" placeholder="Enter new secure password" style="width: 100%; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
-                            </div>
-                            <button onclick="handleChangePassword()" class="btn" style="padding: 7px 14px; font-size: 0.8rem; width: 100%; background: linear-gradient(135deg, #e6b800, #b38f00); color: #000;">🔐 Update Password</button>
-                        </div>
-                    </div>
-
-                    <!-- SUPERADMIN EXCLUSIVE PANEL 0: CREDENTIALS VIEWER & LOST PASS INBOX -->
-                    <div id="superadmin-credentials-inbox-block" class="admin-section-block" style="display: none; border-color: #33cc33;">
-                        <button onclick="toggleAdminSection('sec-superadmin-creds')" class="admin-collapsible-btn" style="background: rgba(51,204,51,0.1); color: #33cc33;">
-                            <span>👑 SuperAdmin Control Panel: Credentials & Lost Password Inbox</span>
-                            <span id="icon-sec-superadmin-creds">▼ Expand</span>
-                        </button>
-                        <div id="sec-superadmin-creds" class="admin-collapsible-content">
-                            <!-- CREDENTIALS VIEWER -->
-                            <div style="margin-bottom: 15px; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #33cc33; border-radius: 6px;">
-                                <h4 style="color: #33cc33; font-size: 0.85rem; margin-bottom: 8px;">📋 SuperAdmin & Admin Account Credentials</h4>
-                                <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 10px;">I-click ang button sa ibaba para lumabas ang mga nakarehistrong credential sa system:</p>
-                                <button onclick="toggleSuperAdminCredentialsList()" class="btn" style="padding: 6px 12px; font-size: 0.75rem; background: #222; border-color: #33cc33; color: #33cc33; margin-bottom: 10px;">👁️ Toggle Credentials View</button>
-                                <div id="superadmin-credentials-display-box" style="display: none; font-size: 0.8rem; background: #111; padding: 10px; border-radius: 4px; border: 1px solid #444;">
-                                    <div>👑 <strong>kulturamain</strong>: kulturamain@alliance.com (SuperAdmin)</div>
-                                    <div>👑 <strong>fullclip</strong>: fullclip@kulturaguild.com (SuperAdmin)</div>
-                                    <div>👑 <strong>kultura</strong>: kultura@kulturaguild.com (SuperAdmin)</div>
-                                    <div>⚔️ <strong>mechado</strong>: mechado@kulturaguild.com (AGM)</div>
-                                    <div>⚔️ <strong>tsukushi</strong>: tsukushi@kulturaguild.com (AGM)</div>
-                                    <div>🛡️ <strong>windtalker</strong>: windtalker@kulturaguild.com (GM)</div>
-                                    <div>🛡️ <strong>lorddwight</strong>: lorddwight@kulturaguild.com (GM)</div>
-                                    <div>🛡️ <strong>ikapitana</strong>: ikapitana@kulturaguild.com (GM)</div>
-                                </div>
-                            </div>
-
-                            <!-- LOST PASSWORD INBOX -->
-                            <div style="padding: 12px; background: rgba(139, 0, 0, 0.15); border: 1px solid rgba(255, 51, 51, 0.4); border-radius: 6px;">
-                                <h4 style="color: #ffaa33; font-size: 0.85rem; margin-bottom: 8px;">📥 Lost Password Requests Inbox</h4>
-                                <div id="superadmin-lost-pass-inbox-list" style="max-height: 160px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
-                                    <span style="color: var(--text-dim);">Walang nakareserbang lost password requests.</span>
-                                </div>
+                        <div id="sec-inbox" class="admin-collapsible-content">
+                            <div id="superadmin-inbox-list" style="max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
+                                <span style="color: var(--text-dim);">Walang nakareserbang ticket sa inbox.</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- SUPERADMIN EXCLUSIVE PANEL 1: MULTI-DUMMY INPUT MAPPER -->
+                    <!-- KULTURA SECURITY LOGS BLOCK WITH VIEW CREDENTIALS BUTTON -->
+                    <div id="kultura-security-logs-block" class="admin-section-block" style="display: none; border-color: #33cc33;">
+                        <button onclick="toggleAdminSection('sec-kultura-logs')" class="admin-collapsible-btn" style="color: #33cc33; background: rgba(51, 204, 51, 0.1);">
+                            <span>🛡️ Security Audit Logs (Kultura Username Activity)</span>
+                            <span id="icon-sec-kultura-logs">▼ Expand</span>
+                        </button>
+                        <div id="sec-kultura-logs" class="admin-collapsible-content">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <p style="font-size:0.75rem; color:var(--text-dim); margin:0;">Realtime activity logs ng username na kultura.</p>
+                                <button onclick="viewAllCredentialsRealtime()" class="btn" style="padding: 4px 10px; font-size: 0.75rem; background: linear-gradient(135deg, #0088cc, #004488);">🔐 View Credentials</button>
+                            </div>
+                            <div id="kultura-logs-list" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.7); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
+                                <span style="color: var(--text-dim);">Walang nakatalang security logs pa.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUPERADMIN EXCLUSIVE PANEL: MULTI-DUMMY INPUT MAPPER -->
                     <div id="superadmin-main-dummy-block" class="admin-section-block" style="display: none;">
                         <button onclick="toggleAdminSection('sec-main-dummy-linker')" class="admin-collapsible-btn">
                             <span>🎭 SuperAdmin: Multi-Dummy Character Mapper (Link Dummies to Main)</span>
@@ -1035,71 +960,107 @@
                         </button>
                         <div id="sec-main-dummy-linker" class="admin-collapsible-content">
                             <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
-                                I-type ang <strong>Main Character IGN</strong> at ilagay sa mga boxes ang kanyang <strong>Dummy Accounts</strong>.
+                                I-type ang <strong>Main Character IGN</strong> at ilagay sa mga boxes ang kanyang <strong>Dummy Accounts</strong>. Magiging <strong>naka-link</strong> lamang sila sa Main pero **mananatili (stay) sila sa kani-kanilang kasalukuyang Guild/Division**.
                             </p>
                             
+                            <!-- MAIN IGN FIELD -->
                             <div style="margin-bottom: 12px; background: rgba(51,204,51,0.1); padding: 10px; border: 1px solid #33cc33; border-radius: 6px;">
                                 <label style="font-size: 0.8rem; color: #33cc33; font-weight: bold;">👑 Main Character IGN:</label>
                                 <input type="text" id="type-main-ign" placeholder="e.g. Eremes" style="width: 100%; padding: 8px; background: #111; border: 1px solid #33cc33; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
                             </div>
 
+                            <!-- MULTI DUMMY BOXES GRID -->
                             <label style="font-size: 0.8rem; color: #ffaa33; font-weight: bold;">🎭 Dummy / Alt Character Accounts:</label>
                             <div id="dummy-boxes-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; margin-bottom: 10px; max-height: 220px; overflow-y: auto; padding-right: 5px;">
                                 <input type="text" class="dummy-input-field" placeholder="Dummy 1 (e.g. Kreios)" style="padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;">
                                 <input type="text" class="dummy-input-field" placeholder="Dummy 2 (e.g. Papaliciou)" style="padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                                <input type="text" class="dummy-input-field" placeholder="Dummy 3" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                                <input type="text" class="dummy-input-field" placeholder="Dummy 4" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
                             </div>
 
                             <div style="display: flex; gap: 8px; margin-bottom: 10px;">
                                 <button onclick="addMoreDummyBox()" class="btn" style="padding: 5px 12px; font-size: 0.75rem; background: #333; border-color: #777;">➕ Add More Dummy Box</button>
                             </div>
 
-                            <button onclick="saveSuperAdminMultiLinkage()" class="btn" style="padding: 8px 14px; font-size: 0.85rem; width: 100%; background: linear-gradient(135deg, #8b0000, #ffaa33); color: #000;">🔗 Link Dummies to Main</button>
+                            <button onclick="saveSuperAdminMultiLinkage()" class="btn" style="padding: 8px 14px; font-size: 0.85rem; width: 100%; background: linear-gradient(135deg, #8b0000, #ffaa33); color: #000;">🔗 Link Dummies to Main (Keep Current Guild Position)</button>
                         </div>
                     </div>
 
-                    <!-- SUPERADMIN EXCLUSIVE PANEL 2: ALLIANCE & GUILD DIVISION MANAGEMENT -->
-                    <div id="superadmin-alliance-mgmt-block" class="admin-section-block" style="display: none;">
-                        <button onclick="toggleAdminSection('sec-alliance-mgmt')" class="admin-collapsible-btn">
-                            <span>🏛️ SuperAdmin: Alliance & Guild Division Management</span>
-                            <span id="icon-sec-alliance-mgmt">▼ Expand</span>
-                        </button>
-                        <div id="sec-alliance-mgmt" class="admin-collapsible-content">
-                            <!-- ADD NEW GUILD / ALLIANCE -->
-                            <div style="margin-bottom: 15px; padding: 12px; background: rgba(230, 184, 0, 0.05); border: 1px solid var(--border-gold); border-radius: 6px;">
-                                <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 8px;">➕ Create New Alliance / Guild Division</h4>
-                                
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-                                    <div>
-                                        <label style="font-size: 0.75rem; color: var(--primary-glow);">Alliance / Division Name:</label>
-                                        <input type="text" id="new-division-name" placeholder="e.g. SPIDEY Division" style="width: 100%; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
-                                    </div>
-                                    <div>
-                                        <label style="font-size: 0.75rem; color: var(--primary-glow);">Guild Master (GM) IGN:</label>
-                                        <input type="text" id="new-division-gm" placeholder="e.g. Spidey" style="width: 100%; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
-                                    </div>
-                                </div>
-
-                                <button onclick="addNewGuildDivision()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">🏰 Add New Guild Alliance with GM</button>
-                            </div>
-
-                            <!-- DELETE GUILD / ALLIANCE -->
-                            <div style="padding: 12px; background: rgba(139, 0, 0, 0.15); border: 1px solid rgba(255, 51, 51, 0.4); border-radius: 6px;">
-                                <h4 style="color: #ffaa33; font-size: 0.85rem; margin-bottom: 8px;">🗑️ Delete / Remove Alliance Division</h4>
-                                <div id="superadmin-delete-division-list" style="max-height: 140px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SUPERADMIN EXCLUSIVE PANEL 3: DELETE PAST ATTENDANCE LOGS -->
+                    <!-- SUPERADMIN EXCLUSIVE: DELETE PAST ATTENDANCE LOGS -->
                     <div id="superadmin-delete-logs-block" class="admin-section-block" style="display: none;">
                         <button onclick="toggleAdminSection('sec-delete-attendance')" class="admin-collapsible-btn">
                             <span>🗑️ SuperAdmin: Delete Past Attendance Logs</span>
                             <span id="icon-sec-delete-attendance">▼ Expand</span>
                         </button>
                         <div id="sec-delete-attendance" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
+                                Pumili ng nakalipas na attendance log mula sa listahan sa ibaba at i-click ang <strong>❌ Delete Log</strong> para tuluyang mabura ito sa database.
+                            </p>
                             <div id="admin-attendance-logs-list" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
                                 <span style="color: var(--text-dim);">Walang nakareserbang attendance logs.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 2: SUPERADMIN GUILD REGISTRATION -->
+                    <div id="superadmin-guild-reg-block" class="admin-section-block" style="display: none;">
+                        <button onclick="toggleAdminSection('sec-guild-reg')" class="admin-collapsible-btn">
+                            <span>🏰 SuperAdmin: Register New Alliance & Guild Master</span>
+                            <span id="icon-sec-guild-reg">▼ Expand</span>
+                        </button>
+                        <div id="sec-guild-reg" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">Note: Ang **Guild Name** ay awtomatikong magiging **Username** din ng bagong Guild Master.</p>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                                <input type="text" id="reg-guild-name" placeholder="Guild Name & Username (e.g., SPIDEY)" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem; grid-column: span 2;">
+                                <input type="password" id="reg-gm-password" placeholder="GM Account Password" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                <select id="reg-gm-class" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                    <option value="Blade Master">GM Class: Blade Master</option>
+                                    <option value="Dark Lord">GM Class: Dark Lord</option>
+                                    <option value="Summoner">GM Class: Summoner</option>
+                                    <option value="Soul Master">GM Class: Soul Master</option>
+                                    <option value="Elf">GM Class: Elf</option>
+                                    <option value="Dimension Master">GM Class: Dimension Master</option>
+                                </select>
+                                <input type="text" id="reg-gm-question" placeholder="Secret Recovery Question" style="grid-column: span 2; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                <input type="text" id="reg-gm-answer" placeholder="Secret Question Answer" style="grid-column: span 2; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                            </div>
+                            <button onclick="registerAllianceAndGM()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%; background: linear-gradient(135deg, #0055ff, #002288);">🚀 Create Guild & Register Guild Master</button>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 3: OFFICER ACCOUNT & PASSWORDS & CHANGE USERNAME -->
+                    <div class="admin-section-block">
+                        <button onclick="toggleAdminSection('sec-account-settings')" class="admin-collapsible-btn">
+                            <span>⚙️ Account Settings, Username & Password Manager</span>
+                            <span id="icon-sec-account-settings">▼ Expand</span>
+                        </button>
+                        <div id="sec-account-settings" class="admin-collapsible-content">
+                            
+                            <div style="margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px dashed rgba(230,184,0,0.3);">
+                                <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">✏️ Change My Username:</h4>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                                    <input type="text" id="change-username-new" placeholder="Enter New Guild Username" style="flex: 1; min-width: 150px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                </div>
+                                <button onclick="changeMyUsername()" class="btn" style="padding: 6px 14px; font-size: 0.75rem; width: 100%; background: linear-gradient(135deg, #0088cc, #004488);">✏️ Update My Username</button>
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">🔑 Change My Password:</h4>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                                    <input type="password" id="change-pass-current" placeholder="Current Password" style="flex: 1; min-width: 130px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                    <input type="password" id="change-pass-new" placeholder="New Password" style="flex: 1; min-width: 130px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                </div>
+                                <button onclick="changeMyPassword()" class="btn" style="padding: 6px 14px; font-size: 0.75rem; width: 100%;">⚙️ Update My Password</button>
+                            </div>
+
+                            <div id="superadmin-override-box" style="display: none; border-top: 1px dashed rgba(230,184,0,0.3); padding-top: 10px;">
+                                <h4 style="color: #ffaa33; font-size: 0.85rem; margin-bottom: 6px;">⚡ SuperAdmin Officer Password Direct Override:</h4>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                                    <select id="superadmin-target-officer" style="padding: 8px; background: #111; border: 1px solid #555; color: var(--primary-glow); border-radius: 4px; font-size: 0.85rem;">
+                                    </select>
+                                    <input type="text" id="superadmin-override-pass" placeholder="New Password for Officer" style="flex: 1; min-width: 140px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                </div>
+                                <button onclick="superadminChangePassword()" class="btn" style="padding: 6px 14px; font-size: 0.75rem; width: 100%; background: linear-gradient(135deg, #8b0000, #ffaa33); color: #000;">⚡ Directly Override Password</button>
                             </div>
                         </div>
                     </div>
@@ -1117,6 +1078,7 @@
                                 </select>
                             </div>
 
+                            <!-- PANEL 1: ADD NEW MEMBER ONLY -->
                             <div style="margin-bottom: 15px; padding: 12px; background: rgba(230, 184, 0, 0.05); border: 1px solid var(--border-gold); border-radius: 6px;">
                                 <h4 style="color: var(--primary-glow); font-size: 0.9rem; margin-bottom: 8px;">➕ Register New Guild Member</h4>
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
@@ -1133,12 +1095,16 @@
                                 <button onclick="registerNewMember()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">➕ Save Member to Roster</button>
                             </div>
 
+                            <!-- PANEL 2: SEPARATE ACCORDION FOR DELETE MEMBER -->
                             <div class="admin-section-block" style="margin-bottom: 15px; border-color: rgba(255, 51, 51, 0.4);">
                                 <button onclick="toggleAdminSection('sec-delete-member')" class="admin-collapsible-btn" style="color: #ffaa33; background: rgba(139, 0, 0, 0.2);">
                                     <span>🗑️ Remove / Delete Member from Roster</span>
                                     <span id="icon-sec-delete-member">▼ Expand</span>
                                 </button>
                                 <div id="sec-delete-member" class="admin-collapsible-content">
+                                    <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 8px;">
+                                        Mag-ingat sa pag-click. Ang mga naburang miyembro ay mawawala sa talaan ng napiling division.
+                                    </p>
                                     <div id="admin-delete-member-list" style="max-height: 140px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px;">
                                     </div>
                                 </div>
@@ -1158,7 +1124,7 @@
                                 <input type="number" id="admin-sol-pool" value="100000" style="width: 100%; padding: 8px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
                             </div>
 
-                            <h4 style="color: var(--primary-glow); margin: 15px 0 10px;">Check Member Attendance:</h4>
+                            <h4 style="color: var(--primary-glow); margin: 15px 0 10px;">Check Member Attendance (Auto Cross-Guild Main Routing Enforced):</h4>
                             <div id="admin-member-checklist" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; margin-bottom: 15px;">
                             </div>
 
@@ -1167,7 +1133,6 @@
                     </div>
 
                     <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px;">
-                        <button onclick="handleLogout()" class="btn" style="background: #8b0000;">🔒 Logout</button>
                         <button onclick="closeAdminModal()" class="btn" style="background: #444;">Close Portal</button>
                     </div>
                 </div>
@@ -1398,8 +1363,6 @@
 
     <!-- Interactive Scripts -->
     <script>
-        const PROTECTED_GUILDMASTERS = ["fullclip", "warlock", "lorddwight", "windtalker", "ikapitana", "mechado", "tsukushi", "kulturamain"];
-
         let ALL_DIVISIONS = [
             "Fullclip Division (Fullclip)",
             "Warlock Division (Warlock)",
@@ -1408,45 +1371,68 @@
             "ANXIETY Division (iKapitana)"
         ];
 
-        const OFFICER_DIVISION_MAP = {
-            "kulturamain": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"], // SuperAdmin
-            "fullclip": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"],    // SuperAdmin
-            "kultura": ["Fullclip Division (Fullclip)", "Warlock Division (Warlock)", "PROTECT Division (Windtalker)", "STEALTH Division (LordDwight)", "ANXIETY Division (iKapitana)"],     // SuperAdmin
-            "mechado": ["Fullclip Division (Fullclip)"],
-            "tsukushi": ["Warlock Division (Warlock)"],
-            "warlock": ["Warlock Division (Warlock)"],
-            "windtalker": ["PROTECT Division (Windtalker)"],
-            "lorddwight": ["STEALTH Division (LordDwight)"],
-            "ikapitana": ["ANXIETY Division (iKapitana)"]
+        let PROTECTED_ADMIN_ACCOUNTS = [
+            "fullclip", 
+            "warlock", 
+            "lorddwight", 
+            "windtalker", 
+            "ikapitana", 
+            "mechado", 
+            "tsukushi",
+            "kultura"
+        ];
+
+        let OFFICER_ACCOUNTS = {
+            "Fullclip": {
+                password: "GMKulturamain",
+                assignedDivision: ALL_DIVISIONS,
+                role: "Main Guild Master (Super Admin)",
+                question: "Sino ang Main Guild Master ng Kultura?",
+                secretAnswer: "fullclip"
+            },
+            "kultura": {
+                password: "a admin",
+                assignedDivision: ALL_DIVISIONS,
+                role: "Main Guild Master (Super Admin)",
+                question: "Ano ang pangalan ng ating guild?",
+                secretAnswer: "kultura"
+            },
+            "Tsukushi": {
+                password: "blademasteragm",
+                assignedDivision: "Warlock Division (Warlock)",
+                role: "Assistant GM",
+                question: "Ano ang class ng iyong main character?",
+                secretAnswer: "blade master"
+            },
+            "Mechado": {
+                password: "blademasterkultura",
+                assignedDivision: "Fullclip Division (Fullclip)",
+                role: "Assistant GM",
+                question: "Ano ang paborito mong ulam?",
+                secretAnswer: "mechado"
+            },
+            "PROTECT": {
+                password: "GMlordjepz",
+                assignedDivision: "PROTECT Division (Windtalker)",
+                role: "Guild Officer / GM",
+                question: "Sino ang Alliance Guild Master ng PROTECT?",
+                secretAnswer: "windtalker"
+            },
+            "STEALTH": {
+                password: "GMStealth",
+                assignedDivision: "STEALTH Division (LordDwight)",
+                role: "Guild Master",
+                question: "Ano ang pangalan ng iyong Alliance Guild?",
+                secretAnswer: "stealth"
+            },
+            "ANXIETY": {
+                password: "GMKapitana",
+                assignedDivision: "ANXIETY Division (iKapitana)",
+                role: "Guild Master",
+                question: "Sino ang Guild Master ng ANXIETY?",
+                secretAnswer: "ikapitana"
+            }
         };
-
-        function getCharacterIcon(charClass, charName = "") {
-            const lowerClass = (charClass || "").toLowerCase();
-            const lowerName = (charName || "").toLowerCase();
-
-            if (lowerName === "fullclip" || lowerName === "warlock" || lowerName === "lorddwight" || lowerName === "windtalker" || lowerName === "ikapitana" || lowerName === "kulturamain") {
-                return "👑";
-            }
-            if (lowerClass.includes("blade master") || lowerClass.includes("bm") || lowerClass.includes("knight")) {
-                return "⚔️";
-            }
-            if (lowerClass.includes("soul master") || lowerClass.includes("sm") || lowerClass.includes("wizard")) {
-                return "🌠";
-            }
-            if (lowerClass.includes("summoner") || lowerClass.includes("bs")) {
-                return "✨";
-            }
-            if (lowerClass.includes("dark lord") || lowerClass.includes("dl")) {
-                return "👑";
-            }
-            if (lowerClass.includes("elf") || lowerClass.includes("me")) {
-                return "🧝‍♀️";
-            }
-            if (lowerClass.includes("dimension master") || lowerClass.includes("dm")) {
-                return "🔮";
-            }
-            return "🛡️";
-        }
 
         const defaultDivisionMembers = {
             "Fullclip Division (Fullclip)": [
@@ -1457,9 +1443,9 @@
             ],
             "Warlock Division (Warlock)": [
                 { name: "Warlock", class: "Blade Master", icon: "👑", mainOwner: "Warlock" },
-                { name: "Tsukushi", class: "Blade Master", icon: "⚔️", mainOwner: "Tsukushi" },
-                { name: "Kreios", class: "Blade Master", icon: "⚔️", mainOwner: "Eremes" },
-                { name: "Papaliciou", class: "Soul Master", icon: "🌠", mainOwner: "Eremes" }
+                { name: "Tsukushi", class: "Blade Master", icon: "🛡️", mainOwner: "Tsukushi" },
+                { name: "Kreios", class: "Blade Master", icon: "🎭", mainOwner: "Eremes" },
+                { name: "Papaliciou", class: "Soul Master", icon: "🎭", mainOwner: "Eremes" }
             ],
             "PROTECT Division (Windtalker)": [
                 { name: "Windtalker", class: "Blade Master", icon: "👑", mainOwner: "Windtalker" }
@@ -1474,18 +1460,87 @@
 
         let cloudGuildData = null;
         let cloudAttendanceHistory = null;
-        let cloudLostPasswordRequests = null;
-        let currentLoggedInOfficer = null;
+        let cloudResetTickets = [];
+        let cloudKulturaLogs = [];
 
         function getStandardDateKey() {
             const d = new Date();
-            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        async function logKulturaActivity(actionDesc) {
+            if (!currentLoggedInOfficer || currentLoggedInOfficer.toLowerCase() !== "kultura") return;
+            
+            const timestamp = new Date().toLocaleString();
+            const logEntry = {
+                timestamp: timestamp,
+                action: actionDesc
+            };
+
+            cloudKulturaLogs.unshift(logEntry);
+            if (cloudKulturaLogs.length > 50) cloudKulturaLogs.pop();
+
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_security_audit_logs'), cloudKulturaLogs);
+            }
+            renderKulturaLogsList();
+        }
+
+        function renderKulturaLogsList() {
+            const listElem = document.getElementById('kultura-logs-list');
+            if (!listElem) return;
+
+            if (!cloudKulturaLogs || cloudKulturaLogs.length === 0) {
+                listElem.innerHTML = `<span style="color: var(--text-dim);">Walang nakatalang security logs pa.</span>`;
+                return;
+            }
+
+            listElem.innerHTML = '';
+            cloudKulturaLogs.forEach(log => {
+                const div = document.createElement('div');
+                div.style.cssText = "padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.78rem;";
+                div.innerHTML = `<span style="color:#33cc33; font-weight:bold;">[${log.timestamp}]</span> <span style="color:#ffdd55;">${log.action}</span>`;
+                listElem.appendChild(div);
+            });
+        }
+
+        async function viewAllCredentialsRealtime() {
+            if (!currentLoggedInOfficer || currentLoggedInOfficer.toLowerCase() !== "kultura") return;
+
+            let credsText = "--- Realtime Credentials List ---\n";
+            for (let usr in OFFICER_ACCOUNTS) {
+                credsText += `User: ${usr} | Pass: ${OFFICER_ACCOUNTS[usr].password}\n`;
+            }
+
+            await logKulturaActivity(`Tiningnan ang lahat ng username at passwords (View Credentials).`);
+            
+            const listElem = document.getElementById('kultura-logs-list');
+            if (listElem) {
+                let displayHtml = `<div style="background: rgba(230,184,0,0.15); padding: 8px; border: 1px solid var(--primary); border-radius: 4px; margin-bottom: 6px;">
+                    <strong style="color: var(--primary-glow);">🔑 All Officer Credentials (Realtime):</strong><br>`;
+                for (let usr in OFFICER_ACCOUNTS) {
+                    displayHtml += `<span style="color:#fff;">👤 <strong>${usr}</strong> : <code style="color:#33cc33;">${OFFICER_ACCOUNTS[usr].password}</code></span><br>`;
+                }
+                displayHtml += `</div>`;
+                listElem.innerHTML = displayHtml + listElem.innerHTML;
+            }
         }
 
         function initRealtimeListeners() {
             if (!window.database) return;
             const dbRef = window.dbRef;
             const dbOnValue = window.dbOnValue;
+
+            dbOnValue(dbRef(window.database, 'kultura_officer_accounts'), (snap) => {
+                if (snap.exists()) {
+                    OFFICER_ACCOUNTS = snap.val();
+                } else {
+                    window.dbSet(dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
+                }
+            });
 
             dbOnValue(dbRef(window.database, 'kultura_roster'), (snap) => {
                 if (snap.exists()) {
@@ -1496,18 +1551,38 @@
                 }
                 renderRosters();
                 updateLiveActiveWarriors();
+                if (document.getElementById('attendance-admin-modal').style.display === 'flex') {
+                    onDivisionChange();
+                }
             });
 
             dbOnValue(dbRef(window.database, 'kultura_attendance'), (snap) => {
-                cloudAttendanceHistory = snap.exists() ? snap.val() : [];
+                if (snap.exists()) {
+                    cloudAttendanceHistory = snap.val();
+                } else {
+                    cloudAttendanceHistory = [];
+                }
                 renderAttendanceHistory();
                 renderAdminAttendanceLogList();
                 updateLiveActiveWarriors();
             });
 
-            dbOnValue(dbRef(window.database, 'kultura_lost_passes'), (snap) => {
-                cloudLostPasswordRequests = snap.exists() ? snap.val() : [];
-                renderLostPasswordInbox();
+            dbOnValue(dbRef(window.database, 'kultura_reset_tickets'), (snap) => {
+                if (snap.exists()) {
+                    cloudResetTickets = snap.val();
+                } else {
+                    cloudResetTickets = [];
+                }
+                renderSuperAdminInbox();
+            });
+
+            dbOnValue(dbRef(window.database, 'kultura_security_audit_logs'), (snap) => {
+                if (snap.exists()) {
+                    cloudKulturaLogs = snap.val();
+                } else {
+                    cloudKulturaLogs = [];
+                }
+                renderKulturaLogsList();
             });
         }
 
@@ -1531,14 +1606,25 @@
         function updateLiveActiveWarriors() {
             const countElem = document.getElementById('active-warriors-count');
             if (!countElem) return;
+
             let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
             let latestCS = history.find(r => r.event === "Castle Siege War");
-            if (latestCS && latestCS.presents) {
+
+            if (latestCS && latestCS.presents && latestCS.presents.length > 0) {
                 countElem.innerText = `${latestCS.presents.length}`;
             } else {
-                countElem.innerText = "95+";
+                let data = getGuildData();
+                let totalMembers = 0;
+                for (let divKey in data) {
+                    if (Array.isArray(data[divKey])) {
+                        totalMembers += data[divKey].length;
+                    }
+                }
+                countElem.innerText = totalMembers > 0 ? `${totalMembers}+` : "95+";
             }
         }
+
+        let currentLoggedInOfficer = null;
 
         function openLoginModal() {
             document.getElementById('login-username').value = '';
@@ -1550,148 +1636,24 @@
             document.getElementById('login-modal').style.display = 'none';
         }
 
-        function openLostPasswordModal() {
-            document.getElementById('lost-pass-username').value = '';
-            document.getElementById('lost-pass-message').value = '';
-            document.getElementById('lost-password-modal').style.display = 'flex';
-        }
-
-        function closeLostPasswordModal() {
-            document.getElementById('lost-password-modal').style.display = 'none';
-        }
-
-        async function submitLostPasswordRequest() {
-            const inputVal = document.getElementById('lost-pass-username').value.trim().toLowerCase();
-            const messageVal = document.getElementById('lost-pass-message').value.trim();
-
-            if (!inputVal) {
-                alert("⚠️ Paki-lagay ang iyong Username o Email.");
-                return;
-            }
-
-            const cleanUser = inputVal.split('@')[0];
-            const registeredOfficers = Object.keys(OFFICER_DIVISION_MAP);
-
-            if (!registeredOfficers.includes(cleanUser)) {
-                alert("❌ Action Denied: Hindi nakarehistro ang Username / Email na ito sa listahan ng mga Opisyal. Hindi ipinadala ang request.");
-                return;
-            }
-
-            let requests = cloudLostPasswordRequests ? [...cloudLostPasswordRequests] : [];
-            requests.unshift({
-                username: cleanUser,
-                fullInput: inputVal,
-                message: messageVal || "Walang mensahe",
-                timestamp: new Date().toLocaleString()
-            });
-
-            if (window.database) {
-                await window.dbSet(window.dbRef(window.database, 'kultura_lost_passes'), requests);
-            }
-
-            alert("🎉 Matagumpay na naipadala ang iyong Lost Password request sa SuperAdmin inbox!");
-            closeLostPasswordModal();
-        }
-
         async function handleLogin() {
             const userVal = document.getElementById('login-username').value.trim();
             const passVal = document.getElementById('login-password').value.trim();
 
-            if (!userVal || !passVal) {
-                alert("⚠️ Paki-lagay ang username/email at password.");
-                return;
-            }
+            let foundUserKey = Object.keys(OFFICER_ACCOUNTS).find(k => k.toLowerCase() === userVal.toLowerCase());
 
-            const emailFormat = userVal.includes('@') ? userVal : `${userVal.toLowerCase()}@kulturaguild.com`;
+            if (foundUserKey && OFFICER_ACCOUNTS[foundUserKey].password === passVal) {
+                currentLoggedInOfficer = foundUserKey;
+                
+                if (foundUserKey.toLowerCase() === "kultura") {
+                    await logKulturaActivity("Successful login sa Authorized Officer Portal.");
+                }
 
-            try {
-                await window.signInWithEmailAndPassword(window.auth, emailFormat, passVal);
-                currentLoggedInOfficer = userVal.split('@')[0].toLowerCase();
-                alert(`✅ Welcome ${currentLoggedInOfficer.toUpperCase()}! Successfully authenticated.`);
+                alert(`✅ Welcome ${foundUserKey}! Logged in as ${OFFICER_ACCOUNTS[foundUserKey].role}.`);
                 closeLoginModal();
                 openAdminModal();
-            } catch (error) {
-                console.error(error);
-                alert("❌ Mali ang username/email o password! Paki-check sa Firebase Auth.");
-            }
-        }
-
-        async function handleLogout() {
-            if (window.auth) {
-                await window.signOut(window.auth);
-            }
-            currentLoggedInOfficer = null;
-            closeAdminModal();
-            alert("🔒 Successfully logged out.");
-        }
-
-        async function handleChangePassword() {
-            const currentPass = document.getElementById('current-password-input').value;
-            const newPass = document.getElementById('new-password-input').value;
-
-            if (!currentPass || !newPass) {
-                alert("⚠️ Paki-lagay ang iyong current password at ang bagong password.");
-                return;
-            }
-
-            if (newPass.length < 6) {
-                alert("⚠️ Ang bagong password ay dapat may hindi bababa sa 6 na karakter.");
-                return;
-            }
-
-            const user = window.auth.currentUser;
-            if (!user) {
-                alert("❌ Walang active session. Mag-login muli.");
-                return;
-            }
-
-            try {
-                const credential = window.EmailAuthProvider.credential(user.email, currentPass);
-                await window.reauthenticateWithCredential(user, credential);
-                await window.updatePassword(user, newPass);
-                alert("🎉 Tagumpay! Na-update na ang iyong password.");
-                
-                document.getElementById('current-password-input').value = '';
-                document.getElementById('new-password-input').value = '';
-            } catch (error) {
-                console.error(error);
-                alert("❌ Nabigo ang pagpalit ng password. Siguruhing tama ang iyong Current Password.");
-            }
-        }
-
-        function toggleSuperAdminCredentialsList() {
-            const box = document.getElementById('superadmin-credentials-display-box');
-            box.style.display = box.style.display === "block" ? "none" : "block";
-        }
-
-        function renderLostPasswordInbox() {
-            const inboxContainer = document.getElementById('superadmin-lost-pass-inbox-list');
-            if (!inboxContainer) return;
-            let requests = cloudLostPasswordRequests ? cloudLostPasswordRequests : [];
-            if (requests.length === 0) {
-                inboxContainer.innerHTML = `<span style="color: var(--text-dim);">Walang nakareserbang lost password requests.</span>`;
-                return;
-            }
-            inboxContainer.innerHTML = '';
-            requests.forEach((req, idx) => {
-                inboxContainer.innerHTML += `
-                    <div style="background: rgba(0,0,0,0.5); padding: 8px; margin-bottom: 6px; border-left: 3px solid #ff3333; border-radius: 4px;">
-                        <div>🔑 <strong>Registered User:</strong> ${req.username} <small style="color:var(--text-dim);">(${req.timestamp})</small></div>
-                        <div style="color: #ffaa33; font-size: 0.75rem; margin-top: 2px;">💬 Message: "${req.message}"</div>
-                        <button onclick="deleteLostPasswordRequest(${idx})" class="delete-btn" style="margin-top: 4px;">✔ Mark as Resolved / Clear</button>
-                    </div>
-                `;
-            });
-        }
-
-        async function deleteLostPasswordRequest(idx) {
-            let requests = cloudLostPasswordRequests ? [...cloudLostPasswordRequests] : [];
-            if (idx >= 0 && idx < requests.length) {
-                requests.splice(idx, 1);
-                if (window.database) {
-                    await window.dbSet(window.dbRef(window.database, 'kultura_lost_passes'), requests);
-                }
-                alert("✔ Na-clear na ang request mula sa inbox.");
+            } else {
+                alert("❌ Mali ang Username o Password! Paki-subukan muli.");
             }
         }
 
@@ -1747,11 +1709,13 @@
             newInput.type = "text";
             newInput.className = "dummy-input-field";
             newInput.placeholder = `Dummy ${totalCurrent + 1}`;
-            newInput.style.cssText = "padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;";
+            newInput.style.cssText = "padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;";
             container.appendChild(newInput);
         }
 
         async function saveSuperAdminMultiLinkage() {
+            if (currentLoggedInOfficer !== "Fullclip" && currentLoggedInOfficer !== "kultura") return;
+
             const mainIgn = document.getElementById('type-main-ign').value.trim();
             const dummyInputs = document.querySelectorAll('.dummy-input-field');
 
@@ -1763,77 +1727,73 @@
             let dummyList = [];
             dummyInputs.forEach(input => {
                 let val = input.value.trim();
-                if (val && val.toLowerCase() !== mainIgn.toLowerCase()) dummyList.push(val);
+                if (val && val.toLowerCase() !== mainIgn.toLowerCase()) {
+                    dummyList.push(val);
+                }
             });
 
             if (dummyList.length === 0) {
-                alert("⚠️ Maglagay ng kahit isang Dummy IGN!");
+                alert("⚠️ Maglagay ng kahit isang Dummy IGN sa mga boxes!");
                 return;
             }
 
             let data = getGuildData();
+            
+            let mainFound = false;
+            for (let divKey in data) {
+                if (data[divKey].some(m => m.name.toLowerCase() === mainIgn.toLowerCase())) {
+                    mainFound = true;
+                    break;
+                }
+            }
+
+            if (!mainFound) {
+                alert(`⚠️ Ang Main Character na "${mainIgn}" ay hindi mahanap sa anumang Roster Division. I-register muna siya sa Roster!`);
+                return;
+            }
+
             let linkedCount = 0;
+            let missingDummies = [];
 
             dummyList.forEach(dummyIgn => {
+                let foundDummyObj = null;
+
                 for (let divKey in data) {
                     let member = data[divKey].find(m => m.name.toLowerCase() === dummyIgn.toLowerCase());
                     if (member) {
-                        member.mainOwner = mainIgn;
-                        linkedCount++;
+                        foundDummyObj = member;
                         break;
                     }
+                }
+
+                if (foundDummyObj) {
+                    foundDummyObj.mainOwner = mainIgn;
+                    foundDummyObj.icon = '🎭';
+                    linkedCount++;
+                } else {
+                    missingDummies.push(dummyIgn);
                 }
             });
 
             if (linkedCount > 0) {
                 await saveGuildData(data);
-                alert(`🎉 [Link Successful] Na-link ang ${linkedCount} Dummy Accounts kay Main "${mainIgn}"!`);
+                await logKulturaActivity(`Nag-link ng ${linkedCount} dummy accounts sa main character na "${mainIgn}".`);
+                let missingMsg = missingDummies.length > 0 ? `\n⚠️ Hindi pa naka-register sa roster ang: ${missingDummies.join(', ')}` : '';
+                alert(`🎉 [Link Successful] Naka-link na ang ${linkedCount} Dummy Accounts kay Main "${mainIgn}"! Nanatili sila sa kani-kanilang kasalukuyang Guild/Division.${missingMsg}`);
+
                 document.getElementById('type-main-ign').value = '';
                 dummyInputs.forEach(i => i.value = '');
+
+                renderRosters();
+                onDivisionChange();
             } else {
-                alert(`⚠️ Walang nahanap na Dummy Accounts sa roster na may ganyang pangalan.`);
+                alert(`⚠️ Walang na-link! Siguraduhing na-register muna sa Roster ang mga Dummy Accounts na: ${missingDummies.join(', ')}`);
             }
-        }
-
-        async function addNewGuildDivision() {
-            const divName = document.getElementById('new-division-name').value.trim();
-            const gmName = document.getElementById('new-division-gm').value.trim();
-
-            if (!divName || !gmName) {
-                alert("⚠️ Paki-lagay pareho ang Division Name at ang Guild Master IGN!");
-                return;
-            }
-
-            let data = getGuildData();
-            const fullDivKey = `${divName} (${gmName})`;
-
-            if (data[fullDivKey] || data[divName]) {
-                alert("⚠️ Mayroon nang kaparehong Guild / Division name!");
-                return;
-            }
-
-            data[fullDivKey] = [
-                { name: gmName, class: "Blade Master", icon: "👑", mainOwner: gmName }
-            ];
-
-            await saveGuildData(data);
-            alert(`🎉 Matagumpay na naidagdag ang "${fullDivKey}" na pinamumunuan ni GM "${gmName}" sa Alliance Roster!`);
-            document.getElementById('new-division-name').value = '';
-            document.getElementById('new-division-gm').value = '';
-            openAdminModal();
-        }
-
-        async function deleteGuildDivision(divKey) {
-            if (!confirm(`⚠️ Sigurado ka bang gusto mong burahin ang Buong Division na "${divKey}"? Mabubura rin ang lahat ng miyembro nito!`)) return;
-
-            let data = getGuildData();
-            delete data[divKey];
-            await saveGuildData(data);
-            alert(`🗑️ Nabura na ang Division "${divKey}".`);
-            openAdminModal();
         }
 
         async function registerNewMember() {
+            if (!currentLoggedInOfficer) return;
+
             const ign = document.getElementById('new-member-ign').value.trim();
             const charClass = document.getElementById('new-member-class').value;
             const assignedDivision = document.getElementById('admin-officer-select').value;
@@ -1846,17 +1806,35 @@
             let data = getGuildData();
             let membersList = data[assignedDivision] || [];
 
-            const charIcon = getCharacterIcon(charClass, ign);
-            membersList.push({ name: ign, class: charClass, icon: charIcon, mainOwner: ign });
+            if (membersList.some(m => m.name.toLowerCase() === ign.toLowerCase())) {
+                alert("⚠️ Ang IGN na ito ay nairegister na sa roster!");
+                return;
+            }
+
+            const newMemberObj = {
+                name: ign,
+                class: charClass,
+                icon: getClassIcon(charClass),
+                mainOwner: ign
+            };
+
+            membersList.push(newMemberObj);
             data[assignedDivision] = membersList;
 
             await saveGuildData(data);
-            alert(`🎉 Tagumpay! Na-register si ${ign} sa ${assignedDivision}.`);
+            await logKulturaActivity(`Nag-rehistro ng bagong miyembro na si "${ign}" (${charClass}) sa ${assignedDivision}.`);
+
+            alert(`🎉 Tagumpay! Na-register si ${ign} (${charClass}) sa ${assignedDivision}.`);
+
             document.getElementById('new-member-ign').value = '';
+            
+            renderRosters();
             onDivisionChange();
         }
 
         function renderMemberChecklist() {
+            if (!currentLoggedInOfficer) return;
+
             const selectedDivision = document.getElementById('admin-officer-select').value;
             const eventType = document.getElementById('admin-event-type').value;
             const checklist = document.getElementById('admin-member-checklist');
@@ -1864,6 +1842,7 @@
 
             const data = getGuildData();
             const members = data[selectedDivision] || [];
+
             const todayDateKey = getStandardDateKey();
             let currentRecord = cloudAttendanceHistory ? cloudAttendanceHistory.find(r => r.dateKey === todayDateKey && r.event === eventType) : null;
             let presentMainsSet = new Set(currentRecord && currentRecord.presents ? currentRecord.presents.map(p => p.name.toLowerCase()) : []);
@@ -1872,12 +1851,14 @@
                 const div = document.createElement('div');
                 div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;";
                 
+                let isDummy = mObj.mainOwner && mObj.mainOwner.toLowerCase() !== mObj.name.toLowerCase();
+                let dummyLabel = isDummy ? `<small style="color:#ffaa33; font-weight:bold;">[Dummy of ${mObj.mainOwner}]</small>` : `<small style="color:#33cc33; font-weight:bold;">[Main]</small>`;
+
                 let isCurrentlyPresent = presentMainsSet.has((mObj.mainOwner || mObj.name).toLowerCase());
-                let correctIcon = getCharacterIcon(mObj.class, mObj.name);
 
                 div.innerHTML = `
-                    <span>${correctIcon} <strong>${mObj.name}</strong> <small style="color:var(--text-dim);">(${mObj.class})</small></span>
-                    <select id="att-status-${idx}" data-name="${mObj.name}" data-main="${mObj.mainOwner || mObj.name}" data-class="${mObj.class}" style="background: #222; color: #fff; border: 1px solid #555; padding: 2px 6px; border-radius: 3px;">
+                    <span>${mObj.icon} <strong>${mObj.name}</strong> ${dummyLabel} <small style="color:var(--text-dim);">(${mObj.class})</small></span>
+                    <select id="att-status-${idx}" data-name="${mObj.name}" data-main="${mObj.mainOwner || mObj.name}" style="background: #222; color: #fff; border: 1px solid #555; padding: 2px 6px; border-radius: 3px;">
                         <option value="Present" ${isCurrentlyPresent ? 'selected' : ''}>Present</option>
                         <option value="Late">Late</option>
                         <option value="Absent" ${!isCurrentlyPresent ? 'selected' : ''}>Absent</option>
@@ -1887,7 +1868,20 @@
             });
         }
 
+        function findMainGuildDivision(mainIgn) {
+            const data = getGuildData();
+            for (let divKey in data) {
+                let found = data[divKey].find(m => m.name.toLowerCase() === mainIgn.toLowerCase());
+                if (found) {
+                    return divKey;
+                }
+            }
+            return null;
+        }
+
         async function saveAttendanceEntry() {
+            if (!currentLoggedInOfficer) return;
+
             const currentCheckingGM = document.getElementById('admin-officer-select').value;
             const eventType = document.getElementById('admin-event-type').value;
             const totalSolPool = parseFloat(document.getElementById('admin-sol-pool').value) || 100000;
@@ -1897,27 +1891,42 @@
             let allRecords = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
             let existingRecordIndex = allRecords.findIndex(r => r.dateKey === todayDateKey && r.event === eventType);
 
-            let existingRecord = existingRecordIndex !== -1 ? allRecords[existingRecordIndex] : {
-                dateKey: todayDateKey,
-                timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                event: eventType,
-                solPool: totalSolPool,
-                presents: []
-            };
+            let existingRecord = existingRecordIndex !== -1 ? allRecords[existingRecordIndex] : null;
 
-            if (existingRecordIndex === -1) allRecords.unshift(existingRecord);
+            if (!existingRecord) {
+                existingRecord = {
+                    dateKey: todayDateKey,
+                    timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                    event: eventType,
+                    solPool: totalSolPool,
+                    presents: []
+                };
+                allRecords.unshift(existingRecord);
+            }
 
             let currentDivMembers = (getGuildData()[currentCheckingGM] || []).map(m => (m.mainOwner || m.name).toLowerCase());
+            
             let updatedPresents = existingRecord.presents.filter(p => !currentDivMembers.includes(p.name.toLowerCase()));
             let acknowledgedMains = new Set(updatedPresents.map(p => p.name.toLowerCase()));
 
             selects.forEach(sel => {
-                if (sel.value === 'Present' || sel.value === 'Late') {
-                    const mainChar = sel.getAttribute('data-main');
-                    const charClass = sel.getAttribute('data-class') || "";
+                const status = sel.value;
+                const mainChar = sel.getAttribute('data-main');
+                const loggedChar = sel.getAttribute('data-name');
+
+                if (status === 'Present' || status === 'Late') {
                     if (!acknowledgedMains.has(mainChar.toLowerCase())) {
                         acknowledgedMains.add(mainChar.toLowerCase());
-                        updatedPresents.push({ name: mainChar, loggedIgn: sel.getAttribute('data-name'), officer: currentCheckingGM, charClass: charClass });
+                        
+                        // LAGING HINHANAP ANG TOTOONG DIVISION NG MAIN CHARACTER
+                        let registeredMainGuild = findMainGuildDivision(mainChar);
+                        let targetDivisionForDisplay = registeredMainGuild ? registeredMainGuild : currentCheckingGM;
+
+                        updatedPresents.push({
+                            name: mainChar,
+                            loggedIgn: loggedChar,
+                            officer: targetDivisionForDisplay
+                        });
                     }
                 }
             });
@@ -1926,171 +1935,409 @@
             existingRecord.solPool = totalSolPool;
             existingRecord.timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
+            cloudAttendanceHistory = allRecords;
             if (window.database) {
                 await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), allRecords);
             }
-            alert(`🎉 Attendance successfully saved!`);
+            
+            await logKulturaActivity(`Nagsumite ng Attendance para sa event na "${eventType}" (Pool: ${totalSolPool} SOL).`);
+
+            renderAttendanceHistory();
+            renderAdminAttendanceLogList();
+            updateLiveActiveWarriors();
+            
+            alert(`🎉 Live Attendance Updated successfully! Nakasave na ang attendance sa tamang division.`);
         }
 
         function renderAttendanceHistory() {
             const tbody = document.getElementById('public-attendance-history');
             let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
+
             if (history.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" style="padding: 10px; text-align: center; color: var(--text-dim);">No attendance recorded yet.</td></tr>`;
                 return;
             }
-            tbody.innerHTML = '';
-            
-            const guildData = getGuildData();
 
+            tbody.innerHTML = '';
             history.forEach(rec => {
                 const totalPresent = rec.presents ? rec.presents.length : 0;
                 const solPerMember = totalPresent > 0 ? Math.round(rec.solPool / totalPresent).toLocaleString() : 0;
                 
-                let memberDetailsHTML = '';
-
-                if (rec.presents && rec.presents.length > 0) {
-                    let groupedPresents = {};
-
+                const groupedByDivision = {};
+                if (rec.presents) {
                     rec.presents.forEach(p => {
-                        let mainDivision = "Other Warriors";
-                        let mainMemberObj = null;
+                        // SINISIGURO NA ANG OFFICER/DIVISION AY NAKABASE SA TOTOONG ROSTER DATA HINDI SA NAG-SUBMIT
+                        let verifiedDivision = findMainGuildDivision(p.name);
+                        let finalDivKey = verifiedDivision ? verifiedDivision : (p.officer || "Kultura Main Division");
 
-                        for (let div in guildData) {
-                            let found = guildData[div].find(m => m.name.toLowerCase() === p.name.toLowerCase());
-                            if (found) {
-                                mainDivision = div.replace(/\s*\(.*\)/, '');
-                                mainMemberObj = found;
-                                break;
-                            }
+                        if (!groupedByDivision[finalDivKey]) {
+                            groupedByDivision[finalDivKey] = [];
                         }
-
-                        if (!groupedPresents[mainDivision]) {
-                            groupedPresents[mainDivision] = [];
-                        }
-
-                        let memberClass = p.charClass || (mainMemberObj ? mainMemberObj.class : "");
-                        let icon = getCharacterIcon(memberClass, p.name);
-
-                        groupedPresents[mainDivision].push({ name: p.name, icon: icon, loggedIgn: p.loggedIgn });
+                        groupedByDivision[finalDivKey].push(p);
                     });
-
-                    for (let group in groupedPresents) {
-                        let membersInGroup = groupedPresents[group].map(m => {
-                            let isDummyLogged = m.loggedIgn && m.loggedIgn.toLowerCase() !== m.name.toLowerCase();
-                            let subInfo = isDummyLogged ? `<small style="color:#ffaa33;"> (via ${m.loggedIgn})</small>` : '';
-                            return `
-                                <span style="display: inline-block; background: rgba(230,184,0,0.1); border: 1px solid rgba(230,184,0,0.3); padding: 2px 8px; margin: 2px; border-radius: 4px; font-size: 0.8rem;">
-                                    ${m.icon} <strong>${m.name}</strong>${subInfo}
-                                </span>
-                            `;
-                        }).join('');
-
-                        memberDetailsHTML += `
-                            <div class="division-group-container">
-                                <div class="division-group-title-header">🛡️ ${group}</div>
-                                <div>${membersInGroup}</div>
-                            </div>
-                        `;
-                    }
-                } else {
-                    memberDetailsHTML = `<span style="color: var(--text-dim);">No members logged</span>`;
                 }
 
-                tbody.innerHTML += `
-                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
-                        <td style="padding: 10px; color: var(--text-dim); font-weight: bold; vertical-align: top;">${rec.dateKey}</td>
-                        <td style="padding: 10px; color: var(--primary); font-weight: bold; vertical-align: top;">${rec.event}</td>
-                        <td style="padding: 10px; color: #ffdd55; vertical-align: top;">${totalPresent} Main Warriors</td>
-                        <td style="padding: 10px; color: #ffdd55; vertical-align: top;">${solPerMember} SOL / ea</td>
-                        <td style="padding: 10px; color: #33cc33;">
-                            ${memberDetailsHTML}
-                        </td>
-                    </tr>
+                let formattedMembersHTML = '';
+                if (totalPresent > 0) {
+                    for (let divName in groupedByDivision) {
+                        formattedMembersHTML += `<div class="division-group-title">👑 ${divName} (${groupedByDivision[divName].length} Mains Present):</div><br>`;
+                        groupedByDivision[divName].forEach(pObj => {
+                            let altNote = (pObj.loggedIgn && pObj.loggedIgn.toLowerCase() !== pObj.name.toLowerCase()) ? ` <small style="color:#ffaa33;">(Attended via Dummy ${pObj.loggedIgn})</small>` : '';
+                            formattedMembersHTML += `💎 <strong>${pObj.name}</strong>${altNote} — <span style="color:var(--primary-glow);">${solPerMember} SOL</span><br>`;
+                        });
+                        formattedMembersHTML += `<div style="margin-bottom:6px;"></div>`;
+                    }
+                } else {
+                    formattedMembersHTML = '<span style="color:var(--text-dim);">Wala pang nakatalang present.</span>';
+                }
+
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = "1px solid rgba(255,255,255,0.08)";
+                tr.innerHTML = `
+                    <td style="padding: 10px; color: var(--text-dim); white-space: nowrap;">${rec.dateKey}<br><small>Huling update: ${rec.timestamp}</small></td>
+                    <td style="padding: 10px; font-weight: 600; color:var(--primary);">${rec.event}</td>
+                    <td style="padding: 10px; color: #ffdd55; font-weight: bold;">${totalPresent} Main Warriors</td>
+                    <td style="padding: 10px; color: #ffdd55;">${rec.solPool.toLocaleString()} SOL<br><span style="color:#33cc33; font-weight:bold;">${solPerMember} SOL / ea</span></td>
+                    <td style="padding: 10px; color: #33cc33; line-height: 1.5;">${formattedMembersHTML}</td>
                 `;
+                tbody.appendChild(tr);
             });
         }
 
         function renderAdminAttendanceLogList() {
             const listContainer = document.getElementById('admin-attendance-logs-list');
             if (!listContainer) return;
+
             let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
+
             if (history.length === 0) {
                 listContainer.innerHTML = `<span style="color: var(--text-dim);">Walang nakareserbang attendance logs.</span>`;
                 return;
             }
+
             listContainer.innerHTML = '';
             history.forEach((rec, index) => {
-                listContainer.innerHTML += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px; margin-bottom: 6px; background: rgba(0,0,0,0.5); border-left: 3px solid var(--primary);">
-                        <span>📅 ${rec.dateKey} - ${rec.event}</span>
-                        <button onclick="deleteAttendanceLog(${index})" class="delete-btn">❌ Delete</button>
+                const totalPresent = rec.presents ? rec.presents.length : 0;
+                const div = document.createElement('div');
+                div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 6px; margin-bottom: 6px; background: rgba(0,0,0,0.5); border-left: 3px solid var(--primary); border-radius: 4px;";
+                
+                div.innerHTML = `
+                    <div>
+                        <strong>📅 ${rec.dateKey}</strong> - <span style="color:var(--primary-glow);">${rec.event}</span><br>
+                        <small style="color:var(--text-dim);">Presents: ${totalPresent} Members | Pool: ${rec.solPool.toLocaleString()} SOL</small>
                     </div>
+                    <button onclick="deleteAttendanceLog(${index})" class="delete-btn" style="padding: 4px 8px;">❌ Delete Log</button>
                 `;
+                listContainer.appendChild(div);
             });
         }
 
         async function deleteAttendanceLog(logIndex) {
+            if (currentLoggedInOfficer !== "Fullclip" && currentLoggedInOfficer !== "kultura") {
+                alert("⛔ Ang pagbura ng Attendance Logs ay para lamang sa SuperAdmin!");
+                return;
+            }
+
             let history = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
             if (logIndex < 0 || logIndex >= history.length) return;
-            if (confirm("⚠️ Sigurado ka bang gusto mong burahin ang attendance log na ito?")) {
+
+            const targetLog = history[logIndex];
+            const confirmDelete = confirm(`⚠️ Sigurado ka bang gusto mong burahin ang attendance log noong "${targetLog.dateKey}" (${targetLog.event})?`);
+
+            if (confirmDelete) {
                 history.splice(logIndex, 1);
+                cloudAttendanceHistory = history;
+
                 if (window.database) {
-                    await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), history);
+                    await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), cloudAttendanceHistory);
                 }
-                alert("🗑️ Nabura na ang attendance log!");
+
+                await logKulturaActivity(`Binura ang past attendance log para sa petsa na "${targetLog.dateKey}" (${targetLog.event}).`);
+
+                renderAttendanceHistory();
+                renderAdminAttendanceLogList();
+                updateLiveActiveWarriors();
+                alert(`🗑️ Nabura na nang tuluyan ang attendance log record!`);
+            }
+        }
+
+        async function changeMyUsername() {
+            if (!currentLoggedInOfficer) return;
+            const newUsername = document.getElementById('change-username-new').value.trim();
+            if (!newUsername) return;
+
+            let isAlreadyTaken = Object.keys(OFFICER_ACCOUNTS).some(k => k.toLowerCase() === newUsername.toLowerCase());
+            if (isAlreadyTaken) {
+                alert(`❌ Ang username na "${newUsername}" ay nagagamit na o may kapareho na sa database! Pumili ng ibang username.`);
+                return;
+            }
+
+            const oldUserKey = currentLoggedInOfficer;
+            const officerObj = OFFICER_ACCOUNTS[oldUserKey];
+
+            delete OFFICER_ACCOUNTS[oldUserKey];
+            OFFICER_ACCOUNTS[newUsername] = officerObj;
+            currentLoggedInOfficer = newUsername;
+
+            let data = getGuildData();
+            let oldDivKey = `${oldUserKey} Division (${oldUserKey})`;
+            let newDivKey = `${newUsername} Division (${newUsername})`;
+
+            if (data[oldDivKey]) {
+                data[newDivKey] = data[oldDivKey];
+                delete data[oldDivKey];
+                OFFICER_ACCOUNTS[newUsername].assignedDivision = newDivKey;
+            }
+
+            ALL_DIVISIONS = Object.keys(data);
+            if (OFFICER_ACCOUNTS["Fullclip"]) OFFICER_ACCOUNTS["Fullclip"].assignedDivision = ALL_DIVISIONS;
+            if (OFFICER_ACCOUNTS["kultura"]) OFFICER_ACCOUNTS["kultura"].assignedDivision = ALL_DIVISIONS;
+
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
+                await saveGuildData(data);
+            }
+
+            await logKulturaActivity(`Binago ang username mula "${oldUserKey}" patungong "${newUsername}".`);
+
+            alert(`🎉 Username changed successfully to "${newUsername}".`);
+            document.getElementById('change-username-new').value = '';
+            renderRosters();
+            openAdminModal();
+        }
+
+        async function changeMyPassword() {
+            if (!currentLoggedInOfficer) return;
+            const currPass = document.getElementById('change-pass-current').value.trim();
+            const newPass = document.getElementById('change-pass-new').value.trim();
+            if (!currPass || !newPass) return;
+
+            if (OFFICER_ACCOUNTS[currentLoggedInOfficer].password !== currPass) {
+                alert("❌ Mali ang kasalukuyang password!");
+                return;
+            }
+
+            OFFICER_ACCOUNTS[currentLoggedInOfficer].password = newPass;
+
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
+            }
+
+            await logKulturaActivity("Matagumpay na binago ang account password.");
+
+            alert(`🎉 Password updated successfully!`);
+            document.getElementById('change-pass-current').value = '';
+            document.getElementById('change-pass-new').value = '';
+        }
+
+        async function sendPasswordResetTicket() {
+            const userVal = document.getElementById('reset-username').value.trim();
+            const msgVal = document.getElementById('reset-ticket-msg').value.trim();
+            let foundKey = Object.keys(OFFICER_ACCOUNTS).find(k => k.toLowerCase() === userVal.toLowerCase());
+            if (!userVal || !foundKey || !msgVal) return;
+
+            const newTicket = { id: Date.now(), username: foundKey, message: msgVal, timestamp: new Date().toLocaleString() };
+            cloudResetTickets.unshift(newTicket);
+
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_reset_tickets'), cloudResetTickets);
+            }
+
+            alert(`📩 Request sent to SuperAdmin Inbox!`);
+            closeForgotPasswordModal();
+        }
+
+        function renderSuperAdminInbox() {
+            const inboxList = document.getElementById('superadmin-inbox-list');
+            if (!inboxList) return;
+            if (cloudResetTickets.length === 0) {
+                inboxList.innerHTML = `<span style="color: var(--text-dim);">Walang nakareserbang ticket sa inbox.</span>`;
+                return;
+            }
+            inboxList.innerHTML = '';
+            cloudResetTickets.forEach(ticket => {
+                const div = document.createElement('div');
+                div.style.cssText = "padding: 6px; margin-bottom: 6px; background: rgba(0,0,0,0.5); border-left: 3px solid #ff3333; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;";
+                div.innerHTML = `<div><strong>👤 ${ticket.username}</strong> <small style="color:var(--text-dim);">(${ticket.timestamp})</small><br><span style="color:#ffdd55;">💬 "${ticket.message}"</span></div><button onclick="resolveTicket(${ticket.id}, '${ticket.username}')" class="btn" style="padding: 4px 8px; font-size: 0.7rem; background: #33cc33; color: #000;">✅ Done</button>`;
+                inboxList.appendChild(div);
+            });
+        }
+
+        async function resolveTicket(ticketId, username) {
+            cloudResetTickets = cloudResetTickets.filter(t => t.id !== ticketId);
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_reset_tickets'), cloudResetTickets);
+            }
+            renderSuperAdminInbox();
+        }
+
+        async function registerAllianceAndGM() {
+            if (currentLoggedInOfficer !== "Fullclip" && currentLoggedInOfficer !== "kultura") return;
+            const guildName = document.getElementById('reg-guild-name').value.trim();
+            const gmPass = document.getElementById('reg-gm-password').value.trim();
+            const gmClass = document.getElementById('reg-gm-class').value;
+            const gmQuest = document.getElementById('reg-gm-question').value.trim();
+            const gmAns = document.getElementById('reg-gm-answer').value.trim();
+
+            if (!guildName || !gmPass || !gmQuest || !gmAns) return;
+
+            const gmUser = guildName;
+
+            let isAlreadyTaken = Object.keys(OFFICER_ACCOUNTS).some(k => k.toLowerCase() === gmUser.toLowerCase());
+            if (isAlreadyTaken) {
+                alert(`❌ Ang guild name / username na "${gmUser}" ay may kapareho na sa sistema!`);
+                return;
+            }
+
+            const divisionKey = `${guildName} Division (${gmUser})`;
+
+            OFFICER_ACCOUNTS[gmUser] = { password: gmPass, assignedDivision: divisionKey, role: `${guildName} Guild Master`, question: gmQuest, secretAnswer: gmAns };
+            PROTECTED_ADMIN_ACCOUNTS.push(gmUser.toLowerCase());
+
+            let data = getGuildData();
+            data[divisionKey] = [{ name: gmUser, class: gmClass, icon: "👑", mainOwner: gmUser }];
+
+            ALL_DIVISIONS = Object.keys(data);
+            if (OFFICER_ACCOUNTS["Fullclip"]) OFFICER_ACCOUNTS["Fullclip"].assignedDivision = ALL_DIVISIONS;
+            if (OFFICER_ACCOUNTS["kultura"]) OFFICER_ACCOUNTS["kultura"].assignedDivision = ALL_DIVISIONS;
+
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
+                await saveGuildData(data);
+            }
+
+            await logKulturaActivity(`Nagrehistro ng bagong Alliance Guild at Guild Master: "${guildName}".`);
+
+            alert(`🎉 Alliance "${guildName}" created.`);
+            renderRosters();
+            openAdminModal();
+        }
+
+        function openForgotPasswordModal() {
+            closeLoginModal();
+            document.getElementById('forgot-password-modal').style.display = 'flex';
+        }
+
+        function closeForgotPasswordModal() {
+            document.getElementById('forgot-password-modal').style.display = 'none';
+        }
+
+        function loadOfficerQuestion() {
+            const userVal = document.getElementById('reset-username').value.trim();
+            const qDisplay = document.getElementById('secret-question-display');
+            let foundKey = Object.keys(OFFICER_ACCOUNTS).find(k => k.toLowerCase() === userVal.toLowerCase());
+            if (foundKey) {
+                qDisplay.innerText = OFFICER_ACCOUNTS[foundKey].question;
+            } else {
+                qDisplay.innerText = '❌ Hindi mahanap ang Guild Username.';
+            }
+        }
+
+        async function handlePasswordReset() {
+            const userVal = document.getElementById('reset-username').value.trim();
+            const answerVal = document.getElementById('reset-secret-answer').value.trim().toLowerCase();
+            const newPassVal = document.getElementById('reset-new-password').value.trim();
+
+            let foundKey = Object.keys(OFFICER_ACCOUNTS).find(k => k.toLowerCase() === userVal.toLowerCase());
+            if (!foundKey || !newPassVal) return;
+
+            if (OFFICER_ACCOUNTS[foundKey].secretAnswer.toLowerCase() === answerVal) {
+                OFFICER_ACCOUNTS[foundKey].password = newPassVal;
+                if (window.database) {
+                    await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
+                }
+                alert(`🎉 Password reset for "${foundKey}".`);
+                closeForgotPasswordModal();
+                openLoginModal();
+            }
+        }
+
+        async function superadminChangePassword() {
+            if (currentLoggedInOfficer !== "Fullclip" && currentLoggedInOfficer !== "kultura") return;
+            const targetOfficer = document.getElementById('superadmin-target-officer').value;
+            const newPass = document.getElementById('superadmin-override-pass').value.trim();
+            if (!newPass) return;
+
+            if (OFFICER_ACCOUNTS[targetOfficer]) {
+                OFFICER_ACCOUNTS[targetOfficer].password = newPass;
+                if (window.database) {
+                    await window.dbSet(window.dbRef(window.database, 'kultura_officer_accounts'), OFFICER_ACCOUNTS);
+                }
+                await logKulturaActivity(`Ginawa ang direct password override para sa officer na "${targetOfficer}".`);
+                alert(`⚡ Override successful for "${targetOfficer}".`);
             }
         }
 
         function openAdminModal() {
+            if (!currentLoggedInOfficer) return;
+            const officerInfo = OFFICER_ACCOUNTS[currentLoggedInOfficer];
+            document.getElementById('logged-agm-display').innerText = `${currentLoggedInOfficer} (${officerInfo.role})`;
+
+            const superInboxBlock = document.getElementById('superadmin-inbox-block');
+            const superMainDummyBlock = document.getElementById('superadmin-main-dummy-block');
+            const superDeleteLogsBlock = document.getElementById('superadmin-delete-logs-block');
+            const superGuildRegBlock = document.getElementById('superadmin-guild-reg-block');
+            const superOverrideBox = document.getElementById('superadmin-override-box');
+            const kulturaLogsBlock = document.getElementById('kultura-security-logs-block');
+
+            if (currentLoggedInOfficer.toLowerCase() === "kultura") {
+                kulturaLogsBlock.style.display = 'block';
+                renderKulturaLogsList();
+            } else {
+                kulturaLogsBlock.style.display = 'none';
+            }
+
+            if (currentLoggedInOfficer === "Fullclip" || currentLoggedInOfficer === "kultura") {
+                superInboxBlock.style.display = 'block';
+                superMainDummyBlock.style.display = 'block';
+                superDeleteLogsBlock.style.display = 'block';
+                superGuildRegBlock.style.display = 'block';
+                superOverrideBox.style.display = 'block';
+                
+                renderSuperAdminInbox();
+                renderAdminAttendanceLogList();
+
+                const targetSelect = document.getElementById('superadmin-target-officer');
+                targetSelect.innerHTML = '';
+                for (let offName in OFFICER_ACCOUNTS) {
+                    targetSelect.innerHTML += `<option value="${offName}">${offName}</option>`;
+                }
+            } else {
+                superInboxBlock.style.display = 'none';
+                superMainDummyBlock.style.display = 'none';
+                superDeleteLogsBlock.style.display = 'none';
+                superGuildRegBlock.style.display = 'none';
+                superOverrideBox.style.display = 'none';
+            }
+
             const selectDiv = document.getElementById('admin-officer-select');
             selectDiv.innerHTML = '';
 
-            const userRole = (currentLoggedInOfficer || "").toLowerCase();
-            const isSuperAdmin = (userRole === "kulturamain" || userRole === "fullclip" || userRole === "kultura");
-
-            const guildData = getGuildData();
-            let currentDivisions = Object.keys(guildData);
-
-            let allowedDivisions = isSuperAdmin ? currentDivisions : (OFFICER_DIVISION_MAP[userRole] || currentDivisions);
-
-            allowedDivisions.forEach(divName => {
-                selectDiv.innerHTML += `<option value="${divName}">${divName}</option>`;
-            });
-
-            document.getElementById('logged-agm-display').innerText = userRole.toUpperCase() || "OFFICER";
-
-            const isKulturaMainOnly = (userRole === "kulturamain");
-            document.getElementById('superadmin-credentials-inbox-block').style.display = isKulturaMainOnly ? 'block' : 'none';
-            document.getElementById('superadmin-main-dummy-block').style.display = isSuperAdmin ? 'block' : 'none';
-            document.getElementById('superadmin-alliance-mgmt-block').style.display = isSuperAdmin ? 'block' : 'none';
-            document.getElementById('superadmin-delete-logs-block').style.display = isSuperAdmin ? 'block' : 'none';
-
-            if (isSuperAdmin) {
-                renderDeleteDivisionList();
-            }
-            if (isKulturaMainOnly) {
-                renderLostPasswordInbox();
+            if (Array.isArray(officerInfo.assignedDivision)) {
+                selectDiv.disabled = false;
+                officerInfo.assignedDivision.forEach(divName => {
+                    selectDiv.innerHTML += `<option value="${divName}">${divName}</option>`;
+                });
+            } else {
+                selectDiv.disabled = true;
+                selectDiv.innerHTML = `<option value="${officerInfo.assignedDivision}">${officerInfo.assignedDivision}</option>`;
             }
 
             onDivisionChange();
-            document.getElementById('attendance-admin-modal').style.display = 'flex';
-        }
-
-        function renderDeleteDivisionList() {
-            const container = document.getElementById('superadmin-delete-division-list');
-            if (!container) return;
-            container.innerHTML = '';
-            let data = getGuildData();
-
-            for (let divKey in data) {
-                container.innerHTML += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <span>🏰 <strong>${divKey}</strong></span>
-                        <button onclick="deleteGuildDivision('${divKey}')" class="delete-btn">❌ Delete Alliance</button>
-                    </div>
-                `;
-            }
+            
+            const modalOverlay = document.getElementById('attendance-admin-modal');
+            const modalCard = document.getElementById('admin-modal-card');
+            modalOverlay.style.background = "rgba(0,0,0,0.85)";
+            modalOverlay.style.justifyContent = "center";
+            modalOverlay.style.alignItems = "center";
+            modalCard.style.width = "90%";
+            modalCard.style.maxWidth = "680px";
+            modalCard.style.position = "relative";
+            modalCard.style.bottom = "auto";
+            modalCard.style.right = "auto";
+            document.getElementById('admin-modal-body-content').style.display = 'block';
+            document.getElementById('modal-min-btn').innerText = "➖";
+            modalOverlay.style.display = 'flex';
         }
 
         function onDivisionChange() {
@@ -2098,49 +2345,68 @@
             renderMemberChecklist();
         }
 
+        function getClassIcon(className) {
+            switch(className) {
+                case 'Summoner': return '✨';
+                case 'Blade Master': return '⚔️';
+                case 'Elf': return '🏹';
+                case 'Dark Lord': return '♛';
+                case 'Dimension Master': return '🌌';
+                case 'Soul Master': return '🌠';
+                default: return '🛡️';
+            }
+        }
+
+        function getClassCss(className) {
+            switch(className) {
+                case 'Summoner': return 'class-summoner';
+                case 'Blade Master': return 'class-blademaster';
+                case 'Elf': return 'class-elf';
+                case 'Dark Lord': return 'class-darklord';
+                case 'Dimension Master': return 'class-dimensionmaster';
+                case 'Soul Master': return 'class-soulmaster';
+                default: return '';
+            }
+        }
+
         function renderDeleteMemberList() {
+            if (!currentLoggedInOfficer) return;
             const selectedDivision = document.getElementById('admin-officer-select').value;
             const listContainer = document.getElementById('admin-delete-member-list');
             listContainer.innerHTML = '';
-            const members = getGuildData()[selectedDivision] || [];
-            const userRole = (currentLoggedInOfficer || "").toLowerCase();
-            const isSuperAdmin = (userRole === "kulturamain" || userRole === "fullclip" || userRole === "kultura");
+
+            const data = getGuildData();
+            const members = data[selectedDivision] || [];
 
             members.forEach(mObj => {
-                let icon = getCharacterIcon(mObj.class, mObj.name);
-                let isProtected = PROTECTED_GUILDMASTERS.includes(mObj.name.toLowerCase());
+                const isProtected = PROTECTED_ADMIN_ACCOUNTS.includes(mObj.name.toLowerCase());
+                const div = document.createElement('div');
+                div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;";
+                
+                const actionHTML = isProtected 
+                    ? `<span style="font-size:0.75rem; color:#e6b800; font-weight:bold; background:rgba(230,184,0,0.15); padding:2px 6px; border-radius:3px; border:1px solid #e6b800;">🛡️ Protected</span>`
+                    : `<button onclick="deleteMember('${mObj.name}')" class="delete-btn">❌ Delete</button>`;
 
-                let actionHTML = '';
-                if (isProtected && !isSuperAdmin) {
-                    actionHTML = `<span style="font-size: 0.75rem; color: #ffdd55; font-weight: bold; background: rgba(230,184,0,0.2); padding: 2px 6px; border-radius: 3px;">🔒 Protected GM</span>`;
-                } else {
-                    actionHTML = `<button onclick="deleteMember('${mObj.name}')" class="delete-btn">❌ Delete</button>`;
-                }
+                let altTag = (mObj.mainOwner && mObj.mainOwner.toLowerCase() !== mObj.name.toLowerCase()) ? ` <small style="color:#ffaa33;">(Dummy of ${mObj.mainOwner})</small>` : ' <small style="color:#33cc33;">(Main)</small>';
 
-                listContainer.innerHTML += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0;">
-                        <span>${icon} <strong>${mObj.name}</strong></span>
-                        ${actionHTML}
-                    </div>
-                `;
+                div.innerHTML = `<span>${mObj.icon} <strong>${mObj.name}</strong>${altTag} <small style="color:var(--text-dim);">(${mObj.class})</small></span>${actionHTML}`;
+                listContainer.appendChild(div);
             });
         }
 
         async function deleteMember(memberName) {
-            const userRole = (currentLoggedInOfficer || "").toLowerCase();
-            const isSuperAdmin = (userRole === "kulturamain" || userRole === "fullclip" || userRole === "kultura");
+            if (!currentLoggedInOfficer) return;
 
-            if (PROTECTED_GUILDMASTERS.includes(memberName.toLowerCase()) && !isSuperAdmin) {
-                alert("⛔ Action Denied: Naka-lock ang Guild Master account na ito. SuperAdmin lang ang may karapatang mag-alis sa kanila!");
-                return;
-            }
+            const confirmDel = confirm(`⚠️ Sigurado ka bang gusto mong alisin si "${memberName}" sa roster?`);
+            if (!confirmDel) return;
 
-            if (!confirm(`Alisin si "${memberName}" sa roster?`)) return;
             const selectedDivision = document.getElementById('admin-officer-select').value;
             let data = getGuildData();
             if (data[selectedDivision]) {
                 data[selectedDivision] = data[selectedDivision].filter(m => m.name.toLowerCase() !== memberName.toLowerCase());
                 await saveGuildData(data);
+                await logKulturaActivity(`Inalis sa roster ang miyembrong si "${memberName}" mula sa ${selectedDivision}.`);
+                renderRosters();
                 onDivisionChange();
             }
         }
@@ -2149,21 +2415,25 @@
             const data = getGuildData();
             const dynamicGrid = document.getElementById('dynamic-roster-grid');
             if (!dynamicGrid) return;
+
             dynamicGrid.innerHTML = '';
             let idx = 0;
-
             for (const divKey in data) {
                 const containerId = `roster-box-${idx}`;
                 const btnId = `roster-btn-${idx}`;
                 const members = data[divKey] || [];
-                let membersHTML = '';
 
+                let membersHTML = '';
                 members.forEach(m => {
-                    let icon = getCharacterIcon(m.class, m.name);
+                    const cssClass = getClassCss(m.class);
+                    let isDummy = m.mainOwner && m.mainOwner.toLowerCase() !== m.name.toLowerCase();
+                    let displayName = m.name;
+                    let altTag = isDummy ? ` <small style="color:#ffaa33; font-weight:bold;">[Dummy of ${m.mainOwner}]</small>` : '';
+                    
                     membersHTML += `
                         <div class="roster-list-item">
-                            <span>${icon} <span>${m.name}</span></span>
-                            <span>${m.class}</span>
+                            <span>${m.icon} <span class="${cssClass}">${displayName}</span>${altTag}</span>
+                            <span class="${cssClass}">${m.class}</span>
                         </div>
                     `;
                 });
@@ -2172,9 +2442,11 @@
                     <div class="roster-box">
                         <div class="roster-box-header" onclick="toggleDivision('${containerId}', '${btnId}')">
                             <span class="roster-box-title">🛡️ ${divKey}</span>
-                            <button id="${btnId}" class="roster-toggle-btn">▼ Expand</button>
+                            <button id="${btnId}" class="roster-toggle-btn">▼ Click to Expand</button>
                         </div>
-                        <div id="${containerId}" class="roster-list-container">${membersHTML}</div>
+                        <div id="${containerId}" class="roster-list-container">
+                            ${membersHTML}
+                        </div>
                     </div>
                 `;
                 idx++;
@@ -2190,21 +2462,24 @@
             const btn = document.getElementById(btnId);
             if (rosterContainer.style.display === "block") {
                 rosterContainer.style.display = "none";
-                btn.innerText = "▼ Expand";
+                btn.innerText = "▼ Click to Expand";
             } else {
                 rosterContainer.style.display = "block";
-                btn.innerText = "▲ Hide";
+                btn.innerText = "▲ Click to Hide";
             }
         }
 
         const allianceGuilds = [
             { name: "PROTECT GUILD", icon: "🛡️" },
             { name: "ANXIETY GUILD", icon: "⚡" },
-            { name: "SPIDEY GUILD", icon: "🕷️" }
+            { name: "SPIDEY GUILD", icon: "🕷️" },
+            { name: "STEALTH GUILD", icon: "⚔️" },
+            { name: "VALKYRIE GUILD", icon: "✨" },
+            { name: "xNOTA GUILD", icon: "🔥" }
         ];
 
         let currentIndex = 0;
-        setInterval(() => {
+        function rotateAllianceBadge() {
             currentIndex = (currentIndex + 1) % allianceGuilds.length;
             const guild = allianceGuilds[currentIndex];
             const iconElem = document.getElementById('rotating-icon');
@@ -2213,14 +2488,22 @@
                 iconElem.innerText = guild.icon;
                 textElem.innerText = guild.name;
             }
-        }, 3000);
+        }
+        setInterval(rotateAllianceBadge, 3000);
 
         const audio = document.getElementById('bg-audio');
         let isPlaying = false;
+        function playMusic() {
+            audio.play().then(() => { isPlaying = true; updateButton(); }).catch(() => { isPlaying = false; updateButton(); });
+        }
         function toggleMusic() {
-            if (isPlaying) { audio.pause(); isPlaying = false; } else { audio.play(); isPlaying = true; }
-            document.getElementById('music-icon').innerText = isPlaying ? '🔊' : '🔇';
-            document.getElementById('music-text').innerText = isPlaying ? 'Pause Music' : 'Play Music';
+            if (isPlaying) { audio.pause(); isPlaying = false; } else { playMusic(); }
+            updateButton();
+        }
+        function updateButton() {
+            const icon = document.getElementById('music-icon');
+            const text = document.getElementById('music-text');
+            if (isPlaying) { icon.innerText = '🔊'; text.innerText = 'Pause Music'; } else { icon.innerText = '🔇'; text.innerText = 'Play Music'; }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -2228,5 +2511,6 @@
             updateLiveActiveWarriors();
         });
     </script>
+
 </body>
 </html>
