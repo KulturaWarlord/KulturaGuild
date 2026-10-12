@@ -75,6 +75,71 @@
             position: relative;
         }
 
+        /* FLOATING SIDE TEXT STYLES - 8rem ALGERIAN, BLACK-RED TEXT WITH GOLD GLOW */
+        .side-floating-text {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 999;
+            font-family: 'Algerian', 'Cinzel', serif;
+            font-weight: 900;
+            font-size: 8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 0.9;
+            letter-spacing: 2px;
+            pointer-events: none;
+            user-select: none;
+            background: transparent;
+            padding: 0;
+            border: none;
+            box-shadow: none;
+        }
+
+        .side-floating-text span {
+            /* Black to Dark Red to Bright Red gradient para sa mismong letra */
+            background: linear-gradient(180deg, #1a0000 0%, #8b0000 50%, #ff3333 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            
+            /* Initial state bago mag-animate */
+            opacity: 0;
+            transform: translateY(25px) scale(0.8);
+            filter: drop-shadow(0 0 0px rgba(255, 215, 0, 0));
+            
+            /* Staggered animation */
+            animation: letterGoldGlowAppear 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes letterGoldGlowAppear {
+            0% {
+                opacity: 0;
+                transform: translateY(25px) scale(0.8);
+                filter: drop-shadow(0 0 0px rgba(255, 215, 0, 0));
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                /* Matingkad na Gold Glow at Shadow */
+                filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.95)) 
+                        drop-shadow(0 0 40px rgba(230, 184, 0, 0.75))
+                        drop-shadow(2px 5px 12px rgba(0, 0, 0, 0.95));
+            }
+        }
+
+        .side-floating-text.left {
+            left: 20px;
+        }
+
+        .side-floating-text.right {
+            right: 20px;
+        }
+
+        .side-floating-text span.gap-space {
+            height: 40px;
+        }
+
         #music-control {
             position: fixed;
             bottom: 25px;
@@ -737,6 +802,10 @@
             gap: 25px;
         }
 
+        @media (max-width: 1500px) {
+            .side-floating-text { display: none; }
+        }
+
         @media (max-width: 768px) {
             .guild-logo { font-size: 3rem; }
             .server-logo { max-width: 220px; }
@@ -758,6 +827,32 @@
     </style>
 </head>
 <body>
+
+    <!-- FLOATING SIDE TEXT: LEFT (KULTURA) -->
+    <div class="side-floating-text left" id="left-floating-word">
+        <span>K</span>
+        <span>U</span>
+        <span>L</span>
+        <span>T</span>
+        <span>U</span>
+        <span>R</span>
+        <span>A</span>
+    </div>
+
+    <!-- FLOATING SIDE TEXT: RIGHT (ALLIANCE PH) -->
+    <div class="side-floating-text right" id="right-floating-word">
+        <span>A</span>
+        <span>L</span>
+        <span>L</span>
+        <span>I</span>
+        <span>A</span>
+        <span>N</span>
+        <span>C</span>
+        <span>E</span>
+        <span class="gap-space"></span>
+        <span style="background: linear-gradient(180deg, #331100 0%, #b35900 50%, #ffaa33 100%);">P</span>
+        <span style="background: linear-gradient(180deg, #331100 0%, #b35900 50%, #ffaa33 100%);">H</span>
+    </div>
 
     <!-- Floating Audio Control Button -->
     <div id="music-control" onclick="toggleMusic()">
@@ -1356,6 +1451,19 @@
 
     <!-- Interactive Scripts -->
     <script>
+        // Staggered Animation Delay para sa Floating Letters
+        document.addEventListener('DOMContentLoaded', () => {
+            const leftLetters = document.querySelectorAll('#left-floating-word span');
+            leftLetters.forEach((letter, index) => {
+                letter.style.animationDelay = `${index * 0.12}s`;
+            });
+
+            const rightLetters = document.querySelectorAll('#right-floating-word span');
+            rightLetters.forEach((letter, index) => {
+                letter.style.animationDelay = `${index * 0.12}s`;
+            });
+        });
+
         let ALL_DIVISIONS = [
             "Fullclip Division (Fullclip)",
             "Warlock Division (Warlock)",
@@ -1565,14 +1673,10 @@
             }
         }
 
-        /* -------------------------------------------------------------
-           3-DAY ATTENDANCE SUMMARY & PAYOUT DOWNLOAD LOGIC
-        ------------------------------------------------------------- */
         function calculate3DayPayoutData() {
             let history = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
             if (history.length === 0) return null;
 
-            // Kunan ang huling 3 records (mula sa pinakabago)
             let last3Records = history.slice(0, 3);
             let includedDates = last3Records.map(r => r.dateKey);
 
@@ -1624,7 +1728,6 @@
                 datesElem.innerHTML = `Included Dates (${data.totalDaysCount} Events): <span style="color:#fff;">${data.includedDates.join(' | ')}</span>`;
                 
                 tbody.innerHTML = '';
-                // I-sort ayon sa Guild Division at Name
                 data.members.sort((a, b) => a.division.localeCompare(b.division) || a.name.localeCompare(b.name));
 
                 data.members.forEach(m => {
@@ -1663,7 +1766,6 @@
             fileContent += `MAIN CHARACTER        TOTAL DAYS    TOTAL SOL SHARE\n`;
             fileContent += `--------------------------------------------------\n`;
 
-            // I-group ayon sa Division para malinis tingnan
             let grouped = {};
             data.members.forEach(m => {
                 if (!grouped[m.division]) grouped[m.division] = [];
@@ -1684,7 +1786,6 @@
             fileContent += `TOTAL WARRIORS IN PAYOUT: ${data.members.length}\n`;
             fileContent += `==================================================\n`;
 
-            // Trigger Download
             const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
