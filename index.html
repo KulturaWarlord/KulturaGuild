@@ -75,31 +75,6 @@
             position: relative;
         }
 
-        /* FLOATING SIDE EMBLEMS */
-        .side-crest {
-            position: fixed;
-            z-index: 9000;
-            width: 100px;
-            filter: drop-shadow(0 0 12px rgba(230, 184, 0, 0.6));
-            transition: transform 0.3s ease;
-        }
-
-        .side-crest:hover {
-            transform: scale(1.15);
-        }
-
-        .crest-left-1 { top: 20px; left: 20px; width: 130px; }
-        .crest-left-2 { top: 220px; left: 25px; }
-        .crest-left-3 { top: 430px; left: 25px; }
-
-        .crest-right-1 { top: 20px; right: 20px; }
-        .crest-right-2 { top: 220px; right: 25px; }
-        .crest-right-3 { top: 430px; right: 25px; }
-
-        @media (max-width: 1200px) {
-            .side-crest { display: none; }
-        }
-
         #music-control {
             position: fixed;
             bottom: 25px;
@@ -784,15 +759,6 @@
 </head>
 <body>
 
-    <!-- FLOATING SIDE EMBLEMS -->
-    <img src="https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png" class="side-crest crest-left-1" alt="Kultura Shield">
-    <img src="https://cdn.phototourl.com/member/2026-10-08-f86e67c4-ab50-45e0-8c0b-38490e52c60c.png" class="side-crest crest-left-2" alt="Stealth Guild">
-    <img src="https://cdn.phototourl.com/member/2026-10-07-5cb85190-c10a-47a1-8b08-870ed366d52f.png" class="side-crest crest-left-3" alt="Valkyrie Guild">
-
-    <img src="https://cdn.phototourl.com/member/2026-10-07-4f35248b-2602-408c-8175-3e37cc1e0977.png" class="side-crest crest-right-1" alt="xNOTA Guild">
-    <img src="https://cdn.phototourl.com/member/2026-10-08-a6619f00-88bb-4a5b-b244-715b129a4c1e.png" class="side-crest crest-right-2" alt="Spidey Guild">
-    <img src="https://cdn.phototourl.com/member/2026-10-08-9594006c-6428-4b19-a7a4-e6f1e807e489.png" class="side-crest crest-right-3" alt="Anxiety Guild">
-
     <!-- Floating Audio Control Button -->
     <div id="music-control" onclick="toggleMusic()">
         <span id="music-icon">🎵</span>
@@ -850,11 +816,16 @@
 
         <!-- ATTENDANCE SYSTEM SECTION -->
         <section id="attendance-system" class="panel" style="margin-bottom: 60px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-gold); padding-bottom: 10px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-gold); padding-bottom: 10px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                 <h3 style="margin: 0; color: var(--primary);">📋 Live Attendance & Anti-Double Compensation Log</h3>
-                <button onclick="openLoginModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem;">
-                    🔐 Open Authorized Officer Portal
-                </button>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="open3DaySummaryModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem; background: linear-gradient(135deg, #0088cc, #004488);">
+                        📊 View 3-Day Summary & Download Payout List
+                    </button>
+                    <button onclick="openLoginModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem;">
+                        🔐 Open Authorized Officer Portal
+                    </button>
+                </div>
             </div>
 
             <!-- Public Attendance Log -->
@@ -878,6 +849,45 @@
                 </div>
             </div>
         </section>
+
+        <!-- 3-DAY PAYOUT SUMMARY & DOWNLOAD MODAL -->
+        <div id="summary-3day-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10002; justify-content: center; align-items: center;">
+            <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 650px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-gold); padding-bottom: 10px; margin-bottom: 15px;">
+                    <h3 style="color: var(--primary-glow); margin: 0; font-size: 1.2rem;">📊 3-Day Attendance & Payout Summary</h3>
+                    <button onclick="close3DaySummaryModal()" class="modal-win-btn" style="background: #8b0000; border: 1px solid #ff3333; color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: bold; font-size: 0.8rem;">✖</button>
+                </div>
+
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">
+                    Binubuo mula sa **huling 3 recorded attendance dates**. Ipinapakita ang kabuuang attendance count at calculated total SOL shares.
+                </p>
+
+                <div id="summary-3day-dates" style="font-size: 0.85rem; color: var(--primary-glow); margin-bottom: 12px; font-weight: bold;">
+                </div>
+
+                <div style="max-height: 320px; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; margin-bottom: 15px; border: 1px solid rgba(230,184,0,0.2);">
+                    <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.85rem;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--primary); color: var(--primary-glow);">
+                                <th style="padding: 6px;">Main Member</th>
+                                <th style="padding: 6px;">Main Guild</th>
+                                <th style="padding: 6px; text-align: center;">3-Day Count</th>
+                                <th style="padding: 6px; text-align: right;">Total SOL Share</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summary-3day-table-body">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: space-between; flex-wrap: wrap;">
+                    <button onclick="downloadCleanPayoutTxt()" class="btn" style="background: linear-gradient(135deg, #33cc33, #008800); color: #000; flex: 1; min-width: 200px;">
+                        📥 Download Clean Payout (.txt)
+                    </button>
+                    <button onclick="close3DaySummaryModal()" class="btn" style="background: #444;">Close</button>
+                </div>
+            </div>
+        </div>
 
         <!-- LOGIN MODAL FOR OFFICERS -->
         <div id="login-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10001; justify-content: center; align-items: center;">
@@ -1368,7 +1378,6 @@
 
         let OFFICER_ACCOUNTS_SYNC = {};
 
-        // Tanging ang mga Guild Masters at AGMs lamang ang default leaders sa bawat dibisyon
         const defaultDivisionMembers = {
             "Fullclip Division (Fullclip)": [
                 { name: "Fullclip", class: "Blade Master", icon: "👑", mainOwner: "Fullclip" },
@@ -1394,6 +1403,7 @@
         let cloudResetTickets = [];
         let cloudKulturaLogs = [];
         let currentLoggedInOfficer = null;
+        let cached3DayPayoutData = null;
 
         function getStandardDateKey() {
             const d = new Date();
@@ -1553,6 +1563,135 @@
                 }
                 countElem.innerText = totalMembers > 0 ? `${totalMembers}+` : "95+";
             }
+        }
+
+        /* -------------------------------------------------------------
+           3-DAY ATTENDANCE SUMMARY & PAYOUT DOWNLOAD LOGIC
+        ------------------------------------------------------------- */
+        function calculate3DayPayoutData() {
+            let history = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
+            if (history.length === 0) return null;
+
+            // Kunan ang huling 3 records (mula sa pinakabago)
+            let last3Records = history.slice(0, 3);
+            let includedDates = last3Records.map(r => r.dateKey);
+
+            let mainMap = {};
+
+            last3Records.forEach(rec => {
+                let totalPresent = rec.presents ? rec.presents.length : 0;
+                let solShare = totalPresent > 0 ? Math.round(rec.solPool / totalPresent) : 0;
+
+                if (rec.presents) {
+                    rec.presents.forEach(p => {
+                        let mainIgn = p.name;
+                        let divKey = findMainGuildDivision(mainIgn) || (p.officer || "Kultura Main Division");
+
+                        if (!mainMap[mainIgn]) {
+                            mainMap[mainIgn] = {
+                                name: mainIgn,
+                                division: divKey,
+                                count: 0,
+                                totalSol: 0,
+                                datesPresent: []
+                            };
+                        }
+
+                        mainMap[mainIgn].count += 1;
+                        mainMap[mainIgn].totalSol += solShare;
+                        mainMap[mainIgn].datesPresent.push(rec.dateKey);
+                    });
+                }
+            });
+
+            return {
+                includedDates: includedDates,
+                totalDaysCount: last3Records.length,
+                members: Object.values(mainMap)
+            };
+        }
+
+        function open3DaySummaryModal() {
+            const data = calculate3DayPayoutData();
+            const datesElem = document.getElementById('summary-3day-dates');
+            const tbody = document.getElementById('summary-3day-table-body');
+
+            if (!data || data.members.length === 0) {
+                datesElem.innerText = "Walang recorded attendance logs sa database.";
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:15px; color:var(--text-dim);">No 3-Day Attendance records found.</td></tr>`;
+            } else {
+                cached3DayPayoutData = data;
+                datesElem.innerHTML = `Included Dates (${data.totalDaysCount} Events): <span style="color:#fff;">${data.includedDates.join(' | ')}</span>`;
+                
+                tbody.innerHTML = '';
+                // I-sort ayon sa Guild Division at Name
+                data.members.sort((a, b) => a.division.localeCompare(b.division) || a.name.localeCompare(b.name));
+
+                data.members.forEach(m => {
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = "1px solid rgba(255,255,255,0.08)";
+                    tr.innerHTML = `
+                        <td style="padding: 8px; font-weight: bold; color: #fff;">${m.name}</td>
+                        <td style="padding: 8px; color: var(--primary-glow); font-size: 0.8rem;">${m.division}</td>
+                        <td style="padding: 8px; text-align: center; color: #33cc33; font-weight: bold;">${m.count} / ${data.totalDaysCount}</td>
+                        <td style="padding: 8px; text-align: right; color: #ffdd55; font-weight: bold;">${m.totalSol.toLocaleString()} SOL</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            document.getElementById('summary-3day-modal').style.display = 'flex';
+        }
+
+        function close3DaySummaryModal() {
+            document.getElementById('summary-3day-modal').style.display = 'none';
+        }
+
+        function downloadCleanPayoutTxt() {
+            const data = cached3DayPayoutData || calculate3DayPayoutData();
+            if (!data || data.members.length === 0) {
+                alert("⚠️ Walang data na maitatala sa file!");
+                return;
+            }
+
+            let fileContent = `==================================================\n`;
+            fileContent += `   KULTURA GUILD & ALLIANCE - 3-DAY PAYOUT SUMMARY\n`;
+            fileContent += `==================================================\n`;
+            fileContent += `Generated Date: ${new Date().toLocaleDateString()}\n`;
+            fileContent += `Included Dates: ${data.includedDates.join(' | ')}\n\n`;
+            fileContent += `--------------------------------------------------\n`;
+            fileContent += `MAIN CHARACTER        TOTAL DAYS    TOTAL SOL SHARE\n`;
+            fileContent += `--------------------------------------------------\n`;
+
+            // I-group ayon sa Division para malinis tingnan
+            let grouped = {};
+            data.members.forEach(m => {
+                if (!grouped[m.division]) grouped[m.division] = [];
+                grouped[m.division].push(m);
+            });
+
+            for (let divName in grouped) {
+                fileContent += `\n[ ${divName.toUpperCase()} ]\n`;
+                grouped[divName].forEach(m => {
+                    let padName = m.name.padEnd(22, ' ');
+                    let padCount = `${m.count}/${data.totalDaysCount}`.padEnd(14, ' ');
+                    let solStr = `${m.totalSol.toLocaleString()} SOL`;
+                    fileContent += `${padName}${padCount}${solStr}\n`;
+                });
+            }
+
+            fileContent += `\n==================================================\n`;
+            fileContent += `TOTAL WARRIORS IN PAYOUT: ${data.members.length}\n`;
+            fileContent += `==================================================\n`;
+
+            // Trigger Download
+            const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Kultura_3Day_Payout_${getStandardDateKey()}.txt`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         function openLoginModal() {
