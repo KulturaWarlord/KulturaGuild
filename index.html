@@ -784,7 +784,7 @@
 </head>
 <body>
 
-    <!-- FLOATING SIDE EMBLEMS (KALIWA AT KANAN) -->
+    <!-- FLOATING SIDE EMBLEMS -->
     <img src="https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png" class="side-crest crest-left-1" alt="Kultura Shield">
     <img src="https://cdn.phototourl.com/member/2026-10-08-f86e67c4-ab50-45e0-8c0b-38490e52c60c.png" class="side-crest crest-left-2" alt="Stealth Guild">
     <img src="https://cdn.phototourl.com/member/2026-10-07-5cb85190-c10a-47a1-8b08-870ed366d52f.png" class="side-crest crest-left-3" alt="Valkyrie Guild">
@@ -906,7 +906,7 @@
         <div id="attendance-admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center;">
             <div id="admin-modal-card" style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 680px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto; position: relative; transition: all 0.3s ease;">
                 
-                <!-- WINDOW HEADER CONTROLS (MINIMIZE & CLOSE) -->
+                <!-- WINDOW HEADER CONTROLS -->
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(230,184,0,0.3); padding-bottom: 8px; margin-bottom: 12px;">
                     <h3 style="color: var(--primary-glow); margin: 0; font-size: 1.1rem;">🔒 Authorized Officer Portal</h3>
                     <div style="display: flex; gap: 6px;">
@@ -932,7 +932,7 @@
                         </div>
                     </div>
 
-                    <!-- KULTURA SECURITY LOGS BLOCK WITH WORKING VIEW CREDENTIALS -->
+                    <!-- KULTURA SECURITY LOGS BLOCK -->
                     <div id="kultura-security-logs-block" class="admin-section-block" style="display: none; border-color: #33cc33;">
                         <button onclick="toggleAdminSection('sec-kultura-logs')" class="admin-collapsible-btn" style="color: #33cc33; background: rgba(51, 204, 51, 0.1);">
                             <span>🛡️ Security Audit Logs (Kultura Username Activity)</span>
@@ -960,13 +960,11 @@
                                 I-type ang <strong>Main Character IGN</strong> at ilagay sa mga boxes ang kanyang <strong>Dummy Accounts</strong>. Magiging <strong>naka-link</strong> lamang sila sa Main pero **mananatili (stay) sila sa kani-kanilang kasalukuyang Guild/Division**.
                             </p>
                             
-                            <!-- MAIN IGN FIELD -->
                             <div style="margin-bottom: 12px; background: rgba(51,204,51,0.1); padding: 10px; border: 1px solid #33cc33; border-radius: 6px;">
                                 <label style="font-size: 0.8rem; color: #33cc33; font-weight: bold;">👑 Main Character IGN:</label>
                                 <input type="text" id="type-main-ign" placeholder="e.g. Eremes" style="width: 100%; padding: 8px; background: #111; border: 1px solid #33cc33; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
                             </div>
 
-                            <!-- MULTI DUMMY BOXES GRID -->
                             <label style="font-size: 0.8rem; color: #ffaa33; font-weight: bold;">🎭 Dummy / Alt Character Accounts:</label>
                             <div id="dummy-boxes-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; margin-bottom: 10px; max-height: 220px; overflow-y: auto; padding-right: 5px;">
                                 <input type="text" class="dummy-input-field" placeholder="Dummy 1 (e.g. Kreios)" style="padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;">
@@ -1370,18 +1368,15 @@
 
         let OFFICER_ACCOUNTS_SYNC = {};
 
+        // Tanging ang mga Guild Masters at AGMs lamang ang default leaders sa bawat dibisyon
         const defaultDivisionMembers = {
             "Fullclip Division (Fullclip)": [
                 { name: "Fullclip", class: "Blade Master", icon: "👑", mainOwner: "Fullclip" },
-                { name: "Mechado", class: "Blade Master", icon: "⚔️", mainOwner: "Mechado" },
-                { name: "Eremes", class: "Soul Master", icon: "🌠", mainOwner: "Eremes" },
-                { name: "Gail", class: "Summoner", icon: "✨", mainOwner: "Gail" }
+                { name: "Mechado", class: "Blade Master", icon: "⚔️", mainOwner: "Mechado" }
             ],
             "Warlock Division (Warlock)": [
                 { name: "Warlock", class: "Blade Master", icon: "👑", mainOwner: "Warlock" },
-                { name: "Tsukushi", class: "Blade Master", icon: "🛡️", mainOwner: "Tsukushi" },
-                { name: "Kreios", class: "Blade Master", icon: "🎭", mainOwner: "Eremes" },
-                { name: "Papaliciou", class: "Soul Master", icon: "🎭", mainOwner: "Eremes" }
+                { name: "Tsukushi", class: "Blade Master", icon: "🛡️", mainOwner: "Tsukushi" }
             ],
             "PROTECT Division (Windtalker)": [
                 { name: "Windtalker", class: "Blade Master", icon: "👑", mainOwner: "Windtalker" }
@@ -2224,19 +2219,23 @@
                 const members = data[divKey] || [];
 
                 let membersHTML = '';
-                members.forEach(m => {
-                    const cssClass = getClassCss(m.class);
-                    let isDummy = m.mainOwner && m.mainOwner.toLowerCase() !== m.name.toLowerCase();
-                    let displayName = m.name;
-                    let altTag = isDummy ? ` <small style="color:#ffaa33; font-weight:bold;">[Dummy of ${m.mainOwner}]</small>` : '';
-                    
-                    membersHTML += `
-                        <div class="roster-list-item">
-                            <span>${m.icon} <span class="${cssClass}">${displayName}</span>${altTag}</span>
-                            <span class="${cssClass}">${m.class}</span>
-                        </div>
-                    `;
-                });
+                if (members.length === 0) {
+                    membersHTML = `<div style="padding: 8px; color: var(--text-dim); font-size: 0.85rem; text-align: center;">Walang miyembro sa dibisyong ito. Magdagdag sa Admin Portal.</div>`;
+                } else {
+                    members.forEach(m => {
+                        const cssClass = getClassCss(m.class);
+                        let isDummy = m.mainOwner && m.mainOwner.toLowerCase() !== m.name.toLowerCase();
+                        let displayName = m.name;
+                        let altTag = isDummy ? ` <small style="color:#ffaa33; font-weight:bold;">[Dummy of ${m.mainOwner}]</small>` : '';
+                        
+                        membersHTML += `
+                            <div class="roster-list-item">
+                                <span>${m.icon} <span class="${cssClass}">${displayName}</span>${altTag}</span>
+                                <span class="${cssClass}">${m.class}</span>
+                            </div>
+                        `;
+                    });
+                }
 
                 dynamicGrid.innerHTML += `
                     <div class="roster-box">
