@@ -839,7 +839,7 @@
         <span>A</span>
     </div>
 
-    <!-- FLOATING SIDE TEXT: RIGHT (ALLIANCE PH- 5rem) -->
+    <!-- FLOATING SIDE TEXT: RIGHT (ALLIANCE PH - 5rem) -->
     <div class="side-floating-text right" id="right-floating-word">
         <span>A</span>
         <span>L</span>
@@ -2330,6 +2330,8 @@
             const kulturaLogsBlock = document.getElementById('kultura-security-logs-block');
 
             let currentLower = currentLoggedInOfficer.toLowerCase();
+            let isSuperAdmin = (currentLower === "fullclip" || currentLower === "kultura" || currentLower === "kulturamain");
+
             if (currentLower === "kultura" || currentLower === "kulturamain") {
                 kulturaLogsBlock.style.display = 'block';
                 renderKulturaLogsList();
@@ -2337,7 +2339,7 @@
                 kulturaLogsBlock.style.display = 'none';
             }
 
-            if (currentLower === "fullclip" || currentLower === "kultura" || currentLower === "kulturamain") {
+            if (isSuperAdmin) {
                 superInboxBlock.style.display = 'block';
                 superMainDummyBlock.style.display = 'block';
                 superDeleteLogsBlock.style.display = 'block';
@@ -2352,9 +2354,30 @@
                 superGuildRegBlock.style.display = 'none';
             }
 
+            /* DIVISION LOCKING PER GM ACCOUNT */
             const selectDiv = document.getElementById('admin-officer-select');
             selectDiv.innerHTML = '';
-            ALL_DIVISIONS.forEach(divName => {
+            
+            let matchedDivisions = [];
+            let allAvailDivs = Object.keys(getGuildData());
+
+            if (isSuperAdmin) {
+                matchedDivisions = allAvailDivs;
+                selectDiv.disabled = false;
+            } else {
+                // Hahanapin lamang ang division na para sa partikular na Guild Master / Officer
+                matchedDivisions = allAvailDivs.filter(divName => divName.toLowerCase().includes(currentLower));
+                
+                // Fallback kung hindi eksaktong nakapangalan sa division
+                if (matchedDivisions.length === 0) {
+                    matchedDivisions = allAvailDivs;
+                    selectDiv.disabled = false;
+                } else {
+                    selectDiv.disabled = true; // Lock dropdown para sa GM
+                }
+            }
+
+            matchedDivisions.forEach(divName => {
                 selectDiv.innerHTML += `<option value="${divName}">${divName}</option>`;
             });
 
