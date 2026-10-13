@@ -1386,9 +1386,10 @@
             return `${year}-${month}-${day}`;
         }
 
-        /* LIVE MAIN CHARACTER SEARCH FUNCTION FOR DUMMIES */
+        /* CASE-INSENSITIVE LIVE MAIN CHARACTER SEARCH FUNCTION FOR DUMMIES */
         function searchMainAndDummies() {
-            const query = document.getElementById('search-main-input').value.trim().toLowerCase();
+            const rawQuery = document.getElementById('search-main-input').value.trim();
+            const query = rawQuery.toLowerCase();
             const resultBox = document.getElementById('search-dummy-result-box');
 
             if (!query) {
@@ -1399,34 +1400,36 @@
             let data = getGuildData();
             let mainGroups = {};
 
-            // Grupo ng Dummies base sa Main Owner
+            // Grupo ng Dummies base sa Case-Insensitive Main Owner Key
             for (let divKey in data) {
                 let members = data[divKey];
                 members.forEach(m => {
-                    let mainName = m.mainOwner ? m.mainOwner : m.name;
-                    if (!mainGroups[mainName]) {
-                        mainGroups[mainName] = {
-                            mainIgn: mainName,
+                    let rawMainName = m.mainOwner ? m.mainOwner : m.name;
+                    let mainKey = rawMainName.toLowerCase();
+
+                    if (!mainGroups[mainKey]) {
+                        mainGroups[mainKey] = {
+                            mainIgn: rawMainName,
                             mainDivision: divKey,
                             dummies: []
                         };
                     }
-                    if (m.name.toLowerCase() !== mainName.toLowerCase()) {
-                        mainGroups[mainName].dummies.push({ name: m.name, division: divKey, class: m.class });
+                    if (m.name.toLowerCase() !== mainKey) {
+                        mainGroups[mainKey].dummies.push({ name: m.name, division: divKey, class: m.class });
                     }
                 });
             }
 
-            // Paghahanap ng tumutugma sa query
-            let matchedMains = Object.keys(mainGroups).filter(mainKey => mainKey.toLowerCase().includes(query));
+            // Paghahanap gamit ang Case-Insensitive query matching
+            let matchedMainKeys = Object.keys(mainGroups).filter(k => k.includes(query));
 
-            if (matchedMains.length === 0) {
-                resultBox.innerHTML = `<span style="color: #ffaa33;">⚠️ Walang nahanap na Main Character na may pangalang "<strong>${query}</strong>".</span>`;
+            if (matchedMainKeys.length === 0) {
+                resultBox.innerHTML = `<span style="color: #ffaa33;">⚠️ Walang nahanap na Main Character na may pangalang "<strong>${rawQuery}</strong>".</span>`;
                 return;
             }
 
             let displayHtml = '';
-            matchedMains.forEach(mainKey => {
+            matchedMainKeys.forEach(mainKey => {
                 let info = mainGroups[mainKey];
                 let dummyCount = info.dummies.length;
 
@@ -1734,10 +1737,10 @@
         }
 
         async function saveSuperAdminMultiLinkage() {
-            const mainIgn = document.getElementById('type-main-ign').value.trim();
+            const mainIgnInput = document.getElementById('type-main-ign').value.trim();
             const dummyInputs = document.querySelectorAll('.dummy-input-field');
 
-            if (!mainIgn) {
+            if (!mainIgnInput) {
                 alert("⚠️ Paki-type muna ang Main Character IGN!");
                 return;
             }
@@ -1745,7 +1748,7 @@
             let dummyList = [];
             dummyInputs.forEach(input => {
                 let val = input.value.trim();
-                if (val && val.toLowerCase() !== mainIgn.toLowerCase()) { dummyList.push(val); }
+                if (val && val.toLowerCase() !== mainIgnInput.toLowerCase()) { dummyList.push(val); }
             });
 
             if (dummyList.length === 0) {
@@ -1754,16 +1757,19 @@
             }
 
             let data = getGuildData();
-            let mainFound = false;
+            let canonicalMainIgn = null;
+
+            // Hanapin ang Main Character nang Case-Insensitive at kunin ang kanyang exact spelling
             for (let divKey in data) {
-                if (data[divKey].some(m => m.name.toLowerCase() === mainIgn.toLowerCase())) {
-                    mainFound = true;
+                let foundMain = data[divKey].find(m => m.name.toLowerCase() === mainIgnInput.toLowerCase());
+                if (foundMain) {
+                    canonicalMainIgn = foundMain.name;
                     break;
                 }
             }
 
-            if (!mainFound) {
-                alert(`⚠️ Ang Main Character na "${mainIgn}" ay hindi mahanap sa anumang Roster Division. I-register muna siya sa Roster!`);
+            if (!canonicalMainIgn) {
+                alert(`⚠️ Ang Main Character na "${mainIgnInput}" ay hindi mahanap sa anumang Roster Division. I-register muna siya sa Roster!`);
                 return;
             }
 
@@ -1778,7 +1784,7 @@
                 }
 
                 if (foundDummyObj) {
-                    foundDummyObj.mainOwner = mainIgn;
+                    foundDummyObj.mainOwner = canonicalMainIgn;
                     foundDummyObj.icon = '🎭';
                     linkedCount++;
                 } else {
@@ -1789,14 +1795,14 @@
             if (linkedCount > 0) {
                 await saveGuildData(data);
                 let missingMsg = missingDummies.length > 0 ? `\n⚠️ Hindi pa naka-register sa roster ang: ${missingDummies.join(', ')}` : '';
-                alert(`🎉 [Link Successful] Naka-link na ang ${linkedCount} Dummy Accounts kay Main "${mainIgn}"! Maaari mo na itong i-search sa portal.${missingMsg}`);
+                alert(`🎉 [Link Successful] Naka-link na ang ${linkedCount} Dummy Accounts kay Main "${canonicalMainIgn}"! Maaari mo na itong i-search sa portal.${missingMsg}`);
 
                 document.getElementById('type-main-ign').value = '';
                 dummyInputs.forEach(i => i.value = '');
 
                 renderRosters();
                 onDivisionChange();
-                document.getElementById('search-main-input').value = mainIgn;
+                document.getElementById('search-main-input').value = canonicalMainIgn;
                 searchMainAndDummies();
             } else {
                 alert(`⚠️ Walang na-link! Siguraduhing na-register muna sa Roster ang mga Dummy Accounts na: ${missingDummies.join(', ')}`);
