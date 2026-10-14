@@ -384,22 +384,19 @@
         <!-- PUBLIC SECONDARY DISPLAY FOR GIVEAWAYBOT (LALABAS LAMANG KAGANANG NAKA-SHOW SA PORTAL) -->
         <section id="public-giveaway-display-section" class="panel" style="display: none; border: 2px solid #ff3399; background: rgba(255, 0, 127, 0.05); margin-bottom: 60px;">
             <h3 style="color: #ff99dd; text-align: center; margin-bottom: 10px;">🎲 3-Day Castle Siege GiveawayBot Display</h3>
-            <p style="text-align: center; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 20px;">
-                Public view para sa huling 3 Castle Siege perfect attendance (3/3). Tanging ang SuperAdmin lamang ang may karapatang mag-roll ng winners sa loob ng Officer Portal.
-            </p>
 
-            <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
+            <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; margin-top: 15px;">
                 <div style="flex: 1; min-width: 280px; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 6px; border: 1px solid var(--border-gold);">
                     <h4 style="color: var(--primary-glow); font-size: 0.9rem; margin-bottom: 8px;">📋 Qualified 3/3 Attendance Main Members:</h4>
                     <div id="public-qualified-list" style="max-height: 150px; overflow-y: auto; font-size: 0.85rem; color: #fff;">
-                        <span style="color: var(--text-dim);">Kinakalkula mula sa huling 3 CS records...</span>
+                        <span style="color: var(--text-dim);">Calculating from the last 3 CS records...</span>
                     </div>
                 </div>
 
                 <div style="flex: 1; min-width: 280px; background: rgba(255, 0, 127, 0.1); padding: 15px; border-radius: 6px; border: 1px solid #ff3399; text-align: center;">
                     <h4 style="color: #ff99dd; font-size: 0.9rem; margin-bottom: 8px;">🏆 Official Giveaway Winners:</h4>
                     <div id="public-winners-display-box" style="font-size: 0.9rem; color: #fff; margin-top: 10px;">
-                        <em style="color: var(--text-dim);">Naghihintay pa sa pag-roll ng SuperAdmin sa loob ng Portal...</em>
+                        <em style="color: var(--text-dim);">No winners rolled yet.</em>
                     </div>
                 </div>
             </div>
@@ -1005,7 +1002,7 @@
                 
                 const p2 = document.createElement('p');
                 p2.style.cssText = "margin-top: 6px; font-size: 0.75rem; color: #7a7a90; letter-spacing: 1px;";
-                p2.innerHTML = 'Developed & Maintained by <span style="color: var(--primary);">Lord Emperor Warlock & Kultura Alliance</span>';
+                p2.innerHTML = 'Developed & Maintained by <span style="color: var(--primary);">Lord Emperor Warlock</span>';
                 
                 footerContainer.appendChild(p1);
                 footerContainer.appendChild(p2);
@@ -1332,7 +1329,7 @@
 
             const csRecords = (cloudAttendanceHistory || []).filter(r => r.event === "Castle Siege War").slice(0, 3);
             if (csRecords.length < 3) {
-                qualifiedListElem.innerHTML = `<span style="color: var(--text-dim);">Kailangan ng 3 recorded Castle Siege events (Kasalukuyan: ${csRecords.length}/3).</span>`;
+                qualifiedListElem.innerHTML = `<span style="color: var(--text-dim);">Requires 3 recorded Castle Siege events (Current: ${csRecords.length}/3).</span>`;
                 return;
             }
 
@@ -1349,7 +1346,7 @@
 
             let qualifiedMains = Object.keys(csMainCounts).filter(mName => csMainCounts[mName] === 3);
             if (qualifiedMains.length === 0) {
-                qualifiedListElem.innerHTML = `<span style="color: var(--text-dim);">Wala pang miyembro na may kumpletong 3/3 CS attendance.</span>`;
+                qualifiedListElem.innerHTML = `<span style="color: var(--text-dim);">No members have completed 3/3 CS attendance yet.</span>`;
                 return;
             }
 
@@ -1384,7 +1381,7 @@
 
             if (window.database) {
                 await window.dbSet(window.dbRef(window.database, 'kultura_events'), newEventsPayload);
-                alert("🎉 Success! Ang Guild Events at GiveawayBot Public Visibility Settings ay nailathala na!");
+                alert("🎉 Success! Guild Events and GiveawayBot Public Visibility Settings have been published!");
             }
         }
 
@@ -1393,7 +1390,7 @@
             const csRecords = (cloudAttendanceHistory || []).filter(r => r.event === "Castle Siege War").slice(0, 3);
             
             if (csRecords.length < 3) {
-                alert(`⚠️ Kinakailangan ng kahit 3 recorded Castle Siege War events! Kasalukuyang mayroon lamang na ${csRecords.length} CS events sa database.`);
+                alert(`⚠️ Requires at least 3 recorded Castle Siege War events! Currently only have ${csRecords.length} CS events in database.`);
                 return;
             }
 
@@ -1415,7 +1412,7 @@
             let qualifiedMains = Object.keys(csMainCounts).filter(mName => csMainCounts[mName] === 3);
 
             if (qualifiedMains.length < 3) {
-                alert(`⚠️ Kulang ang bilang ng qualified members! Mayroon lamang ${qualifiedMains.length} main members na nakakumpleto ng 3/3 CS attendance.`);
+                alert(`⚠️ Not enough qualified members! Only ${qualifiedMains.length} main members completed 3/3 CS attendance.`);
                 return;
             }
 
@@ -1456,7 +1453,7 @@
 
                     resultsBox.style.display = 'block';
 
-                    // Update public secondary display winners box din
+                    // Update public secondary display winners box
                     const publicWinnersBox = document.getElementById('public-winners-display-box');
                     if (publicWinnersBox) {
                         publicWinnersBox.innerHTML = publicWinnersHtml;
