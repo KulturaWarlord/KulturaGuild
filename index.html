@@ -60,7 +60,7 @@
             cursor: url('https://muonline.webzen.com/Cont/images/common/cursor.cur'), auto !important;
         }
 
-        a, button, .server-logo-link, #music-control, .rotating-alliance-badge, .roster-toggle-btn, .admin-collapsible-btn, .modal-win-btn {
+        a, button, .server-logo-link, .rotating-alliance-badge, .roster-toggle-btn, .admin-collapsible-btn, .modal-win-btn {
             cursor: url('https://muonline.webzen.com/Cont/images/common/cursor_select.cur'), pointer !important;
         }
 
@@ -125,34 +125,6 @@
         .side-floating-text.left { left: 20px; }
         .side-floating-text.right { right: 20px; }
         .side-floating-text span.gap-space { height: 30px; }
-
-        #music-control {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            z-index: 9999;
-            background: rgba(139, 0, 0, 0.9);
-            border: 1px solid var(--primary);
-            color: #fff;
-            padding: 12px 20px;
-            border-radius: 30px;
-            font-family: 'Cinzel', serif;
-            font-size: 0.85rem;
-            font-weight: 700;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.8), 0 0 10px rgba(230, 184, 0, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-
-        #music-control:hover {
-            background: linear-gradient(135deg, var(--primary), #b38f00);
-            color: #000;
-            box-shadow: 0 0 20px var(--primary-glow);
-            transform: translateY(-2px);
-        }
 
         .portal-btn-top-left {
             position: fixed !important;
@@ -762,18 +734,12 @@
     <div class="side-floating-text right" id="right-floating-word">
         <span>A</span><span>L</span><span>L</span><span>I</span><span>A</span><span>N</span><span>C</span><span>E</span>
         <span class="gap-space"></span>
-        <span>P</span>
-        <span>H</span>
+        <span style="background: linear-gradient(180deg, #331100 0%, #b35900 50%, #ffaa33 100%);">P</span>
+        <span style="background: linear-gradient(180deg, #331100 0%, #b35900 50%, #ffaa33 100%);">H</span>
     </div>
 
-    <!-- Floating Audio Control Button -->
-    <div id="music-control" onclick="toggleMusic()">
-        <span id="music-icon">🎵</span>
-        <span id="music-text">Play Guild Music</span>
-    </div>
-
-    <!-- Audio Element -->
-    <audio id="bg-audio" loop preload="auto">
+    <!-- Background Audio Element (Autoplay & Loop) -->
+    <audio id="bg-audio" autoplay loop preload="auto">
         <source src="Epic Medieval Battle Music_ _Valiant Warriors of our Lands_ by RageSound (Copyright Free Music) [MGIt04kMV_g].mp3" type="audio/mpeg">
         <source src="kultura_music.mp3" type="audio/mpeg">
     </audio>
@@ -1346,18 +1312,53 @@
     </div>
 
     <footer>
-        <p>&copy; 2026 <span>Kultura Guild</span> — NoLimit MU Online Community. All Rights Reserved.</p>
+        <div id="dynamic-secure-credits"></div>
     </footer>
 
     <!-- Interactive Scripts -->
     <script>
+        // JS-Generated Protected Credits
         document.addEventListener('DOMContentLoaded', () => {
+            const footerContainer = document.getElementById('dynamic-secure-credits');
+            if (footerContainer) {
+                const p1 = document.createElement('p');
+                p1.innerHTML = '&copy; 2026 <span>Kultura Guild</span> — NoLimit MU Online Community. All Rights Reserved.';
+                
+                const p2 = document.createElement('p');
+                p2.style.cssText = "margin-top: 6px; font-size: 0.75rem; color: #7a7a90; letter-spacing: 1px;";
+                p2.innerHTML = 'Developed & Maintained by <span style="color: var(--primary);">Lord Emperor Warlock & Kultura Alliance</span>';
+                
+                footerContainer.appendChild(p1);
+                footerContainer.appendChild(p2);
+            }
+
             const leftLetters = document.querySelectorAll('#left-floating-word span');
             leftLetters.forEach((letter, index) => { letter.style.animationDelay = `${index * 0.12}s`; });
 
             const rightLetters = document.querySelectorAll('#right-floating-word span');
             rightLetters.forEach((letter, index) => { letter.style.animationDelay = `${index * 0.12}s`; });
         });
+
+        // Background Audio Autoplay Handler (Bypasses Browser Autoplay Restrictions)
+        const audio = document.getElementById('bg-audio');
+        function startBackgroundAudio() {
+            if (audio) {
+                audio.play().catch(() => {
+                    const enableAudioOnInteraction = () => {
+                        audio.play();
+                        window.removeEventListener('click', enableAudioOnInteraction);
+                        window.removeEventListener('touchstart', enableAudioOnInteraction);
+                        window.removeEventListener('keydown', enableAudioOnInteraction);
+                        window.removeEventListener('scroll', enableAudioOnInteraction);
+                    };
+                    window.addEventListener('click', enableAudioOnInteraction);
+                    window.addEventListener('touchstart', enableAudioOnInteraction);
+                    window.addEventListener('keydown', enableAudioOnInteraction);
+                    window.addEventListener('scroll', enableAudioOnInteraction);
+                });
+            }
+        }
+        window.addEventListener('DOMContentLoaded', startBackgroundAudio);
 
         let ALL_DIVISIONS = [
             "Fullclip Division (Fullclip)",
@@ -2420,21 +2421,6 @@
             }
         }
         setInterval(rotateAllianceBadge, 3000);
-
-        const audio = document.getElementById('bg-audio');
-        let isPlaying = false;
-        function playMusic() {
-            audio.play().then(() => { isPlaying = true; updateButton(); }).catch(() => { isPlaying = false; updateButton(); });
-        }
-        function toggleMusic() {
-            if (isPlaying) { audio.pause(); isPlaying = false; } else { playMusic(); }
-            updateButton();
-        }
-        function updateButton() {
-            const icon = document.getElementById('music-icon');
-            const text = document.getElementById('music-text');
-            if (isPlaying) { icon.innerText = '🔊'; text.innerText = 'Pause Music'; } else { icon.innerText = '🔇'; text.innerText = 'Play Music'; }
-        }
 
         window.addEventListener('DOMContentLoaded', () => {
             const savedOfficer = localStorage.getItem('kultura_logged_officer');
