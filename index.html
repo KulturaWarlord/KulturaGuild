@@ -293,14 +293,14 @@
     <div class="side-floating-text right" id="right-floating-word">
         <span>A</span><span>L</span><span>L</span><span>I</span><span>A</span><span>N</span><span>C</span><span>E</span>
         <span class="gap-space"></span>
-        <span>P</span>
-        <span>H</span>
+        <span style="background: linear-gradient(180deg, #331100 0%, #b35900 50%, #ffaa33 100%);">P</span>
+        <span style="background: linear-gradient(180deg, #331100 0%, #b35900 50%, #ffaa33 100%);">H</span>
     </div>
 
     <!-- Background Audio Element -->
     <audio id="bg-audio" loop preload="auto">
         <source src="Epic Medieval Battle Music_ _Valiant Warriors of our Lands_ by RageSound (Copyright Free Music) [MGIt04kMV_g].mp3" type="audio/mpeg">
-        <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73111.mp3?filename=epic-hollywood-trailer-109587.mp3" type="audio/mpeg">
+        <source src="https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png" type="audio/mpeg">
     </audio>
 
     <!-- Header Section -->
@@ -377,6 +377,30 @@
                             <tr><td colspan="5" style="padding: 10px; text-align: center; color: var(--text-dim);">Connecting to Live Firebase Sync...</td></tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- PUBLIC SECONDARY DISPLAY FOR GIVEAWAYBOT (LALABAS LAMANG KAGANANG NAKA-SHOW SA PORTAL) -->
+        <section id="public-giveaway-display-section" class="panel" style="display: none; border: 2px solid #ff3399; background: rgba(255, 0, 127, 0.05); margin-bottom: 60px;">
+            <h3 style="color: #ff99dd; text-align: center; margin-bottom: 10px;">🎲 3-Day Castle Siege GiveawayBot Display</h3>
+            <p style="text-align: center; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 20px;">
+                Public view para sa huling 3 Castle Siege perfect attendance (3/3). Tanging ang SuperAdmin lamang ang may karapatang mag-roll ng winners sa loob ng Officer Portal.
+            </p>
+
+            <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
+                <div style="flex: 1; min-width: 280px; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 6px; border: 1px solid var(--border-gold);">
+                    <h4 style="color: var(--primary-glow); font-size: 0.9rem; margin-bottom: 8px;">📋 Qualified 3/3 Attendance Main Members:</h4>
+                    <div id="public-qualified-list" style="max-height: 150px; overflow-y: auto; font-size: 0.85rem; color: #fff;">
+                        <span style="color: var(--text-dim);">Kinakalkula mula sa huling 3 CS records...</span>
+                    </div>
+                </div>
+
+                <div style="flex: 1; min-width: 280px; background: rgba(255, 0, 127, 0.1); padding: 15px; border-radius: 6px; border: 1px solid #ff3399; text-align: center;">
+                    <h4 style="color: #ff99dd; font-size: 0.9rem; margin-bottom: 8px;">🏆 Official Giveaway Winners:</h4>
+                    <div id="public-winners-display-box" style="font-size: 0.9rem; color: #fff; margin-top: 10px;">
+                        <em style="color: var(--text-dim);">Naghihintay pa sa pag-roll ng SuperAdmin sa loob ng Portal...</em>
+                    </div>
                 </div>
             </div>
         </section>
@@ -497,14 +521,14 @@
                             
                             <!-- GIVEAWAYBOT VISIBILITY TOGGLE SECTION -->
                             <div style="background: rgba(255, 51, 153, 0.1); padding: 12px; border-radius: 6px; border: 1px solid #ff3399; margin-bottom: 15px;">
-                                <h4 style="color: #ff99dd; font-size: 0.85rem; margin-bottom: 6px;">🎲 GiveawayBot Module Control:</h4>
+                                <h4 style="color: #ff99dd; font-size: 0.85rem; margin-bottom: 6px;">🎲 GiveawayBot Public Visibility Control:</h4>
                                 <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">
-                                    I-set kung dapat bang lumabas ang <strong>GiveawayBot module</strong> sa Officer Portal.
+                                    I-set kung dapat bang lumabas ang <strong>GiveawayBot secondary display sa labas ng portal</strong> para sa mga miyembro.
                                 </p>
                                 <div style="display: flex; gap: 10px; align-items: center;">
                                     <select id="giveawaybot-visibility-select" style="flex: 1; padding: 8px; background: #111; border: 1px solid #ff3399; color: #fff; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">
-                                        <option value="HIDE">🔒 HIDE GiveawayBot Module</option>
-                                        <option value="SHOW">👁️ SHOW GiveawayBot Module</option>
+                                        <option value="HIDE">🔒 HIDE GiveawayBot (Nakatago sa labas)</option>
+                                        <option value="SHOW">👁️ SHOW GiveawayBot (Lalabas sa labas ng portal)</option>
                                     </select>
                                 </div>
                             </div>
@@ -981,7 +1005,7 @@
                 
                 const p2 = document.createElement('p');
                 p2.style.cssText = "margin-top: 6px; font-size: 0.75rem; color: #7a7a90; letter-spacing: 1px;";
-                p2.innerHTML = 'Developed & Maintained by <span style="color: var(--primary);">Lord Emperor Warlock</span>';
+                p2.innerHTML = 'Developed & Maintained by <span style="color: var(--primary);">Lord Emperor Warlock & Kultura Alliance</span>';
                 
                 footerContainer.appendChild(p1);
                 footerContainer.appendChild(p2);
@@ -1190,6 +1214,7 @@
                 renderAttendanceHistory();
                 renderAdminAttendanceLogList();
                 updateLiveActiveWarriors();
+                updatePublicGiveawayDisplay();
             });
 
             dbOnValue(dbRef(window.database, 'kultura_reset_tickets'), (snap) => {
@@ -1273,19 +1298,67 @@
 
         function updateGiveawayBotVisibility() {
             const superGiveawayBlock = document.getElementById('superadmin-giveaway-block');
-            if (!superGiveawayBlock) return;
-
+            const publicGiveawaySection = document.getElementById('public-giveaway-display-section');
+            
             let currentLower = currentLoggedInOfficer ? currentLoggedInOfficer.toLowerCase() : '';
             let isSuperAdmin = (currentLower === "fullclip" || currentLower === "kultura" || currentLower === "kulturamain");
 
             const eventsData = cloudGuildEvents || defaultGuildEvents;
             const isVisible = Array.isArray(eventsData) ? "HIDE" : (eventsData.giveawayVisible || "HIDE");
 
-            if (isSuperAdmin && isVisible === "SHOW") {
-                superGiveawayBlock.style.display = 'block';
-            } else {
-                superGiveawayBlock.style.display = 'none';
+            // Portal view (SuperAdmin lang)
+            if (superGiveawayBlock) {
+                if (isSuperAdmin && isVisible === "SHOW") {
+                    superGiveawayBlock.style.display = 'block';
+                } else {
+                    superGiveawayBlock.style.display = 'none';
+                }
             }
+
+            // Public secondary display sa labas ng portal
+            if (publicGiveawaySection) {
+                if (isVisible === "SHOW") {
+                    publicGiveawaySection.style.display = 'block';
+                    updatePublicGiveawayDisplay();
+                } else {
+                    publicGiveawaySection.style.display = 'none';
+                }
+            }
+        }
+
+        function updatePublicGiveawayDisplay() {
+            const qualifiedListElem = document.getElementById('public-qualified-list');
+            if (!qualifiedListElem) return;
+
+            const csRecords = (cloudAttendanceHistory || []).filter(r => r.event === "Castle Siege War").slice(0, 3);
+            if (csRecords.length < 3) {
+                qualifiedListElem.innerHTML = `<span style="color: var(--text-dim);">Kailangan ng 3 recorded Castle Siege events (Kasalukuyan: ${csRecords.length}/3).</span>`;
+                return;
+            }
+
+            let csMainCounts = {};
+            csRecords.forEach(rec => {
+                if (rec.presents) {
+                    let uniqueMainsInEvent = new Set();
+                    rec.presents.forEach(p => { uniqueMainsInEvent.add(p.name); });
+                    uniqueMainsInEvent.forEach(mName => {
+                        csMainCounts[mName] = (csMainCounts[mName] || 0) + 1;
+                    });
+                }
+            });
+
+            let qualifiedMains = Object.keys(csMainCounts).filter(mName => csMainCounts[mName] === 3);
+            if (qualifiedMains.length === 0) {
+                qualifiedListElem.innerHTML = `<span style="color: var(--text-dim);">Wala pang miyembro na may kumpletong 3/3 CS attendance.</span>`;
+                return;
+            }
+
+            let html = `<ul style="padding-left: 15px; margin: 0;">`;
+            qualifiedMains.forEach(m => {
+                html += `<li>👑 <strong>${m}</strong> <span style="color: #33cc33;">(3/3 Verified)</span></li>`;
+            });
+            html += `</ul>`;
+            qualifiedListElem.innerHTML = html;
         }
 
         async function saveGuildEventsToFirebase() {
@@ -1311,7 +1384,7 @@
 
             if (window.database) {
                 await window.dbSet(window.dbRef(window.database, 'kultura_events'), newEventsPayload);
-                alert("🎉 Success! Ang Guild Events at GiveawayBot Visibility Settings ay nailathala na!");
+                alert("🎉 Success! Ang Guild Events at GiveawayBot Public Visibility Settings ay nailathala na!");
             }
         }
 
@@ -1367,6 +1440,7 @@
                     infoElem.innerHTML = `✅ Giveaway Complete! Total Qualified Mains: <strong>${qualifiedMains.length}</strong>`;
                     winnersList.innerHTML = '';
 
+                    let publicWinnersHtml = '';
                     finalWinners.forEach((wName, i) => {
                         let mainDiv = findMainGuildDivision(wName) || "Kultura Alliance";
                         winnersList.innerHTML += `
@@ -1376,9 +1450,17 @@
                                 <div style="font-size: 0.75rem; color: #33cc33;">${mainDiv}</div>
                             </div>
                         `;
+
+                        publicWinnersHtml += `👑 <strong>Winner ${i+1}: ${wName}</strong> <span style="color: #33cc33;">(${mainDiv})</span><br>`;
                     });
 
                     resultsBox.style.display = 'block';
+
+                    // Update public secondary display winners box din
+                    const publicWinnersBox = document.getElementById('public-winners-display-box');
+                    if (publicWinnersBox) {
+                        publicWinnersBox.innerHTML = publicWinnersHtml;
+                    }
                 }
             }, 100);
         }
@@ -1817,6 +1899,7 @@
             renderAttendanceHistory();
             renderAdminAttendanceLogList();
             updateLiveActiveWarriors();
+            updatePublicGiveawayDisplay();
             
             alert(`🎉 Live Attendance Updated successfully!`);
         }
@@ -1918,6 +2001,7 @@
                 renderAttendanceHistory();
                 renderAdminAttendanceLogList();
                 updateLiveActiveWarriors();
+                updatePublicGiveawayDisplay();
                 alert(`🗑️ Nabura na nang tuluyan ang attendance log record!`);
             }
         }
