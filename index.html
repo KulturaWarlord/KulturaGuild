@@ -9,7 +9,7 @@
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        import { getDatabase, ref, set, get, child, onValue, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
         import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -31,6 +31,7 @@
         window.dbGet = get;
         window.dbChild = child;
         window.dbSet = set;
+        window.dbPush = push;
         window.dbOnValue = onValue;
         window.database = db;
         window.auth = auth;
@@ -75,7 +76,6 @@
             position: relative;
         }
 
-        /* FLOATING SIDE TEXT STYLES - 5rem ALGERIAN, BLACK-RED TEXT WITH GOLD GLOW */
         .side-floating-text {
             position: fixed;
             top: 50%;
@@ -152,6 +152,25 @@
             color: #000;
             box-shadow: 0 0 20px var(--primary-glow);
             transform: translateY(-2px);
+        }
+
+        .portal-btn-top-left {
+            position: fixed !important;
+            top: 15px !important;
+            left: 15px !important;
+            z-index: 99999 !important;
+            box-shadow: 0 0 15px rgba(230, 184, 0, 0.8), 0 4px 15px rgba(0,0,0,0.9) !important;
+            background: linear-gradient(135deg, #1e7e34, #155724) !important;
+            border: 2px solid var(--primary) !important;
+            font-size: 0.8rem !important;
+            padding: 10px 18px !important;
+            border-radius: 30px !important;
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(51, 204, 51, 0.6); }
+            50% { box-shadow: 0 0 22px rgba(230, 184, 0, 0.9); }
         }
 
         h1, h2, h3, h4 {
@@ -743,8 +762,8 @@
     <div class="side-floating-text right" id="right-floating-word">
         <span>A</span><span>L</span><span>L</span><span>I</span><span>A</span><span>N</span><span>C</span><span>E</span>
         <span class="gap-space"></span>
-        <span>P</span>
-        <span>H</span>
+        <span style="background: linear-gradient(180deg, #331100 0%, #b35900 50%, #ffaa33 100%);">P</span>
+        <span style="background: linear-gradient(180deg, #331100 0%, #b35900 50%, #ffaa33 100%);">H</span>
     </div>
 
     <!-- Floating Audio Control Button -->
@@ -792,8 +811,8 @@
                 <div class="stat-label">Active Warriors</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">300K SOL</div>
-                <div class="stat-label">CS Prize</div>
+                <div class="stat-value">100k SOL</div>
+                <div class="stat-label">CS Prize Pool</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value">Valley</div>
@@ -809,7 +828,8 @@
                     <button onclick="open3DaySummaryModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem; background: linear-gradient(135deg, #0088cc, #004488);">
                         📊 View 3-Day Summary & Download Payout List
                     </button>
-                    <button onclick="openLoginModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem;">
+                    <!-- OFFICER PORTAL BUTTON (DYNAMICAL MOVES TOP-LEFT WHEN LOGGED IN) -->
+                    <button id="open-officer-portal-btn" onclick="openLoginModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem;">
                         🔐 Open Authorized Officer Portal
                     </button>
                 </div>
@@ -896,16 +916,17 @@
             </div>
         </div>
 
-        <!-- AUTHORIZED OFFICER PORTAL WITH FIXED MINIMIZE/RESTORE DOCK -->
+        <!-- AUTHORIZED OFFICER PORTAL WITH LOG OUT & MINIMIZE CONTROLS -->
         <div id="attendance-admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center;">
-            <div id="admin-modal-card" style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 680px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto; position: relative; transition: all 0.3s ease;">
+            <div id="admin-modal-card" style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 680px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto; position: relative; transition: all 0.3s ease; pointer-events: auto;">
                 
                 <!-- WINDOW HEADER CONTROLS -->
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(230,184,0,0.3); padding-bottom: 8px; margin-bottom: 12px;">
                     <h3 style="color: var(--primary-glow); margin: 0; font-size: 1.1rem;">🔒 Authorized Officer Portal</h3>
                     <div style="display: flex; gap: 6px;">
+                        <button onclick="handleLogout()" class="modal-win-btn" title="Log Out" style="background: #8b0000; border: 1px solid #ff3333; color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: bold; font-size: 0.75rem;">🚪 Log Out</button>
                         <button onclick="toggleMinimizeAdminModal()" id="modal-min-btn" class="modal-win-btn" title="Minimize / Restore" style="background: #333; border: 1px solid var(--primary); color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: bold; font-size: 0.8rem;">➖</button>
-                        <button onclick="closeAdminModal()" class="modal-win-btn" title="Close" style="background: #8b0000; border: 1px solid #ff3333; color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: bold; font-size: 0.8rem;">✖</button>
+                        <button onclick="closeAdminModal()" class="modal-win-btn" title="Close" style="background: #333; border: 1px solid #777; color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: bold; font-size: 0.8rem;">✖</button>
                     </div>
                 </div>
 
@@ -926,8 +947,8 @@
                         </div>
                     </div>
 
-                    <!-- MULTI-DUMMY CHARACTER MAPPER & LIVE MAIN SEARCH BLOCK -->
-                    <div id="superadmin-main-dummy-block" class="admin-section-block" style="display: none; border-color: #33cc33;">
+                    <!-- MULTI-DUMMY CHARACTER MAPPER & LIVE MAIN SEARCH BLOCK (LOCKED / HIDDEN ONLY FOR iKapitana) -->
+                    <div id="superadmin-main-dummy-block" class="admin-section-block" style="border-color: #33cc33;">
                         <button onclick="toggleAdminSection('sec-main-dummy-linker')" class="admin-collapsible-btn" style="color: #33cc33; background: rgba(51, 204, 51, 0.1);">
                             <span>🎭 Multi-Dummy Character Mapper & Search Portal</span>
                             <span id="icon-sec-main-dummy-linker">▼ Expand</span>
@@ -1378,6 +1399,36 @@
         let currentLoggedInOfficer = null;
         let cached3DayPayoutData = null;
 
+        let inactivityTimer = null;
+        const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 Minutes in milliseconds
+
+        function resetInactivityTimer() {
+            if (!currentLoggedInOfficer) return;
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                alert("⏳ Naubos na ang 5-minutong inactivity limit. Awtomatiko kang na-log out.");
+                handleLogout();
+            }, INACTIVITY_LIMIT);
+        }
+
+        ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(eventType => {
+            window.addEventListener(eventType, resetInactivityTimer);
+        });
+
+        /* UPDATE PORTAL BUTTON POSITION & LOOK DEPENDING ON LOGIN STATUS */
+        function updatePortalButtonUI() {
+            const btn = document.getElementById('open-officer-portal-btn');
+            if (!btn) return;
+
+            if (currentLoggedInOfficer) {
+                btn.classList.add('portal-btn-top-left');
+                btn.innerHTML = `🔓 Open Officer Portal (@${currentLoggedInOfficer})`;
+            } else {
+                btn.classList.remove('portal-btn-top-left');
+                btn.innerHTML = `🔐 Open Authorized Officer Portal`;
+            }
+        }
+
         function getStandardDateKey() {
             const d = new Date();
             const year = d.getFullYear();
@@ -1386,11 +1437,11 @@
             return `${year}-${month}-${day}`;
         }
 
-        /* CASE-INSENSITIVE LIVE MAIN CHARACTER SEARCH FUNCTION FOR DUMMIES */
         function searchMainAndDummies() {
-            const rawQuery = document.getElementById('search-main-input').value.trim();
+            const rawQuery = document.getElementById('search-main-input') ? document.getElementById('search-main-input').value.trim() : '';
             const query = rawQuery.toLowerCase();
             const resultBox = document.getElementById('search-dummy-result-box');
+            if (!resultBox) return;
 
             if (!query) {
                 resultBox.innerHTML = `<span style="color: var(--text-dim); italic;">Mag-type sa search bar sa itaas para makita ang Main at ang kanyang mga naka-link na dummies.</span>`;
@@ -1400,7 +1451,6 @@
             let data = getGuildData();
             let mainGroups = {};
 
-            // Grupo ng Dummies base sa Case-Insensitive Main Owner Key
             for (let divKey in data) {
                 let members = data[divKey];
                 members.forEach(m => {
@@ -1408,11 +1458,7 @@
                     let mainKey = rawMainName.toLowerCase();
 
                     if (!mainGroups[mainKey]) {
-                        mainGroups[mainKey] = {
-                            mainIgn: rawMainName,
-                            mainDivision: divKey,
-                            dummies: []
-                        };
+                        mainGroups[mainKey] = { mainIgn: rawMainName, mainDivision: divKey, dummies: [] };
                     }
                     if (m.name.toLowerCase() !== mainKey) {
                         mainGroups[mainKey].dummies.push({ name: m.name, division: divKey, class: m.class });
@@ -1420,7 +1466,6 @@
                 });
             }
 
-            // Paghahanap gamit ang Case-Insensitive query matching
             let matchedMainKeys = Object.keys(mainGroups).filter(k => k.includes(query));
 
             if (matchedMainKeys.length === 0) {
@@ -1653,6 +1698,10 @@
         }
 
         function openLoginModal() {
+            if (currentLoggedInOfficer) {
+                openAdminModal();
+                return;
+            }
             document.getElementById('login-username').value = '';
             document.getElementById('login-password').value = '';
             document.getElementById('login-modal').style.display = 'flex';
@@ -1670,14 +1719,32 @@
             try {
                 await window.signInWithEmailAndPassword(window.auth, loginEmail, passVal);
                 currentLoggedInOfficer = userVal.includes('@') ? userVal.split('@')[0] : userVal;
+                
+                localStorage.setItem('kultura_logged_officer', currentLoggedInOfficer);
 
-                alert(`✅ Welcome ${currentLoggedInOfficer}! Successfully authenticated via Firebase Auth.`);
+                alert(`✅ Welcome ${currentLoggedInOfficer}! Successfully authenticated.`);
                 closeLoginModal();
+                updatePortalButtonUI();
                 openAdminModal();
+                resetInactivityTimer();
             } catch (error) {
                 console.error(error);
                 alert("❌ Mali ang Email/Username o Password! Paki-subukan muli.");
             }
+        }
+
+        async function handleLogout() {
+            try {
+                if (window.auth) { await window.signOut(window.auth); }
+            } catch(e) {}
+
+            currentLoggedInOfficer = null;
+            localStorage.removeItem('kultura_logged_officer');
+            clearTimeout(inactivityTimer);
+
+            closeAdminModal();
+            updatePortalButtonUI();
+            alert("🔒 Successfully Logged Out.");
         }
 
         function toggleAdminSection(sectionId) {
@@ -1707,9 +1774,11 @@
                 modalCard.style.position = "relative";
                 modalCard.style.bottom = "auto";
                 modalCard.style.right = "auto";
+                
                 modalOverlay.style.background = "rgba(0,0,0,0.85)";
                 modalOverlay.style.justifyContent = "center";
                 modalOverlay.style.alignItems = "center";
+                modalOverlay.style.pointerEvents = "auto";
             } else {
                 bodyContent.style.display = "none";
                 minBtn.innerText = "🗖";
@@ -1719,9 +1788,11 @@
                 modalCard.style.position = "fixed";
                 modalCard.style.bottom = "20px";
                 modalCard.style.right = "20px";
+                
                 modalOverlay.style.background = "transparent";
                 modalOverlay.style.justifyContent = "flex-end";
                 modalOverlay.style.alignItems = "flex-end";
+                modalOverlay.style.pointerEvents = "none";
             }
         }
 
@@ -1759,7 +1830,6 @@
             let data = getGuildData();
             let canonicalMainIgn = null;
 
-            // Hanapin ang Main Character nang Case-Insensitive at kunin ang kanyang exact spelling
             for (let divKey in data) {
                 let foundMain = data[divKey].find(m => m.name.toLowerCase() === mainIgnInput.toLowerCase());
                 if (foundMain) {
@@ -2045,6 +2115,7 @@
 
             const oldUserKey = currentLoggedInOfficer;
             currentLoggedInOfficer = newUsername;
+            localStorage.setItem('kultura_logged_officer', currentLoggedInOfficer);
 
             let data = getGuildData();
             let oldDivKey = `${oldUserKey} Division (${oldUserKey})`;
@@ -2062,6 +2133,7 @@
             document.getElementById('change-username-new').value = '';
             renderRosters();
             openAdminModal();
+            updatePortalButtonUI();
         }
 
         async function changeMyPassword() {
@@ -2121,7 +2193,10 @@
         }
 
         function openAdminModal() {
-            if (!currentLoggedInOfficer) return;
+            if (!currentLoggedInOfficer) {
+                openLoginModal();
+                return;
+            }
             document.getElementById('logged-agm-display').innerText = `${currentLoggedInOfficer}`;
 
             const superInboxBlock = document.getElementById('superadmin-inbox-block');
@@ -2131,20 +2206,27 @@
 
             let currentLower = currentLoggedInOfficer.toLowerCase();
             let isSuperAdmin = (currentLower === "fullclip" || currentLower === "kultura" || currentLower === "kulturamain");
+            
+            // Check if current user is iKapitana
+            let isIkapitana = (currentLower === "ikapitana");
 
             if (isSuperAdmin) {
                 superInboxBlock.style.display = 'block';
-                superMainDummyBlock.style.display = 'block';
                 superDeleteLogsBlock.style.display = 'block';
                 superGuildRegBlock.style.display = 'block';
-                
                 renderSuperAdminInbox();
                 renderAdminAttendanceLogList();
             } else {
                 superInboxBlock.style.display = 'none';
-                superMainDummyBlock.style.display = 'none';
                 superDeleteLogsBlock.style.display = 'none';
                 superGuildRegBlock.style.display = 'none';
+            }
+
+            // Ipakita ang Multi-Dummy Character Mapper sa lahat MALIBAN kay ikapitana
+            if (isIkapitana) {
+                superMainDummyBlock.style.display = 'none';
+            } else {
+                superMainDummyBlock.style.display = 'block';
             }
 
             const selectDiv = document.getElementById('admin-officer-select');
@@ -2177,6 +2259,7 @@
             modalOverlay.style.background = "rgba(0,0,0,0.85)";
             modalOverlay.style.justifyContent = "center";
             modalOverlay.style.alignItems = "center";
+            modalOverlay.style.pointerEvents = "auto";
             modalCard.style.width = "90%";
             modalCard.style.maxWidth = "680px";
             modalCard.style.position = "relative";
@@ -2354,8 +2437,15 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            const savedOfficer = localStorage.getItem('kultura_logged_officer');
+            if (savedOfficer) {
+                currentLoggedInOfficer = savedOfficer;
+                resetInactivityTimer();
+            }
+
             renderRosters();
             updateLiveActiveWarriors();
+            updatePortalButtonUI();
         });
     </script>
 </body>
