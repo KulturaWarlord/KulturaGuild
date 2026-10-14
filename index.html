@@ -336,7 +336,7 @@
                 <div class="stat-label">Active Warriors</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">300k SOL</div>
+                <div class="stat-value">100k SOL</div>
                 <div class="stat-label">CS Prize Pool</div>
             </div>
             <div class="stat-card">
@@ -381,7 +381,7 @@
             </div>
         </section>
 
-        <!-- PUBLIC SECONDARY DISPLAY FOR GIVEAWAYBOT (LALABAS LAMANG KAGANANG NAKA-SHOW SA PORTAL) -->
+        <!-- PUBLIC SECONDARY DISPLAY FOR GIVEAWAYBOT -->
         <section id="public-giveaway-display-section" class="panel" style="display: none; border: 2px solid #ff3399; background: rgba(255, 0, 127, 0.05); margin-bottom: 60px;">
             <h3 style="color: #ff99dd; text-align: center; margin-bottom: 10px;">🎲 3-Day Castle Siege GiveawayBot Display</h3>
 
@@ -411,7 +411,7 @@
                 </div>
 
                 <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">
-                    Binubuo mula sa **huling 3 recorded attendance dates**. Ipinapakita ang kabuuang attendance count at calculated total SOL shares.
+                    Compiled from the **last 3 recorded attendance dates**. Displays the total attendance count and calculated total SOL shares.
                 </p>
 
                 <div id="summary-3day-dates" style="font-size: 0.85rem; color: var(--primary-glow); margin-bottom: 12px; font-weight: bold;"></div>
@@ -443,11 +443,11 @@
         <div id="login-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10001; justify-content: center; align-items: center;">
             <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 400px; padding: 25px; border-radius: 10px; color: #fff; text-align: center;">
                 <h3 style="color: var(--primary-glow); margin-bottom: 15px;">🔐 Secure Firebase Authentication</h3>
-                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Mag-login gamit ang inyong Registered Email / Username sa Firebase Console.</p>
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Log in using your Registered Email / Username in the Firebase Console.</p>
                 
                 <div style="margin-bottom: 12px; text-align: left;">
-                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Registered Email o Username:</label>
-                    <input type="text" id="login-username" placeholder="e.g. kulturamain@alliance.com o Fullclip" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Registered Email or Username:</label>
+                    <input type="text" id="login-username" placeholder="e.g. kulturamain@alliance.com or Fullclip" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
                 </div>
 
                 <div style="margin-bottom: 15px; text-align: left;">
@@ -488,12 +488,12 @@
                         </button>
                         <div id="sec-giveaway-bot" class="admin-collapsible-content">
                             <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
-                                Kwalipikado sa Giveaway: Ang mga Main Characters na nakakumpleto ng <strong>3/3 Castle Siege Attendance</strong> sa huling 3 recorded CS events. Awtomatikong idi-direct sa Main IGN ang prize kahit dummy ang ginamit.
+                                Giveaway Eligibility: Main characters who completed <strong>3/3 Castle Siege Attendance</strong> across the last 3 recorded CS events. Prizes are automatically routed to the Main IGN even if a dummy character was used.
                             </p>
 
                             <div style="background: rgba(0,0,0,0.6); padding: 12px; border-radius: 6px; border: 1px solid #ff3399; margin-bottom: 12px; text-align: center;">
                                 <div id="giveaway-participants-info" style="font-size: 0.85rem; color: #ff99dd; margin-bottom: 10px; font-weight: bold;">
-                                    Pindutin ang button sa ibaba para ma-roll ang 3 random winners!
+                                    Click the button below to roll 3 random winners!
                                 </div>
 
                                 <button onclick="runGiveawayBot()" class="btn" style="padding: 10px 20px; font-size: 0.9rem; background: linear-gradient(135deg, #ff007f, #99004d); color: #fff; border-color: #ff99dd;">
@@ -520,18 +520,18 @@
                             <div style="background: rgba(255, 51, 153, 0.1); padding: 12px; border-radius: 6px; border: 1px solid #ff3399; margin-bottom: 15px;">
                                 <h4 style="color: #ff99dd; font-size: 0.85rem; margin-bottom: 6px;">🎲 GiveawayBot Public Visibility Control:</h4>
                                 <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">
-                                    I-set kung dapat bang lumabas ang <strong>GiveawayBot secondary display sa labas ng portal</strong> para sa mga miyembro.
+                                    Set whether the <strong>GiveawayBot secondary display outside the portal</strong> should be visible to members.
                                 </p>
                                 <div style="display: flex; gap: 10px; align-items: center;">
                                     <select id="giveawaybot-visibility-select" style="flex: 1; padding: 8px; background: #111; border: 1px solid #ff3399; color: #fff; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">
-                                        <option value="HIDE">🔒 HIDE GiveawayBot (Nakatago sa labas)</option>
-                                        <option value="SHOW">👁️ SHOW GiveawayBot (Lalabas sa labas ng portal)</option>
+                                        <option value="HIDE">🔒 HIDE GiveawayBot (Hidden outside)</option>
+                                        <option value="SHOW">👁️ SHOW GiveawayBot (Visible outside portal)</option>
                                     </select>
                                 </div>
                             </div>
 
                             <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:12px;">
-                                Baguhin ang mga impormasyon sa ibaba at i-click ang <strong>💾 Save & Publish Events</strong> para mag-update agad sa landing page at sa portal settings.
+                                Modify the information below and click <strong>💾 Save & Publish Events</strong> to update the landing page and portal settings immediately.
                             </p>
 
                             <!-- EVENT CARD 1 EDIT -->
@@ -564,7 +564,7 @@
                         </button>
                         <div id="sec-inbox" class="admin-collapsible-content">
                             <div id="superadmin-inbox-list" style="max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
-                                <span style="color: var(--text-dim);">Walang nakareserbang ticket sa inbox.</span>
+                                <span style="color: var(--text-dim);">No reserved tickets in the inbox.</span>
                             </div>
                         </div>
                     </div>
@@ -578,7 +578,7 @@
                         <div id="sec-main-dummy-linker" class="admin-collapsible-content">
                             
                             <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
-                                I-type ang <strong>Main Character IGN</strong> at ilagay ang kanyang mga <strong>Dummy Accounts</strong> upang ma-link sila sa database.
+                                Type the <strong>Main Character IGN</strong> and list their <strong>Dummy Accounts</strong> to link them in the database.
                             </p>
                             
                             <div style="margin-bottom: 12px; background: rgba(51,204,51,0.1); padding: 10px; border: 1px solid #33cc33; border-radius: 6px;">
@@ -605,7 +605,7 @@
                                 <input type="text" id="search-main-input" onkeyup="searchMainAndDummies()" placeholder="Type Main Character IGN (e.g., Eremes, Fullclip, Warlock)..." style="width: 100%; padding: 8px 12px; background: #111; border: 1px solid var(--primary); color: #fff; border-radius: 4px; font-size: 0.85rem; margin-bottom: 8px;">
                                 
                                 <div id="search-dummy-result-box" style="background: rgba(0,0,0,0.8); padding: 10px; border-radius: 4px; font-size: 0.85rem; min-height: 40px;">
-                                    <span style="color: var(--text-dim); italic;">Mag-type sa search bar sa itaas para makita ang Main at ang kanyang mga naka-link na dummies.</span>
+                                    <span style="color: var(--text-dim); font-style: italic;">Type in the search bar above to view the Main and their linked dummies.</span>
                                 </div>
                             </div>
 
@@ -620,10 +620,10 @@
                         </button>
                         <div id="sec-delete-attendance" class="admin-collapsible-content">
                             <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
-                                Pumili ng nakalipas na attendance log mula sa listahan sa ibaba at i-click ang <strong>❌ Delete Log</strong> para tuluyang mabura ito sa database.
+                                Select a past attendance log from the list below and click <strong>❌ Delete Log</strong> to permanently remove it from the database.
                             </p>
                             <div id="admin-attendance-logs-list" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
-                                <span style="color: var(--text-dim);">Walang nakareserbang attendance logs.</span>
+                                <span style="color: var(--text-dim);">No reserved attendance logs.</span>
                             </div>
                         </div>
                     </div>
@@ -635,7 +635,7 @@
                             <span id="icon-sec-guild-reg">▼ Expand</span>
                         </button>
                         <div id="sec-guild-reg" class="admin-collapsible-content">
-                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">Note: Ang **Guild Name** ay awtomatikong magiging **Username** din ng bagong Guild Master.</p>
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">Note: The **Guild Name** will automatically become the **Username** of the new Guild Master.</p>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
                                 <input type="text" id="reg-guild-name" placeholder="Guild Name & Username (e.g., SPIDEY)" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem; grid-column: span 2;">
                                 <input type="password" id="reg-gm-password" placeholder="GM Account Password" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
@@ -715,7 +715,7 @@
                                 </button>
                                 <div id="sec-delete-member" class="admin-collapsible-content">
                                     <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 8px;">
-                                        Mag-ingat sa pag-click. Ang mga naburang miyembro ay mawawala sa talaan ng napiling division.
+                                        Exercise caution when clicking. Deleted members will be removed from the selected division record.
                                     </p>
                                     <div id="admin-delete-member-list" style="max-height: 140px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px;"></div>
                                 </div>
@@ -890,7 +890,7 @@
         <section id="schedule-section">
             <h2 class="section-title">Upcoming Guild Schedule</h2>
             <div style="max-width: 800px; margin: 0 auto;" id="dynamic-events-container">
-                <!-- Fallback Habang Nag-o-load -->
+                <!-- Fallback Loading -->
                 <div class="schedule-box">
                     <div class="schedule-title">CASTLE SIEGE WAR</div>
                     <div class="schedule-time">📅 Saturday | 6:00 PM PH Time</div>
@@ -1079,7 +1079,7 @@
             if (!currentLoggedInOfficer) return;
             clearTimeout(inactivityTimer);
             inactivityTimer = setTimeout(() => {
-                alert("⏳ Naubos na ang 5-minutong inactivity limit. Awtomatiko kang na-log out.");
+                alert("⏳ The 5-minute inactivity limit has been reached. You have been automatically logged out.");
                 handleLogout();
             }, INACTIVITY_LIMIT);
         }
@@ -1116,7 +1116,7 @@
             if (!resultBox) return;
 
             if (!query) {
-                resultBox.innerHTML = `<span style="color: var(--text-dim); italic;">Mag-type sa search bar sa itaas para makita ang Main at ang kanyang mga naka-link na dummies.</span>`;
+                resultBox.innerHTML = `<span style="color: var(--text-dim); font-style: italic;">Type in the search bar above to view the Main and their linked dummies.</span>`;
                 return;
             }
 
@@ -1141,7 +1141,7 @@
             let matchedMainKeys = Object.keys(mainGroups).filter(k => k.includes(query));
 
             if (matchedMainKeys.length === 0) {
-                resultBox.innerHTML = `<span style="color: #ffaa33;">⚠️ Walang nahanap na Main Character na may pangalang "<strong>${rawQuery}</strong>".</span>`;
+                resultBox.innerHTML = `<span style="color: #ffaa33;">⚠️ No Main Character found with the name "<strong>${rawQuery}</strong>".</span>`;
                 return;
             }
 
@@ -1156,7 +1156,7 @@
                         dummyListHtml += `<li style="margin-left: 15px; color: #fff;">🎭 <strong>${d.name}</strong> <small style="color: var(--text-dim);">(${d.class} - ${d.division})</small></li>`;
                     });
                 } else {
-                    dummyListHtml = `<span style="color: var(--text-dim); margin-left: 15px; font-size: 0.8rem;">(Walang naka-link na dummy accounts)</span>`;
+                    dummyListHtml = `<span style="color: var(--text-dim); margin-left: 15px; font-size: 0.8rem;">(No linked dummy accounts)</span>`;
                 }
 
                 displayHtml += `
@@ -1303,7 +1303,7 @@
             const eventsData = cloudGuildEvents || defaultGuildEvents;
             const isVisible = Array.isArray(eventsData) ? "HIDE" : (eventsData.giveawayVisible || "HIDE");
 
-            // Portal view (SuperAdmin lang)
+            // Portal view (SuperAdmin only)
             if (superGiveawayBlock) {
                 if (isSuperAdmin && isVisible === "SHOW") {
                     superGiveawayBlock.style.display = 'block';
@@ -1312,7 +1312,7 @@
                 }
             }
 
-            // Public secondary display sa labas ng portal
+            // Public secondary display outside the portal
             if (publicGiveawaySection) {
                 if (isVisible === "SHOW") {
                     publicGiveawaySection.style.display = 'block';
@@ -1518,7 +1518,7 @@
             const tbody = document.getElementById('summary-3day-table-body');
 
             if (!data || data.members.length === 0) {
-                datesElem.innerText = "Walang recorded attendance logs sa database.";
+                datesElem.innerText = "No recorded attendance logs found in the database.";
                 tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:15px; color:var(--text-dim);">No 3-Day Attendance records found.</td></tr>`;
             } else {
                 cached3DayPayoutData = data;
@@ -1548,7 +1548,7 @@
         function downloadCleanPayoutTxt() {
             const data = cached3DayPayoutData || calculate3DayPayoutData();
             if (!data || data.members.length === 0) {
-                alert("⚠️ Walang data na maitatala sa file!");
+                alert("⚠️ No data available to export into file!");
                 return;
             }
 
@@ -1622,7 +1622,7 @@
                 resetInactivityTimer();
             } catch (error) {
                 console.error(error);
-                alert("❌ Mali ang Email/Username o Password! Paki-subukan muli.");
+                alert("❌ Invalid Email/Username or Password! Please try again.");
             }
         }
 
@@ -1705,7 +1705,7 @@
             const dummyInputs = document.querySelectorAll('.dummy-input-field');
 
             if (!mainIgnInput) {
-                alert("⚠️ Paki-type muna ang Main Character IGN!");
+                alert("⚠️ Please type the Main Character IGN first!");
                 return;
             }
 
@@ -1716,7 +1716,7 @@
             });
 
             if (dummyList.length === 0) {
-                alert("⚠️ Maglagay ng kahit isang Dummy IGN sa mga boxes!");
+                alert("⚠️ Enter at least one Dummy IGN in the boxes!");
                 return;
             }
 
@@ -1732,7 +1732,7 @@
             }
 
             if (!canonicalMainIgn) {
-                alert(`⚠️ Ang Main Character na "${mainIgnInput}" ay hindi mahanap sa anumang Roster Division. I-register muna siya sa Roster!`);
+                alert(`⚠️ The Main Character "${mainIgnInput}" was not found in any Roster Division. Please register them in the Roster first!`);
                 return;
             }
 
@@ -1757,8 +1757,8 @@
 
             if (linkedCount > 0) {
                 await saveGuildData(data);
-                let missingMsg = missingDummies.length > 0 ? `\n⚠️ Hindi pa naka-register sa roster ang: ${missingDummies.join(', ')}` : '';
-                alert(`🎉 [Link Successful] Naka-link na ang ${linkedCount} Dummy Accounts kay Main "${canonicalMainIgn}"! Maaari mo na itong i-search sa portal.${missingMsg}`);
+                let missingMsg = missingDummies.length > 0 ? `\n⚠️ Not yet registered in roster: ${missingDummies.join(', ')}` : '';
+                alert(`🎉 [Link Successful] Successfully linked ${linkedCount} Dummy Accounts to Main "${canonicalMainIgn}"! You can now search them in the portal.${missingMsg}`);
 
                 document.getElementById('type-main-ign').value = '';
                 dummyInputs.forEach(i => i.value = '');
@@ -1768,7 +1768,7 @@
                 document.getElementById('search-main-input').value = canonicalMainIgn;
                 searchMainAndDummies();
             } else {
-                alert(`⚠️ Walang na-link! Siguraduhing na-register muna sa Roster ang mga Dummy Accounts na: ${missingDummies.join(', ')}`);
+                alert(`⚠️ No accounts linked! Ensure the Dummy Accounts are registered in the Roster first: ${missingDummies.join(', ')}`);
             }
         }
 
@@ -1779,13 +1779,13 @@
             const charClass = document.getElementById('new-member-class').value;
             const assignedDivision = document.getElementById('admin-officer-select').value;
 
-            if (!ign) { alert("⚠️ Paki-lagay ang IGN Member Name!"); return; }
+            if (!ign) { alert("⚠️ Please enter the Member IGN!"); return; }
 
             let data = getGuildData();
             let membersList = data[assignedDivision] || [];
 
             if (membersList.some(m => m.name.toLowerCase() === ign.toLowerCase())) {
-                alert("⚠️ Ang IGN na ito ay nairegister na sa roster!");
+                alert("⚠️ This IGN is already registered in the roster!");
                 return;
             }
 
@@ -1794,7 +1794,7 @@
             data[assignedDivision] = membersList;
 
             await saveGuildData(data);
-            alert(`🎉 Tagumpay! Na-register si ${ign} (${charClass}) sa ${assignedDivision}.`);
+            alert(`🎉 Success! Registered ${ign} (${charClass}) to ${assignedDivision}.`);
 
             document.getElementById('new-member-ign').value = '';
             renderRosters();
@@ -1937,13 +1937,13 @@
                         formattedMembersHTML += `<div style="margin-bottom:6px;"></div>`;
                     }
                 } else {
-                    formattedMembersHTML = '<span style="color:var(--text-dim);">Wala pang nakatalang present.</span>';
+                    formattedMembersHTML = '<span style="color:var(--text-dim);">No attendance records found.</span>';
                 }
 
                 const tr = document.createElement('tr');
                 tr.style.borderBottom = "1px solid rgba(255,255,255,0.08)";
                 tr.innerHTML = `
-                    <td style="padding: 10px; color: var(--text-dim); white-space: nowrap;">${rec.dateKey}<br><small>Huling update: ${rec.timestamp}</small></td>
+                    <td style="padding: 10px; color: var(--text-dim); white-space: nowrap;">${rec.dateKey}<br><small>Last updated: ${rec.timestamp}</small></td>
                     <td style="padding: 10px; font-weight: 600; color:var(--primary);">${rec.event}</td>
                     <td style="padding: 10px; color: #ffdd55; font-weight: bold;">${totalPresent} Main Warriors</td>
                     <td style="padding: 10px; color: #ffdd55;">${rec.solPool.toLocaleString()} SOL<br><span style="color:#33cc33; font-weight:bold;">${solPerMember} SOL / ea</span></td>
@@ -1959,7 +1959,7 @@
             let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
 
             if (history.length === 0) {
-                listContainer.innerHTML = `<span style="color: var(--text-dim);">Walang nakareserbang attendance logs.</span>`;
+                listContainer.innerHTML = `<span style="color: var(--text-dim);">No attendance logs reserved.</span>`;
                 return;
             }
 
@@ -1985,7 +1985,7 @@
             if (logIndex < 0 || logIndex >= history.length) return;
 
             const targetLog = history[logIndex];
-            const confirmDelete = confirm(`⚠️ Sigurado ka bang gusto mong burahin ang attendance log noong "${targetLog.dateKey}" (${targetLog.event})?`);
+            const confirmDelete = confirm(`⚠️ Are you sure you want to delete the attendance log on "${targetLog.dateKey}" (${targetLog.event})?`);
 
             if (confirmDelete) {
                 history.splice(logIndex, 1);
@@ -1999,7 +1999,7 @@
                 renderAdminAttendanceLogList();
                 updateLiveActiveWarriors();
                 updatePublicGiveawayDisplay();
-                alert(`🗑️ Nabura na nang tuluyan ang attendance log record!`);
+                alert(`🗑️ Attendance log record permanently deleted!`);
             }
         }
 
@@ -2044,7 +2044,7 @@
             const inboxList = document.getElementById('superadmin-inbox-list');
             if (!inboxList) return;
             if (cloudResetTickets.length === 0) {
-                inboxList.innerHTML = `<span style="color: var(--text-dim);">Walang nakareserbang ticket sa inbox.</span>`;
+                inboxList.innerHTML = `<span style="color: var(--text-dim);">No reserved tickets in the inbox.</span>`;
                 return;
             }
             inboxList.innerHTML = '';
@@ -2225,7 +2225,7 @@
 
         async function deleteMember(memberName) {
             if (!currentLoggedInOfficer) return;
-            const confirmDel = confirm(`⚠️ Sigurado ka bang gusto mong alisin si "${memberName}" sa roster?`);
+            const confirmDel = confirm(`⚠️ Are you sure you want to remove "${memberName}" from the roster?`);
             if (!confirmDel) return;
 
             const selectedDivision = document.getElementById('admin-officer-select').value;
@@ -2252,7 +2252,7 @@
 
                 let membersHTML = '';
                 if (members.length === 0) {
-                    membersHTML = `<div style="padding: 8px; color: var(--text-dim); font-size: 0.85rem; text-align: center;">Walang miyembro sa dibisyong ito.</div>`;
+                    membersHTML = `<div style="padding: 8px; color: var(--text-dim); font-size: 0.85rem; text-align: center;">No members in this division.</div>`;
                 } else {
                     members.forEach(m => {
                         const cssClass = getClassCss(m.class);
