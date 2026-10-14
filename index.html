@@ -725,6 +725,37 @@
 </head>
 <body>
 
+    <!-- ENTRANCE OVERLAY FOR GUARANTEED AUDIO AUTOPLAY -->
+    <div id="audio-entrance-overlay" onclick="startAudioAndEnter()" style="
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(5, 5, 10, 0.94);
+        z-index: 999999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+        transition: opacity 0.8s ease, visibility 0.8s ease;
+        text-align: center;
+        padding: 20px;
+    ">
+        <h1 style="font-family: 'MedievalSharp', serif; color: #e6b800; font-size: 3.2rem; text-shadow: 0 0 20px rgba(230,184,0,0.8); margin-bottom: 12px;">
+            KULTURA GUILD & ALLIANCE
+        </h1>
+        <p style="font-family: 'Cinzel', serif; color: #fff; font-size: 1.25rem; letter-spacing: 2px; animation: pulseText 1.5s infinite ease-in-out;">
+            🔊 CLICK ANYWHERE TO ENTER & PLAY MUSIC 🔊
+        </p>
+    </div>
+
+    <style>
+    @keyframes pulseText {
+        0%, 100% { opacity: 0.6; transform: scale(0.98); }
+        50% { opacity: 1; font-weight: bold; transform: scale(1.02); text-shadow: 0 0 15px #e6b800; }
+    }
+    </style>
+
     <!-- FLOATING SIDE TEXT: LEFT (KULTURA - 5rem) -->
     <div class="side-floating-text left" id="left-floating-word">
         <span>K</span><span>U</span><span>L</span><span>T</span><span>U</span><span>R</span><span>A</span>
@@ -734,14 +765,14 @@
     <div class="side-floating-text right" id="right-floating-word">
         <span>A</span><span>L</span><span>L</span><span>I</span><span>A</span><span>N</span><span>C</span><span>E</span>
         <span class="gap-space"></span>
-        <span style="background: linear-gradient(180deg, #331100 0%, #b35900 50%, #ffaa33 100%);">P</span>
-        <span style="background: linear-gradient(180deg, #331100 0%, #b35900 50%, #ffaa33 100%);">H</span>
+        <span>P</span>
+        <span>H</span>
     </div>
 
-    <!-- Background Audio Element (Autoplay & Loop) -->
-    <audio id="bg-audio" autoplay loop preload="auto">
+    <!-- Background Audio Element -->
+    <audio id="bg-audio" loop preload="auto">
         <source src="Epic Medieval Battle Music_ _Valiant Warriors of our Lands_ by RageSound (Copyright Free Music) [MGIt04kMV_g].mp3" type="audio/mpeg">
-        <source src="kultura_music.mp3" type="audio/mpeg">
+        <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73111.mp3?filename=epic-hollywood-trailer-109587.mp3" type="audio/mpeg">
     </audio>
 
     <!-- Header Section -->
@@ -794,7 +825,7 @@
                     <button onclick="open3DaySummaryModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem; background: linear-gradient(135deg, #0088cc, #004488);">
                         📊 View 3-Day Summary & Download Payout List
                     </button>
-                    <!-- OFFICER PORTAL BUTTON (DYNAMICAL MOVES TOP-LEFT WHEN LOGGED IN) -->
+                    <!-- OFFICER PORTAL BUTTON -->
                     <button id="open-officer-portal-btn" onclick="openLoginModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem;">
                         🔐 Open Authorized Officer Portal
                     </button>
@@ -882,7 +913,7 @@
             </div>
         </div>
 
-        <!-- AUTHORIZED OFFICER PORTAL WITH LOG OUT & MINIMIZE CONTROLS -->
+        <!-- AUTHORIZED OFFICER PORTAL -->
         <div id="attendance-admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center;">
             <div id="admin-modal-card" style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 680px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto; position: relative; transition: all 0.3s ease; pointer-events: auto;">
                 
@@ -913,7 +944,7 @@
                         </div>
                     </div>
 
-                    <!-- MULTI-DUMMY CHARACTER MAPPER & LIVE MAIN SEARCH BLOCK (LOCKED / HIDDEN ONLY FOR iKapitana) -->
+                    <!-- MULTI-DUMMY CHARACTER MAPPER & LIVE MAIN SEARCH BLOCK -->
                     <div id="superadmin-main-dummy-block" class="admin-section-block" style="border-color: #33cc33;">
                         <button onclick="toggleAdminSection('sec-main-dummy-linker')" class="admin-collapsible-btn" style="color: #33cc33; background: rgba(51, 204, 51, 0.1);">
                             <span>🎭 Multi-Dummy Character Mapper & Search Portal</span>
@@ -921,7 +952,6 @@
                         </button>
                         <div id="sec-main-dummy-linker" class="admin-collapsible-content">
                             
-                            <!-- LINKING FORM -->
                             <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
                                 I-type ang <strong>Main Character IGN</strong> at ilagay ang kanyang mga <strong>Dummy Accounts</strong> upang ma-link sila sa database.
                             </p>
@@ -1317,6 +1347,27 @@
 
     <!-- Interactive Scripts -->
     <script>
+        // Entrance Audio Trigger Function
+        function startAudioAndEnter() {
+            const audio = document.getElementById('bg-audio');
+            const overlay = document.getElementById('audio-entrance-overlay');
+            
+            if (audio) {
+                audio.volume = 0.5; // Set volume to 50%
+                audio.play().catch(err => {
+                    console.warn("Audio play prevented:", err);
+                });
+            }
+
+            if (overlay) {
+                overlay.style.opacity = '0';
+                overlay.style.visibility = 'hidden';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 800);
+            }
+        }
+
         // JS-Generated Protected Credits
         document.addEventListener('DOMContentLoaded', () => {
             const footerContainer = document.getElementById('dynamic-secure-credits');
@@ -1338,27 +1389,6 @@
             const rightLetters = document.querySelectorAll('#right-floating-word span');
             rightLetters.forEach((letter, index) => { letter.style.animationDelay = `${index * 0.12}s`; });
         });
-
-        // Background Audio Autoplay Handler (Bypasses Browser Autoplay Restrictions)
-        const audio = document.getElementById('bg-audio');
-        function startBackgroundAudio() {
-            if (audio) {
-                audio.play().catch(() => {
-                    const enableAudioOnInteraction = () => {
-                        audio.play();
-                        window.removeEventListener('click', enableAudioOnInteraction);
-                        window.removeEventListener('touchstart', enableAudioOnInteraction);
-                        window.removeEventListener('keydown', enableAudioOnInteraction);
-                        window.removeEventListener('scroll', enableAudioOnInteraction);
-                    };
-                    window.addEventListener('click', enableAudioOnInteraction);
-                    window.addEventListener('touchstart', enableAudioOnInteraction);
-                    window.addEventListener('keydown', enableAudioOnInteraction);
-                    window.addEventListener('scroll', enableAudioOnInteraction);
-                });
-            }
-        }
-        window.addEventListener('DOMContentLoaded', startBackgroundAudio);
 
         let ALL_DIVISIONS = [
             "Fullclip Division (Fullclip)",
@@ -1416,7 +1446,6 @@
             window.addEventListener(eventType, resetInactivityTimer);
         });
 
-        /* UPDATE PORTAL BUTTON POSITION & LOOK DEPENDING ON LOGIN STATUS */
         function updatePortalButtonUI() {
             const btn = document.getElementById('open-officer-portal-btn');
             if (!btn) return;
@@ -2207,8 +2236,6 @@
 
             let currentLower = currentLoggedInOfficer.toLowerCase();
             let isSuperAdmin = (currentLower === "fullclip" || currentLower === "kultura" || currentLower === "kulturamain");
-            
-            // Check if current user is iKapitana
             let isIkapitana = (currentLower === "ikapitana");
 
             if (isSuperAdmin) {
@@ -2223,7 +2250,6 @@
                 superGuildRegBlock.style.display = 'none';
             }
 
-            // Ipakita ang Multi-Dummy Character Mapper sa lahat MALIBAN kay ikapitana
             if (isIkapitana) {
                 superMainDummyBlock.style.display = 'none';
             } else {
