@@ -734,8 +734,8 @@
     <div class="side-floating-text right" id="right-floating-word">
         <span>A</span><span>L</span><span>L</span><span>I</span><span>A</span><span>N</span><span>C</span><span>E</span>
         <span class="gap-space"></span>
-        <span>P</span>
-        <span>H</span>
+        <span style="background: linear-gradient(180deg, #331100 0%, #b35900 50%, #ffaa33 100%);">P</span>
+        <span style="background: linear-gradient(180deg, #331100 0%, #b35900 50%, #ffaa33 100%);">H</span>
     </div>
 
     <!-- Background Audio Element -->
@@ -899,6 +899,39 @@
                 <!-- MODAL BODY CONTENT CONTAINER -->
                 <div id="admin-modal-body-content">
                     <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">Officer</strong></p>
+
+                    <!-- SUPERADMIN EXCLUSIVE: GUILD EVENTS MANAGER -->
+                    <div id="superadmin-events-block" class="admin-section-block" style="display: none; border-color: var(--primary);">
+                        <button onclick="toggleAdminSection('sec-events-manager')" class="admin-collapsible-btn" style="color: var(--primary-glow); background: rgba(230, 184, 0, 0.1);">
+                            <span>📢 Guild Events Manager (Realtime Schedule Update)</span>
+                            <span id="icon-sec-events-manager">▼ Expand</span>
+                        </button>
+                        <div id="sec-events-manager" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:12px;">
+                                Baguhin ang mga impormasyon sa ibaba at i-click ang <strong>💾 Save & Publish Events</strong> para mag-update agad sa landing page.
+                            </p>
+
+                            <!-- EVENT CARD 1 EDIT -->
+                            <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; border: 1px solid var(--border-gold); margin-bottom: 12px;">
+                                <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">Event 1 Settings (e.g. Castle Siege):</h4>
+                                <input type="text" id="event1-title" placeholder="Event Title (e.g. CASTLE SIEGE WAR)" style="width: 100%; padding: 6px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem; margin-bottom: 6px;">
+                                <input type="text" id="event1-time" placeholder="Schedule Time (e.g. 📅 Saturday | 6:00 PM PH Time)" style="width: 100%; padding: 6px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem; margin-bottom: 6px;">
+                                <textarea id="event1-desc" rows="2" placeholder="Event Description..." style="width: 100%; padding: 6px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;"></textarea>
+                            </div>
+
+                            <!-- EVENT CARD 2 EDIT -->
+                            <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; border: 1px solid var(--border-gold); margin-bottom: 12px;">
+                                <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">Event 2 Settings (e.g. Weekly Guild Event):</h4>
+                                <input type="text" id="event2-title" placeholder="Event Title (e.g. GUILD EVENTS / PK TOURNAMENT)" style="width: 100%; padding: 6px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem; margin-bottom: 6px;">
+                                <input type="text" id="event2-time" placeholder="Schedule Time (e.g. 📅 Saturday | 8:00 PM PH Time)" style="width: 100%; padding: 6px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem; margin-bottom: 6px;">
+                                <textarea id="event2-desc" rows="2" placeholder="Event Description..." style="width: 100%; padding: 6px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;"></textarea>
+                            </div>
+
+                            <button onclick="saveGuildEventsToFirebase()" class="btn" style="width: 100%; padding: 8px; font-size: 0.85rem; background: linear-gradient(135deg, #e6b800, #b38f00); color: #000;">
+                                💾 Save & Publish Events to Website
+                            </button>
+                        </div>
+                    </div>
 
                     <!-- SECTION 1: SUPERADMIN INBOX -->
                     <div id="superadmin-inbox-block" class="admin-section-block" style="display: none;">
@@ -1230,10 +1263,11 @@
             <div class="roster-grid-container" id="dynamic-roster-grid"></div>
         </section>
 
-        <!-- UPCOMING GUILD SCHEDULE SECTION -->
+        <!-- UPCOMING GUILD SCHEDULE SECTION (DYNAMIC FROM FIREBASE) -->
         <section id="schedule-section">
             <h2 class="section-title">Upcoming Guild Schedule</h2>
-            <div style="max-width: 800px; margin: 0 auto;">
+            <div style="max-width: 800px; margin: 0 auto;" id="dynamic-events-container">
+                <!-- Fallback Habang Nag-o-load -->
                 <div class="schedule-box">
                     <div class="schedule-title">CASTLE SIEGE WAR</div>
                     <div class="schedule-time">📅 Saturday | 6:00 PM PH Time</div>
@@ -1345,7 +1379,7 @@
                 
                 const p2 = document.createElement('p');
                 p2.style.cssText = "margin-top: 6px; font-size: 0.75rem; color: #7a7a90; letter-spacing: 1px;";
-                p2.innerHTML = 'Developed & Maintained by <span style="color: var(--primary);">Lord Emperor Warlock</span>';
+                p2.innerHTML = 'Developed & Maintained by <span style="color: var(--primary);">Lord Emperor Warlock & Kultura Alliance</span>';
                 
                 footerContainer.appendChild(p1);
                 footerContainer.appendChild(p2);
@@ -1392,9 +1426,23 @@
             ]
         };
 
+        const defaultGuildEvents = [
+            {
+                title: "CASTLE SIEGE WAR",
+                time: "📅 Saturday | 6:00 PM PH Time",
+                desc: "Mandatory attendance for all main members and alliance rosters. Be ready 30 mins prior."
+            },
+            {
+                title: "GUILD EVENTS",
+                time: "📅 Saturday | 8:00 PM PH Time",
+                desc: "All Guild Leaders will host an Event."
+            }
+        ];
+
         let cloudGuildData = null;
         let cloudAttendanceHistory = null;
         let cloudResetTickets = [];
+        let cloudGuildEvents = null;
         let currentLoggedInOfficer = null;
         let cached3DayPayoutData = null;
 
@@ -1547,6 +1595,16 @@
                 }
                 renderSuperAdminInbox();
             });
+
+            dbOnValue(dbRef(window.database, 'kultura_events'), (snap) => {
+                if (snap.exists()) {
+                    cloudGuildEvents = snap.val();
+                } else {
+                    cloudGuildEvents = defaultGuildEvents;
+                }
+                renderPublicGuildEvents();
+                populateEventsAdminForm();
+            });
         }
 
         window.addEventListener('firebase-ready', () => {
@@ -1565,6 +1623,61 @@
             renderRosters();
             updateLiveActiveWarriors();
             searchMainAndDummies();
+        }
+
+        function renderPublicGuildEvents() {
+            const container = document.getElementById('dynamic-events-container');
+            if (!container) return;
+
+            const events = cloudGuildEvents || defaultGuildEvents;
+            container.innerHTML = '';
+
+            events.forEach(ev => {
+                const box = document.createElement('div');
+                box.className = 'schedule-box';
+                box.innerHTML = `
+                    <div class="schedule-title">${ev.title || 'GUILD EVENT'}</div>
+                    <div class="schedule-time">${ev.time || 'Schedule TBA'}</div>
+                    <p style="font-size: 0.9rem; color: var(--text-light);">${ev.desc || ''}</p>
+                `;
+                container.appendChild(box);
+            });
+        }
+
+        function populateEventsAdminForm() {
+            const events = cloudGuildEvents || defaultGuildEvents;
+            if (events[0]) {
+                if (document.getElementById('event1-title')) document.getElementById('event1-title').value = events[0].title || '';
+                if (document.getElementById('event1-time')) document.getElementById('event1-time').value = events[0].time || '';
+                if (document.getElementById('event1-desc')) document.getElementById('event1-desc').value = events[0].desc || '';
+            }
+            if (events[1]) {
+                if (document.getElementById('event2-title')) document.getElementById('event2-title').value = events[1].title || '';
+                if (document.getElementById('event2-time')) document.getElementById('event2-time').value = events[1].time || '';
+                if (document.getElementById('event2-desc')) document.getElementById('event2-desc').value = events[1].desc || '';
+            }
+        }
+
+        async function saveGuildEventsToFirebase() {
+            if (!currentLoggedInOfficer) return;
+
+            const newEvents = [
+                {
+                    title: document.getElementById('event1-title').value.trim(),
+                    time: document.getElementById('event1-time').value.trim(),
+                    desc: document.getElementById('event1-desc').value.trim()
+                },
+                {
+                    title: document.getElementById('event2-title').value.trim(),
+                    time: document.getElementById('event2-time').value.trim(),
+                    desc: document.getElementById('event2-desc').value.trim()
+                }
+            ];
+
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_events'), newEvents);
+                alert("🎉 Success! Ang Guild Events ay nailathala na sa website!");
+            }
         }
 
         function updateLiveActiveWarriors() {
@@ -2201,6 +2314,7 @@
             const superMainDummyBlock = document.getElementById('superadmin-main-dummy-block');
             const superDeleteLogsBlock = document.getElementById('superadmin-delete-logs-block');
             const superGuildRegBlock = document.getElementById('superadmin-guild-reg-block');
+            const superEventsBlock = document.getElementById('superadmin-events-block');
 
             let currentLower = currentLoggedInOfficer.toLowerCase();
             let isSuperAdmin = (currentLower === "fullclip" || currentLower === "kultura" || currentLower === "kulturamain");
@@ -2210,12 +2324,16 @@
                 superInboxBlock.style.display = 'block';
                 superDeleteLogsBlock.style.display = 'block';
                 superGuildRegBlock.style.display = 'block';
+                if (superEventsBlock) superEventsBlock.style.display = 'block';
+                
                 renderSuperAdminInbox();
                 renderAdminAttendanceLogList();
+                populateEventsAdminForm();
             } else {
                 superInboxBlock.style.display = 'none';
                 superDeleteLogsBlock.style.display = 'none';
                 superGuildRegBlock.style.display = 'none';
+                if (superEventsBlock) superEventsBlock.style.display = 'none';
             }
 
             if (isIkapitana) {
