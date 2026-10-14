@@ -108,18 +108,8 @@
         }
 
         @keyframes letterGoldGlowAppear {
-            0% {
-                opacity: 0;
-                transform: translateY(25px) scale(0.8);
-                filter: drop-shadow(0 0 0px rgba(255, 215, 0, 0));
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-                filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.95)) 
-                        drop-shadow(0 0 30px rgba(230, 184, 0, 0.75))
-                        drop-shadow(2px 4px 10px rgba(0, 0, 0, 0.95));
-            }
+            0% { opacity: 0; transform: translateY(25px) scale(0.8); filter: drop-shadow(0 0 0px rgba(255, 215, 0, 0)); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.95)) drop-shadow(0 0 30px rgba(230, 184, 0, 0.75)) drop-shadow(2px 4px 10px rgba(0, 0, 0, 0.95)); }
         }
 
         .side-floating-text.left { left: 20px; }
@@ -145,11 +135,7 @@
             50% { box-shadow: 0 0 22px rgba(230, 184, 0, 0.9); }
         }
 
-        h1, h2, h3, h4 {
-            font-family: 'Cinzel', serif;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
+        h1, h2, h3, h4 { font-family: 'Cinzel', serif; letter-spacing: 2px; text-transform: uppercase; }
 
         .guild-logo {
             font-family: 'MedievalSharp', cursive, serif;
@@ -163,324 +149,87 @@
 
         .guild-logo span { color: var(--primary); }
 
-        .rotating-alliance-container {
-            margin: 10px auto 20px;
-            display: inline-block;
-        }
+        .rotating-alliance-container { margin: 10px auto 20px; display: inline-block; }
 
         .rotating-alliance-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
+            display: inline-flex; align-items: center; gap: 10px;
             background: linear-gradient(135deg, rgba(30, 30, 45, 0.92), rgba(10, 10, 15, 0.95));
-            border: 2px solid var(--primary);
-            color: #fff;
-            padding: 8px 24px;
-            border-radius: 30px;
-            font-family: 'Cinzel', serif;
-            font-size: 0.95rem;
-            font-weight: 700;
+            border: 2px solid var(--primary); color: #fff; padding: 8px 24px; border-radius: 30px;
+            font-family: 'Cinzel', serif; font-size: 0.95rem; font-weight: 700;
             box-shadow: 0 4px 20px rgba(0,0,0,0.8), 0 0 15px rgba(230, 184, 0, 0.4);
-            backdrop-filter: blur(6px);
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: all 0.3s ease;
+            backdrop-filter: blur(6px); text-decoration: none; text-transform: uppercase; letter-spacing: 2px; transition: all 0.3s ease;
         }
 
-        .rotating-alliance-badge:hover {
-            transform: scale(1.05);
-            border-color: var(--primary-glow);
-            box-shadow: 0 0 25px rgba(230, 184, 0, 0.8);
-        }
-
+        .rotating-alliance-badge:hover { transform: scale(1.05); border-color: var(--primary-glow); box-shadow: 0 0 25px rgba(230, 184, 0, 0.8); }
         .rotating-alliance-badge span { color: var(--primary); }
 
         header {
-            position: relative;
-            padding: 60px 20px 50px;
-            text-align: center;
+            position: relative; padding: 60px 20px 50px; text-align: center;
             background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(10,10,12,0.4) 100%);
-            border-bottom: 2px solid var(--border-gold);
-            backdrop-filter: blur(4px);
+            border-bottom: 2px solid var(--border-gold); backdrop-filter: blur(4px);
         }
 
-        .server-logo-link {
-            display: inline-block;
-            transition: transform 0.3s ease;
-        }
-
+        .server-logo-link { display: inline-block; transition: transform 0.3s ease; }
         .server-logo-link:hover { transform: scale(1.05); }
 
-        .server-logo {
-            max-width: 280px;
-            height: auto;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 10px rgba(230, 184, 0, 0.5));
-        }
+        .server-logo { max-width: 280px; height: auto; margin-bottom: 20px; filter: drop-shadow(0 0 10px rgba(230, 184, 0, 0.5)); }
 
-        .guild-motto {
-            font-style: italic;
-            color: var(--text-dim);
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto 30px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-        }
+        .guild-motto { font-style: italic; color: var(--text-dim); font-size: 1.2rem; max-width: 600px; margin: 0 auto 30px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
-        .hero-btns {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
+        .hero-btns { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
 
         .btn {
-            padding: 12px 30px;
-            font-family: 'Cinzel', serif;
-            font-weight: 700;
-            text-decoration: none;
-            color: #fff;
+            padding: 12px 30px; font-family: 'Cinzel', serif; font-weight: 700; text-decoration: none; color: #fff;
             background: linear-gradient(135deg, rgba(139, 0, 0, 0.85), rgba(60, 0, 0, 0.95));
-            border: 1px solid var(--primary);
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
-            display: inline-block;
-            text-align: center;
+            border: 1px solid var(--primary); border-radius: 4px; transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8); display: inline-block; text-align: center;
         }
 
-        .btn:hover {
-            background: linear-gradient(135deg, var(--primary), #b38f00);
-            color: #000;
-            box-shadow: 0 0 20px var(--primary-glow);
-            transform: translateY(-2px);
-        }
+        .btn:hover { background: linear-gradient(135deg, var(--primary), #b38f00); color: #000; box-shadow: 0 0 20px var(--primary-glow); transform: translateY(-2px); }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
         section { margin-bottom: 60px; }
 
-        .section-title {
-            font-size: 2rem;
-            text-align: center;
-            color: var(--primary);
-            margin-bottom: 30px;
-            position: relative;
-            padding-bottom: 10px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.9);
-        }
+        .section-title { font-size: 2rem; text-align: center; color: var(--primary); margin-bottom: 30px; position: relative; padding-bottom: 10px; text-shadow: 0 2px 10px rgba(0,0,0,0.9); }
+        .section-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 3px; background: linear-gradient(90deg, transparent, var(--primary), transparent); }
 
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
-        }
+        .category-title { font-size: 1.4rem; color: var(--primary-glow); margin: 30px 0 15px; border-left: 4px solid var(--primary); padding-left: 10px; text-transform: uppercase; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
 
-        .category-title {
-            font-size: 1.4rem;
-            color: var(--primary-glow);
-            margin: 30px 0 15px;
-            border-left: 4px solid var(--primary);
-            padding-left: 10px;
-            text-transform: uppercase;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
-        }
-
-        .schedule-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border-gold);
-            border-radius: 8px;
-            padding: 25px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(8px);
-            border-left: 4px solid var(--primary);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-        }
-
-        .schedule-title {
-            font-size: 1.2rem;
-            color: var(--primary-glow);
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
-
-        .schedule-time {
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .schedule-box { background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: 8px; padding: 25px; margin-bottom: 20px; backdrop-filter: blur(8px); border-left: 4px solid var(--primary); box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
+        .schedule-title { font-size: 1.2rem; color: var(--primary-glow); margin-bottom: 8px; font-weight: 700; }
+        .schedule-time { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
 
         .req-list { list-style: none; padding: 0; }
-        .req-list li {
-            position: relative;
-            padding-left: 25px;
-            margin-bottom: 15px;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-        .req-list li::before {
-            content: '◆';
-            position: absolute;
-            left: 0;
-            top: 0;
-            color: var(--primary);
-            font-size: 0.9rem;
-        }
+        .req-list li { position: relative; padding-left: 25px; margin-bottom: 15px; font-size: 0.95rem; line-height: 1.5; }
+        .req-list li::before { content: '◆'; position: absolute; left: 0; top: 0; color: var(--primary); font-size: 0.9rem; }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 50px;
-        }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 50px; }
+        .stat-card { background: var(--bg-card); border: 1px solid var(--border-gold); padding: 20px; text-align: center; border-radius: 6px; backdrop-filter: blur(8px); box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
+        .stat-value { font-size: 2.5rem; font-family: 'Cinzel', serif; color: var(--primary-glow); font-weight: 800; }
+        .stat-label { font-size: 0.9rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
 
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-gold);
-            padding: 20px;
-            text-align: center;
-            border-radius: 6px;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-        }
+        .roster-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .member-card { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 25px 20px; position: relative; overflow: hidden; transition: all 0.3s ease; backdrop-filter: blur(8px); box-shadow: 0 8px 20px rgba(0,0,0,0.6); display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .member-card:hover { border-color: var(--primary); transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.9); }
+        .member-card.master { border: 1px solid var(--primary); background: linear-gradient(145deg, rgba(35, 22, 10, 0.92), rgba(10, 10, 15, 0.92)); box-shadow: 0 0 15px rgba(230, 184, 0, 0.25); }
 
-        .stat-value {
-            font-size: 2.5rem;
-            font-family: 'Cinzel', serif;
-            color: var(--primary-glow);
-            font-weight: 800;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .roster-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .member-card {
-            background: var(--bg-card);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 8px;
-            padding: 25px 20px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .member-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.9);
-        }
-
-        .member-card.master {
-            border: 1px solid var(--primary);
-            background: linear-gradient(145deg, rgba(35, 22, 10, 0.92), rgba(10, 10, 15, 0.92));
-            box-shadow: 0 0 15px rgba(230, 184, 0, 0.25);
-        }
-
-        @keyframes battleBlink1 {
-            0% { border-color: rgba(255, 51, 51, 0.4); box-shadow: 0 0 10px rgba(255, 51, 51, 0.2); }
-            50% { border-color: #ff3333; box-shadow: 0 0 25px rgba(255, 51, 51, 0.8), inset 0 0 15px rgba(255, 51, 51, 0.4); }
-            100% { border-color: rgba(255, 51, 51, 0.4); box-shadow: 0 0 10px rgba(255, 51, 51, 0.2); }
-        }
-
-        @keyframes battleBlink2 {
-            0% { border-color: rgba(230, 184, 0, 0.4); box-shadow: 0 0 10px rgba(230, 184, 0, 0.2); }
-            50% { border-color: var(--primary-glow); box-shadow: 0 0 25px rgba(230, 184, 0, 0.8), inset 0 0 15px rgba(230, 184, 0, 0.4); }
-            100% { border-color: rgba(230, 184, 0, 0.4); box-shadow: 0 0 10px rgba(230, 184, 0, 0.2); }
-        }
-
+        @keyframes battleBlink1 { 0% { border-color: rgba(255, 51, 51, 0.4); box-shadow: 0 0 10px rgba(255, 51, 51, 0.2); } 50% { border-color: #ff3333; box-shadow: 0 0 25px rgba(255, 51, 51, 0.8), inset 0 0 15px rgba(255, 51, 51, 0.4); } 100% { border-color: rgba(255, 51, 51, 0.4); box-shadow: 0 0 10px rgba(255, 51, 51, 0.2); } }
+        @keyframes battleBlink2 { 0% { border-color: rgba(230, 184, 0, 0.4); box-shadow: 0 0 10px rgba(230, 184, 0, 0.2); } 50% { border-color: var(--primary-glow); box-shadow: 0 0 25px rgba(230, 184, 0, 0.8), inset 0 0 15px rgba(230, 184, 0, 0.4); } 100% { border-color: rgba(230, 184, 0, 0.4); box-shadow: 0 0 10px rgba(230, 184, 0, 0.2); } }
         .battle-card-1 { animation: battleBlink1 3s infinite ease-in-out; }
         .battle-card-2 { animation: battleBlink2 3s infinite ease-in-out; animation-delay: 1.5s; }
 
-        @keyframes avatarFlash {
-            0%, 100% { opacity: 1; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7)); }
-            50% { opacity: 0; filter: none; }
-        }
-
+        @keyframes avatarFlash { 0%, 100% { opacity: 1; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7)); } 50% { opacity: 0; filter: none; } }
         .battle-avatar-flash { animation: avatarFlash 1.5s infinite ease-in-out; }
 
-        .role-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 3px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            z-index: 2;
-        }
-
+        .role-badge { position: absolute; top: 15px; right: 15px; font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 3px; text-transform: uppercase; letter-spacing: 1px; z-index: 2; }
         .role-master { background: var(--primary); color: #000; }
         .role-bm { background: var(--secondary); color: #fff; }
         .role-supporter { background: linear-gradient(135deg, #ff9900, #ff3333); color: #fff; }
 
-        .member-avatar {
-            width: 100%;
-            max-height: 180px;
-            object-fit: contain;
-            border-radius: 6px;
-            margin-top: 25px;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7));
-        }
-
-        .member-name {
-            font-size: 1.4rem;
-            color: #fff;
-            margin-top: 10px;
-            margin-bottom: 5px;
-            word-break: break-word;
-            width: 100%;
-        }
-
-        .member-class {
-            font-size: 0.9rem;
-            color: var(--primary-glow);
-            margin-bottom: 15px;
-            font-weight: 600;
-            width: 100%;
-        }
-
-        .member-details {
-            font-size: 0.85rem;
-            color: var(--text-dim);
-            display: flex;
-            justify-content: space-between;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 10px;
-            width: 100%;
-        }
+        .member-avatar { width: 100%; max-height: 180px; object-fit: contain; border-radius: 6px; margin-top: 25px; margin-bottom: 10px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7)); }
+        .member-name { font-size: 1.4rem; color: #fff; margin-top: 10px; margin-bottom: 5px; word-break: break-word; width: 100%; }
+        .member-class { font-size: 0.9rem; color: var(--primary-glow); margin-bottom: 15px; font-weight: 600; width: 100%; }
+        .member-details { font-size: 0.85rem; color: var(--text-dim); display: flex; justify-content: space-between; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 10px; width: 100%; }
 
         .class-summoner { color: #ff3333 !important; }
         .class-blademaster { color: #3399ff !important; }
@@ -489,248 +238,58 @@
         .class-elf { color: #33cc33 !important; }
         .class-soulmaster { color: #ffff33 !important; }
 
-        .roster-grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-            align-items: start;
-        }
+        .roster-grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; align-items: start; }
+        .roster-box { background: rgba(15, 15, 22, 0.85); padding: 20px; border-radius: 10px; border: 1px solid var(--border-gold); backdrop-filter: blur(6px); box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
+        .roster-box-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding-bottom: 8px; border-bottom: 1px solid rgba(230, 184, 0, 0.3); user-select: none; }
+        .roster-box-title { color: var(--primary-glow); font-family: 'Cinzel', serif; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        .roster-toggle-btn { background: linear-gradient(135deg, rgba(139, 0, 0, 0.7), rgba(40, 0, 0, 0.9)); border: 1px solid var(--primary); color: var(--primary-glow); padding: 6px 14px; border-radius: 20px; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 600; pointer-events: none; }
 
-        .roster-box {
-            background: rgba(15, 15, 22, 0.85);
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid var(--border-gold);
-            backdrop-filter: blur(6px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-        }
+        .roster-list-container { display: none; margin-top: 15px; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .roster-box-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(230, 184, 0, 0.3);
-            user-select: none;
-        }
+        .roster-list-item { padding: 8px 12px; margin-bottom: 6px; background: rgba(255, 255, 255, 0.03); border-radius: 6px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid var(--primary); font-size: 0.9rem; }
 
-        .roster-box-title {
-            color: var(--primary-glow);
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .roster-toggle-btn {
-            background: linear-gradient(135deg, rgba(139, 0, 0, 0.7), rgba(40, 0, 0, 0.9));
-            border: 1px solid var(--primary);
-            color: var(--primary-glow);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 600;
-            pointer-events: none;
-        }
-
-        .roster-list-container {
-            display: none;
-            margin-top: 15px;
-            animation: fadeIn 0.4s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .roster-list-item {
-            padding: 8px 12px;
-            margin-bottom: 6px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 3px solid var(--primary);
-            font-size: 0.9rem;
-        }
-
-        .delete-btn {
-            background: rgba(255, 51, 51, 0.2);
-            border: 1px solid #ff3333;
-            color: #ffaa33;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            transition: all 0.2s ease;
-        }
-
+        .delete-btn { background: rgba(255, 51, 51, 0.2); border: 1px solid #ff3333; color: #ffaa33; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; transition: all 0.2s ease; }
         .delete-btn:hover { background: #ff3333; color: #fff; }
 
-        .admin-section-block {
-            margin-bottom: 12px;
-            border: 1px solid var(--border-gold);
-            border-radius: 6px;
-            overflow: hidden;
-            background: rgba(10, 10, 15, 0.6);
-        }
-
-        .admin-collapsible-btn {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border: none;
-            color: var(--primary-glow);
-            padding: 12px 15px;
-            text-align: left;
-            font-family: 'Cinzel', serif;
-            font-size: 0.95rem;
-            font-weight: 700;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background 0.3s ease;
-        }
-
+        .admin-section-block { margin-bottom: 12px; border: 1px solid var(--border-gold); border-radius: 6px; overflow: hidden; background: rgba(10, 10, 15, 0.6); }
+        .admin-collapsible-btn { width: 100%; background: rgba(255, 255, 255, 0.05); border: none; color: var(--primary-glow); padding: 12px 15px; text-align: left; font-family: 'Cinzel', serif; font-size: 0.95rem; font-weight: 700; display: flex; justify-content: space-between; align-items: center; transition: background 0.3s ease; }
         .admin-collapsible-btn:hover { background: rgba(230, 184, 0, 0.15); }
+        .admin-collapsible-content { display: none; padding: 15px; border-top: 1px solid rgba(230, 184, 0, 0.2); animation: fadeIn 0.3s ease; }
 
-        .admin-collapsible-content {
-            display: none;
-            padding: 15px;
-            border-top: 1px solid rgba(230, 184, 0, 0.2);
-            animation: fadeIn 0.3s ease;
-        }
+        .flame-section { background: linear-gradient(145deg, rgba(20, 10, 5, 0.85), rgba(10, 10, 15, 0.95)); border: 2px solid #ff7700; border-radius: 12px; padding: 40px 30px; box-shadow: 0 0 30px rgba(255, 119, 0, 0.25); margin-bottom: 60px; position: relative; }
+        .flame-title { font-size: 2rem; text-align: center; color: #ffaa33; margin-bottom: 10px; text-shadow: 0 0 15px rgba(255, 119, 0, 0.6); }
+        .flame-subtitle { text-align: center; color: var(--text-dim); font-style: italic; margin-bottom: 35px; font-size: 1.05rem; }
+        .flame-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+        .flame-card { background: rgba(30, 15, 10, 0.7); border: 1px solid rgba(255, 119, 0, 0.4); border-radius: 8px; padding: 20px; text-align: center; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
 
-        .flame-section {
-            background: linear-gradient(145deg, rgba(20, 10, 5, 0.85), rgba(10, 10, 15, 0.95));
-            border: 2px solid #ff7700;
-            border-radius: 12px;
-            padding: 40px 30px;
-            box-shadow: 0 0 30px rgba(255, 119, 0, 0.25);
-            margin-bottom: 60px;
-            position: relative;
-        }
-
-        .flame-title {
-            font-size: 2rem;
-            text-align: center;
-            color: #ffaa33;
-            margin-bottom: 10px;
-            text-shadow: 0 0 15px rgba(255, 119, 0, 0.6);
-        }
-
-        .flame-subtitle {
-            text-align: center;
-            color: var(--text-dim);
-            font-style: italic;
-            margin-bottom: 35px;
-            font-size: 1.05rem;
-        }
-
-        .flame-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-        }
-
-        .flame-card {
-            background: rgba(30, 15, 10, 0.7);
-            border: 1px solid rgba(255, 119, 0, 0.4);
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        }
-
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-            margin-top: 20px;
-        }
-
-        .video-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-gold);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-        }
-
-        .video-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%;
-            height: 0;
-        }
-
-        .video-container iframe {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%; border: none;
-        }
-
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-top: 20px; }
+        .video-card { background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: 8px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
+        .video-container { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         .video-info { padding: 15px; text-align: center; }
         .video-title { font-family: 'Cinzel', serif; color: var(--primary-glow); font-size: 1.05rem; font-weight: 700; }
 
-        .panel {
-            background: var(--bg-card);
-            border: 1px solid var(--border-gold);
-            padding: 30px;
-            border-radius: 8px;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-        }
-
-        .panel h3 {
-            color: var(--primary);
-            margin-bottom: 20px;
-            font-size: 1.3rem;
-            border-bottom: 1px solid rgba(230, 184, 0, 0.2);
-            padding-bottom: 10px;
-        }
-
-        .division-group-title {
-            color: var(--primary-glow);
-            font-weight: 700;
-            margin-top: 8px;
-            margin-bottom: 4px;
-            border-bottom: 1px solid rgba(230, 184, 0, 0.2);
-            display: inline-block;
-            font-size: 0.85rem;
-        }
-
+        .panel { background: var(--bg-card); border: 1px solid var(--border-gold); padding: 30px; border-radius: 8px; backdrop-filter: blur(8px); box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
+        .panel h3 { color: var(--primary); margin-bottom: 20px; font-size: 1.3rem; border-bottom: 1px solid rgba(230, 184, 0, 0.2); padding-bottom: 10px; }
+        .division-group-title { color: var(--primary-glow); font-weight: 700; margin-top: 8px; margin-bottom: 4px; border-bottom: 1px solid rgba(230, 184, 0, 0.2); display: inline-block; font-size: 0.85rem; }
         .two-col-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
 
         @media (max-width: 1500px) { .side-floating-text { display: none; } }
-        @media (max-width: 768px) {
-            .guild-logo { font-size: 3rem; }
-            .server-logo { max-width: 220px; }
-            .rotating-alliance-badge { font-size: 0.8rem; padding: 6px 16px; }
-        }
+        @media (max-width: 768px) { .guild-logo { font-size: 3rem; } .server-logo { max-width: 220px; } .rotating-alliance-badge { font-size: 0.8rem; padding: 6px 16px; } }
 
-        footer {
-            text-align: center;
-            padding: 30px 20px;
-            background: rgba(5, 5, 7, 0.95);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-dim);
-            font-size: 0.85rem;
-        }
+        footer { text-align: center; padding: 30px 20px; background: rgba(5, 5, 7, 0.95); border-top: 1px solid rgba(255, 255, 255, 0.1); color: var(--text-dim); font-size: 0.85rem; }
         footer p span { color: var(--primary); }
     </style>
 </head>
 <body>
 
-    <!-- FLOATING SIDE TEXT: LEFT (KULTURA - 5rem) -->
+    <!-- FLOATING SIDE TEXT: LEFT -->
     <div class="side-floating-text left" id="left-floating-word">
         <span>K</span><span>U</span><span>L</span><span>T</span><span>U</span><span>R</span><span>A</span>
     </div>
 
-    <!-- FLOATING SIDE TEXT: RIGHT (ALLIANCE PH - 5rem) -->
+    <!-- FLOATING SIDE TEXT: RIGHT -->
     <div class="side-floating-text right" id="right-floating-word">
         <span>A</span><span>L</span><span>L</span><span>I</span><span>A</span><span>N</span><span>C</span><span>E</span>
         <span class="gap-space"></span>
@@ -900,15 +459,58 @@
                 <div id="admin-modal-body-content">
                     <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">Officer</strong></p>
 
-                    <!-- SUPERADMIN EXCLUSIVE: GUILD EVENTS MANAGER -->
+                    <!-- SUPERADMIN EXCLUSIVE: GIVEAWAY BOT -->
+                    <div id="superadmin-giveaway-block" class="admin-section-block" style="display: none; border-color: #ff3399;">
+                        <button onclick="toggleAdminSection('sec-giveaway-bot')" class="admin-collapsible-btn" style="color: #ff99dd; background: rgba(255, 51, 153, 0.15);">
+                            <span>🎲 3-Day Castle Siege GiveawayBot (Auto 3 Winners)</span>
+                            <span id="icon-sec-giveaway-bot">▼ Expand</span>
+                        </button>
+                        <div id="sec-giveaway-bot" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
+                                Kwalipikado sa Giveaway: Ang mga Main Characters na nakakumpleto ng <strong>3/3 Castle Siege Attendance</strong> sa huling 3 recorded CS events. Awtomatikong idi-direct sa Main IGN ang prize kahit dummy ang ginamit.
+                            </p>
+
+                            <div style="background: rgba(0,0,0,0.6); padding: 12px; border-radius: 6px; border: 1px solid #ff3399; margin-bottom: 12px; text-align: center;">
+                                <div id="giveaway-participants-info" style="font-size: 0.85rem; color: #ff99dd; margin-bottom: 10px; font-weight: bold;">
+                                    Pindutin ang button sa ibaba para ma-roll ang 3 random winners!
+                                </div>
+
+                                <button onclick="runGiveawayBot()" class="btn" style="padding: 10px 20px; font-size: 0.9rem; background: linear-gradient(135deg, #ff007f, #99004d); color: #fff; border-color: #ff99dd;">
+                                    🎲 ROLL GIVEAWAY BOT (PICK 3 WINNERS)
+                                </button>
+                            </div>
+
+                            <div id="giveaway-results-box" style="display: none; background: rgba(255, 0, 127, 0.1); border: 2px solid #ff3399; padding: 15px; border-radius: 8px; text-align: center;">
+                                <h4 style="color: #ff99dd; margin-bottom: 10px; font-size: 1.1rem;">🎉 CONGRATULATIONS TO THE 3 WINNERS! 🎉</h4>
+                                <div id="giveaway-winners-list" style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 10px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUPERADMIN EXCLUSIVE: GUILD EVENTS MANAGER & GIVEAWAYBOT TOGGLE SWITCH -->
                     <div id="superadmin-events-block" class="admin-section-block" style="display: none; border-color: var(--primary);">
                         <button onclick="toggleAdminSection('sec-events-manager')" class="admin-collapsible-btn" style="color: var(--primary-glow); background: rgba(230, 184, 0, 0.1);">
-                            <span>📢 Guild Events Manager (Realtime Schedule Update)</span>
+                            <span>📢 Guild Events Manager & Module Visibility Controls</span>
                             <span id="icon-sec-events-manager">▼ Expand</span>
                         </button>
                         <div id="sec-events-manager" class="admin-collapsible-content">
+                            
+                            <!-- GIVEAWAYBOT VISIBILITY TOGGLE SECTION -->
+                            <div style="background: rgba(255, 51, 153, 0.1); padding: 12px; border-radius: 6px; border: 1px solid #ff3399; margin-bottom: 15px;">
+                                <h4 style="color: #ff99dd; font-size: 0.85rem; margin-bottom: 6px;">🎲 GiveawayBot Module Control:</h4>
+                                <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">
+                                    I-set kung dapat bang lumabas ang <strong>GiveawayBot module</strong> sa Officer Portal.
+                                </p>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <select id="giveawaybot-visibility-select" style="flex: 1; padding: 8px; background: #111; border: 1px solid #ff3399; color: #fff; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">
+                                        <option value="HIDE">🔒 HIDE GiveawayBot Module</option>
+                                        <option value="SHOW">👁️ SHOW GiveawayBot Module</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:12px;">
-                                Baguhin ang mga impormasyon sa ibaba at i-click ang <strong>💾 Save & Publish Events</strong> para mag-update agad sa landing page.
+                                Baguhin ang mga impormasyon sa ibaba at i-click ang <strong>💾 Save & Publish Events</strong> para mag-update agad sa landing page at sa portal settings.
                             </p>
 
                             <!-- EVENT CARD 1 EDIT -->
@@ -1426,18 +1028,21 @@
             ]
         };
 
-        const defaultGuildEvents = [
-            {
-                title: "CASTLE SIEGE WAR",
-                time: "📅 Saturday | 6:00 PM PH Time",
-                desc: "Mandatory attendance for all main members and alliance rosters. Be ready 30 mins prior."
-            },
-            {
-                title: "GUILD EVENTS",
-                time: "📅 Saturday | 8:00 PM PH Time",
-                desc: "All Guild Leaders will host an Event."
-            }
-        ];
+        const defaultGuildEvents = {
+            events: [
+                {
+                    title: "CASTLE SIEGE WAR",
+                    time: "📅 Saturday | 6:00 PM PH Time",
+                    desc: "Mandatory attendance for all main members and alliance rosters. Be ready 30 mins prior."
+                },
+                {
+                    title: "GUILD EVENTS",
+                    time: "📅 Saturday | 8:00 PM PH Time",
+                    desc: "All Guild Leaders will host an Event."
+                }
+            ],
+            giveawayVisible: "HIDE"
+        };
 
         let cloudGuildData = null;
         let cloudAttendanceHistory = null;
@@ -1604,6 +1209,7 @@
                 }
                 renderPublicGuildEvents();
                 populateEventsAdminForm();
+                updateGiveawayBotVisibility();
             });
         }
 
@@ -1629,7 +1235,8 @@
             const container = document.getElementById('dynamic-events-container');
             if (!container) return;
 
-            const events = cloudGuildEvents || defaultGuildEvents;
+            const eventsData = cloudGuildEvents || defaultGuildEvents;
+            const events = Array.isArray(eventsData) ? eventsData : (eventsData.events || defaultGuildEvents.events);
             container.innerHTML = '';
 
             events.forEach(ev => {
@@ -1645,7 +1252,10 @@
         }
 
         function populateEventsAdminForm() {
-            const events = cloudGuildEvents || defaultGuildEvents;
+            const eventsData = cloudGuildEvents || defaultGuildEvents;
+            const events = Array.isArray(eventsData) ? eventsData : (eventsData.events || defaultGuildEvents.events);
+            const isVisible = Array.isArray(eventsData) ? "HIDE" : (eventsData.giveawayVisible || "HIDE");
+
             if (events[0]) {
                 if (document.getElementById('event1-title')) document.getElementById('event1-title').value = events[0].title || '';
                 if (document.getElementById('event1-time')) document.getElementById('event1-time').value = events[0].time || '';
@@ -1656,28 +1266,121 @@
                 if (document.getElementById('event2-time')) document.getElementById('event2-time').value = events[1].time || '';
                 if (document.getElementById('event2-desc')) document.getElementById('event2-desc').value = events[1].desc || '';
             }
+            if (document.getElementById('giveawaybot-visibility-select')) {
+                document.getElementById('giveawaybot-visibility-select').value = isVisible;
+            }
+        }
+
+        function updateGiveawayBotVisibility() {
+            const superGiveawayBlock = document.getElementById('superadmin-giveaway-block');
+            if (!superGiveawayBlock) return;
+
+            let currentLower = currentLoggedInOfficer ? currentLoggedInOfficer.toLowerCase() : '';
+            let isSuperAdmin = (currentLower === "fullclip" || currentLower === "kultura" || currentLower === "kulturamain");
+
+            const eventsData = cloudGuildEvents || defaultGuildEvents;
+            const isVisible = Array.isArray(eventsData) ? "HIDE" : (eventsData.giveawayVisible || "HIDE");
+
+            if (isSuperAdmin && isVisible === "SHOW") {
+                superGiveawayBlock.style.display = 'block';
+            } else {
+                superGiveawayBlock.style.display = 'none';
+            }
         }
 
         async function saveGuildEventsToFirebase() {
             if (!currentLoggedInOfficer) return;
 
-            const newEvents = [
-                {
-                    title: document.getElementById('event1-title').value.trim(),
-                    time: document.getElementById('event1-time').value.trim(),
-                    desc: document.getElementById('event1-desc').value.trim()
-                },
-                {
-                    title: document.getElementById('event2-title').value.trim(),
-                    time: document.getElementById('event2-time').value.trim(),
-                    desc: document.getElementById('event2-desc').value.trim()
-                }
-            ];
+            const isGiveawayVisible = document.getElementById('giveawaybot-visibility-select').value;
+
+            const newEventsPayload = {
+                events: [
+                    {
+                        title: document.getElementById('event1-title').value.trim(),
+                        time: document.getElementById('event1-time').value.trim(),
+                        desc: document.getElementById('event1-desc').value.trim()
+                    },
+                    {
+                        title: document.getElementById('event2-title').value.trim(),
+                        time: document.getElementById('event2-time').value.trim(),
+                        desc: document.getElementById('event2-desc').value.trim()
+                    }
+                ],
+                giveawayVisible: isGiveawayVisible
+            };
 
             if (window.database) {
-                await window.dbSet(window.dbRef(window.database, 'kultura_events'), newEvents);
-                alert("🎉 Success! Ang Guild Events ay nailathala na sa website!");
+                await window.dbSet(window.dbRef(window.database, 'kultura_events'), newEventsPayload);
+                alert("🎉 Success! Ang Guild Events at GiveawayBot Visibility Settings ay nailathala na!");
             }
+        }
+
+        // GIVEAWAY BOT LOGIC (3 CS PERFECT ATTENDANCE ONLY)
+        function runGiveawayBot() {
+            const csRecords = (cloudAttendanceHistory || []).filter(r => r.event === "Castle Siege War").slice(0, 3);
+            
+            if (csRecords.length < 3) {
+                alert(`⚠️ Kinakailangan ng kahit 3 recorded Castle Siege War events! Kasalukuyang mayroon lamang na ${csRecords.length} CS events sa database.`);
+                return;
+            }
+
+            let csMainCounts = {};
+            csRecords.forEach(rec => {
+                if (rec.presents) {
+                    let uniqueMainsInEvent = new Set();
+                    rec.presents.forEach(p => {
+                        let mainIgn = p.name;
+                        uniqueMainsInEvent.add(mainIgn);
+                    });
+
+                    uniqueMainsInEvent.forEach(mName => {
+                        csMainCounts[mName] = (csMainCounts[mName] || 0) + 1;
+                    });
+                }
+            });
+
+            let qualifiedMains = Object.keys(csMainCounts).filter(mName => csMainCounts[mName] === 3);
+
+            if (qualifiedMains.length < 3) {
+                alert(`⚠️ Kulang ang bilang ng qualified members! Mayroon lamang ${qualifiedMains.length} main members na nakakumpleto ng 3/3 CS attendance.`);
+                return;
+            }
+
+            const infoElem = document.getElementById('giveaway-participants-info');
+            const resultsBox = document.getElementById('giveaway-results-box');
+            const winnersList = document.getElementById('giveaway-winners-list');
+
+            infoElem.innerHTML = `🎲 Rolling Giveaway Bot... <span style="color:#fff;">(Total Qualified 3/3 CS Mains: ${qualifiedMains.length})</span>`;
+            
+            let shuffleCount = 0;
+            const interval = setInterval(() => {
+                shuffleCount++;
+                let tempPick = qualifiedMains[Math.floor(Math.random() * qualifiedMains.length)];
+                infoElem.innerHTML = `🎰 Picking Winners: <strong style="color:#ffdd55; font-size:1.2rem;">${tempPick}</strong>...`;
+
+                if (shuffleCount >= 20) {
+                    clearInterval(interval);
+                    
+                    let shuffled = [...qualifiedMains].sort(() => 0.5 - Math.random());
+                    let finalWinners = shuffled.slice(0, 3);
+
+                    infoElem.innerHTML = `✅ Giveaway Complete! Total Qualified Mains: <strong>${qualifiedMains.length}</strong>`;
+                    winnersList.innerHTML = '';
+
+                    finalWinners.forEach((wName, i) => {
+                        let mainDiv = findMainGuildDivision(wName) || "Kultura Alliance";
+                        winnersList.innerHTML += `
+                            <div style="background: rgba(0,0,0,0.6); border: 1px solid var(--primary); padding: 12px; border-radius: 6px; flex: 1; min-width: 150px;">
+                                <div style="font-size: 1.2rem;">🏆 Winner ${i+1}</div>
+                                <div style="color: #ffdd55; font-weight: bold; font-size: 1.1rem; margin: 4px 0;">👑 ${wName}</div>
+                                <div style="font-size: 0.75rem; color: #33cc33;">${mainDiv}</div>
+                            </div>
+                        `;
+                    });
+
+                    resultsBox.style.display = 'block';
+                }
+            }, 100);
         }
 
         function updateLiveActiveWarriors() {
@@ -2335,6 +2038,8 @@
                 superGuildRegBlock.style.display = 'none';
                 if (superEventsBlock) superEventsBlock.style.display = 'none';
             }
+
+            updateGiveawayBotVisibility();
 
             if (isIkapitana) {
                 superMainDummyBlock.style.display = 'none';
