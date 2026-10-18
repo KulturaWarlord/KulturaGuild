@@ -336,7 +336,7 @@
                 <div class="stat-label">Active Warriors</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">300k SOL</div>
+                <div class="stat-value">100k SOL</div>
                 <div class="stat-label">CS Prize Pool</div>
             </div>
             <div class="stat-card">
@@ -601,11 +601,11 @@
 
                             <!-- LIVE MAIN SEARCH BAR -->
                             <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; border: 1px solid var(--border-gold);">
-                                <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">🔍 Search Main Character & Linked Dummies:</h4>
-                                <input type="text" id="search-main-input" onkeyup="searchMainAndDummies()" placeholder="Type Main Character IGN (e.g., Eremes, Fullclip, Warlock)..." style="width: 100%; padding: 8px 12px; background: #111; border: 1px solid var(--primary); color: #fff; border-radius: 4px; font-size: 0.85rem; margin-bottom: 8px;">
+                                <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">🔍 Search Main or Dummy Character:</h4>
+                                <input type="text" id="search-main-input" onkeyup="searchMainAndDummies()" placeholder="Type Main or Dummy Character IGN..." style="width: 100%; padding: 8px 12px; background: #111; border: 1px solid var(--primary); color: #fff; border-radius: 4px; font-size: 0.85rem; margin-bottom: 8px;">
                                 
                                 <div id="search-dummy-result-box" style="background: rgba(0,0,0,0.8); padding: 10px; border-radius: 4px; font-size: 0.85rem; min-height: 40px;">
-                                    <span style="color: var(--text-dim); font-style: italic;">Type in the search bar above to view the Main and their linked dummies.</span>
+                                    <span style="color: var(--text-dim); font-style: italic;">Type a Main or Dummy character name to search...</span>
                                 </div>
                             </div>
 
@@ -721,13 +721,19 @@
                                 </div>
                             </div>
 
-                            <div style="margin-bottom: 12px;">
-                                <label style="font-size: 0.85rem;">Event Type:</label>
-                                <select id="admin-event-type" onchange="renderMemberChecklist()" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
-                                    <option value="Castle Siege War">Castle Siege War (100,000 SOL Pool)</option>
-                                    <option value="Boss Hunt Raid">Boss Hunt Raid</option>
-                                    <option value="Guild Event">Guild Event</option>
-                                </select>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+                                <div>
+                                    <label style="font-size: 0.85rem;">Event Type:</label>
+                                    <select id="admin-event-type" onchange="renderMemberChecklist()" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
+                                        <option value="Castle Siege War">Castle Siege War (100,000 SOL Pool)</option>
+                                        <option value="Boss Hunt Raid">Boss Hunt Raid</option>
+                                        <option value="Guild Event">Guild Event</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.85rem; color: var(--primary-glow);">📅 Select Attendance Date:</label>
+                                    <input type="date" id="admin-attendance-date" onchange="renderMemberChecklist()" style="width: 100%; padding: 7px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; font-weight: bold;">
+                                </div>
                             </div>
 
                             <div style="margin-bottom: 15px;">
@@ -965,6 +971,15 @@
                 </div>
             </div>
         </section>
+
+        <!-- LIVE PAGE VIEWS COUNTER -->
+        <div style="text-align: center; margin: 40px 0 10px;">
+            <div style="display: inline-block; background: var(--bg-card); border: 1px solid var(--border-gold); padding: 12px 25px; border-radius: 30px; backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.6);">
+                <span style="font-size: 0.9rem; color: var(--text-dim); font-family: 'Cinzel', serif;">👀 Total Page Visits: </span>
+                <span id="live-page-views-count" style="font-size: 1.1rem; color: var(--primary-glow); font-weight: 800; font-family: 'Cinzel', serif;">Loading...</span>
+            </div>
+        </div>
+
     </div>
 
     <footer>
@@ -1014,6 +1029,30 @@
             const rightLetters = document.querySelectorAll('#right-floating-word span');
             rightLetters.forEach((letter, index) => { letter.style.animationDelay = `${index * 0.12}s`; });
         });
+
+        // Firebase Live Page View Counter Logic
+        function initPageCounter() {
+            if (!window.database) return;
+            const dbRef = window.dbRef;
+            const dbGet = window.dbGet;
+            const dbSet = window.dbSet;
+            const database = window.database;
+
+            const viewCountRef = dbRef(database, 'kultura_page_views');
+
+            dbGet(viewCountRef).then((snapshot) => {
+                let currentViews = snapshot.exists() ? snapshot.val() : 1000; 
+                let newViews = currentViews + 1;
+                dbSet(viewCountRef, newViews);
+
+                const counterElem = document.getElementById('live-page-views-count');
+                if (counterElem) {
+                    counterElem.innerText = newViews.toLocaleString();
+                }
+            }).catch((error) => {
+                console.error("Error updating page views:", error);
+            });
+        }
 
         let ALL_DIVISIONS = [
             "Fullclip Division (Fullclip)",
@@ -1102,6 +1141,10 @@
         }
 
         function getStandardDateKey() {
+            const dateInput = document.getElementById('admin-attendance-date');
+            if (dateInput && dateInput.value) {
+                return dateInput.value;
+            }
             const d = new Date();
             const year = d.getFullYear();
             const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -1116,18 +1159,27 @@
             if (!resultBox) return;
 
             if (!query) {
-                resultBox.innerHTML = `<span style="color: var(--text-dim); font-style: italic;">Type in the search bar above to view the Main and their linked dummies.</span>`;
+                resultBox.innerHTML = `<span style="color: var(--text-dim); font-style: italic;">Type a Main or Dummy character name to search...</span>`;
                 return;
             }
 
             let data = getGuildData();
             let mainGroups = {};
+            let allMembersFlat = [];
 
             for (let divKey in data) {
                 let members = data[divKey];
                 members.forEach(m => {
                     let rawMainName = m.mainOwner ? m.mainOwner : m.name;
                     let mainKey = rawMainName.toLowerCase();
+
+                    allMembersFlat.push({
+                        name: m.name,
+                        class: m.class,
+                        division: divKey,
+                        mainOwner: rawMainName,
+                        isDummy: m.name.toLowerCase() !== mainKey.toLowerCase()
+                    });
 
                     if (!mainGroups[mainKey]) {
                         mainGroups[mainKey] = { mainIgn: rawMainName, mainDivision: divKey, dummies: [] };
@@ -1138,42 +1190,64 @@
                 });
             }
 
-            let matchedMainKeys = Object.keys(mainGroups).filter(k => k.includes(query));
+            let displayHtml = '';
+            let foundMatch = false;
 
-            if (matchedMainKeys.length === 0) {
-                resultBox.innerHTML = `<span style="color: #ffaa33;">⚠️ No Main Character found with the name "<strong>${rawQuery}</strong>".</span>`;
-                return;
+            let matchedMainKeys = Object.keys(mainGroups).filter(k => k.includes(query));
+            if (matchedMainKeys.length > 0) {
+                foundMatch = true;
+                matchedMainKeys.forEach(mainKey => {
+                    let info = mainGroups[mainKey];
+                    let dummyCount = info.dummies.length;
+
+                    let dummyListHtml = '';
+                    if (dummyCount > 0) {
+                        info.dummies.forEach(d => {
+                            dummyListHtml += `<li style="margin-left: 15px; color: #fff;">🎭 <strong>${d.name}</strong> <small style="color: var(--text-dim);">(${d.class} - ${d.division})</small></li>`;
+                        });
+                    } else {
+                        dummyListHtml = `<span style="color: var(--text-dim); margin-left: 15px; font-size: 0.8rem;">(No linked dummy accounts)</span>`;
+                    }
+
+                    displayHtml += `
+                        <div style="background: rgba(230,184,0,0.1); border-left: 3px solid var(--primary); padding: 8px 10px; margin-bottom: 8px; border-radius: 4px;">
+                            <div style="color: var(--primary-glow); font-weight: bold; font-size: 0.95rem;">
+                                👑 Main Character: <span style="color: #fff;">${info.mainIgn}</span> 
+                                <small style="color: #33cc33; font-weight: normal;">[${info.mainDivision}]</small>
+                            </div>
+                            <div style="margin-top: 4px; font-size: 0.85rem;">
+                                <strong style="color: #ffaa33;">Linked Dummies (${dummyCount}):</strong>
+                                <ul style="list-style-type: none; padding: 0; margin-top: 2px;">
+                                    ${dummyListHtml}
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                });
             }
 
-            let displayHtml = '';
-            matchedMainKeys.forEach(mainKey => {
-                let info = mainGroups[mainKey];
-                let dummyCount = info.dummies.length;
-
-                let dummyListHtml = '';
-                if (dummyCount > 0) {
-                    info.dummies.forEach(d => {
-                        dummyListHtml += `<li style="margin-left: 15px; color: #fff;">🎭 <strong>${d.name}</strong> <small style="color: var(--text-dim);">(${d.class} - ${d.division})</small></li>`;
-                    });
-                } else {
-                    dummyListHtml = `<span style="color: var(--text-dim); margin-left: 15px; font-size: 0.8rem;">(No linked dummy accounts)</span>`;
-                }
-
-                displayHtml += `
-                    <div style="background: rgba(230,184,0,0.1); border-left: 3px solid var(--primary); padding: 8px 10px; margin-bottom: 8px; border-radius: 4px;">
-                        <div style="color: var(--primary-glow); font-weight: bold; font-size: 0.95rem;">
-                            👑 Main Character: <span style="color: #fff;">${info.mainIgn}</span> 
-                            <small style="color: #33cc33; font-weight: normal;">[${info.mainDivision}]</small>
+            let matchedDummies = allMembersFlat.filter(m => m.isDummy && m.name.toLowerCase().includes(query));
+            if (matchedDummies.length > 0) {
+                foundMatch = true;
+                matchedDummies.forEach(d => {
+                    let mainDiv = findMainGuildDivision(d.mainOwner) || "Unknown Division";
+                    displayHtml += `
+                        <div style="background: rgba(255,170,51,0.1); border-left: 3px solid #ffaa33; padding: 8px 10px; margin-bottom: 8px; border-radius: 4px;">
+                            <div style="color: #ffaa33; font-weight: bold; font-size: 0.95rem;">
+                                🎭 Searched Dummy: <span style="color: #fff;">${d.name}</span> <small style="color: var(--text-dim);">(${d.class} - ${d.division})</small>
+                            </div>
+                            <div style="margin-top: 4px; font-size: 0.85rem; color: #33cc33;">
+                                🔗 Belongs to Main Character: <strong>👑 ${d.mainOwner}</strong> <small style="color: var(--text-dim);">[${mainDiv}]</small>
+                            </div>
                         </div>
-                        <div style="margin-top: 4px; font-size: 0.85rem;">
-                            <strong style="color: #ffaa33;">Linked Dummies (${dummyCount}):</strong>
-                            <ul style="list-style-type: none; padding: 0; margin-top: 2px;">
-                                ${dummyListHtml}
-                            </ul>
-                        </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
+
+            if (!foundMatch) {
+                resultBox.innerHTML = `<span style="color: #ff3333;">⚠️ No Main or Dummy Character found matching "<strong>${rawQuery}</strong>".</span>`;
+                return;
+            }
 
             resultBox.innerHTML = displayHtml;
         }
@@ -1237,6 +1311,7 @@
 
         window.addEventListener('firebase-ready', () => {
             initRealtimeListeners();
+            initPageCounter();
         });
 
         function getGuildData() {
@@ -1303,7 +1378,6 @@
             const eventsData = cloudGuildEvents || defaultGuildEvents;
             const isVisible = Array.isArray(eventsData) ? "HIDE" : (eventsData.giveawayVisible || "HIDE");
 
-            // Portal view (SuperAdmin only)
             if (superGiveawayBlock) {
                 if (isSuperAdmin && isVisible === "SHOW") {
                     superGiveawayBlock.style.display = 'block';
@@ -1312,7 +1386,6 @@
                 }
             }
 
-            // Public secondary display outside the portal
             if (publicGiveawaySection) {
                 if (isVisible === "SHOW") {
                     publicGiveawaySection.style.display = 'block';
@@ -1325,37 +1398,51 @@
 
         function updatePublicGiveawayDisplay() {
             const qualifiedListElem = document.getElementById('public-qualified-list');
+            const publicWinnersBox = document.getElementById('public-winners-display-box');
             if (!qualifiedListElem) return;
 
-            const csRecords = (cloudAttendanceHistory || []).filter(r => r.event === "Castle Siege War").slice(0, 3);
+            const history = cloudAttendanceHistory || [];
+            const csRecords = history.filter(r => r.event === "Castle Siege War").slice(0, 3);
+            
             if (csRecords.length < 3) {
                 qualifiedListElem.innerHTML = `<span style="color: var(--text-dim);">Requires 3 recorded Castle Siege events (Current: ${csRecords.length}/3).</span>`;
-                return;
-            }
+            } else {
+                let csMainCounts = {};
+                csRecords.forEach(rec => {
+                    if (rec.presents) {
+                        let uniqueMainsInEvent = new Set();
+                        rec.presents.forEach(p => { uniqueMainsInEvent.add(p.name); });
+                        uniqueMainsInEvent.forEach(mName => {
+                            csMainCounts[mName] = (csMainCounts[mName] || 0) + 1;
+                        });
+                    }
+                });
 
-            let csMainCounts = {};
-            csRecords.forEach(rec => {
-                if (rec.presents) {
-                    let uniqueMainsInEvent = new Set();
-                    rec.presents.forEach(p => { uniqueMainsInEvent.add(p.name); });
-                    uniqueMainsInEvent.forEach(mName => {
-                        csMainCounts[mName] = (csMainCounts[mName] || 0) + 1;
+                let qualifiedMains = Object.keys(csMainCounts).filter(mName => csMainCounts[mName] === 3);
+                if (qualifiedMains.length === 0) {
+                    qualifiedListElem.innerHTML = `<span style="color: var(--text-dim);">No members have completed 3/3 CS attendance yet.</span>`;
+                } else {
+                    let html = `<ul style="padding-left: 15px; margin: 0;">`;
+                    qualifiedMains.forEach(m => {
+                        html += `<li>👑 <strong>${m}</strong> <span style="color: #33cc33;">(3/3 Verified)</span></li>`;
                     });
+                    html += `</ul>`;
+                    qualifiedListElem.innerHTML = html;
                 }
-            });
-
-            let qualifiedMains = Object.keys(csMainCounts).filter(mName => csMainCounts[mName] === 3);
-            if (qualifiedMains.length === 0) {
-                qualifiedListElem.innerHTML = `<span style="color: var(--text-dim);">No members have completed 3/3 CS attendance yet.</span>`;
-                return;
             }
 
-            let html = `<ul style="padding-left: 15px; margin: 0;">`;
-            qualifiedMains.forEach(m => {
-                html += `<li>👑 <strong>${m}</strong> <span style="color: #33cc33;">(3/3 Verified)</span></li>`;
-            });
-            html += `</ul>`;
-            qualifiedListElem.innerHTML = html;
+            // Check if the latest CS record already has saved winners in Firebase database
+            let latestCS = history.find(r => r.event === "Castle Siege War");
+            if (latestCS && latestCS.giveawayWinners && latestCS.giveawayWinners.length > 0) {
+                let winnersHtml = '';
+                latestCS.giveawayWinners.forEach((wName, i) => {
+                    let mainDiv = findMainGuildDivision(wName) || "Kultura Alliance";
+                    winnersHtml += `👑 <strong>Winner ${i+1}: ${wName}</strong> <span style="color: #33cc33;">(${mainDiv})</span><br>`;
+                });
+                if (publicWinnersBox) publicWinnersBox.innerHTML = winnersHtml;
+            } else {
+                if (publicWinnersBox) publicWinnersBox.innerHTML = `<em style="color: var(--text-dim);">No winners rolled yet for the latest Castle Siege.</em>`;
+            }
         }
 
         async function saveGuildEventsToFirebase() {
@@ -1385,14 +1472,16 @@
             }
         }
 
-        // GIVEAWAY BOT LOGIC (3 CS PERFECT ATTENDANCE ONLY)
-        function runGiveawayBot() {
-            const csRecords = (cloudAttendanceHistory || []).filter(r => r.event === "Castle Siege War").slice(0, 3);
+        async function runGiveawayBot() {
+            let history = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
+            const csRecords = history.filter(r => r.event === "Castle Siege War").slice(0, 3);
             
             if (csRecords.length < 3) {
                 alert(`⚠️ Requires at least 3 recorded Castle Siege War events! Currently only have ${csRecords.length} CS events in database.`);
                 return;
             }
+
+            let latestCS = csRecords[0]; // The most recent CS record
 
             let csMainCounts = {};
             csRecords.forEach(rec => {
@@ -1423,7 +1512,7 @@
             infoElem.innerHTML = `🎲 Rolling Giveaway Bot... <span style="color:#fff;">(Total Qualified 3/3 CS Mains: ${qualifiedMains.length})</span>`;
             
             let shuffleCount = 0;
-            const interval = setInterval(() => {
+            const interval = setInterval(async () => {
                 shuffleCount++;
                 let tempPick = qualifiedMains[Math.floor(Math.random() * qualifiedMains.length)];
                 infoElem.innerHTML = `🎰 Picking Winners: <strong style="color:#ffdd55; font-size:1.2rem;">${tempPick}</strong>...`;
@@ -1434,7 +1523,19 @@
                     let shuffled = [...qualifiedMains].sort(() => 0.5 - Math.random());
                     let finalWinners = shuffled.slice(0, 3);
 
-                    infoElem.innerHTML = `✅ Giveaway Complete! Total Qualified Mains: <strong>${qualifiedMains.length}</strong>`;
+                    // SAVE WINNERS PERMANENTLY TO FIREBASE RECORD
+                    latestCS.giveawayWinners = finalWinners;
+                    
+                    let recordIndex = history.findIndex(r => r.dateKey === latestCS.dateKey && r.event === "Castle Siege War");
+                    if (recordIndex !== -1) {
+                        history[recordIndex] = latestCS;
+                        cloudAttendanceHistory = history;
+                        if (window.database) {
+                            await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), history);
+                        }
+                    }
+
+                    infoElem.innerHTML = `✅ Giveaway Complete & Saved to Database! Total Qualified Mains: <strong>${qualifiedMains.length}</strong>`;
                     winnersList.innerHTML = '';
 
                     let publicWinnersHtml = '';
@@ -1453,7 +1554,6 @@
 
                     resultsBox.style.display = 'block';
 
-                    // Update public secondary display winners box
                     const publicWinnersBox = document.getElementById('public-winners-display-box');
                     if (publicWinnersBox) {
                         publicWinnersBox.innerHTML = publicWinnersHtml;
@@ -1812,8 +1912,8 @@
             const data = getGuildData();
             const members = data[selectedDivision] || [];
 
-            const todayDateKey = getStandardDateKey();
-            let currentRecord = cloudAttendanceHistory ? cloudAttendanceHistory.find(r => r.dateKey === todayDateKey && r.event === eventType) : null;
+            const targetDateKey = getStandardDateKey();
+            let currentRecord = cloudAttendanceHistory ? cloudAttendanceHistory.find(r => r.dateKey === targetDateKey && r.event === eventType) : null;
             let presentMainsSet = new Set(currentRecord && currentRecord.presents ? currentRecord.presents.map(p => p.name.toLowerCase()) : []);
 
             members.forEach((mObj, idx) => {
@@ -1853,14 +1953,14 @@
             const totalSolPool = parseFloat(document.getElementById('admin-sol-pool').value) || 100000;
             const selects = document.querySelectorAll('#admin-member-checklist select');
             
-            const todayDateKey = getStandardDateKey(); 
+            const targetDateKey = getStandardDateKey(); 
             let allRecords = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
-            let existingRecordIndex = allRecords.findIndex(r => r.dateKey === todayDateKey && r.event === eventType);
+            let existingRecordIndex = allRecords.findIndex(r => r.dateKey === targetDateKey && r.event === eventType);
 
             let existingRecord = existingRecordIndex !== -1 ? allRecords[existingRecordIndex] : null;
 
             if (!existingRecord) {
-                existingRecord = { dateKey: todayDateKey, timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), event: eventType, solPool: totalSolPool, presents: [] };
+                existingRecord = { dateKey: targetDateKey, timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), event: eventType, solPool: totalSolPool, presents: [] };
                 allRecords.unshift(existingRecord);
             }
 
@@ -1898,7 +1998,7 @@
             updateLiveActiveWarriors();
             updatePublicGiveawayDisplay();
             
-            alert(`🎉 Live Attendance Updated successfully!`);
+            alert(`🎉 Live Attendance Updated successfully for date: ${targetDateKey}!`);
         }
 
         function renderAttendanceHistory() {
@@ -2093,6 +2193,15 @@
                 return;
             }
             document.getElementById('logged-agm-display').innerText = `${currentLoggedInOfficer}`;
+
+            const datePicker = document.getElementById('admin-attendance-date');
+            if (datePicker && !datePicker.value) {
+                const d = new Date();
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                datePicker.value = `${year}-${month}-${day}`;
+            }
 
             const superInboxBlock = document.getElementById('superadmin-inbox-block');
             const superMainDummyBlock = document.getElementById('superadmin-main-dummy-block');
