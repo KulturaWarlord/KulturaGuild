@@ -1114,7 +1114,7 @@
         let cached3DayPayoutData = null;
 
         let inactivityTimer = null;
-        const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 Minutes
+        const INACTIVITY_LIMIT = 5 * 60 * 1000;
 
         function resetInactivityTimer() {
             if (!currentLoggedInOfficer) return;
@@ -1180,7 +1180,7 @@
                         class: m.class,
                         division: divKey,
                         mainOwner: rawMainName,
-                        isDummy: m.name.toLowerCase() !== mainKey.toLowerCase()
+                        isDummy: m.name.toLowerCase() !== mainKey
                     });
 
                     if (!mainGroups[mainKey]) {
@@ -1261,7 +1261,6 @@
             resultBox.innerHTML = displayHtml;
         }
 
-        // UNLINK FUNCTION
         async function unlinkDummyAccount(dummyIgn) {
             const confirmUnlink = confirm(`⚠️ Are you sure you want to unlink "${dummyIgn}"? It will revert back to being independent or its own main.`);
             if (!confirmUnlink) return;
@@ -1272,7 +1271,7 @@
             for (let divKey in data) {
                 let member = data[divKey].find(m => m.name.toLowerCase() === dummyIgn.toLowerCase());
                 if (member) {
-                    member.mainOwner = member.name; // Ibalik sa sarili as main
+                    member.mainOwner = member.name;
                     member.icon = getClassIcon(member.class);
                     found = true;
                     break;
@@ -1433,6 +1432,7 @@
             }
         }
 
+        // CASE-INSENSITIVE NORMALIZER PARA SA MAIN/DUMMY AT GIVEAWAY
         function updatePublicGiveawayDisplay() {
             const qualifiedListElem = document.getElementById('public-qualified-list');
             const publicWinnersBox = document.getElementById('public-winners-display-box');
@@ -1448,24 +1448,28 @@
                 csRecords.forEach(rec => {
                     if (rec.presents) {
                         let uniqueMainsInEvent = new Set();
-                        rec.presents.forEach(p => { uniqueMainsInEvent.add(p.name); });
-                        uniqueMainsInEvent.forEach(mName => {
-                            csMainCounts[mName] = (csMainCounts[mName] || 0) + 1;
+                        rec.presents.forEach(p => {
+                            let mainKey = (p.name || "").toLowerCase().trim();
+                            if (mainKey) uniqueMainsInEvent.add(mainKey);
+                        });
+                        uniqueMainsInEvent.forEach(mKey => {
+                            csMainCounts[mKey] = (csMainCounts[mKey] || 0) + 1;
                         });
                     }
                 });
 
-                let qualifiedMains = Object.keys(csMainCounts).filter(mName => {
-                    let isGm = GUILD_MASTERS_LIST.some(gm => gm.toLowerCase() === mName.toLowerCase());
-                    return csMainCounts[mName] === 3 && !isGm;
+                let qualifiedMains = Object.keys(csMainCounts).filter(mKey => {
+                    let isGm = GUILD_MASTERS_LIST.some(gm => gm.toLowerCase() === mKey);
+                    return csMainCounts[mKey] === 3 && !isGm;
                 });
 
                 if (qualifiedMains.length === 0) {
                     qualifiedListElem.innerHTML = `<span style="color: var(--text-dim);">No eligible members (non-GMs) have completed 3/3 CS attendance yet.</span>`;
                 } else {
                     let html = `<ul style="padding-left: 15px; margin: 0;">`;
-                    qualifiedMains.forEach(m => {
-                        html += `<li>👑 <strong>${m}</strong> <span style="color: #33cc33;">(3/3 Verified)</span></li>`;
+                    qualifiedMains.forEach(mKey => {
+                        let originalNameDisplay = getOriginalCasedMainName(mKey) || mKey;
+                        html += `<li>👑 <strong>${originalNameDisplay}</strong> <span style="color: #33cc33;">(3/3 Verified)</span></li>`;
                     });
                     html += `</ul>`;
                     qualifiedListElem.innerHTML = html;
@@ -1475,14 +1479,24 @@
             let latestCS = history.find(r => r.event === "Castle Siege War");
             if (latestCS && latestCS.giveawayWinners && latestCS.giveawayWinners.length > 0) {
                 let winnersHtml = '';
-                latestCS.giveawayWinners.forEach((wName, i) => {
-                    let mainDiv = findMainGuildDivision(wName) || "Kultura Alliance";
-                    winnersHtml += `👑 <strong>Winner ${i+1}: ${wName}</strong> <span style="color: #33cc33;">(${mainDiv})</span><br>`;
+                latestCS.giveawayWinners.forEach((wKey, i) => {
+                    let originalNameDisplay = getOriginalCasedMainName(wKey) || wKey;
+                    let mainDiv = findMainGuildDivision(originalNameDisplay) || "Kultura Alliance";
+                    winnersHtml += `👑 <strong>Winner ${i+1}: ${originalNameDisplay}</strong> <span style="color: #33cc33;">(${mainDiv})</span><br>`;
                 });
                 if (publicWinnersBox) publicWinnersBox.innerHTML = winnersHtml;
             } else {
                 if (publicWinnersBox) publicWinnersBox.innerHTML = `<em style="color: var(--text-dim);">No winners rolled yet for the latest Castle Siege.</em>`;
             }
+        }
+
+        function getOriginalCasedMainName(lowerKey) {
+            let data = getGuildData();
+            for (let divKey in data) {
+                let found = data[divKey].find(m => (m.mainOwner || m.name).toLowerCase() === lowerKey);
+                if (found) return found.mainOwner || found.name;
+            }
+            return lowerKey;
         }
 
         async function saveGuildEventsToFirebase() {
@@ -1528,19 +1542,19 @@
                 if (rec.presents) {
                     let uniqueMainsInEvent = new Set();
                     rec.presents.forEach(p => {
-                        let mainIgn = p.name;
-                        uniqueMainsInEvent.add(mainIgn);
+                        let mainKey = (p.name || "").toLowerCase().trim();
+                        if (mainKey) uniqueMainsInEvent.add(mainKey);
                     });
 
-                    uniqueMainsInEvent.forEach(mName => {
-                        csMainCounts[mName] = (csMainCounts[mName] || 0) + 1;
+                    uniqueMainsInEvent.forEach(mKey => {
+                        csMainCounts[mKey] = (csMainCounts[mKey] || 0) + 1;
                     });
                 }
             });
 
-            let qualifiedMains = Object.keys(csMainCounts).filter(mName => {
-                let isGm = GUILD_MASTERS_LIST.some(gm => gm.toLowerCase() === mName.toLowerCase());
-                return csMainCounts[mName] === 3 && !isGm;
+            let qualifiedMains = Object.keys(csMainCounts).filter(mKey => {
+                let isGm = GUILD_MASTERS_LIST.some(gm => gm.toLowerCase() === mKey);
+                return csMainCounts[mKey] === 3 && !isGm;
             });
 
             if (qualifiedMains.length < 6) {
@@ -1557,8 +1571,9 @@
             let shuffleCount = 0;
             const interval = setInterval(async () => {
                 shuffleCount++;
-                let tempPick = qualifiedMains[Math.floor(Math.random() * qualifiedMains.length)];
-                infoElem.innerHTML = `🎰 Picking Winners: <strong style="color:#ffdd55; font-size:1.2rem;">${tempPick}</strong>...`;
+                let tempKey = qualifiedMains[Math.floor(Math.random() * qualifiedMains.length)];
+                let tempDisplayName = getOriginalCasedMainName(tempKey);
+                infoElem.innerHTML = `🎰 Picking Winners: <strong style="color:#ffdd55; font-size:1.2rem;">${tempDisplayName}</strong>...`;
 
                 if (shuffleCount >= 20) {
                     clearInterval(interval);
@@ -1581,7 +1596,8 @@
                     winnersList.innerHTML = '';
 
                     let publicWinnersHtml = '';
-                    finalWinners.forEach((wName, i) => {
+                    finalWinners.forEach((wKey, i) => {
+                        let wName = getOriginalCasedMainName(wKey);
                         let mainDiv = findMainGuildDivision(wName) || "Kultura Alliance";
                         winnersList.innerHTML += `
                             <div style="background: rgba(0,0,0,0.6); border: 1px solid var(--primary); padding: 10px; border-radius: 6px; text-align: center;">
@@ -1637,7 +1653,7 @@
 
                 if (rec.presents) {
                     rec.presents.forEach(p => {
-                        let mainIgn = p.name;
+                        let mainIgn = getOriginalCasedMainName((p.name || "").toLowerCase().trim()) || p.name;
                         let divKey = findMainGuildDivision(mainIgn) || (p.officer || "Kultura Main Division");
 
                         if (!mainMap[mainIgn]) {
@@ -1956,19 +1972,20 @@
 
             const targetDateKey = getStandardDateKey();
             let currentRecord = cloudAttendanceHistory ? cloudAttendanceHistory.find(r => r.dateKey === targetDateKey && r.event === eventType) : null;
-            let presentMainsSet = new Set(currentRecord && currentRecord.presents ? currentRecord.presents.map(p => p.name.toLowerCase()) : []);
+            let presentMainsSet = new Set(currentRecord && currentRecord.presents ? currentRecord.presents.map(p => (p.name || "").toLowerCase()) : []);
 
             members.forEach((mObj, idx) => {
                 const div = document.createElement('div');
                 div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;";
                 
-                let isDummy = mObj.mainOwner && mObj.mainOwner.toLowerCase() !== mObj.name.toLowerCase();
-                let dummyLabel = isDummy ? `<small style="color:#ffaa33; font-weight:bold;">[Dummy of ${mObj.mainOwner}]</small>` : `<small style="color:#33cc33; font-weight:bold;">[Main]</small>`;
-                let isCurrentlyPresent = presentMainsSet.has((mObj.mainOwner || mObj.name).toLowerCase());
+                let mainOwnerVal = mObj.mainOwner || mObj.name;
+                let isDummy = mainOwnerVal.toLowerCase() !== mObj.name.toLowerCase();
+                let dummyLabel = isDummy ? `<small style="color:#ffaa33; font-weight:bold;">[Dummy of ${mainOwnerVal}]</small>` : `<small style="color:#33cc33; font-weight:bold;">[Main]</small>`;
+                let isCurrentlyPresent = presentMainsSet.has(mainOwnerVal.toLowerCase());
 
                 div.innerHTML = `
                     <span>${mObj.icon} <strong>${mObj.name}</strong> ${dummyLabel} <small style="color:var(--text-dim);">(${mObj.class})</small></span>
-                    <select id="att-status-${idx}" data-name="${mObj.name}" data-main="${mObj.mainOwner || mObj.name}" style="background: #222; color: #fff; border: 1px solid #555; padding: 2px 6px; border-radius: 3px;">
+                    <select id="att-status-${idx}" data-name="${mObj.name}" data-main="${mainOwnerVal}" style="background: #222; color: #fff; border: 1px solid #555; padding: 2px 6px; border-radius: 3px;">
                         <option value="Present" ${isCurrentlyPresent ? 'selected' : ''}>Present</option>
                         <option value="Late">Late</option>
                         <option value="Absent" ${!isCurrentlyPresent ? 'selected' : ''}>Absent</option>
@@ -1980,8 +1997,9 @@
 
         function findMainGuildDivision(mainIgn) {
             const data = getGuildData();
+            let lowerMain = (mainIgn || "").toLowerCase();
             for (let divKey in data) {
-                let found = data[divKey].find(m => m.name.toLowerCase() === mainIgn.toLowerCase());
+                let found = data[divKey].find(m => (m.mainOwner || m.name).toLowerCase() === lowerMain);
                 if (found) return divKey;
             }
             return null;
@@ -2007,8 +2025,8 @@
             }
 
             let currentDivMembers = (getGuildData()[currentCheckingGM] || []).map(m => (m.mainOwner || m.name).toLowerCase());
-            let updatedPresents = existingRecord.presents.filter(p => !currentDivMembers.includes(p.name.toLowerCase()));
-            let acknowledgedMains = new Set(updatedPresents.map(p => p.name.toLowerCase()));
+            let updatedPresents = existingRecord.presents.filter(p => !currentDivMembers.includes((p.name || "").toLowerCase()));
+            let acknowledgedMains = new Set(updatedPresents.map(p => (p.name || "").toLowerCase()));
 
             selects.forEach(sel => {
                 const status = sel.value;
@@ -2060,11 +2078,12 @@
                 const groupedByDivision = {};
                 if (rec.presents) {
                     rec.presents.forEach(p => {
-                        let verifiedDivision = findMainGuildDivision(p.name);
+                        let normalizedMainName = getOriginalCasedMainName((p.name || "").toLowerCase().trim()) || p.name;
+                        let verifiedDivision = findMainGuildDivision(normalizedMainName);
                         let finalDivKey = verifiedDivision ? verifiedDivision : (p.officer || "Kultura Main Division");
 
                         if (!groupedByDivision[finalDivKey]) { groupedByDivision[finalDivKey] = []; }
-                        groupedByDivision[finalDivKey].push(p);
+                        groupedByDivision[finalDivKey].push({ ...p, name: normalizedMainName });
                     });
                 }
 
@@ -2368,7 +2387,8 @@
                     ? `<span style="font-size:0.75rem; color:#e6b800; font-weight:bold; background:rgba(230,184,0,0.15); padding:2px 6px; border-radius:3px; border:1px solid #e6b800;">🛡️ Protected</span>`
                     : `<button onclick="deleteMember('${mObj.name}')" class="delete-btn">❌ Delete</button>`;
 
-                let altTag = (mObj.mainOwner && mObj.mainOwner.toLowerCase() !== mObj.name.toLowerCase()) ? ` <small style="color:#ffaa33;">(Dummy of ${mObj.mainOwner})</small>` : ' <small style="color:#33cc33;">(Main)</small>';
+                let mainOwnerVal = mObj.mainOwner || mObj.name;
+                let altTag = mainOwnerVal.toLowerCase() !== mObj.name.toLowerCase() ? ` <small style="color:#ffaa33;">(Dummy of ${mainOwnerVal})</small>` : ' <small style="color:#33cc33;">(Main)</small>';
 
                 div.innerHTML = `<span>${mObj.icon} <strong>${mObj.name}</strong>${altTag} <small style="color:var(--text-dim);">(${mObj.class})</small></span>${actionHTML}`;
                 listContainer.appendChild(div);
@@ -2408,9 +2428,10 @@
                 } else {
                     members.forEach(m => {
                         const cssClass = getClassCss(m.class);
-                        let isDummy = m.mainOwner && m.mainOwner.toLowerCase() !== m.name.toLowerCase();
+                        let mainOwnerVal = m.mainOwner || m.name;
+                        let isDummy = mainOwnerVal.toLowerCase() !== m.name.toLowerCase();
                         let displayName = m.name;
-                        let altTag = isDummy ? ` <small style="color:#ffaa33; font-weight:bold;">[Dummy of ${m.mainOwner}]</small>` : '';
+                        let altTag = isDummy ? ` <small style="color:#ffaa33; font-weight:bold;">[Dummy of ${mainOwnerVal}]</small>` : '';
                         
                         membersHTML += `
                             <div class="roster-list-item">
