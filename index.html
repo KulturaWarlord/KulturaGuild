@@ -1579,11 +1579,9 @@
             arena.style.display = 'block';
             resultsBox.style.display = 'none';
 
-            // Pumili ng 6 random ducks para sa karera mula sa qualified members
             let shuffledPool = [...qualifiedMains].sort(() => 0.5 - Math.random());
             let racingDucksKeys = shuffledPool.slice(0, Math.min(6, shuffledPool.length));
 
-            // Setup Duck Lanes
             lanesContainer.innerHTML = '';
             let duckElements = [];
 
@@ -1603,11 +1601,10 @@
 
             infoElem.innerHTML = `🏁 DUCKS ARE RACING TO THE FINISH LINE! 🦆💨`;
 
-            // Simula ng karera (Animation loop)
             let raceInterval = setInterval(() => {
                 let finished = false;
                 duckElements.forEach(duck => {
-                    duck.pos += duck.speed + (Math.random() * 2 - 1); // Random acceleration
+                    duck.pos += duck.speed + (Math.random() * 2 - 1);
                     if (duck.pos >= 90) {
                         duck.pos = 90;
                         finished = true;
@@ -1618,7 +1615,6 @@
                 if (finished || duckElements.some(d => d.pos >= 90)) {
                     clearInterval(raceInterval);
 
-                    // I-sort ang ducks batay sa posisyon para makuha ang ranking
                     duckElements.sort((a, b) => b.pos - a.pos);
                     let finalWinnersKeys = duckElements.map(d => d.key).slice(0, 6);
 
@@ -1629,7 +1625,7 @@
                         history[recordIndex] = latestCS;
                         cloudAttendanceHistory = history;
                         if (window.database) {
-                            await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), history);
+                            window.dbSet(window.dbRef(window.database, 'kultura_attendance'), history);
                         }
                     }
 
