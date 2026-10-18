@@ -394,7 +394,7 @@
                 </div>
 
                 <div style="flex: 1; min-width: 280px; background: rgba(255, 0, 127, 0.1); padding: 15px; border-radius: 6px; border: 1px solid #ff3399; text-align: center;">
-                    <h4 style="color: #ff99dd; font-size: 0.9rem; margin-bottom: 8px;">🏆 Official Giveaway Winners:</h4>
+                    <h4 style="color: #ff99dd; font-size: 0.9rem; margin-bottom: 8px;">🏆 Official Giveaway Winners (6 Winners):</h4>
                     <div id="public-winners-display-box" style="font-size: 0.9rem; color: #fff; margin-top: 10px;">
                         <em style="color: var(--text-dim);">No winners rolled yet.</em>
                     </div>
@@ -483,7 +483,7 @@
                     <!-- SUPERADMIN EXCLUSIVE: GIVEAWAY BOT -->
                     <div id="superadmin-giveaway-block" class="admin-section-block" style="display: none; border-color: #ff3399;">
                         <button onclick="toggleAdminSection('sec-giveaway-bot')" class="admin-collapsible-btn" style="color: #ff99dd; background: rgba(255, 51, 153, 0.15);">
-                            <span>🎲 3-Day Castle Siege GiveawayBot (Auto 3 Winners)</span>
+                            <span>🎲 3-Day Castle Siege GiveawayBot (Auto 6 Winners)</span>
                             <span id="icon-sec-giveaway-bot">▼ Expand</span>
                         </button>
                         <div id="sec-giveaway-bot" class="admin-collapsible-content">
@@ -493,17 +493,17 @@
 
                             <div style="background: rgba(0,0,0,0.6); padding: 12px; border-radius: 6px; border: 1px solid #ff3399; margin-bottom: 12px; text-align: center;">
                                 <div id="giveaway-participants-info" style="font-size: 0.85rem; color: #ff99dd; margin-bottom: 10px; font-weight: bold;">
-                                    Click the button below to roll 3 random winners!
+                                    Click the button below to roll 6 random winners!
                                 </div>
 
                                 <button onclick="runGiveawayBot()" class="btn" style="padding: 10px 20px; font-size: 0.9rem; background: linear-gradient(135deg, #ff007f, #99004d); color: #fff; border-color: #ff99dd;">
-                                    🎲 ROLL GIVEAWAY BOT (PICK 3 WINNERS)
+                                    🎲 ROLL GIVEAWAY BOT (PICK 6 WINNERS)
                                 </button>
                             </div>
 
                             <div id="giveaway-results-box" style="display: none; background: rgba(255, 0, 127, 0.1); border: 2px solid #ff3399; padding: 15px; border-radius: 8px; text-align: center;">
-                                <h4 style="color: #ff99dd; margin-bottom: 10px; font-size: 1.1rem;">🎉 CONGRATULATIONS TO THE 3 WINNERS! 🎉</h4>
-                                <div id="giveaway-winners-list" style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 10px;"></div>
+                                <h4 style="color: #ff99dd; margin-bottom: 10px; font-size: 1.1rem;">🎉 CONGRATULATIONS TO THE 6 WINNERS! 🎉</h4>
+                                <div id="giveaway-winners-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;"></div>
                             </div>
                         </div>
                     </div>
@@ -1431,7 +1431,6 @@
                 }
             }
 
-            // Check if the latest CS record already has saved winners in Firebase database
             let latestCS = history.find(r => r.event === "Castle Siege War");
             if (latestCS && latestCS.giveawayWinners && latestCS.giveawayWinners.length > 0) {
                 let winnersHtml = '';
@@ -1481,7 +1480,7 @@
                 return;
             }
 
-            let latestCS = csRecords[0]; // The most recent CS record
+            let latestCS = csRecords[0];
 
             let csMainCounts = {};
             csRecords.forEach(rec => {
@@ -1500,8 +1499,8 @@
 
             let qualifiedMains = Object.keys(csMainCounts).filter(mName => csMainCounts[mName] === 3);
 
-            if (qualifiedMains.length < 3) {
-                alert(`⚠️ Not enough qualified members! Only ${qualifiedMains.length} main members completed 3/3 CS attendance.`);
+            if (qualifiedMains.length < 6) {
+                alert(`⚠️ Not enough qualified members! Only ${qualifiedMains.length} main members completed 3/3 CS attendance (Need at least 6 qualified mains).`);
                 return;
             }
 
@@ -1521,9 +1520,8 @@
                     clearInterval(interval);
                     
                     let shuffled = [...qualifiedMains].sort(() => 0.5 - Math.random());
-                    let finalWinners = shuffled.slice(0, 3);
+                    let finalWinners = shuffled.slice(0, 6); // GINAWANG 6 WINNERS
 
-                    // SAVE WINNERS PERMANENTLY TO FIREBASE RECORD
                     latestCS.giveawayWinners = finalWinners;
                     
                     let recordIndex = history.findIndex(r => r.dateKey === latestCS.dateKey && r.event === "Castle Siege War");
@@ -1542,10 +1540,10 @@
                     finalWinners.forEach((wName, i) => {
                         let mainDiv = findMainGuildDivision(wName) || "Kultura Alliance";
                         winnersList.innerHTML += `
-                            <div style="background: rgba(0,0,0,0.6); border: 1px solid var(--primary); padding: 12px; border-radius: 6px; flex: 1; min-width: 150px;">
-                                <div style="font-size: 1.2rem;">🏆 Winner ${i+1}</div>
-                                <div style="color: #ffdd55; font-weight: bold; font-size: 1.1rem; margin: 4px 0;">👑 ${wName}</div>
-                                <div style="font-size: 0.75rem; color: #33cc33;">${mainDiv}</div>
+                            <div style="background: rgba(0,0,0,0.6); border: 1px solid var(--primary); padding: 10px; border-radius: 6px; text-align: center;">
+                                <div style="font-size: 1rem; color: #ff99dd;">🏆 Winner ${i+1}</div>
+                                <div style="color: #ffdd55; font-weight: bold; font-size: 1rem; margin: 3px 0;">👑 ${wName}</div>
+                                <div style="font-size: 0.7rem; color: #33cc33;">${mainDiv}</div>
                             </div>
                         `;
 
