@@ -1066,7 +1066,6 @@
             "fullclip", "warlock", "lorddwight", "windtalker", "ikapitana", "mechado", "tsukushi", "kultura", "kulturamain"
         ];
 
-        // List of known Guild Masters to exclude from Giveaway
         const GUILD_MASTERS_LIST = ["fullclip", "warlock", "lorddwight", "windtalker", "ikapitana"];
 
         let OFFICER_ACCOUNTS_SYNC = {};
@@ -1115,7 +1114,7 @@
         let cached3DayPayoutData = null;
 
         let inactivityTimer = null;
-        const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 Minutes in milliseconds
+        const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 Minutes
 
         function resetInactivityTimer() {
             if (!currentLoggedInOfficer) return;
@@ -1206,7 +1205,11 @@
                     let dummyListHtml = '';
                     if (dummyCount > 0) {
                         info.dummies.forEach(d => {
-                            dummyListHtml += `<li style="margin-left: 15px; color: #fff;">🎭 <strong>${d.name}</strong> <small style="color: var(--text-dim);">(${d.class} - ${d.division})</small></li>`;
+                            dummyListHtml += `
+                                <li style="margin-left: 15px; color: #fff; display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                                    <span>🎭 <strong>${d.name}</strong> <small style="color: var(--text-dim);">(${d.class} - ${d.division})</small></span>
+                                    <button onclick="unlinkDummyAccount('${d.name}')" class="delete-btn" style="padding: 2px 6px; font-size: 0.7rem;">🔓 Unlink</button>
+                                </li>`;
                         });
                     } else {
                         dummyListHtml = `<span style="color: var(--text-dim); margin-left: 15px; font-size: 0.8rem;">(No linked dummy accounts)</span>`;
@@ -1235,13 +1238,16 @@
                 matchedDummies.forEach(d => {
                     let mainDiv = findMainGuildDivision(d.mainOwner) || "Unknown Division";
                     displayHtml += `
-                        <div style="background: rgba(255,170,51,0.1); border-left: 3px solid #ffaa33; padding: 8px 10px; margin-bottom: 8px; border-radius: 4px;">
-                            <div style="color: #ffaa33; font-weight: bold; font-size: 0.95rem;">
-                                🎭 Searched Dummy: <span style="color: #fff;">${d.name}</span> <small style="color: var(--text-dim);">(${d.class} - ${d.division})</small>
+                        <div style="background: rgba(255,170,51,0.1); border-left: 3px solid #ffaa33; padding: 8px 10px; margin-bottom: 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="color: #ffaa33; font-weight: bold; font-size: 0.95rem;">
+                                    🎭 Searched Dummy: <span style="color: #fff;">${d.name}</span> <small style="color: var(--text-dim);">(${d.class} - ${d.division})</small>
+                                </div>
+                                <div style="margin-top: 4px; font-size: 0.85rem; color: #33cc33;">
+                                    🔗 Belongs to Main Character: <strong>👑 ${d.mainOwner}</strong> <small style="color: var(--text-dim);">[${mainDiv}]</small>
+                                </div>
                             </div>
-                            <div style="margin-top: 4px; font-size: 0.85rem; color: #33cc33;">
-                                🔗 Belongs to Main Character: <strong>👑 ${d.mainOwner}</strong> <small style="color: var(--text-dim);">[${mainDiv}]</small>
-                            </div>
+                            <button onclick="unlinkDummyAccount('${d.name}')" class="delete-btn" style="padding: 4px 8px; font-size: 0.75rem;">🔓 Unlink</button>
                         </div>
                     `;
                 });
@@ -1253,6 +1259,34 @@
             }
 
             resultBox.innerHTML = displayHtml;
+        }
+
+        // UNLINK FUNCTION
+        async function unlinkDummyAccount(dummyIgn) {
+            const confirmUnlink = confirm(`⚠️ Are you sure you want to unlink "${dummyIgn}"? It will revert back to being independent or its own main.`);
+            if (!confirmUnlink) return;
+
+            let data = getGuildData();
+            let found = false;
+
+            for (let divKey in data) {
+                let member = data[divKey].find(m => m.name.toLowerCase() === dummyIgn.toLowerCase());
+                if (member) {
+                    member.mainOwner = member.name; // Ibalik sa sarili as main
+                    member.icon = getClassIcon(member.class);
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found) {
+                await saveGuildData(data);
+                alert(`🔓 Successfully unlinked "${dummyIgn}"!`);
+                searchMainAndDummies();
+                renderRosters();
+            } else {
+                alert(`⚠️ Error: Dummy character not found in database.`);
+            }
         }
 
         function initRealtimeListeners() {
@@ -1421,7 +1455,6 @@
                     }
                 });
 
-                // EXCLUDE GUILD MASTERS FROM QUALIFIED LIST
                 let qualifiedMains = Object.keys(csMainCounts).filter(mName => {
                     let isGm = GUILD_MASTERS_LIST.some(gm => gm.toLowerCase() === mName.toLowerCase());
                     return csMainCounts[mName] === 3 && !isGm;
@@ -1505,7 +1538,6 @@
                 }
             });
 
-            // FILTER OUT GUILD MASTERS FROM GIVEAWAY ELIGIBILITY
             let qualifiedMains = Object.keys(csMainCounts).filter(mName => {
                 let isGm = GUILD_MASTERS_LIST.some(gm => gm.toLowerCase() === mName.toLowerCase());
                 return csMainCounts[mName] === 3 && !isGm;
@@ -1532,7 +1564,7 @@
                     clearInterval(interval);
                     
                     let shuffled = [...qualifiedMains].sort(() => 0.5 - Math.random());
-                    let finalWinners = shuffled.slice(0, 6); // 6 WINNERS
+                    let finalWinners = shuffled.slice(0, 6);
 
                     latestCS.giveawayWinners = finalWinners;
                     
@@ -2185,7 +2217,7 @@
             const divisionKey = `${guildName} Division (${gmUser})`;
 
             PROTECTED_ADMIN_ACCOUNTS.push(gmUser.toLowerCase());
-            GUILD_MASTERS_LIST.push(gmUser.toLowerCase()); // Automatically treat new registered GMs as excluded from giveaway
+            GUILD_MASTERS_LIST.push(gmUser.toLowerCase());
 
             let data = getGuildData();
             data[divisionKey] = [{ name: gmUser, class: gmClass, icon: "👑", mainOwner: gmUser }];
