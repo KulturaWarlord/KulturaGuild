@@ -383,7 +383,7 @@
 
         <!-- PUBLIC SECONDARY DISPLAY FOR GIVEAWAYBOT -->
         <section id="public-giveaway-display-section" class="panel" style="display: none; border: 2px solid #ff3399; background: rgba(255, 0, 127, 0.05); margin-bottom: 60px;">
-            <h3 style="color: #ff99dd; text-align: center; margin-bottom: 10px;">🎲 3-Day Castle Siege GiveawayBot Display</h3>
+            <h3 style="color: #ff99dd; text-align: center; margin-bottom: 10px;">🎲 3-Day Castle Siege GiveawayBot Display (Excluding Guild Masters)</h3>
 
             <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; margin-top: 15px;">
                 <div style="flex: 1; min-width: 280px; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 6px; border: 1px solid var(--border-gold);">
@@ -483,12 +483,12 @@
                     <!-- SUPERADMIN EXCLUSIVE: GIVEAWAY BOT -->
                     <div id="superadmin-giveaway-block" class="admin-section-block" style="display: none; border-color: #ff3399;">
                         <button onclick="toggleAdminSection('sec-giveaway-bot')" class="admin-collapsible-btn" style="color: #ff99dd; background: rgba(255, 51, 153, 0.15);">
-                            <span>🎲 3-Day Castle Siege GiveawayBot (Auto 6 Winners)</span>
+                            <span>🎲 3-Day Castle Siege GiveawayBot (Auto 6 Winners | GMs Excluded)</span>
                             <span id="icon-sec-giveaway-bot">▼ Expand</span>
                         </button>
                         <div id="sec-giveaway-bot" class="admin-collapsible-content">
                             <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
-                                Giveaway Eligibility: Main characters who completed <strong>3/3 Castle Siege Attendance</strong> across the last 3 recorded CS events. Prizes are automatically routed to the Main IGN even if a dummy character was used.
+                                Giveaway Eligibility: Main characters who completed <strong>3/3 Castle Siege Attendance</strong> across the last 3 recorded CS events. <strong>Guild Masters are automatically excluded</strong> from the draw.
                             </p>
 
                             <div style="background: rgba(0,0,0,0.6); padding: 12px; border-radius: 6px; border: 1px solid #ff3399; margin-bottom: 12px; text-align: center;">
@@ -1066,6 +1066,9 @@
             "fullclip", "warlock", "lorddwight", "windtalker", "ikapitana", "mechado", "tsukushi", "kultura", "kulturamain"
         ];
 
+        // List of known Guild Masters to exclude from Giveaway
+        const GUILD_MASTERS_LIST = ["fullclip", "warlock", "lorddwight", "windtalker", "ikapitana"];
+
         let OFFICER_ACCOUNTS_SYNC = {};
 
         const defaultDivisionMembers = {
@@ -1418,9 +1421,14 @@
                     }
                 });
 
-                let qualifiedMains = Object.keys(csMainCounts).filter(mName => csMainCounts[mName] === 3);
+                // EXCLUDE GUILD MASTERS FROM QUALIFIED LIST
+                let qualifiedMains = Object.keys(csMainCounts).filter(mName => {
+                    let isGm = GUILD_MASTERS_LIST.some(gm => gm.toLowerCase() === mName.toLowerCase());
+                    return csMainCounts[mName] === 3 && !isGm;
+                });
+
                 if (qualifiedMains.length === 0) {
-                    qualifiedListElem.innerHTML = `<span style="color: var(--text-dim);">No members have completed 3/3 CS attendance yet.</span>`;
+                    qualifiedListElem.innerHTML = `<span style="color: var(--text-dim);">No eligible members (non-GMs) have completed 3/3 CS attendance yet.</span>`;
                 } else {
                     let html = `<ul style="padding-left: 15px; margin: 0;">`;
                     qualifiedMains.forEach(m => {
@@ -1497,10 +1505,14 @@
                 }
             });
 
-            let qualifiedMains = Object.keys(csMainCounts).filter(mName => csMainCounts[mName] === 3);
+            // FILTER OUT GUILD MASTERS FROM GIVEAWAY ELIGIBILITY
+            let qualifiedMains = Object.keys(csMainCounts).filter(mName => {
+                let isGm = GUILD_MASTERS_LIST.some(gm => gm.toLowerCase() === mName.toLowerCase());
+                return csMainCounts[mName] === 3 && !isGm;
+            });
 
             if (qualifiedMains.length < 6) {
-                alert(`⚠️ Not enough qualified members! Only ${qualifiedMains.length} main members completed 3/3 CS attendance (Need at least 6 qualified mains).`);
+                alert(`⚠️ Not enough eligible members! Only ${qualifiedMains.length} qualified non-GM members completed 3/3 CS attendance (Need at least 6 qualified members).`);
                 return;
             }
 
@@ -1508,7 +1520,7 @@
             const resultsBox = document.getElementById('giveaway-results-box');
             const winnersList = document.getElementById('giveaway-winners-list');
 
-            infoElem.innerHTML = `🎲 Rolling Giveaway Bot... <span style="color:#fff;">(Total Qualified 3/3 CS Mains: ${qualifiedMains.length})</span>`;
+            infoElem.innerHTML = `🎲 Rolling Giveaway Bot... <span style="color:#fff;">(Total Qualified Non-GM Mains: ${qualifiedMains.length})</span>`;
             
             let shuffleCount = 0;
             const interval = setInterval(async () => {
@@ -1520,7 +1532,7 @@
                     clearInterval(interval);
                     
                     let shuffled = [...qualifiedMains].sort(() => 0.5 - Math.random());
-                    let finalWinners = shuffled.slice(0, 6); // GINAWANG 6 WINNERS
+                    let finalWinners = shuffled.slice(0, 6); // 6 WINNERS
 
                     latestCS.giveawayWinners = finalWinners;
                     
@@ -1533,7 +1545,7 @@
                         }
                     }
 
-                    infoElem.innerHTML = `✅ Giveaway Complete & Saved to Database! Total Qualified Mains: <strong>${qualifiedMains.length}</strong>`;
+                    infoElem.innerHTML = `✅ Giveaway Complete & Saved to Database! (GMs Excluded)`;
                     winnersList.innerHTML = '';
 
                     let publicWinnersHtml = '';
@@ -2173,6 +2185,7 @@
             const divisionKey = `${guildName} Division (${gmUser})`;
 
             PROTECTED_ADMIN_ACCOUNTS.push(gmUser.toLowerCase());
+            GUILD_MASTERS_LIST.push(gmUser.toLowerCase()); // Automatically treat new registered GMs as excluded from giveaway
 
             let data = getGuildData();
             data[divisionKey] = [{ name: gmUser, class: gmClass, icon: "👑", mainOwner: gmUser }];
