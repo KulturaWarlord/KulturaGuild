@@ -1601,31 +1601,81 @@
             return lowerKey;
         }
 
+        // ==========================================
+        // 📢 SAVE GUILD EVENTS & DISCORD WEBHOOK INTEGRATION
+        // ==========================================
         async function saveGuildEventsToFirebase() {
             if (!currentLoggedInOfficer) return;
 
+            const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1561685065963147334/u6MD_ZwJ8EjxSQUkxPmMSHDSGIcOOdHUXV4_ZLBsXcV2Ynav_bTzmt-qN8cLwffuEVBf";
+
             const isGiveawayVisible = document.getElementById('giveawaybot-visibility-select').value;
+
+            const ev1Title = document.getElementById('event1-title').value.trim();
+            const ev1Time = document.getElementById('event1-time').value.trim();
+            const ev1Desc = document.getElementById('event1-desc').value.trim();
+
+            const ev2Title = document.getElementById('event2-title').value.trim();
+            const ev2Time = document.getElementById('event2-time').value.trim();
+            const ev2Desc = document.getElementById('event2-desc').value.trim();
 
             const newEventsPayload = {
                 events: [
-                    {
-                        title: document.getElementById('event1-title').value.trim(),
-                        time: document.getElementById('event1-time').value.trim(),
-                        desc: document.getElementById('event1-desc').value.trim()
-                    },
-                    {
-                        title: document.getElementById('event2-title').value.trim(),
-                        time: document.getElementById('event2-time').value.trim(),
-                        desc: document.getElementById('event2-desc').value.trim()
-                    }
+                    { title: ev1Title, time: ev1Time, desc: ev1Desc },
+                    { title: ev2Title, time: ev2Time, desc: ev2Desc }
                 ],
                 giveawayVisible: isGiveawayVisible
             };
 
+            // 1. I-save sa Firebase Database
             if (window.database) {
                 await window.dbSet(window.dbRef(window.database, 'kultura_events'), newEventsPayload);
-                alert("🎉 Success! Guild Events and Car Race Public Visibility Settings have been published!");
             }
+
+            // 2. Magpadala ng Announcement Notification sa iyong Discord Webhook
+            if (DISCORD_WEBHOOK_URL) {
+                try {
+                    const discordBody = {
+                        username: "Kultura Guild Event Announcer",
+                        avatar_url: "https://nolimit.lv/themes/def_theme/images/logo.png",
+                        content: "@everyone 📢 **BAGONG GUILD EVENTS SCHEDULE IS LIVE!**",
+                        embeds: [
+                            {
+                                title: "⚔️ KULTURA ALLIANCE - UPCOMING EVENTS ⚔️",
+                                description: `In-update ni Officer **${currentLoggedInOfficer}** ang ating official guild schedule. Mangyaring basahin at maghanda!`,
+                                color: 15120128, // Gold Color
+                                fields: [
+                                    {
+                                        name: `📌 ${ev1Title || 'Event 1'}`,
+                                        value: `**Schedule:** ${ev1Time || 'N/A'}\n**Details:** ${ev1Desc || 'N/A'}`,
+                                        inline: false
+                                    },
+                                    {
+                                        name: `📌 ${ev2Title || 'Event 2'}`,
+                                        value: `**Schedule:** ${ev2Time || 'N/A'}\n**Details:** ${ev2Desc || 'N/A'}`,
+                                        inline: false
+                                    }
+                                ],
+                                footer: {
+                                    text: "Kultura Guild & Alliance • NoLimit MU Online",
+                                    icon_url: "https://nolimit.lv/themes/def_theme/images/logo.png"
+                                },
+                                timestamp: new Date().toISOString()
+                            }
+                        ]
+                    };
+
+                    await fetch(DISCORD_WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(discordBody)
+                    });
+                } catch (err) {
+                    console.error("Discord Webhook Error:", err);
+                }
+            }
+
+            alert("🎉 Success! Guild Events updated on Website and successfully announced to your Discord channel!");
         }
 
         // 🏎️ GRAND PRIX CAR RACE 6-ROUND TOURNAMENT LOGIC (WITH HYPED ANNOUNCER VOICE)
