@@ -439,7 +439,7 @@
             </div>
         </section>
 
-        <!-- 🏎️ PUBLIC DISPLAY FOR CAR RACE ARENA & GIVEAWAY TOURNAMENT -->
+        <!-- 🏎️ PUBLIC DISPLAY FOR CAR RACE ARENA & GIVEAWAY TOURNAMENT (INILABAS SA MAIN WEBSITE) -->
         <section id="public-giveaway-display-section" class="panel" style="display: none; border: 2px solid #ff3399; background: rgba(255, 0, 127, 0.05); margin-bottom: 60px;">
             <h3 style="color: #ff99dd; text-align: center; margin-bottom: 10px;">🏎️ Live 3-Day Castle Siege Grand Prix Car Race Arena</h3>
 
@@ -582,31 +582,31 @@
                         </div>
                     </div>
 
-                    <!-- SUPERADMIN EXCLUSIVE: GUILD EVENTS & DISCORD AUTO-POST MANAGER -->
+                    <!-- SUPERADMIN EXCLUSIVE: GUILD EVENTS MANAGER & GIVEAWAYBOT TOGGLE SWITCH -->
                     <div id="superadmin-events-block" class="admin-section-block" style="display: none; border-color: var(--primary);">
                         <button onclick="toggleAdminSection('sec-events-manager')" class="admin-collapsible-btn" style="color: var(--primary-glow); background: rgba(230, 184, 0, 0.1);">
-                            <span>📢 Guild Events & Discord Auto-Publisher Controls</span>
+                            <span>📢 Guild Events Manager & Module Visibility Controls</span>
                             <span id="icon-sec-events-manager">▼ Expand</span>
                         </button>
                         <div id="sec-events-manager" class="admin-collapsible-content">
                             
-                            <!-- DISCORD WEBHOOK INPUT FIELD -->
-                            <div style="background: rgba(114, 137, 218, 0.15); padding: 12px; border-radius: 6px; border: 1px solid #7289da; margin-bottom: 15px;">
-                                <h4 style="color: #7289da; font-size: 0.85rem; margin-bottom: 6px;">🤖 Discord Webhook Integration:</h4>
-                                <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">
-                                    I-paste o i-verify dito ang iyong Discord Channel Webhook URL para awtomatikong mag-post ang bot sa Discord[cite: 1]:
-                                </p>
-                                <input type="text" id="discord-webhook-url" value="https://discord.com/api/webhooks/1561685065963147334/u6MD_ZwJ8EjxSQUkxPmMSHDSGIcOOdHUXV4_ZLBsXcV2Ynav_bTzmt-qN8cLwffuEVBf" placeholder="https://discord.com/api/webhooks/..." style="width: 100%; padding: 8px; background: #111; border: 1px solid #7289da; color: #fff; border-radius: 4px; font-size: 0.8rem;">
-                            </div>
-
                             <!-- GIVEAWAYBOT VISIBILITY TOGGLE SECTION -->
                             <div style="background: rgba(255, 51, 153, 0.1); padding: 12px; border-radius: 6px; border: 1px solid #ff3399; margin-bottom: 15px;">
                                 <h4 style="color: #ff99dd; font-size: 0.85rem; margin-bottom: 6px;">🏎️ Car Race Public Visibility Control:</h4>
-                                <select id="giveawaybot-visibility-select" style="width: 100%; padding: 8px; background: #111; border: 1px solid #ff3399; color: #fff; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">
-                                    <option value="HIDE">🔒 HIDE Car Race (Hidden outside)</option>
-                                    <option value="SHOW">👁️ SHOW Car Race (Visible outside portal)</option>
-                                </select>
+                                <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">
+                                    Set whether the <strong>Car Race display outside the portal</strong> should be visible to members.
+                                </p>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <select id="giveawaybot-visibility-select" style="flex: 1; padding: 8px; background: #111; border: 1px solid #ff3399; color: #fff; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">
+                                        <option value="HIDE">🔒 HIDE Car Race (Hidden outside)</option>
+                                        <option value="SHOW">👁️ SHOW Car Race (Visible outside portal)</option>
+                                    </select>
+                                </div>
                             </div>
+
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:12px;">
+                                Modify the information below and click <strong>💾 Save & Publish Events</strong> to update the landing page and portal settings immediately.
+                            </p>
 
                             <!-- EVENT CARD 1 EDIT -->
                             <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; border: 1px solid var(--border-gold); margin-bottom: 12px;">
@@ -624,8 +624,8 @@
                                 <textarea id="event2-desc" rows="2" placeholder="Event Description..." style="width: 100%; padding: 6px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;"></textarea>
                             </div>
 
-                            <button onclick="saveGuildEventsToFirebase()" class="btn" style="width: 100%; padding: 10px; font-size: 0.85rem; background: linear-gradient(135deg, #7289da, #4e5d94); color: #fff;">
-                                🚀 Save & Auto-Post Updates to Discord & Website
+                            <button onclick="saveGuildEventsToFirebase()" class="btn" style="width: 100%; padding: 8px; font-size: 0.85rem; background: linear-gradient(135deg, #e6b800, #b38f00); color: #000;">
+                                💾 Save & Publish Events to Website
                             </button>
                         </div>
                     </div>
@@ -966,7 +966,7 @@
             <div class="roster-grid-container" id="dynamic-roster-grid"></div>
         </section>
 
-        <!-- UPCOMING GUILD SCHEDULE SECTION -->
+        <!-- UPCOMING GUILD SCHEDULE SECTION (DYNAMIC FROM FIREBASE) -->
         <section id="schedule-section">
             <h2 class="section-title">Upcoming Guild Schedule</h2>
             <div style="max-width: 800px; margin: 0 auto;" id="dynamic-events-container">
@@ -1064,73 +1064,97 @@
         // 🎙️ HIGH-ENERGY SPORTS / ESPORTS ANNOUNCER TTS ENGINE
         function speakKantyawanText(textToSpeak) {
             if ('speechSynthesis' in window) {
+                // Cancel ongoing utterances to ensure crisp live delivery
                 window.speechSynthesis.cancel();
-                let cleanText = textToSpeak.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
-                let utterance = new SpeechSynthesisUtterance(cleanText);
-                utterance.rate = 1.15;
-                utterance.pitch = 1.25;
-                utterance.volume = 1.0;
 
+                // Clean emojis & extra symbols for smooth reading
+                let cleanText = textToSpeak.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
+                
+                let utterance = new SpeechSynthesisUtterance(cleanText);
+                
+                // ⚡ ANNOUNCER HIGH-ENERGY VOICE TUNING:
+                utterance.rate = 1.15;  // Energetic fast-paced commentary speed
+                utterance.pitch = 1.25; // High-pitched hyped announcer enthusiasm
+                utterance.volume = 1.0; // Max clear volume
+
+                // Voice selector prioritizing Filipino/Tagalog or local English voices
                 let voices = window.speechSynthesis.getVoices();
                 let selectedVoice = voices.find(v => v.lang.includes('tl') || v.lang.includes('fil') || v.lang.includes('id') || v.lang.includes('en-PH'));
                 if (!selectedVoice) {
                     selectedVoice = voices.find(v => v.lang.includes('en-US') || v.lang.includes('en-GB') || v.lang.includes('en'));
                 }
-                if (selectedVoice) { utterance.voice = selectedVoice; }
+                if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                }
+
                 window.speechSynthesis.speak(utterance);
             }
         }
 
+        // Global Audio Trigger on First Interaction
         function enableFirstClickAudio() {
             const playSound = () => {
                 const audio = document.getElementById('bg-audio');
                 if (audio && audio.paused) {
                     audio.volume = 0.5;
-                    audio.play().catch(e => console.log("Autoplay blocked", e));
+                    audio.play().catch(e => console.log("Autoplay blocked until user interaction", e));
                 }
                 window.removeEventListener('click', playSound);
                 window.removeEventListener('keydown', playSound);
                 window.removeEventListener('touchstart', playSound);
             };
+
             window.addEventListener('click', playSound);
             window.addEventListener('keydown', playSound);
             window.addEventListener('touchstart', playSound);
         }
+
         enableFirstClickAudio();
 
+        // JS-Generated Protected Credits
         document.addEventListener('DOMContentLoaded', () => {
             const footerContainer = document.getElementById('dynamic-secure-credits');
             if (footerContainer) {
                 const p1 = document.createElement('p');
                 p1.innerHTML = '&copy; 2026 <span>Kultura Guild</span> — NoLimit MU Online Community. All Rights Reserved.';
+                
                 const p2 = document.createElement('p');
                 p2.style.cssText = "margin-top: 6px; font-size: 0.75rem; color: #7a7a90; letter-spacing: 1px;";
                 p2.innerHTML = 'Developed & Maintained by <span style="color: var(--primary);">Lord Emperor Warlock</span>';
+                
                 footerContainer.appendChild(p1);
                 footerContainer.appendChild(p2);
             }
 
             const leftLetters = document.querySelectorAll('#left-floating-word span');
             leftLetters.forEach((letter, index) => { letter.style.animationDelay = `${index * 0.12}s`; });
+
             const rightLetters = document.querySelectorAll('#right-floating-word span');
             rightLetters.forEach((letter, index) => { letter.style.animationDelay = `${index * 0.12}s`; });
         });
 
+        // Firebase Live Page View Counter Logic
         function initPageCounter() {
             if (!window.database) return;
             const dbRef = window.dbRef;
             const dbGet = window.dbGet;
             const dbSet = window.dbSet;
             const database = window.database;
+
             const viewCountRef = dbRef(database, 'kultura_page_views');
 
             dbGet(viewCountRef).then((snapshot) => {
                 let currentViews = snapshot.exists() ? snapshot.val() : 1000; 
                 let newViews = currentViews + 1;
                 dbSet(viewCountRef, newViews);
+
                 const counterElem = document.getElementById('live-page-views-count');
-                if (counterElem) { counterElem.innerText = newViews.toLocaleString(); }
-            }).catch((error) => { console.error(error); });
+                if (counterElem) {
+                    counterElem.innerText = newViews.toLocaleString();
+                }
+            }).catch((error) => {
+                console.error("Error updating page views:", error);
+            });
         }
 
         let ALL_DIVISIONS = [
@@ -1170,7 +1194,6 @@
         };
 
         const defaultGuildEvents = {
-            webhookUrl: "https://discord.com/api/webhooks/1561685065963147334/u6MD_ZwJ8EjxSQUkxPmMSHDSGIcOOdHUXV4_ZLBsXcV2Ynav_bTzmt-qN8cLwffuEVBf",
             events: [
                 {
                     title: "CASTLE SIEGE WAR",
@@ -1200,7 +1223,7 @@
             if (!currentLoggedInOfficer) return;
             clearTimeout(inactivityTimer);
             inactivityTimer = setTimeout(() => {
-                alert("⏳ 5-minute inactivity limit reached. Logged out automatically.");
+                alert("⏳ The 5-minute inactivity limit has been reached. You have been automatically logged out.");
                 handleLogout();
             }, INACTIVITY_LIMIT);
         }
@@ -1212,6 +1235,7 @@
         function updatePortalButtonUI() {
             const btn = document.getElementById('open-officer-portal-btn');
             if (!btn) return;
+
             if (currentLoggedInOfficer) {
                 btn.classList.add('portal-btn-top-left');
                 btn.innerHTML = `🔓 Open Officer Portal (@${currentLoggedInOfficer})`;
@@ -1223,9 +1247,14 @@
 
         function getStandardDateKey() {
             const dateInput = document.getElementById('admin-attendance-date');
-            if (dateInput && dateInput.value) { return dateInput.value; }
+            if (dateInput && dateInput.value) {
+                return dateInput.value;
+            }
             const d = new Date();
-            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
 
         function searchMainAndDummies() {
@@ -1248,23 +1277,82 @@
                 members.forEach(m => {
                     let rawMainName = m.mainOwner ? m.mainOwner : m.name;
                     let mainKey = rawMainName.toLowerCase();
-                    allMembersFlat.push({ name: m.name, class: m.class, division: divKey, mainOwner: rawMainName, isDummy: m.name.toLowerCase() !== mainKey });
-                    if (!mainGroups[mainKey]) { mainGroups[mainKey] = { mainIgn: rawMainName, mainDivision: divKey, dummies: [] }; }
-                    if (m.name.toLowerCase() !== mainKey) { mainGroups[mainKey].dummies.push({ name: m.name, division: divKey, class: m.class }); }
+
+                    allMembersFlat.push({
+                        name: m.name,
+                        class: m.class,
+                        division: divKey,
+                        mainOwner: rawMainName,
+                        isDummy: m.name.toLowerCase() !== mainKey
+                    });
+
+                    if (!mainGroups[mainKey]) {
+                        mainGroups[mainKey] = { mainIgn: rawMainName, mainDivision: divKey, dummies: [] };
+                    }
+                    if (m.name.toLowerCase() !== mainKey) {
+                        mainGroups[mainKey].dummies.push({ name: m.name, division: divKey, class: m.class });
+                    }
                 });
             }
 
             let displayHtml = '';
             let foundMatch = false;
-            let matchedMainKeys = Object.keys(mainGroups).filter(k => k.includes(query));
 
+            let matchedMainKeys = Object.keys(mainGroups).filter(k => k.includes(query));
             if (matchedMainKeys.length > 0) {
                 foundMatch = true;
                 matchedMainKeys.forEach(mainKey => {
                     let info = mainGroups[mainKey];
-                    let dummyListHtml = info.dummies.length > 0 ? info.dummies.map(d => `<li style="margin-left: 15px; color: #fff; display: flex; justify-content: space-between; align-items: center; margin-top: 4px;"><span>🎭 <strong>${d.name}</strong> <small style="color: var(--text-dim);">(${d.class} - ${d.division})</small></span><button onclick="unlinkDummyAccount('${d.name}')" class="delete-btn" style="padding: 2px 6px; font-size: 0.7rem;">🔓 Unlink</button></li>`).join('') : `<span style="color: var(--text-dim); margin-left: 15px; font-size: 0.8rem;">(No linked dummy accounts)</span>`;
+                    let dummyCount = info.dummies.length;
 
-                    displayHtml += `<div style="background: rgba(230,184,0,0.1); border-left: 3px solid var(--primary); padding: 8px 10px; margin-bottom: 8px; border-radius: 4px;"><div style="color: var(--primary-glow); font-weight: bold; font-size: 0.95rem;">👑 Main: <span style="color: #fff;">${info.mainIgn}</span> <small style="color: #33cc33;">[${info.mainDivision}]</small></div><div style="margin-top: 4px; font-size: 0.85rem;"><strong style="color: #ffaa33;">Dummies (${info.dummies.length}):</strong><ul style="list-style-type: none; padding: 0; margin-top: 2px;">${dummyListHtml}</ul></div></div>`;
+                    let dummyListHtml = '';
+                    if (dummyCount > 0) {
+                        info.dummies.forEach(d => {
+                            dummyListHtml += `
+                                <li style="margin-left: 15px; color: #fff; display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                                    <span>🎭 <strong>${d.name}</strong> <small style="color: var(--text-dim);">(${d.class} - ${d.division})</small></span>
+                                    <button onclick="unlinkDummyAccount('${d.name}')" class="delete-btn" style="padding: 2px 6px; font-size: 0.7rem;">🔓 Unlink</button>
+                                </li>`;
+                        });
+                    } else {
+                        dummyListHtml = `<span style="color: var(--text-dim); margin-left: 15px; font-size: 0.8rem;">(No linked dummy accounts)</span>`;
+                    }
+
+                    displayHtml += `
+                        <div style="background: rgba(230,184,0,0.1); border-left: 3px solid var(--primary); padding: 8px 10px; margin-bottom: 8px; border-radius: 4px;">
+                            <div style="color: var(--primary-glow); font-weight: bold; font-size: 0.95rem;">
+                                👑 Main Character: <span style="color: #fff;">${info.mainIgn}</span> 
+                                <small style="color: #33cc33; font-weight: normal;">[${info.mainDivision}]</small>
+                            </div>
+                            <div style="margin-top: 4px; font-size: 0.85rem;">
+                                <strong style="color: #ffaa33;">Linked Dummies (${dummyCount}):</strong>
+                                <ul style="list-style-type: none; padding: 0; margin-top: 2px;">
+                                    ${dummyListHtml}
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            let matchedDummies = allMembersFlat.filter(m => m.isDummy && m.name.toLowerCase().includes(query));
+            if (matchedDummies.length > 0) {
+                foundMatch = true;
+                matchedDummies.forEach(d => {
+                    let mainDiv = findMainGuildDivision(d.mainOwner) || "Unknown Division";
+                    displayHtml += `
+                        <div style="background: rgba(255,170,51,0.1); border-left: 3px solid #ffaa33; padding: 8px 10px; margin-bottom: 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="color: #ffaa33; font-weight: bold; font-size: 0.95rem;">
+                                    🎭 Searched Dummy: <span style="color: #fff;">${d.name}</span> <small style="color: var(--text-dim);">(${d.class} - ${d.division})</small>
+                                </div>
+                                <div style="margin-top: 4px; font-size: 0.85rem; color: #33cc33;">
+                                    🔗 Belongs to Main Character: <strong>👑 ${d.mainOwner}</strong> <small style="color: var(--text-dim);">[${mainDiv}]</small>
+                                </div>
+                            </div>
+                            <button onclick="unlinkDummyAccount('${d.name}')" class="delete-btn" style="padding: 4px 8px; font-size: 0.75rem;">🔓 Unlink</button>
+                        </div>
+                    `;
                 });
             }
 
@@ -1272,13 +1360,17 @@
                 resultBox.innerHTML = `<span style="color: #ff3333;">⚠️ No Main or Dummy Character found matching "<strong>${rawQuery}</strong>".</span>`;
                 return;
             }
+
             resultBox.innerHTML = displayHtml;
         }
 
         async function unlinkDummyAccount(dummyIgn) {
-            if (!confirm(`⚠️ Are you sure you want to unlink "${dummyIgn}"?`)) return;
+            const confirmUnlink = confirm(`⚠️ Are you sure you want to unlink "${dummyIgn}"? It will revert back to being independent or its own main.`);
+            if (!confirmUnlink) return;
+
             let data = getGuildData();
             let found = false;
+
             for (let divKey in data) {
                 let member = data[divKey].find(m => m.name.toLowerCase() === dummyIgn.toLowerCase());
                 if (member) {
@@ -1288,11 +1380,14 @@
                     break;
                 }
             }
+
             if (found) {
                 await saveGuildData(data);
                 alert(`🔓 Successfully unlinked "${dummyIgn}"!`);
                 searchMainAndDummies();
                 renderRosters();
+            } else {
+                alert(`⚠️ Error: Dummy character not found in database.`);
             }
         }
 
@@ -1306,16 +1401,26 @@
             });
 
             dbOnValue(dbRef(window.database, 'kultura_roster'), (snap) => {
-                if (snap.exists()) { cloudGuildData = snap.val(); }
-                else { cloudGuildData = defaultDivisionMembers; window.dbSet(dbRef(window.database, 'kultura_roster'), defaultDivisionMembers); }
+                if (snap.exists()) {
+                    cloudGuildData = snap.val();
+                } else {
+                    cloudGuildData = defaultDivisionMembers;
+                    window.dbSet(dbRef(window.database, 'kultura_roster'), defaultDivisionMembers);
+                }
                 renderRosters();
                 updateLiveActiveWarriors();
                 searchMainAndDummies();
-                if (document.getElementById('attendance-admin-modal').style.display === 'flex') { onDivisionChange(); }
+                if (document.getElementById('attendance-admin-modal').style.display === 'flex') {
+                    onDivisionChange();
+                }
             });
 
             dbOnValue(dbRef(window.database, 'kultura_attendance'), (snap) => {
-                cloudAttendanceHistory = snap.exists() ? snap.val() : [];
+                if (snap.exists()) {
+                    cloudAttendanceHistory = snap.val();
+                } else {
+                    cloudAttendanceHistory = [];
+                }
                 renderAttendanceHistory();
                 renderAdminAttendanceLogList();
                 updateLiveActiveWarriors();
@@ -1323,12 +1428,20 @@
             });
 
             dbOnValue(dbRef(window.database, 'kultura_reset_tickets'), (snap) => {
-                cloudResetTickets = snap.exists() ? snap.val() : [];
+                if (snap.exists()) {
+                    cloudResetTickets = snap.val();
+                } else {
+                    cloudResetTickets = [];
+                }
                 renderSuperAdminInbox();
             });
 
             dbOnValue(dbRef(window.database, 'kultura_events'), (snap) => {
-                cloudGuildEvents = snap.exists() ? snap.val() : defaultGuildEvents;
+                if (snap.exists()) {
+                    cloudGuildEvents = snap.val();
+                } else {
+                    cloudGuildEvents = defaultGuildEvents;
+                }
                 renderPublicGuildEvents();
                 populateEventsAdminForm();
                 updateGiveawayBotVisibility();
@@ -1340,11 +1453,15 @@
             initPageCounter();
         });
 
-        function getGuildData() { return cloudGuildData ? cloudGuildData : defaultDivisionMembers; }
+        function getGuildData() {
+            return cloudGuildData ? cloudGuildData : defaultDivisionMembers;
+        }
 
         async function saveGuildData(data) {
             cloudGuildData = data;
-            if (window.database) { await window.dbSet(window.dbRef(window.database, 'kultura_roster'), data); }
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_roster'), data);
+            }
             renderRosters();
             updateLiveActiveWarriors();
             searchMainAndDummies();
@@ -1353,13 +1470,19 @@
         function renderPublicGuildEvents() {
             const container = document.getElementById('dynamic-events-container');
             if (!container) return;
+
             const eventsData = cloudGuildEvents || defaultGuildEvents;
             const events = Array.isArray(eventsData) ? eventsData : (eventsData.events || defaultGuildEvents.events);
             container.innerHTML = '';
+
             events.forEach(ev => {
                 const box = document.createElement('div');
                 box.className = 'schedule-box';
-                box.innerHTML = `<div class="schedule-title">${ev.title || 'GUILD EVENT'}</div><div class="schedule-time">${ev.time || 'Schedule TBA'}</div><p style="font-size: 0.9rem; color: var(--text-light);">${ev.desc || ''}</p>`;
+                box.innerHTML = `
+                    <div class="schedule-title">${ev.title || 'GUILD EVENT'}</div>
+                    <div class="schedule-time">${ev.time || 'Schedule TBA'}</div>
+                    <p style="font-size: 0.9rem; color: var(--text-light);">${ev.desc || ''}</p>
+                `;
                 container.appendChild(box);
             });
         }
@@ -1367,10 +1490,8 @@
         function populateEventsAdminForm() {
             const eventsData = cloudGuildEvents || defaultGuildEvents;
             const events = Array.isArray(eventsData) ? eventsData : (eventsData.events || defaultGuildEvents.events);
-            const savedWebhook = eventsData.webhookUrl || "https://discord.com/api/webhooks/1561685065963147334/u6MD_ZwJ8EjxSQUkxPmMSHDSGIcOOdHUXV4_ZLBsXcV2Ynav_bTzmt-qN8cLwffuEVBf";
             const isVisible = Array.isArray(eventsData) ? "HIDE" : (eventsData.giveawayVisible || "HIDE");
 
-            if (document.getElementById('discord-webhook-url')) { document.getElementById('discord-webhook-url').value = savedWebhook; }
             if (events[0]) {
                 if (document.getElementById('event1-title')) document.getElementById('event1-title').value = events[0].title || '';
                 if (document.getElementById('event1-time')) document.getElementById('event1-time').value = events[0].time || '';
@@ -1381,21 +1502,36 @@
                 if (document.getElementById('event2-time')) document.getElementById('event2-time').value = events[1].time || '';
                 if (document.getElementById('event2-desc')) document.getElementById('event2-desc').value = events[1].desc || '';
             }
-            if (document.getElementById('giveawaybot-visibility-select')) { document.getElementById('giveawaybot-visibility-select').value = isVisible; }
+            if (document.getElementById('giveawaybot-visibility-select')) {
+                document.getElementById('giveawaybot-visibility-select').value = isVisible;
+            }
         }
 
         function updateGiveawayBotVisibility() {
             const superGiveawayBlock = document.getElementById('superadmin-giveaway-block');
             const publicGiveawaySection = document.getElementById('public-giveaway-display-section');
+            
             let currentLower = currentLoggedInOfficer ? currentLoggedInOfficer.toLowerCase() : '';
             let isSuperAdmin = (currentLower === "fullclip" || currentLower === "kultura" || currentLower === "kulturamain");
+
             const eventsData = cloudGuildEvents || defaultGuildEvents;
             const isVisible = Array.isArray(eventsData) ? "HIDE" : (eventsData.giveawayVisible || "HIDE");
 
-            if (superGiveawayBlock) { superGiveawayBlock.style.display = (isSuperAdmin && isVisible === "SHOW") ? 'block' : 'none'; }
+            if (superGiveawayBlock) {
+                if (isSuperAdmin && isVisible === "SHOW") {
+                    superGiveawayBlock.style.display = 'block';
+                } else {
+                    superGiveawayBlock.style.display = 'none';
+                }
+            }
+
             if (publicGiveawaySection) {
-                publicGiveawaySection.style.display = (isVisible === "SHOW") ? 'block' : 'none';
-                if (isVisible === "SHOW") updatePublicGiveawayDisplay();
+                if (isVisible === "SHOW") {
+                    publicGiveawaySection.style.display = 'block';
+                    updatePublicGiveawayDisplay();
+                } else {
+                    publicGiveawaySection.style.display = 'none';
+                }
             }
         }
 
@@ -1404,7 +1540,7 @@
             const publicWinnersBox = document.getElementById('public-winners-display-box');
             if (!qualifiedListElem) return;
 
-            let history = cloudAttendanceHistory || [];
+            const history = cloudAttendanceHistory || [];
             const csRecords = history.filter(r => r.event === "Castle Siege War").slice(0, 3);
             
             if (csRecords.length < 3) {
@@ -1413,21 +1549,46 @@
                 let csMainCounts = {};
                 csRecords.forEach(rec => {
                     if (rec.presents) {
-                        let uniqueMains = new Set();
-                        rec.presents.forEach(p => { if (p.name) uniqueMains.add(p.name.toLowerCase().trim()); });
-                        uniqueMains.forEach(mKey => { csMainCounts[mKey] = (csMainCounts[mKey] || 0) + 1; });
+                        let uniqueMainsInEvent = new Set();
+                        rec.presents.forEach(p => {
+                            let mainKey = (p.name || "").toLowerCase().trim();
+                            if (mainKey) uniqueMainsInEvent.add(mainKey);
+                        });
+                        uniqueMainsInEvent.forEach(mKey => {
+                            csMainCounts[mKey] = (csMainCounts[mKey] || 0) + 1;
+                        });
                     }
                 });
 
-                let qualifiedMains = Object.keys(csMainCounts).filter(mKey => csMainCounts[mKey] === 3 && !GUILD_MASTERS_LIST.some(gm => gm.toLowerCase() === mKey));
-                qualifiedListElem.innerHTML = qualifiedMains.length === 0 ? `<span style="color: var(--text-dim);">No eligible members (non-GMs) completed 3/3 CS attendance yet.</span>` : `<ul style="padding-left: 15px; margin: 0;">` + qualifiedMains.map(mKey => `<li>👑 <strong>${getOriginalCasedMainName(mKey)}</strong> <span style="color: #33cc33;">(3/3 Verified)</span></li>`).join('') + `</ul>`;
+                let qualifiedMains = Object.keys(csMainCounts).filter(mKey => {
+                    let isGm = GUILD_MASTERS_LIST.some(gm => gm.toLowerCase() === mKey);
+                    return csMainCounts[mKey] === 3 && !isGm;
+                });
+
+                if (qualifiedMains.length === 0) {
+                    qualifiedListElem.innerHTML = `<span style="color: var(--text-dim);">No eligible members (non-GMs) have completed 3/3 CS attendance yet.</span>`;
+                } else {
+                    let html = `<ul style="padding-left: 15px; margin: 0;">`;
+                    qualifiedMains.forEach(mKey => {
+                        let originalNameDisplay = getOriginalCasedMainName(mKey) || mKey;
+                        html += `<li>👑 <strong>${originalNameDisplay}</strong> <span style="color: #33cc33;">(3/3 Verified)</span></li>`;
+                    });
+                    html += `</ul>`;
+                    qualifiedListElem.innerHTML = html;
+                }
             }
 
             let latestCS = history.find(r => r.event === "Castle Siege War");
             if (latestCS && latestCS.giveawayWinners && latestCS.giveawayWinners.length > 0) {
-                if (publicWinnersBox) publicWinnersBox.innerHTML = latestCS.giveawayWinners.map((wKey, i) => `🏎️ <strong>Round ${i+1} Winner: ${getOriginalCasedMainName(wKey)}</strong> <span style="color: #33cc33;">(${findMainGuildDivision(getOriginalCasedMainName(wKey)) || 'Alliance'})</span>`).join('<br>');
-            } else if (publicWinnersBox) {
-                publicWinnersBox.innerHTML = `<em style="color: var(--text-dim);">No car race tournament winners yet.</em>`;
+                let winnersHtml = '';
+                latestCS.giveawayWinners.forEach((wKey, i) => {
+                    let originalNameDisplay = getOriginalCasedMainName(wKey) || wKey;
+                    let mainDiv = findMainGuildDivision(originalNameDisplay) || "Kultura Alliance";
+                    winnersHtml += `🏎️ <strong>Round ${i+1} Winner: ${originalNameDisplay}</strong> <span style="color: #33cc33;">(${mainDiv})</span><br>`;
+                });
+                if (publicWinnersBox) publicWinnersBox.innerHTML = winnersHtml;
+            } else {
+                if (publicWinnersBox) publicWinnersBox.innerHTML = `<em style="color: var(--text-dim);">No car race tournament winners yet.</em>`;
             }
         }
 
@@ -1440,56 +1601,12 @@
             return lowerKey;
         }
 
-        // 🚀 FUNCTION FOR AUTOMATICALLY POSTING TO DISCORD CHANNEL VIA WEBHOOK
-        async function sendDiscordEventNotification(webhookUrl, eventsPayload) {
-            if (!webhookUrl || !webhookUrl.startsWith('http')) return;
-
-            let fields = [];
-            eventsPayload.events.forEach(ev => {
-                if (ev.title) {
-                    fields.push({
-                        name: `🏆 ${ev.title}`,
-                        value: `⏰ **Schedule:** ${ev.time || 'TBA'}\n📝 **Details:** ${ev.desc || 'No description provided.'}`,
-                        inline: false
-                    });
-                }
-            });
-
-            const discordEmbed = {
-                username: "Kultura Guild Event Bot",
-                avatar_url: "https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png",
-                embeds: [
-                    {
-                        title: "📢 UPCOMING GUILD EVENT ANNOUNCEMENT",
-                        description: "Nag-update ang Guild Officers ng bagong schedule para sa ating mga kasama sa Kultura Guild & Alliance![cite: 1]\n\n@everyone paki-check ang details sa ibaba:",
-                        color: 15111680,
-                        fields: fields,
-                        footer: { text: "Kultura Guild Portal Auto-Broadcast System" },
-                        timestamp: new Date().toISOString()
-                    }
-                ]
-            };
-
-            try {
-                await fetch(webhookUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(discordEmbed)
-                });
-                console.log("✅ Successfully sent event updates to Discord!");
-            } catch (error) {
-                console.error("❌ Failed to send Discord Webhook notification:", error);
-            }
-        }
-
-        // 💾 SAVE TO FIREBASE & TRIGGER DISCORD POST
         async function saveGuildEventsToFirebase() {
             if (!currentLoggedInOfficer) return;
-            const webhookUrl = document.getElementById('discord-webhook-url').value.trim();
+
             const isGiveawayVisible = document.getElementById('giveawaybot-visibility-select').value;
 
             const newEventsPayload = {
-                webhookUrl: webhookUrl,
                 events: [
                     {
                         title: document.getElementById('event1-title').value.trim(),
@@ -1507,20 +1624,15 @@
 
             if (window.database) {
                 await window.dbSet(window.dbRef(window.database, 'kultura_events'), newEventsPayload);
-                
-                // Trigger Discord Announcement Automatically
-                if (webhookUrl) {
-                    await sendDiscordEventNotification(webhookUrl, newEventsPayload);
-                    alert("🎉 Success! Saved to Firebase and Posted Event Notification directly to your Discord Channel!");
-                } else {
-                    alert("🎉 Success! Saved to Firebase!");
-                }
+                alert("🎉 Success! Guild Events and Car Race Public Visibility Settings have been published!");
             }
         }
 
         // 🏎️ GRAND PRIX CAR RACE 6-ROUND TOURNAMENT LOGIC (WITH HYPED ANNOUNCER VOICE)
         let currentCarRaceRound = 1;
         let carRaceAccumulatedWinners = [];
+
+        // 🎙️ HIGH ENERGY SHOUTCASTER / ANNOUNCER LINES
         const CAR_KANTYAWAN_PHRASES = [
             "Wooooh! Humahabol ang kotse ni [NAME]! Naka nitro boost yarn?!",
             "At nag-overtake sa kurbada si [NAME]! Grabe ang harurot!",
@@ -1529,8 +1641,11 @@
             "Kumatog ang makina ni [NAME]! Ayan na, bumubuntot na!",
             "Bawal mag warp drive [NAME]! Fair race ito sa speedway!",
             "Sumasabog ang tambutso ni [NAME]! Nitro sprint visual!",
-            "Ayan na, matinding unahan! Nagpa-pumpiyo si [NAME]!"
+            "Ayan na, matinding unahan! Nagpa-pumpiyo si [NAME]!",
+            "Lumampas sa kurbada si [NAME]! Pasok sa pwesto!",
+            "Dikitan ang laban! Hahabol ba si [NAME] sa finish line?!"
         ];
+
         const CAR_ICONS = ["🏎️", "🏎️", "🏎️", "🏎️", "🏎️"];
 
         async function runCarRace() {
@@ -1538,29 +1653,47 @@
             const csRecords = history.filter(r => r.event === "Castle Siege War").slice(0, 3);
             
             if (csRecords.length < 3) {
-                alert(`⚠️ Requires at least 3 recorded Castle Siege War events! Currently only have ${csRecords.length} CS events.`);
+                alert(`⚠️ Requires at least 3 recorded Castle Siege War events! Currently only have ${csRecords.length} CS events in database.`);
                 return;
             }
 
             let latestCS = csRecords[0];
+
             let csMainCounts = {};
             csRecords.forEach(rec => {
                 if (rec.presents) {
-                    let uniqueMains = new Set();
-                    rec.presents.forEach(p => { if (p.name) uniqueMains.add(p.name.toLowerCase().trim()); });
-                    uniqueMains.forEach(mKey => { csMainCounts[mKey] = (csMainCounts[mKey] || 0) + 1; });
+                    let uniqueMainsInEvent = new Set();
+                    rec.presents.forEach(p => {
+                        let mainKey = (p.name || "").toLowerCase().trim();
+                        if (mainKey) uniqueMainsInEvent.add(mainKey);
+                    });
+
+                    uniqueMainsInEvent.forEach(mKey => {
+                        csMainCounts[mKey] = (csMainCounts[mKey] || 0) + 1;
+                    });
                 }
             });
 
-            let qualifiedMains = Object.keys(csMainCounts).filter(mKey => csMainCounts[mKey] === 3 && !GUILD_MASTERS_LIST.some(gm => gm.toLowerCase() === mKey));
+            let qualifiedMains = Object.keys(csMainCounts).filter(mKey => {
+                let isGm = GUILD_MASTERS_LIST.some(gm => gm.toLowerCase() === mKey);
+                return csMainCounts[mKey] === 3 && !isGm;
+            });
+
             if (qualifiedMains.length < 6) {
-                alert(`⚠️ Not enough eligible members! Only ${qualifiedMains.length} qualified non-GM members completed 3/3 CS attendance (Need at least 6).`);
+                alert(`⚠️ Not enough eligible members! Only ${qualifiedMains.length} qualified non-GM members completed 3/3 CS attendance (Need at least 6 qualified members).`);
                 return;
             }
 
-            if (currentCarRaceRound === 1) { carRaceAccumulatedWinners = []; }
+            if (currentCarRaceRound === 1) {
+                carRaceAccumulatedWinners = [];
+            }
+
             let remainingParticipants = qualifiedMains.filter(mKey => !carRaceAccumulatedWinners.includes(mKey));
-            if (remainingParticipants.length === 0) { alert("⚠️ All eligible members have already won!"); return; }
+
+            if (remainingParticipants.length === 0) {
+                alert("⚠️ All eligible members have already won!");
+                return;
+            }
 
             const infoElem = document.getElementById('giveaway-participants-info');
             const resultsBox = document.getElementById('giveaway-results-box');
@@ -1573,70 +1706,123 @@
 
             startBtn.disabled = true;
             arena.style.display = 'block';
+
             arena.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
             lanesContainer.innerHTML = '';
             let carElements = [];
 
             remainingParticipants.forEach((dKey, idx) => {
                 let carDriverName = getOriginalCasedMainName(dKey);
+                let carIcon = CAR_ICONS[idx % CAR_ICONS.length];
+
                 let lane = document.createElement('div');
                 lane.className = 'car-lane-row';
-                lane.innerHTML = `<div class="car-lane-name">🏎️ ${carDriverName}</div><div class="car-track-area"><div class="finish-line-flag"></div><div class="racing-car-icon" id="car-${idx}">${CAR_ICONS[idx % CAR_ICONS.length]}</div></div>`;
+                lane.innerHTML = `
+                    <div class="car-lane-name">
+                        🏎️ ${carDriverName}
+                    </div>
+                    <div class="car-track-area">
+                        <div class="finish-line-flag"></div>
+                        <div class="racing-car-icon" id="car-${idx}">${carIcon}</div>
+                    </div>
+                `;
                 lanesContainer.appendChild(lane);
-                carElements.push({ key: dKey, name: carDriverName, pos: 0, baseSpeed: 0.17 + (Math.random() * 0.04), elem: document.getElementById(`car-${idx}`) });
+                
+                carElements.push({ 
+                    key: dKey, 
+                    name: carDriverName, 
+                    pos: 0, 
+                    baseSpeed: 0.17 + (Math.random() * 0.04),
+                    elem: document.getElementById(`car-${idx}`) 
+                });
             });
 
-            infoElem.innerHTML = `🏁 <strong>ROUND ${currentCarRaceRound} OF 6 IN PROGRESS (45s CAR SPRINT)!</strong>`;
+            infoElem.innerHTML = `🏁 <strong>ROUND ${currentCarRaceRound} OF 6 IN PROGRESS (45s CAR SPRINT)!</strong> ALL ${remainingParticipants.length} RACERS ON SCREEN! 🏎️💨`;
+
             const TOTAL_DURATION_SEC = 45;
             let startTime = Date.now();
             let lastShoutTime = startTime;
 
-            let startMsg = `Attention drivers! Red light is on! Three, two, one, GO!`;
+            // 🎙️ SHOUTCASTER INTRO COUNTDOWN
+            let startMsg = `Attention drivers! Red light is on! Three, two, one, GO! Harurot na sa expressway!`;
             kantyawanBox.innerHTML = `🎙️ 🔊 ${startMsg}`;
             speakKantyawanText(startMsg);
 
             let raceInterval = setInterval(() => {
                 let elapsedSec = (Date.now() - startTime) / 1000;
                 let remainingSec = Math.max(0, Math.ceil(TOTAL_DURATION_SEC - elapsedSec));
-                if (timerDisplay) timerDisplay.innerText = `⏱️ Time Remaining: ${remainingSec}s`;
 
+                if (timerDisplay) {
+                    timerDisplay.innerText = `⏱️ Time Remaining: ${remainingSec}s`;
+                }
+
+                // Periodic Voice Commentary every ~4 seconds
                 if (Date.now() - lastShoutTime > 4000 && remainingSec > 3) {
                     lastShoutTime = Date.now();
                     let randomCar = carElements[Math.floor(Math.random() * carElements.length)];
                     let randomPhrase = CAR_KANTYAWAN_PHRASES[Math.floor(Math.random() * CAR_KANTYAWAN_PHRASES.length)];
                     let shoutText = randomPhrase.replace("[NAME]", randomCar.name);
+                    
                     kantyawanBox.innerHTML = `<span class="kantyawan-bubble">🎙️ 🔊 ${shoutText}</span>`;
                     speakKantyawanText(shoutText);
                 }
 
                 let winnerFound = false;
+
                 carElements.forEach(car => {
+                    let progressRatio = elapsedSec / TOTAL_DURATION_SEC;
                     car.pos += (car.baseSpeed * (1 + (Math.random() * 0.8 - 0.3)));
-                    if (car.pos >= 92 || elapsedSec >= TOTAL_DURATION_SEC) { if (car.pos >= 92) winnerFound = true; }
+                    
+                    if (car.pos >= 92 || elapsedSec >= TOTAL_DURATION_SEC) {
+                        if (car.pos >= 92) winnerFound = true;
+                    }
                     car.elem.style.left = `${Math.min(92, car.pos)}%`;
                 });
 
                 if (winnerFound || elapsedSec >= TOTAL_DURATION_SEC) {
                     clearInterval(raceInterval);
+
                     carElements.sort((a, b) => b.pos - a.pos);
                     let roundWinner = carElements[0];
                     roundWinner.pos = 92;
                     roundWinner.elem.style.left = '92%';
 
                     carRaceAccumulatedWinners.push(roundWinner.key);
+
                     latestCS.giveawayWinners = carRaceAccumulatedWinners;
                     let recordIndex = history.findIndex(r => r.dateKey === latestCS.dateKey && r.event === "Castle Siege War");
                     if (recordIndex !== -1) {
                         history[recordIndex] = latestCS;
                         cloudAttendanceHistory = history;
-                        if (window.database) window.dbSet(window.dbRef(window.database, 'kultura_attendance'), history);
+                        if (window.database) {
+                            window.dbSet(window.dbRef(window.database, 'kultura_attendance'), history);
+                        }
                     }
 
                     resultsBox.style.display = 'block';
-                    winnersList.innerHTML = carRaceAccumulatedWinners.map((wKey, i) => `<div style="background: rgba(0,0,0,0.6); border: 1px solid var(--primary); padding: 10px; border-radius: 6px; text-align: center;"><div style="font-size: 0.9rem; color: #ff99dd; font-weight: bold;">🏆 Round ${i+1} Winner</div><div style="color: #ffdd55; font-weight: bold; font-size: 1rem; margin: 3px 0;">🏎️ ${getOriginalCasedMainName(wKey)}</div></div>`).join('');
-                    updatePublicGiveawayDisplay();
+                    winnersList.innerHTML = '';
+                    let publicWinnersHtml = '';
 
-                    let victoryMessage = `At tinawid na ang finish line! Ang kampeon sa round ${currentCarRaceRound} ay si driver ${roundWinner.name}!`;
+                    carRaceAccumulatedWinners.forEach((wKey, i) => {
+                        let wName = getOriginalCasedMainName(wKey);
+                        let mainDiv = findMainGuildDivision(wName) || "Kultura Alliance";
+                        winnersList.innerHTML += `
+                            <div style="background: rgba(0,0,0,0.6); border: 1px solid var(--primary); padding: 10px; border-radius: 6px; text-align: center;">
+                                <div style="font-size: 0.9rem; color: #ff99dd; font-weight: bold;">🏆 Round ${i+1} Winner</div>
+                                <div style="color: #ffdd55; font-weight: bold; font-size: 1rem; margin: 3px 0;">🏎️ ${wName}</div>
+                                <div style="font-size: 0.75rem; color: #33cc33;">${mainDiv}</div>
+                            </div>
+                        `;
+
+                        publicWinnersHtml += `🏎️ <strong>Round ${i+1} Winner: ${wName}</strong> <span style="color: #33cc33;">(${mainDiv})</span><br>`;
+                    });
+
+                    const publicWinnersBox = document.getElementById('public-winners-display-box');
+                    if (publicWinnersBox) publicWinnersBox.innerHTML = publicWinnersHtml;
+
+                    // 🎙️ SHOUTCASTER VICTORY ANNOUNCEMENT
+                    let victoryMessage = `At tinawid na ang finish line! Ang kampeon sa round ${currentCarRaceRound} ay si driver ${roundWinner.name}! Palakpakan at saludo!`;
                     kantyawanBox.innerHTML = `🎉 🎙️ 🔊 ${victoryMessage} 🎉`;
                     speakKantyawanText(victoryMessage);
 
@@ -1644,12 +1830,12 @@
                         currentCarRaceRound++;
                         startBtn.innerText = `🏎️ START ROUND ${currentCarRaceRound} OF 6 (WITH LIVE ANNOUNCER VOICE)`;
                         startBtn.disabled = false;
-                        infoElem.innerHTML = `🎉 <strong>ROUND ${currentCarRaceRound - 1} WINNER: ${roundWinner.name}!</strong> Click below for Round ${currentCarRaceRound}!`;
+                        infoElem.innerHTML = `🎉 <strong>ROUND ${currentCarRaceRound - 1} WINNER: ${roundWinner.name}!</strong> Click below to start Round ${currentCarRaceRound}!`;
                     } else {
                         currentCarRaceRound = 1;
                         startBtn.innerText = `🏎️ START NEW GRAND PRIX CAR TOURNAMENT (ROUND 1)`;
                         startBtn.disabled = false;
-                        infoElem.innerHTML = `🏆 <strong>ALL 6 CAR RACE ROUNDS COMPLETED!</strong> 🏆`;
+                        infoElem.innerHTML = `🏆 <strong>ALL 6 CAR RACE ROUNDS COMPLETED! CONGRATULATIONS TO ALL CHAMPIONS!</strong> 🏆`;
                     }
                 }
             }, 100);
@@ -1658,14 +1844,18 @@
         function updateLiveActiveWarriors() {
             const countElem = document.getElementById('active-warriors-count');
             if (!countElem) return;
+
             let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
             let latestCS = history.find(r => r.event === "Castle Siege War");
+
             if (latestCS && latestCS.presents && latestCS.presents.length > 0) {
                 countElem.innerText = `${latestCS.presents.length}`;
             } else {
                 let data = getGuildData();
                 let totalMembers = 0;
-                for (let divKey in data) { if (Array.isArray(data[divKey])) totalMembers += data[divKey].length; }
+                for (let divKey in data) {
+                    if (Array.isArray(data[divKey])) { totalMembers += data[divKey].length; }
+                }
                 countElem.innerText = totalMembers > 0 ? `${totalMembers}+` : "95+";
             }
         }
@@ -1673,6 +1863,7 @@
         function calculate3DayPayoutData() {
             let history = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
             if (history.length === 0) return null;
+
             let last3Records = history.slice(0, 3);
             let includedDates = last3Records.map(r => r.dateKey);
             let mainMap = {};
@@ -1680,17 +1871,23 @@
             last3Records.forEach(rec => {
                 let totalPresent = rec.presents ? rec.presents.length : 0;
                 let solShare = totalPresent > 0 ? Math.round(rec.solPool / totalPresent) : 0;
+
                 if (rec.presents) {
                     rec.presents.forEach(p => {
                         let mainIgn = getOriginalCasedMainName((p.name || "").toLowerCase().trim()) || p.name;
                         let divKey = findMainGuildDivision(mainIgn) || (p.officer || "Kultura Main Division");
-                        if (!mainMap[mainIgn]) mainMap[mainIgn] = { name: mainIgn, division: divKey, count: 0, totalSol: 0, datesPresent: [] };
+
+                        if (!mainMap[mainIgn]) {
+                            mainMap[mainIgn] = { name: mainIgn, division: divKey, count: 0, totalSol: 0, datesPresent: [] };
+                        }
+
                         mainMap[mainIgn].count += 1;
                         mainMap[mainIgn].totalSol += solShare;
                         mainMap[mainIgn].datesPresent.push(rec.dateKey);
                     });
                 }
             });
+
             return { includedDates: includedDates, totalDaysCount: last3Records.length, members: Object.values(mainMap) };
         }
 
@@ -1698,18 +1895,30 @@
             const data = calculate3DayPayoutData();
             const datesElem = document.getElementById('summary-3day-dates');
             const tbody = document.getElementById('summary-3day-table-body');
+
             if (!data || data.members.length === 0) {
-                datesElem.innerText = "No recorded attendance logs found.";
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:15px; color:var(--text-dim);">No records found.</td></tr>`;
+                datesElem.innerText = "No recorded attendance logs found in the database.";
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:15px; color:var(--text-dim);">No 3-Day Attendance records found.</td></tr>`;
             } else {
                 cached3DayPayoutData = data;
                 datesElem.innerHTML = `Included Dates (${data.totalDaysCount} Events): <span style="color:#fff;">${data.includedDates.join(' | ')}</span>`;
+                
                 tbody.innerHTML = '';
                 data.members.sort((a, b) => a.division.localeCompare(b.division) || a.name.localeCompare(b.name));
+
                 data.members.forEach(m => {
-                    tbody.innerHTML += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.08);"><td style="padding: 8px; font-weight: bold; color: #fff;">${m.name}</td><td style="padding: 8px; color: var(--primary-glow); font-size: 0.8rem;">${m.division}</td><td style="padding: 8px; text-align: center; color: #33cc33; font-weight: bold;">${m.count} / ${data.totalDaysCount}</td><td style="padding: 8px; text-align: right; color: #ffdd55; font-weight: bold;">${m.totalSol.toLocaleString()} SOL</td></tr>`;
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = "1px solid rgba(255,255,255,0.08)";
+                    tr.innerHTML = `
+                        <td style="padding: 8px; font-weight: bold; color: #fff;">${m.name}</td>
+                        <td style="padding: 8px; color: var(--primary-glow); font-size: 0.8rem;">${m.division}</td>
+                        <td style="padding: 8px; text-align: center; color: #33cc33; font-weight: bold;">${m.count} / ${data.totalDaysCount}</td>
+                        <td style="padding: 8px; text-align: right; color: #ffdd55; font-weight: bold;">${m.totalSol.toLocaleString()} SOL</td>
+                    `;
+                    tbody.appendChild(tr);
                 });
             }
+
             document.getElementById('summary-3day-modal').style.display = 'flex';
         }
 
@@ -1717,14 +1926,40 @@
 
         function downloadCleanPayoutTxt() {
             const data = cached3DayPayoutData || calculate3DayPayoutData();
-            if (!data || data.members.length === 0) { alert("⚠️ No data available!"); return; }
-            let fileContent = `==================================================\n   KULTURA GUILD & ALLIANCE - 3-DAY PAYOUT SUMMARY\n==================================================\nGenerated Date: ${new Date().toLocaleDateString()}\nIncluded Dates: ${data.includedDates.join(' | ')}\n\n`;
+            if (!data || data.members.length === 0) {
+                alert("⚠️ No data available to export into file!");
+                return;
+            }
+
+            let fileContent = `==================================================\n`;
+            fileContent += `   KULTURA GUILD & ALLIANCE - 3-DAY PAYOUT SUMMARY\n`;
+            fileContent += `==================================================\n`;
+            fileContent += `Generated Date: ${new Date().toLocaleDateString()}\n`;
+            fileContent += `Included Dates: ${data.includedDates.join(' | ')}\n\n`;
+            fileContent += `--------------------------------------------------\n`;
+            fileContent += `MAIN CHARACTER        TOTAL DAYS    TOTAL SOL SHARE\n`;
+            fileContent += `--------------------------------------------------\n`;
+
             let grouped = {};
-            data.members.forEach(m => { if (!grouped[m.division]) grouped[m.division] = []; grouped[m.division].push(m); });
+            data.members.forEach(m => {
+                if (!grouped[m.division]) grouped[m.division] = [];
+                grouped[m.division].push(m);
+            });
+
             for (let divName in grouped) {
                 fileContent += `\n[ ${divName.toUpperCase()} ]\n`;
-                grouped[divName].forEach(m => { fileContent += `${m.name.padEnd(22, ' ')}${m.count}/${data.totalDaysCount}`.padEnd(14, ' ') + `${m.totalSol.toLocaleString()} SOL\n`; });
+                grouped[divName].forEach(m => {
+                    let padName = m.name.padEnd(22, ' ');
+                    let padCount = `${m.count}/${data.totalDaysCount}`.padEnd(14, ' ');
+                    let solStr = `${m.totalSol.toLocaleString()} SOL`;
+                    fileContent += `${padName}${padCount}${solStr}\n`;
+                });
             }
+
+            fileContent += `\n==================================================\n`;
+            fileContent += `TOTAL WARRIORS IN PAYOUT: ${data.members.length}\n`;
+            fileContent += `==================================================\n`;
+
             const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
@@ -1735,7 +1970,10 @@
         }
 
         function openLoginModal() {
-            if (currentLoggedInOfficer) { openAdminModal(); return; }
+            if (currentLoggedInOfficer) {
+                openAdminModal();
+                return;
+            }
             document.getElementById('login-username').value = '';
             document.getElementById('login-password').value = '';
             document.getElementById('login-modal').style.display = 'flex';
@@ -1746,27 +1984,36 @@
         async function handleLogin() {
             const userVal = document.getElementById('login-username').value.trim();
             const passVal = document.getElementById('login-password').value.trim();
-            let loginEmail = userVal.includes('@') ? userVal : `${userVal.toLowerCase()}@alliance.com`;
+
+            let loginEmail = userVal;
+            if (!userVal.includes('@')) { loginEmail = `${userVal.toLowerCase()}@alliance.com`; }
 
             try {
                 await window.signInWithEmailAndPassword(window.auth, loginEmail, passVal);
                 currentLoggedInOfficer = userVal.includes('@') ? userVal.split('@')[0] : userVal;
+                
                 localStorage.setItem('kultura_logged_officer', currentLoggedInOfficer);
+
                 alert(`✅ Welcome ${currentLoggedInOfficer}! Successfully authenticated.`);
                 closeLoginModal();
                 updatePortalButtonUI();
                 openAdminModal();
                 resetInactivityTimer();
             } catch (error) {
-                alert("❌ Invalid Username or Password!");
+                console.error(error);
+                alert("❌ Invalid Email/Username or Password! Please try again.");
             }
         }
 
         async function handleLogout() {
-            try { if (window.auth) await window.signOut(window.auth); } catch(e) {}
+            try {
+                if (window.auth) { await window.signOut(window.auth); }
+            } catch(e) {}
+
             currentLoggedInOfficer = null;
             localStorage.removeItem('kultura_logged_officer');
             clearTimeout(inactivityTimer);
+
             closeAdminModal();
             updatePortalButtonUI();
             alert("🔒 Successfully Logged Out.");
@@ -1799,7 +2046,10 @@
                 modalCard.style.position = "relative";
                 modalCard.style.bottom = "auto";
                 modalCard.style.right = "auto";
+                
                 modalOverlay.style.background = "rgba(0,0,0,0.85)";
+                modalOverlay.style.justifyContent = "center";
+                modalOverlay.style.alignItems = "center";
                 modalOverlay.style.pointerEvents = "auto";
             } else {
                 bodyContent.style.display = "none";
@@ -1810,17 +2060,21 @@
                 modalCard.style.position = "fixed";
                 modalCard.style.bottom = "20px";
                 modalCard.style.right = "20px";
+                
                 modalOverlay.style.background = "transparent";
+                modalOverlay.style.justifyContent = "flex-end";
+                modalOverlay.style.alignItems = "flex-end";
                 modalOverlay.style.pointerEvents = "none";
             }
         }
 
         function addMoreDummyBox() {
             const container = document.getElementById('dummy-boxes-container');
+            const totalCurrent = container.querySelectorAll('.dummy-input-field').length;
             const newInput = document.createElement('input');
             newInput.type = "text";
             newInput.className = "dummy-input-field";
-            newInput.placeholder = `Dummy ${container.querySelectorAll('.dummy-input-field').length + 1}`;
+            newInput.placeholder = `Dummy ${totalCurrent + 1}`;
             newInput.style.cssText = "padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;";
             container.appendChild(newInput);
         }
@@ -1828,70 +2082,137 @@
         async function saveSuperAdminMultiLinkage() {
             const mainIgnInput = document.getElementById('type-main-ign').value.trim();
             const dummyInputs = document.querySelectorAll('.dummy-input-field');
-            if (!mainIgnInput) { alert("⚠️ Type Main Character IGN first!"); return; }
+
+            if (!mainIgnInput) {
+                alert("⚠️ Please type the Main Character IGN first!");
+                return;
+            }
 
             let dummyList = [];
-            dummyInputs.forEach(i => { let val = i.value.trim(); if (val && val.toLowerCase() !== mainIgnInput.toLowerCase()) dummyList.push(val); });
-            if (dummyList.length === 0) { alert("⚠️ Enter at least one Dummy IGN!"); return; }
+            dummyInputs.forEach(input => {
+                let val = input.value.trim();
+                if (val && val.toLowerCase() !== mainIgnInput.toLowerCase()) { dummyList.push(val); }
+            });
+
+            if (dummyList.length === 0) {
+                alert("⚠️ Enter at least one Dummy IGN in the boxes!");
+                return;
+            }
 
             let data = getGuildData();
             let canonicalMainIgn = null;
+
             for (let divKey in data) {
                 let foundMain = data[divKey].find(m => m.name.toLowerCase() === mainIgnInput.toLowerCase());
-                if (foundMain) { canonicalMainIgn = foundMain.name; break; }
+                if (foundMain) {
+                    canonicalMainIgn = foundMain.name;
+                    break;
+                }
             }
 
-            if (!canonicalMainIgn) { alert(`⚠️ Main Character "${mainIgnInput}" not found in roster.`); return; }
+            if (!canonicalMainIgn) {
+                alert(`⚠️ The Main Character "${mainIgnInput}" was not found in any Roster Division. Please register them in the Roster first!`);
+                return;
+            }
 
             let linkedCount = 0;
+            let missingDummies = [];
+
             dummyList.forEach(dummyIgn => {
+                let foundDummyObj = null;
                 for (let divKey in data) {
                     let member = data[divKey].find(m => m.name.toLowerCase() === dummyIgn.toLowerCase());
-                    if (member) { member.mainOwner = canonicalMainIgn; member.icon = '🎭'; linkedCount++; break; }
+                    if (member) { foundDummyObj = member; break; }
+                }
+
+                if (foundDummyObj) {
+                    foundDummyObj.mainOwner = canonicalMainIgn;
+                    foundDummyObj.icon = '🎭';
+                    linkedCount++;
+                } else {
+                    missingDummies.push(dummyIgn);
                 }
             });
 
             if (linkedCount > 0) {
                 await saveGuildData(data);
-                alert(`🎉 Successfully linked ${linkedCount} Dummy Accounts to Main "${canonicalMainIgn}"!`);
+                let missingMsg = missingDummies.length > 0 ? `\n⚠️ Not yet registered in roster: ${missingDummies.join(', ')}` : '';
+                alert(`🎉 [Link Successful] Successfully linked ${linkedCount} Dummy Accounts to Main "${canonicalMainIgn}"! You can now search them in the portal.${missingMsg}`);
+
                 document.getElementById('type-main-ign').value = '';
                 dummyInputs.forEach(i => i.value = '');
+
                 renderRosters();
+                onDivisionChange();
+                document.getElementById('search-main-input').value = canonicalMainIgn;
                 searchMainAndDummies();
+            } else {
+                alert(`⚠️ No accounts linked! Ensure the Dummy Accounts are registered in the Roster first: ${missingDummies.join(', ')}`);
             }
         }
 
         async function registerNewMember() {
             if (!currentLoggedInOfficer) return;
+
             const ign = document.getElementById('new-member-ign').value.trim();
             const charClass = document.getElementById('new-member-class').value;
             const assignedDivision = document.getElementById('admin-officer-select').value;
-            if (!ign) return;
+
+            if (!ign) { alert("⚠️ Please enter the Member IGN!"); return; }
 
             let data = getGuildData();
-            if (!data[assignedDivision]) data[assignedDivision] = [];
-            data[assignedDivision].push({ name: ign, class: charClass, icon: getClassIcon(charClass), mainOwner: ign });
+            let membersList = data[assignedDivision] || [];
+
+            if (membersList.some(m => m.name.toLowerCase() === ign.toLowerCase())) {
+                alert("⚠️ This IGN is already registered in the roster!");
+                return;
+            }
+
+            const newMemberObj = { name: ign, class: charClass, icon: getClassIcon(charClass), mainOwner: ign };
+            membersList.push(newMemberObj);
+            data[assignedDivision] = membersList;
+
             await saveGuildData(data);
-            alert(`🎉 Registered ${ign} to ${assignedDivision}.`);
+            alert(`🎉 Success! Registered ${ign} (${charClass}) to ${assignedDivision}.`);
+
             document.getElementById('new-member-ign').value = '';
+            renderRosters();
             onDivisionChange();
         }
 
         function renderMemberChecklist() {
             if (!currentLoggedInOfficer) return;
+
             const selectedDivision = document.getElementById('admin-officer-select').value;
+            const eventType = document.getElementById('admin-event-type').value;
             const checklist = document.getElementById('admin-member-checklist');
             checklist.innerHTML = '';
 
             const data = getGuildData();
             const members = data[selectedDivision] || [];
-            let currentRecord = cloudAttendanceHistory ? cloudAttendanceHistory.find(r => r.dateKey === getStandardDateKey() && r.event === document.getElementById('admin-event-type').value) : null;
-            let presentMains = new Set(currentRecord && currentRecord.presents ? currentRecord.presents.map(p => p.name.toLowerCase()) : []);
+
+            const targetDateKey = getStandardDateKey();
+            let currentRecord = cloudAttendanceHistory ? cloudAttendanceHistory.find(r => r.dateKey === targetDateKey && r.event === eventType) : null;
+            let presentMainsSet = new Set(currentRecord && currentRecord.presents ? currentRecord.presents.map(p => (p.name || "").toLowerCase()) : []);
 
             members.forEach((mObj, idx) => {
+                const div = document.createElement('div');
+                div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;";
+                
                 let mainOwnerVal = mObj.mainOwner || mObj.name;
-                let isPresent = presentMains.has(mainOwnerVal.toLowerCase());
-                checklist.innerHTML += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;"><span>${mObj.icon} <strong>${mObj.name}</strong> <small style="color:${mObj.name.toLowerCase() !== mainOwnerVal.toLowerCase() ? '#ffaa33' : '#33cc33'};">${mObj.name.toLowerCase() !== mainOwnerVal.toLowerCase() ? '[Dummy]' : '[Main]'}</small></span><select id="att-status-${idx}" data-name="${mObj.name}" data-main="${mainOwnerVal}" style="background: #222; color: #fff; border: 1px solid #555; padding: 2px 6px; border-radius: 3px;"><option value="Present" ${isPresent ? 'selected' : ''}>Present</option><option value="Absent" ${!isPresent ? 'selected' : ''}>Absent</option></select></div>`;
+                let isDummy = mainOwnerVal.toLowerCase() !== mObj.name.toLowerCase();
+                let dummyLabel = isDummy ? `<small style="color:#ffaa33; font-weight:bold;">[Dummy of ${mainOwnerVal}]</small>` : `<small style="color:#33cc33; font-weight:bold;">[Main]</small>`;
+                let isCurrentlyPresent = presentMainsSet.has(mainOwnerVal.toLowerCase());
+
+                div.innerHTML = `
+                    <span>${mObj.icon} <strong>${mObj.name}</strong> ${dummyLabel} <small style="color:var(--text-dim);">(${mObj.class})</small></span>
+                    <select id="att-status-${idx}" data-name="${mObj.name}" data-main="${mainOwnerVal}" style="background: #222; color: #fff; border: 1px solid #555; padding: 2px 6px; border-radius: 3px;">
+                        <option value="Present" ${isCurrentlyPresent ? 'selected' : ''}>Present</option>
+                        <option value="Late">Late</option>
+                        <option value="Absent" ${!isCurrentlyPresent ? 'selected' : ''}>Absent</option>
+                    </select>
+                `;
+                checklist.appendChild(div);
             });
         }
 
@@ -1899,13 +2220,15 @@
             const data = getGuildData();
             let lowerMain = (mainIgn || "").toLowerCase();
             for (let divKey in data) {
-                if (data[divKey].some(m => (m.mainOwner || m.name).toLowerCase() === lowerMain)) return divKey;
+                let found = data[divKey].find(m => (m.mainOwner || m.name).toLowerCase() === lowerMain);
+                if (found) return divKey;
             }
             return null;
         }
 
         async function saveAttendanceEntry() {
             if (!currentLoggedInOfficer) return;
+
             const currentCheckingGM = document.getElementById('admin-officer-select').value;
             const eventType = document.getElementById('admin-event-type').value;
             const totalSolPool = parseFloat(document.getElementById('admin-sol-pool').value) || 100000;
@@ -1914,20 +2237,30 @@
             const targetDateKey = getStandardDateKey(); 
             let allRecords = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
             let existingRecordIndex = allRecords.findIndex(r => r.dateKey === targetDateKey && r.event === eventType);
-            let existingRecord = existingRecordIndex !== -1 ? allRecords[existingRecordIndex] : { dateKey: targetDateKey, timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), event: eventType, solPool: totalSolPool, presents: [] };
 
-            if (existingRecordIndex === -1) allRecords.unshift(existingRecord);
+            let existingRecord = existingRecordIndex !== -1 ? allRecords[existingRecordIndex] : null;
+
+            if (!existingRecord) {
+                existingRecord = { dateKey: targetDateKey, timestamp: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), event: eventType, solPool: totalSolPool, presents: [] };
+                allRecords.unshift(existingRecord);
+            }
 
             let currentDivMembers = (getGuildData()[currentCheckingGM] || []).map(m => (m.mainOwner || m.name).toLowerCase());
             let updatedPresents = existingRecord.presents.filter(p => !currentDivMembers.includes((p.name || "").toLowerCase()));
-            let acknowledgedMains = new Set(updatedPresents.map(p => p.name.toLowerCase()));
+            let acknowledgedMains = new Set(updatedPresents.map(p => (p.name || "").toLowerCase()));
 
             selects.forEach(sel => {
-                if (sel.value === 'Present' || sel.value === 'Late') {
-                    let mainChar = sel.getAttribute('data-main');
+                const status = sel.value;
+                const mainChar = sel.getAttribute('data-main');
+                const loggedChar = sel.getAttribute('data-name');
+
+                if (status === 'Present' || status === 'Late') {
                     if (!acknowledgedMains.has(mainChar.toLowerCase())) {
                         acknowledgedMains.add(mainChar.toLowerCase());
-                        updatedPresents.push({ name: mainChar, loggedIgn: sel.getAttribute('data-name'), officer: findMainGuildDivision(mainChar) || currentCheckingGM });
+                        let registeredMainGuild = findMainGuildDivision(mainChar);
+                        let targetDivisionForDisplay = registeredMainGuild ? registeredMainGuild : currentCheckingGM;
+
+                        updatedPresents.push({ name: mainChar, loggedIgn: loggedChar, officer: targetDivisionForDisplay });
                     }
                 }
             });
@@ -1937,85 +2270,304 @@
             existingRecord.timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
             cloudAttendanceHistory = allRecords;
-            if (window.database) await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), allRecords);
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), allRecords);
+            }
+            
             renderAttendanceHistory();
             renderAdminAttendanceLogList();
             updateLiveActiveWarriors();
-            alert(`🎉 Attendance updated successfully for ${targetDateKey}!`);
+            updatePublicGiveawayDisplay();
+            
+            alert(`🎉 Live Attendance Updated successfully for date: ${targetDateKey}!`);
         }
 
         function renderAttendanceHistory() {
             const tbody = document.getElementById('public-attendance-history');
-            let history = cloudAttendanceHistory || [];
-            if (history.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="padding: 10px; text-align: center; color: var(--text-dim);">No attendance recorded yet.</td></tr>`; return; }
+            let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
+
+            if (history.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="padding: 10px; text-align: center; color: var(--text-dim);">No attendance recorded yet.</td></tr>`;
+                return;
+            }
 
             tbody.innerHTML = '';
             history.forEach(rec => {
                 const totalPresent = rec.presents ? rec.presents.length : 0;
                 const solPerMember = totalPresent > 0 ? Math.round(rec.solPool / totalPresent).toLocaleString() : 0;
-                let grouped = {};
+                
+                const groupedByDivision = {};
                 if (rec.presents) {
                     rec.presents.forEach(p => {
-                        let mainName = getOriginalCasedMainName(p.name.toLowerCase().trim()) || p.name;
-                        let divName = findMainGuildDivision(mainName) || p.officer || "Kultura Main Division";
-                        if (!grouped[divName]) grouped[divName] = [];
-                        grouped[divName].push({ ...p, name: mainName });
+                        let normalizedMainName = getOriginalCasedMainName((p.name || "").toLowerCase().trim()) || p.name;
+                        let verifiedDivision = findMainGuildDivision(normalizedMainName);
+                        let finalDivKey = verifiedDivision ? verifiedDivision : (p.officer || "Kultura Main Division");
+
+                        if (!groupedByDivision[finalDivKey]) { groupedByDivision[finalDivKey] = []; }
+                        groupedByDivision[finalDivKey].push({ ...p, name: normalizedMainName });
                     });
                 }
 
-                let membersHTML = '';
-                for (let divName in grouped) {
-                    membersHTML += `<div class="division-group-title">👑 ${divName} (${grouped[divName].length} Mains Present):</div><br>`;
-                    grouped[divName].forEach(o => { membersHTML += `💎 <strong>${o.name}</strong> — <span style="color:var(--primary-glow);">${solPerMember} SOL</span><br>`; });
+                let formattedMembersHTML = '';
+                if (totalPresent > 0) {
+                    for (let divName in groupedByDivision) {
+                        formattedMembersHTML += `<div class="division-group-title">👑 ${divName} (${groupedByDivision[divName].length} Mains Present):</div><br>`;
+                        groupedByDivision[divName].forEach(pObj => {
+                            let altNote = (pObj.loggedIgn && pObj.loggedIgn.toLowerCase() !== pObj.name.toLowerCase()) ? ` <small style="color:#ffaa33;">(Attended via Dummy ${pObj.loggedIgn})</small>` : '';
+                            formattedMembersHTML += `💎 <strong>${pObj.name}</strong>${altNote} — <span style="color:var(--primary-glow);">${solPerMember} SOL</span><br>`;
+                        });
+                        formattedMembersHTML += `<div style="margin-bottom:6px;"></div>`;
+                    }
+                } else {
+                    formattedMembersHTML = '<span style="color:var(--text-dim);">No attendance records found.</span>';
                 }
 
-                tbody.innerHTML += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.08);"><td style="padding: 10px; color: var(--text-dim);">${rec.dateKey}<br><small>${rec.timestamp}</small></td><td style="padding: 10px; font-weight: 600; color:var(--primary);">${rec.event}</td><td style="padding: 10px; color: #ffdd55; font-weight: bold;">${totalPresent} Mains</td><td style="padding: 10px; color: #ffdd55;">${rec.solPool.toLocaleString()} SOL<br><span style="color:#33cc33;">${solPerMember} SOL/ea</span></td><td style="padding: 10px; color: #33cc33;">${membersHTML}</td></tr>`;
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = "1px solid rgba(255,255,255,0.08)";
+                tr.innerHTML = `
+                    <td style="padding: 10px; color: var(--text-dim); white-space: nowrap;">${rec.dateKey}<br><small>Last updated: ${rec.timestamp}</small></td>
+                    <td style="padding: 10px; font-weight: 600; color:var(--primary);">${rec.event}</td>
+                    <td style="padding: 10px; color: #ffdd55; font-weight: bold;">${totalPresent} Main Warriors</td>
+                    <td style="padding: 10px; color: #ffdd55;">${rec.solPool.toLocaleString()} SOL<br><span style="color:#33cc33; font-weight:bold;">${solPerMember} SOL / ea</span></td>
+                    <td style="padding: 10px; color: #33cc33; line-height: 1.5;">${formattedMembersHTML}</td>
+                `;
+                tbody.appendChild(tr);
             });
         }
 
         function renderAdminAttendanceLogList() {
             const listContainer = document.getElementById('admin-attendance-logs-list');
             if (!listContainer) return;
-            let history = cloudAttendanceHistory || [];
-            listContainer.innerHTML = history.length === 0 ? `<span style="color: var(--text-dim);">No logs.</span>` : history.map((rec, i) => `<div style="display: flex; justify-content: space-between; align-items: center; padding: 6px; margin-bottom: 6px; background: rgba(0,0,0,0.5); border-left: 3px solid var(--primary); border-radius: 4px;"><div><strong>📅 ${rec.dateKey}</strong> - ${rec.event}<br><small style="color:var(--text-dim);">Presents: ${rec.presents ? rec.presents.length : 0}</small></div><button onclick="deleteAttendanceLog(${i})" class="delete-btn">❌ Delete</button></div>`).join('');
+            let history = cloudAttendanceHistory ? cloudAttendanceHistory : [];
+
+            if (history.length === 0) {
+                listContainer.innerHTML = `<span style="color: var(--text-dim);">No attendance logs reserved.</span>`;
+                return;
+            }
+
+            listContainer.innerHTML = '';
+            history.forEach((rec, index) => {
+                const totalPresent = rec.presents ? rec.presents.length : 0;
+                const div = document.createElement('div');
+                div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 6px; margin-bottom: 6px; background: rgba(0,0,0,0.5); border-left: 3px solid var(--primary); border-radius: 4px;";
+                
+                div.innerHTML = `
+                    <div>
+                        <strong>📅 ${rec.dateKey}</strong> - <span style="color:var(--primary-glow);">${rec.event}</span><br>
+                        <small style="color:var(--text-dim);">Presents: ${totalPresent} Members | Pool: ${rec.solPool.toLocaleString()} SOL</small>
+                    </div>
+                    <button onclick="deleteAttendanceLog(${index})" class="delete-btn" style="padding: 4px 8px;">❌ Delete Log</button>
+                `;
+                listContainer.appendChild(div);
+            });
         }
 
-        async function deleteAttendanceLog(idx) {
+        async function deleteAttendanceLog(logIndex) {
             let history = cloudAttendanceHistory ? [...cloudAttendanceHistory] : [];
-            if (confirm(`⚠️ Delete log for ${history[idx].dateKey}?`)) {
-                history.splice(idx, 1);
+            if (logIndex < 0 || logIndex >= history.length) return;
+
+            const targetLog = history[logIndex];
+            const confirmDelete = confirm(`⚠️ Are you sure you want to delete the attendance log on "${targetLog.dateKey}" (${targetLog.event})?`);
+
+            if (confirmDelete) {
+                history.splice(logIndex, 1);
                 cloudAttendanceHistory = history;
-                if (window.database) await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), history);
+
+                if (window.database) {
+                    await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), cloudAttendanceHistory);
+                }
+
                 renderAttendanceHistory();
                 renderAdminAttendanceLogList();
+                updateLiveActiveWarriors();
+                updatePublicGiveawayDisplay();
+                alert(`🗑️ Attendance log record permanently deleted!`);
             }
         }
 
-        function openAdminModal() {
-            if (!currentLoggedInOfficer) { openLoginModal(); return; }
-            document.getElementById('logged-agm-display').innerText = currentLoggedInOfficer;
-            let isSuperAdmin = (currentLoggedInOfficer.toLowerCase() === "fullclip" || currentLoggedInOfficer.toLowerCase() === "kultura" || currentLoggedInOfficer.toLowerCase() === "kulturamain");
-            
-            document.getElementById('superadmin-inbox-block').style.display = isSuperAdmin ? 'block' : 'none';
-            document.getElementById('superadmin-delete-logs-block').style.display = isSuperAdmin ? 'block' : 'none';
-            document.getElementById('superadmin-guild-reg-block').style.display = isSuperAdmin ? 'block' : 'none';
-            if (document.getElementById('superadmin-events-block')) document.getElementById('superadmin-events-block').style.display = isSuperAdmin ? 'block' : 'none';
+        async function changeMyUsername() {
+            if (!currentLoggedInOfficer) return;
+            const newUsername = document.getElementById('change-username-new').value.trim();
+            if (!newUsername) return;
 
-            if (isSuperAdmin) { renderSuperAdminInbox(); renderAdminAttendanceLogList(); populateEventsAdminForm(); }
+            const oldUserKey = currentLoggedInOfficer;
+            currentLoggedInOfficer = newUsername;
+            localStorage.setItem('kultura_logged_officer', currentLoggedInOfficer);
+
+            let data = getGuildData();
+            let oldDivKey = `${oldUserKey} Division (${oldUserKey})`;
+            let newDivKey = `${newUsername} Division (${newUsername})`;
+
+            if (data[oldDivKey]) {
+                data[newDivKey] = data[oldDivKey];
+                delete data[oldDivKey];
+            }
+
+            ALL_DIVISIONS = Object.keys(data);
+            if (window.database) { await saveGuildData(data); }
+
+            alert(`🎉 Username changed successfully to "${newUsername}".`);
+            document.getElementById('change-username-new').value = '';
+            renderRosters();
+            openAdminModal();
+            updatePortalButtonUI();
+        }
+
+        async function changeMyPassword() {
+            if (!currentLoggedInOfficer) return;
+            const newPass = document.getElementById('change-pass-new').value.trim();
+            if (!newPass) return;
+            alert(`🎉 Password update requested.`);
+            document.getElementById('change-pass-current').value = '';
+            document.getElementById('change-pass-new').value = '';
+        }
+
+        function renderSuperAdminInbox() {
+            const inboxList = document.getElementById('superadmin-inbox-list');
+            if (!inboxList) return;
+            if (cloudResetTickets.length === 0) {
+                inboxList.innerHTML = `<span style="color: var(--text-dim);">No reserved tickets in the inbox.</span>`;
+                return;
+            }
+            inboxList.innerHTML = '';
+            cloudResetTickets.forEach(ticket => {
+                const div = document.createElement('div');
+                div.style.cssText = "padding: 6px; margin-bottom: 6px; background: rgba(0,0,0,0.5); border-left: 3px solid #ff3333; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;";
+                div.innerHTML = `<div><strong>👤 ${ticket.username}</strong> <small style="color:var(--text-dim);">(${ticket.timestamp})</small><br><span style="color:#ffdd55;">💬 "${ticket.message}"</span></div><button onclick="resolveTicket(${ticket.id}, '${ticket.username}')" class="btn" style="padding: 4px 8px; font-size: 0.7rem; background: #33cc33; color: #000;">✅ Done</button>`;
+                inboxList.appendChild(div);
+            });
+        }
+
+        async function resolveTicket(ticketId, username) {
+            cloudResetTickets = cloudResetTickets.filter(t => t.id !== ticketId);
+            if (window.database) {
+                await window.dbSet(window.dbRef(window.database, 'kultura_reset_tickets'), cloudResetTickets);
+            }
+            renderSuperAdminInbox();
+        }
+
+        async function registerAllianceAndGM() {
+            const guildName = document.getElementById('reg-guild-name').value.trim();
+            const gmPass = document.getElementById('reg-gm-password').value.trim();
+            const gmClass = document.getElementById('reg-gm-class').value;
+
+            if (!guildName) return;
+
+            const gmUser = guildName;
+            const divisionKey = `${guildName} Division (${gmUser})`;
+
+            PROTECTED_ADMIN_ACCOUNTS.push(gmUser.toLowerCase());
+            GUILD_MASTERS_LIST.push(gmUser.toLowerCase());
+
+            let data = getGuildData();
+            data[divisionKey] = [{ name: gmUser, class: gmClass, icon: "👑", mainOwner: gmUser }];
+
+            ALL_DIVISIONS = Object.keys(data);
+            if (window.database) { await saveGuildData(data); }
+
+            alert(`🎉 Alliance "${guildName}" created and added to Roster!`);
+            renderRosters();
+            openAdminModal();
+        }
+
+        function openAdminModal() {
+            if (!currentLoggedInOfficer) {
+                openLoginModal();
+                return;
+            }
+            document.getElementById('logged-agm-display').innerText = `${currentLoggedInOfficer}`;
+
+            const datePicker = document.getElementById('admin-attendance-date');
+            if (datePicker && !datePicker.value) {
+                const d = new Date();
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                datePicker.value = `${year}-${month}-${day}`;
+            }
+
+            const superInboxBlock = document.getElementById('superadmin-inbox-block');
+            const superMainDummyBlock = document.getElementById('superadmin-main-dummy-block');
+            const superDeleteLogsBlock = document.getElementById('superadmin-delete-logs-block');
+            const superGuildRegBlock = document.getElementById('superadmin-guild-reg-block');
+            const superEventsBlock = document.getElementById('superadmin-events-block');
+
+            let currentLower = currentLoggedInOfficer.toLowerCase();
+            let isSuperAdmin = (currentLower === "fullclip" || currentLower === "kultura" || currentLower === "kulturamain");
+            let isIkapitana = (currentLower === "ikapitana");
+
+            if (isSuperAdmin) {
+                superInboxBlock.style.display = 'block';
+                superDeleteLogsBlock.style.display = 'block';
+                superGuildRegBlock.style.display = 'block';
+                if (superEventsBlock) superEventsBlock.style.display = 'block';
+                
+                renderSuperAdminInbox();
+                renderAdminAttendanceLogList();
+                populateEventsAdminForm();
+            } else {
+                superInboxBlock.style.display = 'none';
+                superDeleteLogsBlock.style.display = 'none';
+                superGuildRegBlock.style.display = 'none';
+                if (superEventsBlock) superEventsBlock.style.display = 'none';
+            }
+
             updateGiveawayBotVisibility();
+
+            if (isIkapitana) {
+                superMainDummyBlock.style.display = 'none';
+            } else {
+                superMainDummyBlock.style.display = 'block';
+            }
 
             const selectDiv = document.getElementById('admin-officer-select');
             selectDiv.innerHTML = '';
-            Object.keys(getGuildData()).forEach(div => { selectDiv.innerHTML += `<option value="${div}">${div}</option>`; });
-            onDivisionChange();
+            
+            let matchedDivisions = [];
+            let allAvailDivs = Object.keys(getGuildData());
 
-            document.getElementById('attendance-admin-modal').style.display = 'flex';
+            if (isSuperAdmin) {
+                matchedDivisions = allAvailDivs;
+                selectDiv.disabled = false;
+            } else {
+                matchedDivisions = allAvailDivs.filter(divName => divName.toLowerCase().includes(currentLower));
+                if (matchedDivisions.length === 0) {
+                    matchedDivisions = allAvailDivs;
+                    selectDiv.disabled = false;
+                } else {
+                    selectDiv.disabled = true;
+                }
+            }
+
+            matchedDivisions.forEach(divName => {
+                selectDiv.innerHTML += `<option value="${divName}">${divName}</option>`;
+            });
+
+            onDivisionChange();
+            
+            const modalOverlay = document.getElementById('attendance-admin-modal');
+            const modalCard = document.getElementById('admin-modal-card');
+            modalOverlay.style.background = "rgba(0,0,0,0.85)";
+            modalOverlay.style.justifyContent = "center";
+            modalOverlay.style.alignItems = "center";
+            modalOverlay.style.pointerEvents = "auto";
+            modalCard.style.width = "95%";
+            modalCard.style.maxWidth = "800px";
+            modalCard.style.position = "relative";
+            modalCard.style.bottom = "auto";
+            modalCard.style.right = "auto";
+            document.getElementById('admin-modal-body-content').style.display = 'block';
+            document.getElementById('modal-min-btn').innerText = "➖";
+            modalOverlay.style.display = 'flex';
         }
 
-        function onDivisionChange() { renderDeleteMemberList(); renderMemberChecklist(); }
+        function onDivisionChange() {
+            renderDeleteMemberList();
+            renderMemberChecklist();
+        }
 
-        function getClassIcon(c) {
-            switch(c) {
+        function getClassIcon(className) {
+            switch(className) {
                 case 'Summoner': return '✨';
                 case 'Blade Master': return '⚔️';
                 case 'Elf': return '🏹';
@@ -2026,8 +2578,8 @@
             }
         }
 
-        function getClassCss(c) {
-            switch(c) {
+        function getClassCss(className) {
+            switch(className) {
                 case 'Summoner': return 'class-summoner';
                 case 'Blade Master': return 'class-blademaster';
                 case 'Elf': return 'class-elf';
@@ -2042,16 +2594,39 @@
             if (!currentLoggedInOfficer) return;
             const selectedDivision = document.getElementById('admin-officer-select').value;
             const listContainer = document.getElementById('admin-delete-member-list');
-            listContainer.innerHTML = (getGuildData()[selectedDivision] || []).map(m => `<div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;"><span>${m.icon} <strong>${m.name}</strong></span>${PROTECTED_ADMIN_ACCOUNTS.includes(m.name.toLowerCase()) ? '<span style="font-size:0.75rem; color:#e6b800;">🛡️ Protected</span>' : `<button onclick="deleteMember('${m.name}')" class="delete-btn">❌ Delete</button>`}</div>`).join('');
+            listContainer.innerHTML = '';
+
+            const data = getGuildData();
+            const members = data[selectedDivision] || [];
+
+            members.forEach(mObj => {
+                const isProtected = PROTECTED_ADMIN_ACCOUNTS.includes(mObj.name.toLowerCase());
+                const div = document.createElement('div');
+                div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;";
+                
+                const actionHTML = isProtected 
+                    ? `<span style="font-size:0.75rem; color:#e6b800; font-weight:bold; background:rgba(230,184,0,0.15); padding:2px 6px; border-radius:3px; border:1px solid #e6b800;">🛡️ Protected</span>`
+                    : `<button onclick="deleteMember('${mObj.name}')" class="delete-btn">❌ Delete</button>`;
+
+                let mainOwnerVal = mObj.mainOwner || mObj.name;
+                let altTag = mainOwnerVal.toLowerCase() !== mObj.name.toLowerCase() ? ` <small style="color:#ffaa33;">(Dummy of ${mainOwnerVal})</small>` : ' <small style="color:#33cc33;">(Main)</small>';
+
+                div.innerHTML = `<span>${mObj.icon} <strong>${mObj.name}</strong>${altTag} <small style="color:var(--text-dim);">(${mObj.class})</small></span>${actionHTML}`;
+                listContainer.appendChild(div);
+            });
         }
 
-        async function deleteMember(name) {
-            if (!confirm(`⚠️ Remove ${name}?`)) return;
-            const div = document.getElementById('admin-officer-select').value;
+        async function deleteMember(memberName) {
+            if (!currentLoggedInOfficer) return;
+            const confirmDel = confirm(`⚠️ Are you sure you want to remove "${memberName}" from the roster?`);
+            if (!confirmDel) return;
+
+            const selectedDivision = document.getElementById('admin-officer-select').value;
             let data = getGuildData();
-            if (data[div]) {
-                data[div] = data[div].filter(m => m.name.toLowerCase() !== name.toLowerCase());
+            if (data[selectedDivision]) {
+                data[selectedDivision] = data[selectedDivision].filter(m => m.name.toLowerCase() !== memberName.toLowerCase());
                 await saveGuildData(data);
+                renderRosters();
                 onDivisionChange();
             }
         }
@@ -2060,39 +2635,94 @@
             const data = getGuildData();
             const dynamicGrid = document.getElementById('dynamic-roster-grid');
             if (!dynamicGrid) return;
+
             dynamicGrid.innerHTML = '';
             let idx = 0;
             for (const divKey in data) {
-                let membersHTML = (data[divKey] || []).map(m => `<div class="roster-list-item"><span>${m.icon} <span class="${getClassCss(m.class)}">${m.name}</span></span><span class="${getClassCss(m.class)}">${m.class}</span></div>`).join('') || `<div style="padding: 8px; color: var(--text-dim); font-size: 0.85rem; text-align: center;">No members.</div>`;
-                dynamicGrid.innerHTML += `<div class="roster-box"><div class="roster-box-header" onclick="toggleDivision('roster-box-${idx}', 'roster-btn-${idx}')"><span class="roster-box-title">🛡️ ${divKey}</span><button id="roster-btn-${idx}" class="roster-toggle-btn">▼ Click to Expand</button></div><div id="roster-box-${idx}" class="roster-list-container">${membersHTML}</div></div>`;
+                const containerId = `roster-box-${idx}`;
+                const btnId = `roster-btn-${idx}`;
+                const members = data[divKey] || [];
+
+                let membersHTML = '';
+                if (members.length === 0) {
+                    membersHTML = `<div style="padding: 8px; color: var(--text-dim); font-size: 0.85rem; text-align: center;">No members in this division.</div>`;
+                } else {
+                    members.forEach(m => {
+                        const cssClass = getClassCss(m.class);
+                        let mainOwnerVal = m.mainOwner || m.name;
+                        let isDummy = mainOwnerVal.toLowerCase() !== m.name.toLowerCase();
+                        let displayName = m.name;
+                        let altTag = isDummy ? ` <small style="color:#ffaa33; font-weight:bold;">[Dummy of ${mainOwnerVal}]</small>` : '';
+                        
+                        membersHTML += `
+                            <div class="roster-list-item">
+                                <span>${m.icon} <span class="${cssClass}">${displayName}</span>${altTag}</span>
+                                <span class="${cssClass}">${m.class}</span>
+                            </div>
+                        `;
+                    });
+                }
+
+                dynamicGrid.innerHTML += `
+                    <div class="roster-box">
+                        <div class="roster-box-header" onclick="toggleDivision('${containerId}', '${btnId}')">
+                            <span class="roster-box-title">🛡️ ${divKey}</span>
+                            <button id="${btnId}" class="roster-toggle-btn">▼ Click to Expand</button>
+                        </div>
+                        <div id="${containerId}" class="roster-list-container">
+                            ${membersHTML}
+                        </div>
+                    </div>
+                `;
                 idx++;
             }
         }
 
         function closeAdminModal() { document.getElementById('attendance-admin-modal').style.display = 'none'; }
 
-        function toggleDivision(boxId, btnId) {
-            const box = document.getElementById(boxId);
+        function toggleDivision(rosterId, btnId) {
+            const rosterContainer = document.getElementById(rosterId);
             const btn = document.getElementById(btnId);
-            box.style.display = box.style.display === "block" ? "none" : "block";
-            btn.innerText = box.style.display === "block" ? "▲ Click to Hide" : "▼ Click to Expand";
+            if (rosterContainer.style.display === "block") {
+                rosterContainer.style.display = "none";
+                btn.innerText = "▼ Click to Expand";
+            } else {
+                rosterContainer.style.display = "block";
+                btn.innerText = "▲ Click to Hide";
+            }
         }
 
-        let allianceGuilds = [{ name: "PROTECT GUILD", icon: "🛡️" }, { name: "ANXIETY GUILD", icon: "⚡" }, { name: "SPIDEY GUILD", icon: "🕷️" }, { name: "STEALTH GUILD", icon: "⚔️" }];
+        const allianceGuilds = [
+            { name: "PROTECT GUILD", icon: "🛡️" },
+            { name: "ANXIETY GUILD", icon: "⚡" },
+            { name: "SPIDEY GUILD", icon: "🕷️" },
+            { name: "STEALTH GUILD", icon: "⚔️" },
+            { name: "VALKYRIE GUILD", icon: "✨" },
+            { name: "xNOTA GUILD", icon: "🔥" }
+        ];
+
         let currentIndex = 0;
-        setInterval(() => {
+        function rotateAllianceBadge() {
             currentIndex = (currentIndex + 1) % allianceGuilds.length;
-            const g = allianceGuilds[currentIndex];
-            if (document.getElementById('rotating-icon')) {
-                document.getElementById('rotating-icon').innerText = g.icon;
-                document.getElementById('rotating-text').innerText = g.name;
+            const guild = allianceGuilds[currentIndex];
+            const iconElem = document.getElementById('rotating-icon');
+            const textElem = document.getElementById('rotating-text');
+            if (iconElem && textElem) {
+                iconElem.innerText = guild.icon;
+                textElem.innerText = guild.name;
             }
-        }, 3000);
+        }
+        setInterval(rotateAllianceBadge, 3000);
 
         window.addEventListener('DOMContentLoaded', () => {
             const savedOfficer = localStorage.getItem('kultura_logged_officer');
-            if (savedOfficer) { currentLoggedInOfficer = savedOfficer; resetInactivityTimer(); }
+            if (savedOfficer) {
+                currentLoggedInOfficer = savedOfficer;
+                resetInactivityTimer();
+            }
+
             renderRosters();
+            updateLiveActiveWarriors();
             updatePortalButtonUI();
         });
     </script>
