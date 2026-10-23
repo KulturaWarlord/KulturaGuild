@@ -630,7 +630,7 @@
                         </div>
                     </div>
 
-                    <!-- 📣 NEW SECTION: DIRECT DISCORD ANNOUNCEMENT SENDER -->
+                    <!-- 📣 CUSTOM DISCORD ANNOUNCEMENT SECTION WITH ANNOUNCER DROPDOWN -->
                     <div class="admin-section-block" style="border-color: #7289da;">
                         <button onclick="toggleAdminSection('sec-discord-announcer')" class="admin-collapsible-btn" style="color: #7289da; background: rgba(114, 137, 218, 0.1);">
                             <span>📣 Send Custom Announcement to Discord Webhook</span>
@@ -638,9 +638,21 @@
                         </button>
                         <div id="sec-discord-announcer" class="admin-collapsible-content">
                             <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 10px;">
-                                Type your announcement title and message below to broadcast an official guild notice directly to your Discord channel.
+                                Select the announcing Guild Leader, type your title and message below to broadcast directly to Discord.
                             </p>
                             
+                            <!-- 👑 ANNOUNCER DROPDOWN SELECTION -->
+                            <div style="margin-bottom: 10px;">
+                                <label style="font-size: 0.8rem; color: var(--primary-glow); font-weight: bold;">👑 Select Announcer / Officer:</label>
+                                <select id="discord-announce-sender" style="width: 100%; padding: 8px; background: #111; border: 1px solid #7289da; color: #ffdd55; border-radius: 4px; font-size: 0.85rem; font-weight: bold; margin-top: 3px;">
+                                    <option value="Guild Master : Warlock">Guild Master : Warlock</option>
+                                    <option value="Guild Master : LordDwight">Guild Master : LordDwight</option>
+                                    <option value="Guild Master : Fullclip">Guild Master : Fullclip</option>
+                                    <option value="Guild Master : WindTalker">Guild Master : WindTalker</option>
+                                    <option value="Assistant Guild Master : Tsukushi">Assistant Guild Master : Tsukushi</option>
+                                </select>
+                            </div>
+
                             <div style="margin-bottom: 10px;">
                                 <label style="font-size: 0.8rem; color: var(--primary-glow);">Announcement Header / Title:</label>
                                 <input type="text" id="discord-announce-title" placeholder="e.g. ⚔️ MANDATORY CASTLE SIEGE PREPARATION" style="width: 100%; padding: 8px; background: #111; border: 1px solid #7289da; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
@@ -1705,13 +1717,14 @@
         }
 
         // ==========================================
-        // 📣 SEND CUSTOM DISCORD ANNOUNCEMENT
+        // 📣 SEND CUSTOM DISCORD ANNOUNCEMENT WITH SELECTED ANNOUNCER
         // ==========================================
         async function sendCustomDiscordAnnouncement() {
             if (!currentLoggedInOfficer) return;
 
             const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1561685065963147334/u6MD_ZwJ8EjxSQUkxPmMSHDSGIcOOdHUXV4_ZLBsXcV2Ynav_bTzmt-qN8cLwffuEVBf";
 
+            const selectedSender = document.getElementById('discord-announce-sender').value;
             const title = document.getElementById('discord-announce-title').value.trim();
             const message = document.getElementById('discord-announce-msg').value.trim();
 
@@ -1731,7 +1744,7 @@
                             description: message,
                             color: 15120128, // Gold Color
                             footer: {
-                                text: `Announced by Officer ${currentLoggedInOfficer} • Kultura Guild & Alliance`,
+                                text: `Announced by ${selectedSender} • Kultura Guild & Alliance`,
                                 icon_url: "https://nolimit.lv/themes/def_theme/images/logo.png"
                             },
                             timestamp: new Date().toISOString()
