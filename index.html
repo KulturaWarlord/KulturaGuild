@@ -394,7 +394,7 @@
                 <div class="stat-label">Active Warriors</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">300k SOL</div>
+                <div class="stat-value">100k SOL</div>
                 <div class="stat-label">CS Prize Pool</div>
             </div>
             <div class="stat-card">
@@ -626,6 +626,33 @@
 
                             <button onclick="saveGuildEventsToFirebase()" class="btn" style="width: 100%; padding: 8px; font-size: 0.85rem; background: linear-gradient(135deg, #e6b800, #b38f00); color: #000;">
                                 💾 Save & Publish Events to Website
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 📣 NEW SECTION: DIRECT DISCORD ANNOUNCEMENT SENDER -->
+                    <div class="admin-section-block" style="border-color: #7289da;">
+                        <button onclick="toggleAdminSection('sec-discord-announcer')" class="admin-collapsible-btn" style="color: #7289da; background: rgba(114, 137, 218, 0.1);">
+                            <span>📣 Send Custom Announcement to Discord Webhook</span>
+                            <span id="icon-sec-discord-announcer">▼ Expand</span>
+                        </button>
+                        <div id="sec-discord-announcer" class="admin-collapsible-content">
+                            <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 10px;">
+                                Type your announcement title and message below to broadcast an official guild notice directly to your Discord channel.
+                            </p>
+                            
+                            <div style="margin-bottom: 10px;">
+                                <label style="font-size: 0.8rem; color: var(--primary-glow);">Announcement Header / Title:</label>
+                                <input type="text" id="discord-announce-title" placeholder="e.g. ⚔️ MANDATORY CASTLE SIEGE PREPARATION" style="width: 100%; padding: 8px; background: #111; border: 1px solid #7289da; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label style="font-size: 0.8rem; color: var(--primary-glow);">Announcement Message Body:</label>
+                                <textarea id="discord-announce-msg" rows="4" placeholder="Type your guild announcement message here..." style="width: 100%; padding: 8px; background: #111; border: 1px solid #7289da; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;"></textarea>
+                            </div>
+
+                            <button onclick="sendCustomDiscordAnnouncement()" class="btn" style="width: 100%; padding: 8px; font-size: 0.85rem; background: linear-gradient(135deg, #7289da, #4e5d94); color: #fff;">
+                                🚀 Send Announcement to Discord
                             </button>
                         </div>
                     </div>
@@ -1675,6 +1702,56 @@
             }
 
             alert("🎉 Success! Guild Events updated on Website and successfully announced to your Discord channel!");
+        }
+
+        // ==========================================
+        // 📣 SEND CUSTOM DISCORD ANNOUNCEMENT
+        // ==========================================
+        async function sendCustomDiscordAnnouncement() {
+            if (!currentLoggedInOfficer) return;
+
+            const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1561685065963147334/u6MD_ZwJ8EjxSQUkxPmMSHDSGIcOOdHUXV4_ZLBsXcV2Ynav_bTzmt-qN8cLwffuEVBf";
+
+            const title = document.getElementById('discord-announce-title').value.trim();
+            const message = document.getElementById('discord-announce-msg').value.trim();
+
+            if (!message) {
+                alert("⚠️ Mangyaring maglagay ng announcement message!");
+                return;
+            }
+
+            try {
+                const discordBody = {
+                    username: "Kultura Guild Announcer",
+                    avatar_url: "https://nolimit.lv/themes/def_theme/images/logo.png",
+                    content: "@everyone 📢 **OFFICIAL GUILD ANNOUNCEMENT**",
+                    embeds: [
+                        {
+                            title: title || "📢 GUILD ANNOUNCEMENT",
+                            description: message,
+                            color: 15120128, // Gold Color
+                            footer: {
+                                text: `Announced by Officer ${currentLoggedInOfficer} • Kultura Guild & Alliance`,
+                                icon_url: "https://nolimit.lv/themes/def_theme/images/logo.png"
+                            },
+                            timestamp: new Date().toISOString()
+                        }
+                    ]
+                };
+
+                await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(discordBody)
+                });
+
+                alert("🚀 Official Announcement successfully sent to your Discord channel!");
+                document.getElementById('discord-announce-title').value = '';
+                document.getElementById('discord-announce-msg').value = '';
+            } catch (err) {
+                console.error("Discord Webhook Error:", err);
+                alert("❌ Nagkaroon ng problema sa pagpapadala sa Discord. Pakisuri ang iyong internet connection.");
+            }
         }
 
         // 🏎️ GRAND PRIX CAR RACE 6-ROUND TOURNAMENT LOGIC (WITH HYPED ANNOUNCER VOICE)
