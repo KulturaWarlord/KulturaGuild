@@ -142,6 +142,36 @@
             </div>
         </section>
 
+        <!-- MARKETPLACE MEMBER SUBMISSION SECTION -->
+        <section class="card" style="margin-bottom: 60px; background: var(--bg-card); border: 1px solid var(--border-gold); padding: 30px; border-radius: 8px; backdrop-filter: blur(8px); box-shadow: 0 8px 20px rgba(0,0,0,0.6);">
+            <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 1.3rem; border-bottom: 1px solid rgba(230, 184, 0, 0.2); padding-bottom: 10px;">🛒 Kultura Alliance Marketplace</h3>
+            <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 20px;">
+                Submit your item below. Posts will be reviewed by a SuperAdmin before broadcasting to Discord!
+            </p>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--primary-glow); font-weight: bold;">Seller IGN:</label>
+                    <input type="text" id="market-seller-ign" placeholder="e.g. Mechado" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 4px;">
+                </div>
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--primary-glow); font-weight: bold;">Item / Option (Text only):</label>
+                    <input type="text" id="market-item-desc" placeholder="e.g. (FIRE) Attack Speed Increase" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 4px;">
+                </div>
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--primary-glow); font-weight: bold;">Price / Offer:</label>
+                    <input type="text" id="market-price-desc" placeholder="e.g. GOLD/CASH = 2.5m / 80cash" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 4px;">
+                </div>
+                <div>
+                    <label style="font-size: 0.8rem; color: var(--primary-glow); font-weight: bold;">Discord User ID (For Direct Message Link):</label>
+                    <input type="text" id="market-discord-id" placeholder="e.g. 123456789012345678" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 4px;">
+                </div>
+                <button onclick="submitMarketplacePending()" class="btn" style="background: var(--primary); color: #000; padding: 12px; font-weight: bold; cursor: pointer; margin-top: 5px;">
+                    📩 Submit for Admin Review
+                </button>
+            </div>
+        </section>
+
         <!-- PUBLIC DISPLAY FOR CAR RACE ARENA -->
         <section id="public-giveaway-display-section" class="panel" style="display: none; border: 2px solid #ff3399; background: rgba(255, 0, 127, 0.05); margin-bottom: 60px;">
             <h3 style="color: #ff99dd; text-align: center; margin-bottom: 10px;">🏎️ Live 3-Day Castle Siege Grand Prix Car Race Arena</h3>
@@ -251,6 +281,22 @@
 
                 <div id="admin-modal-body-content">
                     <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">Officer</strong></p>
+
+                    <!-- MARKETPLACE APPROVAL QUEUE (ADMIN SECTION) -->
+                    <div class="admin-section-block" style="border-color: var(--primary);">
+                        <button onclick="toggleAdminSection('sec-marketplace-admin')" class="admin-collapsible-btn" style="color: var(--primary-glow); background: rgba(230, 184, 0, 0.1);">
+                            <span>🛡️ Marketplace Approval Queue (SuperAdmin)</span>
+                            <span id="icon-sec-marketplace-admin">▼ Expand</span>
+                        </button>
+                        <div id="sec-marketplace-admin" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
+                                Review pending marketplace items submitted by members. Approving will automatically post them to your Discord channel.
+                            </p>
+                            <div id="pending-listings-container" style="max-height: 250px; overflow-y: auto;">
+                                <p style="color: var(--text-dim);">Loading pending listings...</p>
+                            </div>
+                        </div>
+                    </div>
 
                     <div id="superadmin-giveaway-block" class="admin-section-block" style="display: none; border-color: #ff3399;">
                         <button onclick="toggleAdminSection('sec-giveaway-bot')" class="admin-collapsible-btn" style="color: #ff99dd; background: rgba(255, 51, 153, 0.15);">
