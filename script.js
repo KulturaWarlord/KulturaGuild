@@ -1697,7 +1697,7 @@ async function submitMarketMemberRegistration() {
     };
 
     try {
-        await window.database.ref(`marketplace_accounts_pending/${username}`).set(regData);
+        await window.dbSet(window.dbRef(window.database, `marketplace_accounts_pending/${username}`), regData);
         alert("🎉 Matagumpay na naisumite ang iyong rehistro! Maghintay ng approval mula sa SuperAdmin.");
         closeMarketRegisterModal();
     } catch (err) {
@@ -1716,7 +1716,7 @@ async function submitMarketMemberLogin() {
     }
 
     try {
-        const snapshot = await window.database.ref(`marketplace_accounts_approved/${username}`).once('value');
+        const snapshot = await window.dbGet(window.dbRef(window.database, `marketplace_accounts_approved/${username}`));
         if (snapshot.exists()) {
             const acc = snapshot.val();
             if (acc.password === password) {
@@ -1744,7 +1744,7 @@ function loadPendingMarketAccounts() {
     const container = document.getElementById('pending-market-accounts-container');
     if (!container) return;
 
-    window.database.ref('marketplace_accounts_pending').on('value', (snapshot) => {
+    window.dbOnValue(window.dbRef(window.database, 'marketplace_accounts_pending'), (snapshot) => {
         container.innerHTML = "";
         const data = snapshot.val();
 
@@ -1771,19 +1771,19 @@ function loadPendingMarketAccounts() {
 }
 
 async function approveMarketAccount(username) {
-    const pendingRef = window.database.ref(`marketplace_accounts_pending/${username}`);
-    const snap = await pendingRef.once('value');
+    const pendingRef = window.dbRef(window.database, `marketplace_accounts_pending/${username}`);
+    const snap = await window.dbGet(pendingRef);
     if (!snap.exists()) return;
 
     const accData = snap.val();
-    await window.database.ref(`marketplace_accounts_approved/${username}`).set(accData);
-    await pendingRef.remove();
+    await window.dbSet(window.dbRef(window.database, `marketplace_accounts_approved/${username}`), accData);
+    await window.dbSet(pendingRef, null);
     alert(`✅ Na-approve na ang account ni @${username}! Makakapag-login na siya sa Marketplace.`);
 }
 
 async function rejectMarketAccount(username) {
     if (confirm(`Tanggihan at tanggalin ang rehistro ni @${username}?`)) {
-        await window.database.ref(`marketplace_accounts_pending/${username}`).remove();
+        await window.dbSet(window.dbRef(window.database, `marketplace_accounts_pending/${username}`), null);
         alert("🗑️ Tinanggihan ang rehistro.");
     }
 }
@@ -1815,7 +1815,8 @@ async function submitMarketplacePending() {
     };
 
     try {
-        await window.database.ref('marketplace_pending').push(newListing);
+        const newPushRef = window.dbPush(window.dbRef(window.database, 'marketplace_pending'));
+        await window.dbSet(newPushRef, newListing);
         alert("🎉 Your listing has been submitted! It will appear on Discord once approved by SuperAdmin.");
         document.getElementById('market-item-desc').value = '';
         document.getElementById('market-price-desc').value = '';
@@ -1829,7 +1830,7 @@ function loadPendingMarketplaceListings() {
     const container = document.getElementById('pending-listings-container');
     if (!container) return;
 
-    window.database.ref('marketplace_pending').on('value', (snapshot) => {
+    window.dbOnValue(window.dbRef(window.database, 'marketplace_pending'), (snapshot) => {
         container.innerHTML = "";
         const data = snapshot.val();
 
@@ -1864,8 +1865,8 @@ function loadPendingMarketplaceListings() {
 }
 
 async function approveMarketplaceListing(key) {
-    const ref = window.database.ref(`marketplace_pending/${key}`);
-    const snapshot = await ref.once('value');
+    const itemRef = window.dbRef(window.database, `marketplace_pending/${key}`);
+    const snapshot = await window.dbGet(itemRef);
     const item = snapshot.val();
 
     if (!item) return;
@@ -1905,7 +1906,7 @@ async function approveMarketplaceListing(key) {
         });
 
         if (response.ok || response.status === 204) {
-            await ref.remove();
+            await window.dbSet(itemRef, null);
             alert("✅ Listing approved and successfully posted to Discord!");
         } else {
             alert("❌ Failed to post to Discord Webhook.");
@@ -1918,7 +1919,7 @@ async function approveMarketplaceListing(key) {
 
 async function rejectMarketplaceListing(key) {
     if (confirm("Are you sure you want to reject and delete this listing?")) {
-        await window.database.ref(`marketplace_pending/${key}`).remove();
+        await window.dbSet(window.dbRef(window.database, `marketplace_pending/${key}`), null);
         alert("🗑️ Listing deleted.");
     }
 }
