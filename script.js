@@ -76,6 +76,9 @@ function initPageCounter() {
     });
 }
 
+// 🌐 DISCORD WEBHOOK PARA SA ATTENDANCE & PAYOUTS (Bagong Channel)
+const ATTENDANCE_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563758263332380773/bxxU_cFnH1bfmcMw8hpMKGJ3wFslCq2rOg4avHYvH-R1S5W8SCZ_z2CoGxJ8H4Ww-3U7";
+
 let ALL_DIVISIONS = [
     "Fullclip Division (Fullclip)",
     "Warlock Division (Warlock)",
@@ -596,6 +599,34 @@ async function sendCustomDiscordAnnouncement() {
     } catch (err) { console.error("Discord Webhook Error:", err); alert("❌ Nagkaroon ng problema sa pagpapadala sa Discord."); }
 }
 
+// 📋 Auto-Broadcast Attendance to the New Discord Channel
+async function sendAttendanceToDiscordChannel(dateKey, eventType, totalPool, presentsCount) {
+    if (!ATTENDANCE_DISCORD_WEBHOOK_URL) return;
+
+    try {
+        const discordBody = {
+            username: "Kultura Attendance Bot",
+            avatar_url: "https://nolimit.lv/themes/def_theme/images/logo.png",
+            content: "@everyone 📋 **NEW ATTENDANCE & SOL PAYOUT LOG UPDATED!**",
+            embeds: [{
+                title: `🛡️ Castle Siege & Event Attendance — ${dateKey}`,
+                description: `**Event:** ${eventType}\n**Total Main Present:** ${presentsCount} Warriors\n**SOL Pool:** ${totalPool.toLocaleString()} SOL`,
+                color: 2303786,
+                footer: { text: "Kultura Guild & Alliance • Attendance System", icon_url: "https://nolimit.lv/themes/def_theme/images/logo.png" },
+                timestamp: new Date().toISOString()
+            }]
+        };
+
+        await fetch(ATTENDANCE_DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(discordBody)
+        });
+    } catch (err) {
+        console.error("Attendance Discord Webhook Error:", err);
+    }
+}
+
 let currentCarRaceRound = 1;
 let carRaceAccumulatedWinners = [];
 
@@ -1100,18 +1131,16 @@ function renderMemberChecklist() {
     });
 }
 
-// 🛡️ FIXED: Strict Routing para sa mga Guild Masters at iba pang members
+// 🛡️ STRICT ROUTING PARA SA MGA GUILD MASTERS
 function findMainGuildDivision(mainIgn) {
     let lowerMain = (mainIgn || "").toLowerCase().trim();
 
-    // 1. HARDCODED GUILD MASTERS (Strict Division Mapping)
     if (lowerMain === "fullclip") return "Fullclip Division (Fullclip)";
     if (lowerMain === "warlock") return "Warlock Division (Warlock)";
     if (lowerMain === "lorddwight") return "STEALTH Division (LordDwight)";
     if (lowerMain === "windtalker") return "PROTECT Division (Windtalker)";
     if (lowerMain === "ikapitana") return "ANXIETY Division (iKapitana)";
 
-    // 2. SEARCH IN ROSTER DATA FOR OTHER MEMBERS
     const data = getGuildData();
     for (let divKey in data) {
         let found = data[divKey].find(m => 
@@ -1166,6 +1195,9 @@ async function saveAttendanceEntry() {
     cloudAttendanceHistory = allRecords;
     if (window.database) { await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), allRecords); }
     
+    // Auto-Send Notification to the new Attendance Discord Channel
+    await sendAttendanceToDiscordChannel(targetDateKey, eventType, totalSolPool, updatedPresents.length);
+
     renderAttendanceHistory();
     renderAdminAttendanceLogList();
     updateLiveActiveWarriors();
