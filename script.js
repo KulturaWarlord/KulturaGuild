@@ -76,7 +76,7 @@ function initPageCounter() {
     });
 }
 
-// 🌐 DISCORD WEBHOOK PARA SA ATTENDANCE & PAYOUTS (Bagong Channel)
+// 🌐 DISCORD WEBHOOK PARA SA ATTENDANCE & PAYOUTS
 const ATTENDANCE_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563758263332380773/bxxU_cFnH1bfmcMw8hpMKGJ3wFslCq2rOg4avHYvH-R1S5W8SCZ_z2CoGxJ8H4Ww-3U7";
 
 let ALL_DIVISIONS = [
