@@ -144,12 +144,12 @@
 
         <!-- MARKETPLACE PRIVATE MEMBER SECTION -->
         <section class="card" style="margin-bottom: 60px; background: var(--bg-card); border: 1px solid var(--border-gold); padding: 30px; border-radius: 8px; backdrop-filter: blur(8px); box-shadow: 0 8px 20px rgba(0,0,0,0.6);">
-            <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 1.3rem; border-bottom: 1px solid rgba(230, 184, 0, 0.2); padding-bottom: 10px;">🛒 Kultura Alliance Private Marketplace</h3>
+            <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 1.3rem; border-bottom: 1px solid rgba(230, 184, 0, 0.2); padding-bottom: 10px;">🛒 Members Section</h3>
             
-            <!-- LOCKED STATE (KUNG HINDI PA NAKAPAG-LOGIN O APPROVED) -->
+            <!-- LOCKED STATE -->
             <div id="market-locked-view" style="text-align: center; padding: 20px;">
                 <p style="font-size: 0.95rem; color: #ffaa33; margin-bottom: 15px;">
-                    🔒 <strong>Exclusive Marketplace para sa mga Verified Members!</strong> Mag-register o mag-log in muna at hintayin ang SuperAdmin approval bago makita ang mga item.
+                    🔒 <strong>Verified Members Only</strong>
                 </p>
                 <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
                     <button onclick="openMarketRegisterModal()" class="btn" style="background: linear-gradient(135deg, #0088cc, #004488); padding: 10px 20px; font-weight: bold;">
@@ -161,23 +161,23 @@
                 </div>
             </div>
 
-            <!-- UNLOCKED STATE (KUNG APPROVED NA) -->
+            <!-- UNLOCKED STATE -->
             <div id="market-unlocked-view" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(0,255,100,0.1); padding: 10px; border-radius: 6px; border: 1px solid #33cc33;">
-                    <span style="color: #33cc33; font-size: 0.9rem;">✅ Nakalog-in bilang: <strong id="market-current-user-display" style="color: #fff;">--</strong></span>
+                    <span style="color: #33cc33; font-size: 0.9rem;">✅ Logged in as: <strong id="market-current-user-display" style="color: #fff;">--</strong></span>
                     <button onclick="marketLogout()" style="background: #8b0000; color: #fff; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">🚪 Log Out</button>
                 </div>
 
                 <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 20px;">
-                    I-submit ang iyong item sa ibaba. Ire-review ito bago i-broadcast sa ating Discord channel!
+                    Submit your item below. It will be reviewed before broadcasting to our Discord channel!
                 </p>
                 
                 <div style="display: flex; flex-direction: column; gap: 15px;">
                     <div>
                         <label style="font-size: 0.8rem; color: var(--primary-glow); font-weight: bold;">Listing Type:</label>
                         <select id="market-listing-type" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 4px; font-weight: bold;">
-                            <option value="SELLING">🔴 SELLING (Nagbebenta)</option>
-                            <option value="BUYING">🟢 BUYING (Bumibili / Naghahanap)</option>
+                            <option value="SELLING">🔴 SELLING</option>
+                            <option value="BUYING">🟢 BUYING</option>
                         </select>
                     </div>
                     <div>
@@ -203,11 +203,10 @@
             </div>
         </section>
 
-        <!-- MARKETPLACE REGISTRATION MODAL -->
+        <!-- MEMBERS REGISTRATION MODAL -->
         <div id="market-register-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10005; justify-content: center; align-items: center;">
             <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 400px; padding: 25px; border-radius: 10px; color: #fff;">
-                <h3 style="color: var(--primary-glow); margin-bottom: 15px; text-align: center;">📝 Marketplace Member Registration</h3>
-                <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px; text-align: center;">Magparehistro para makapasok sa Kultura Private Marketplace. Kailangan ng SuperAdmin approval.</p>
+                <h3 style="color: var(--primary-glow); margin-bottom: 15px; text-align: center;">📝 Members Registration</h3>
                 
                 <div style="margin-bottom: 10px;">
                     <label style="font-size: 0.8rem; color: var(--primary-glow);">In-Game Name (IGN):</label>
@@ -215,11 +214,11 @@
                 </div>
                 <div style="margin-bottom: 10px;">
                     <label style="font-size: 0.8rem; color: var(--primary-glow);">Username:</label>
-                    <input type="text" id="reg-market-user" placeholder="Gawing natatanging username" style="width: 100%; padding: 9px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                    <input type="text" id="reg-market-user" placeholder="Enter a unique username" style="width: 100%; padding: 9px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
                 </div>
                 <div style="margin-bottom: 15px;">
                     <label style="font-size: 0.8rem; color: var(--primary-glow);">Password:</label>
-                    <input type="password" id="reg-market-pass" placeholder="Ilagay ang password" style="width: 100%; padding: 9px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                    <input type="password" id="reg-market-pass" placeholder="Enter password" style="width: 100%; padding: 9px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
                 </div>
 
                 <div style="display: flex; gap: 10px; justify-content: center;">
@@ -229,19 +228,19 @@
             </div>
         </div>
 
-        <!-- MARKETPLACE LOGIN MODAL -->
+        <!-- MEMBER LOGIN MODAL -->
         <div id="market-login-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10005; justify-content: center; align-items: center;">
             <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 400px; padding: 25px; border-radius: 10px; color: #fff; text-align: center;">
                 <h3 style="color: var(--primary-glow); margin-bottom: 15px;">🔑 Member Login</h3>
                 
                 <div style="margin-bottom: 12px; text-align: left;">
                     <label style="font-size: 0.8rem; color: var(--primary-glow);">Username:</label>
-                    <input type="text" id="login-market-user" placeholder="Ilagay ang iyong Username" style="width: 100%; padding: 9px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                    <input type="text" id="login-market-user" placeholder="Enter your Username" style="width: 100%; padding: 9px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
                 </div>
 
                 <div style="margin-bottom: 15px; text-align: left;">
                     <label style="font-size: 0.8rem; color: var(--primary-glow);">Password:</label>
-                    <input type="password" id="login-market-pass" placeholder="Ilagay ang Password" style="width: 100%; padding: 9px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                    <input type="password" id="login-market-pass" placeholder="Enter Password" style="width: 100%; padding: 9px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
                 </div>
 
                 <div style="display: flex; gap: 10px; justify-content: center;">
@@ -262,7 +261,7 @@
                 </div>
 
                 <div id="kantyawan-box" style="min-height: 32px; font-size: 0.95rem; color: #00ffcc; font-weight: bold; font-style: italic; margin-bottom: 10px; text-shadow: 0 0 8px rgba(0,255,204,0.6); display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.6); border-radius: 6px; padding: 6px 12px; border: 1px solid rgba(0,255,204,0.3);">
-                    🎙️ 🔊 Handa na ba ang mga drivers?! Simula na ng karera!
+                    🎙️ 🔊 Are the drivers ready?! The race begins!
                 </div>
 
                 <div id="duck-lanes-container" style="display: flex; flex-direction: column; gap: 2px; width: 100%;"></div>
@@ -361,15 +360,15 @@
                 <div id="admin-modal-body-content">
                     <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">Officer</strong></p>
 
-                    <!-- MARKETPLACE MEMBER REGISTRATION APPROVAL QUEUE (SUPERADMIN) -->
+                    <!-- MEMBERS ACCOUNT APPROVALS QUEUE (SUPERADMIN) -->
                     <div class="admin-section-block" style="border-color: #33cc33;">
                         <button onclick="toggleAdminSection('sec-market-accounts')" class="admin-collapsible-btn" style="color: #33cc33; background: rgba(51, 204, 51, 0.1);">
-                            <span>👥 Marketplace Member Accounts & Approvals</span>
+                            <span>👥 Members Accounts & Approvals</span>
                             <span id="icon-sec-market-accounts">▼ Expand</span>
                         </button>
                         <div id="sec-market-accounts" class="admin-collapsible-content">
                             <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
-                                I-approve ang mga nagrehistrong miyembro para makapasok sila sa Private Marketplace.
+                                Approve registered members to grant them access to the Members Section.
                             </p>
                             <div id="pending-market-accounts-container" style="max-height: 250px; overflow-y: auto;">
                                 <p style="color: var(--text-dim);">Loading pending accounts...</p>
