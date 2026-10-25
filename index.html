@@ -142,42 +142,114 @@
             </div>
         </section>
 
-        <!-- MARKETPLACE MEMBER SUBMISSION SECTION -->
+        <!-- MARKETPLACE PRIVATE MEMBER SECTION -->
         <section class="card" style="margin-bottom: 60px; background: var(--bg-card); border: 1px solid var(--border-gold); padding: 30px; border-radius: 8px; backdrop-filter: blur(8px); box-shadow: 0 8px 20px rgba(0,0,0,0.6);">
-            <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 1.3rem; border-bottom: 1px solid rgba(230, 184, 0, 0.2); padding-bottom: 10px;">🛒 Kultura Alliance Marketplace</h3>
-            <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 20px;">
-                Submit your item below. Posts will be reviewed by SuperAdmin before broadcasting to Discord!
-            </p>
+            <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 1.3rem; border-bottom: 1px solid rgba(230, 184, 0, 0.2); padding-bottom: 10px;">🛒 Kultura Alliance Private Marketplace</h3>
             
-            <div style="display: flex; flex-direction: column; gap: 15px;">
-                <div>
-                    <label style="font-size: 0.8rem; color: var(--primary-glow); font-weight: bold;">Listing Type:</label>
-                    <select id="market-listing-type" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 4px; font-weight: bold;">
-                        <option value="SELLING">🔴 SELLING (Nagbebenta)</option>
-                        <option value="BUYING">🟢 BUYING (Bumibili / Naghahanap)</option>
-                    </select>
+            <!-- LOCKED STATE (KUNG HINDI PA NAKAPAG-LOGIN O APPROVED) -->
+            <div id="market-locked-view" style="text-align: center; padding: 20px;">
+                <p style="font-size: 0.95rem; color: #ffaa33; margin-bottom: 15px;">
+                    🔒 <strong>Exclusive Marketplace para sa mga Verified Members!</strong> Mag-register o mag-log in muna at hintayin ang SuperAdmin approval bago makita ang mga item.
+                </p>
+                <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                    <button onclick="openMarketRegisterModal()" class="btn" style="background: linear-gradient(135deg, #0088cc, #004488); padding: 10px 20px; font-weight: bold;">
+                        📝 Member Registration
+                    </button>
+                    <button onclick="openMarketLoginModal()" class="btn" style="background: linear-gradient(135deg, #e6b800, #b38f00); color: #000; padding: 10px 20px; font-weight: bold;">
+                        🔑 Member Login
+                    </button>
                 </div>
-                <div>
-                    <label style="font-size: 0.8rem; color: var(--primary-glow); font-weight: bold;">Trader / Seller IGN:</label>
-                    <input type="text" id="market-seller-ign" placeholder="e.g. Mechado" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 4px;">
+            </div>
+
+            <!-- UNLOCKED STATE (KUNG APPROVED NA) -->
+            <div id="market-unlocked-view" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(0,255,100,0.1); padding: 10px; border-radius: 6px; border: 1px solid #33cc33;">
+                    <span style="color: #33cc33; font-size: 0.9rem;">✅ Nakalog-in bilang: <strong id="market-current-user-display" style="color: #fff;">--</strong></span>
+                    <button onclick="marketLogout()" style="background: #8b0000; color: #fff; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">🚪 Log Out</button>
                 </div>
-                <div>
-                    <label style="font-size: 0.8rem; color: var(--primary-glow); font-weight: bold;">Item / Option (Text only):</label>
-                    <input type="text" id="market-item-desc" placeholder="e.g. (FIRE) Attack Speed Increase" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 4px;">
+
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 20px;">
+                    I-submit ang iyong item sa ibaba. Ire-review ito bago i-broadcast sa ating Discord channel!
+                </p>
+                
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--primary-glow); font-weight: bold;">Listing Type:</label>
+                        <select id="market-listing-type" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 4px; font-weight: bold;">
+                            <option value="SELLING">🔴 SELLING (Nagbebenta)</option>
+                            <option value="BUYING">🟢 BUYING (Bumibili / Naghahanap)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--primary-glow); font-weight: bold;">Trader / Seller IGN:</label>
+                        <input type="text" id="market-seller-ign" placeholder="e.g. Mechado" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 4px;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--primary-glow); font-weight: bold;">Item / Option (Text only):</label>
+                        <input type="text" id="market-item-desc" placeholder="e.g. (FIRE) Attack Speed Increase" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 4px;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--primary-glow); font-weight: bold;">Price / Offer:</label>
+                        <input type="text" id="market-price-desc" placeholder="e.g. GOLD/CASH = 2.5m / 80cash" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 4px;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.8rem; color: var(--primary-glow); font-weight: bold;">Discord User ID (For Direct Message Link):</label>
+                        <input type="text" id="market-discord-id" placeholder="e.g. 123456789012345678" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 4px;">
+                    </div>
+                    <button onclick="submitMarketplacePending()" class="btn" style="background: var(--primary); color: #000; padding: 12px; font-weight: bold; cursor: pointer; margin-top: 5px;">
+                        📩 Submit for Admin Review
+                    </button>
                 </div>
-                <div>
-                    <label style="font-size: 0.8rem; color: var(--primary-glow); font-weight: bold;">Price / Offer:</label>
-                    <input type="text" id="market-price-desc" placeholder="e.g. GOLD/CASH = 2.5m / 80cash" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 4px;">
-                </div>
-                <div>
-                    <label style="font-size: 0.8rem; color: var(--primary-glow); font-weight: bold;">Discord User ID (For Direct Message Link):</label>
-                    <input type="text" id="market-discord-id" placeholder="e.g. 123456789012345678" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 4px;">
-                </div>
-                <button onclick="submitMarketplacePending()" class="btn" style="background: var(--primary); color: #000; padding: 12px; font-weight: bold; cursor: pointer; margin-top: 5px;">
-                    📩 Submit for Admin Review
-                </button>
             </div>
         </section>
+
+        <!-- MARKETPLACE REGISTRATION MODAL -->
+        <div id="market-register-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10005; justify-content: center; align-items: center;">
+            <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 400px; padding: 25px; border-radius: 10px; color: #fff;">
+                <h3 style="color: var(--primary-glow); margin-bottom: 15px; text-align: center;">📝 Marketplace Member Registration</h3>
+                <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px; text-align: center;">Magparehistro para makapasok sa Kultura Private Marketplace. Kailangan ng SuperAdmin approval.</p>
+                
+                <div style="margin-bottom: 10px;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">In-Game Name (IGN):</label>
+                    <input type="text" id="reg-market-ign" placeholder="e.g. Mechado" style="width: 100%; padding: 9px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Username:</label>
+                    <input type="text" id="reg-market-user" placeholder="Gawing natatanging username" style="width: 100%; padding: 9px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Password:</label>
+                    <input type="password" id="reg-market-pass" placeholder="Ilagay ang password" style="width: 100%; padding: 9px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button onclick="closeMarketRegisterModal()" class="btn" style="background: #444;">Cancel</button>
+                    <button onclick="submitMarketMemberRegistration()" class="btn" style="background: var(--primary); color: #000; font-weight: bold;">Register Now</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MARKETPLACE LOGIN MODAL -->
+        <div id="market-login-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10005; justify-content: center; align-items: center;">
+            <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 400px; padding: 25px; border-radius: 10px; color: #fff; text-align: center;">
+                <h3 style="color: var(--primary-glow); margin-bottom: 15px;">🔑 Member Login</h3>
+                
+                <div style="margin-bottom: 12px; text-align: left;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Username:</label>
+                    <input type="text" id="login-market-user" placeholder="Ilagay ang iyong Username" style="width: 100%; padding: 9px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                </div>
+
+                <div style="margin-bottom: 15px; text-align: left;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Password:</label>
+                    <input type="password" id="login-market-pass" placeholder="Ilagay ang Password" style="width: 100%; padding: 9px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button onclick="closeMarketLoginModal()" class="btn" style="background: #444;">Cancel</button>
+                    <button onclick="submitMarketMemberLogin()" class="btn">Login</button>
+                </div>
+            </div>
+        </div>
 
         <!-- PUBLIC DISPLAY FOR CAR RACE ARENA -->
         <section id="public-giveaway-display-section" class="panel" style="display: none; border: 2px solid #ff3399; background: rgba(255, 0, 127, 0.05); margin-bottom: 60px;">
@@ -289,10 +361,26 @@
                 <div id="admin-modal-body-content">
                     <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">Officer</strong></p>
 
+                    <!-- MARKETPLACE MEMBER REGISTRATION APPROVAL QUEUE (SUPERADMIN) -->
+                    <div class="admin-section-block" style="border-color: #33cc33;">
+                        <button onclick="toggleAdminSection('sec-market-accounts')" class="admin-collapsible-btn" style="color: #33cc33; background: rgba(51, 204, 51, 0.1);">
+                            <span>👥 Marketplace Member Accounts & Approvals</span>
+                            <span id="icon-sec-market-accounts">▼ Expand</span>
+                        </button>
+                        <div id="sec-market-accounts" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
+                                I-approve ang mga nagrehistrong miyembro para makapasok sila sa Private Marketplace.
+                            </p>
+                            <div id="pending-market-accounts-container" style="max-height: 250px; overflow-y: auto;">
+                                <p style="color: var(--text-dim);">Loading pending accounts...</p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- MARKETPLACE APPROVAL QUEUE (ADMIN SECTION) -->
                     <div class="admin-section-block" style="border-color: var(--primary);">
                         <button onclick="toggleAdminSection('sec-marketplace-admin')" class="admin-collapsible-btn" style="color: var(--primary-glow); background: rgba(230, 184, 0, 0.1);">
-                            <span>🛡️ Marketplace Approval Queue (SuperAdmin)</span>
+                            <span>🛡️ Marketplace Items Approval Queue (SuperAdmin)</span>
                             <span id="icon-sec-marketplace-admin">▼ Expand</span>
                         </button>
                         <div id="sec-marketplace-admin" class="admin-collapsible-content">
