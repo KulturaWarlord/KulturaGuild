@@ -372,6 +372,7 @@ function initRealtimeListeners() {
 window.addEventListener('firebase-ready', () => {
     initRealtimeListeners();
     initPageCounter();
+    checkMarketplaceAuthOnLoad();
 });
 
 function getGuildData() {
@@ -1420,6 +1421,7 @@ function openAdminModal() {
         renderSuperAdminInbox();
         renderAdminAttendanceLogList();
         populateEventsAdminForm();
+        loadPendingMarketAccounts();
     } else {
         superInboxBlock.style.display = 'none';
         superDeleteLogsBlock.style.display = 'none';
@@ -1630,17 +1632,161 @@ window.addEventListener('DOMContentLoaded', () => {
 // ==========================================
 // 🛒 KULTURA MARKETPLACE SYSTEM FUNCTIONS
 // ==========================================
-const MARKETPLACE_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563784232256671766/LkcZY_xGBf0ci0r5-zpznt1V5HQhrAs43MTjb8o50dy0Qn24hQbuVNEmuhXKWUkzhhfl";
+const MARKETPLACE_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563790657254854707/HDVDF2jyaYM6fijrCnNEAlW1Z-bkMYPu7G_nHcQiHnGY4Ez0QXTKjvTXD96I9oFMyAnE";
 
-document.addEventListener('DOMContentLoaded', () => {
-    const savedDiscordId = localStorage.getItem('kultura_market_discord_id');
-    if (savedDiscordId && document.getElementById('market-discord-id')) {
-        document.getElementById('market-discord-id').value = savedDiscordId;
+function checkMarketplaceAuthOnLoad() {
+    const loggedMarketUser = localStorage.getItem('kultura_market_user');
+    const lockedView = document.getElementById('market-locked-view');
+    const unlockedView = document.getElementById('market-unlocked-view');
+    const userDisplay = document.getElementById('market-current-user-display');
+
+    if (loggedMarketUser) {
+        if (lockedView) lockedView.style.display = 'none';
+        if (unlockedView) unlockedView.style.display = 'block';
+        if (userDisplay) userDisplay.innerText = loggedMarketUser;
+        
+        const savedDiscordId = localStorage.getItem('kultura_market_discord_id');
+        if (savedDiscordId && document.getElementById('market-discord-id')) {
+            document.getElementById('market-discord-id').value = savedDiscordId;
+        }
+    } else {
+        if (lockedView) lockedView.style.display = 'block';
+        if (unlockedView) unlockedView.style.display = 'none';
     }
+
     if (typeof window.database !== 'undefined') {
         loadPendingMarketplaceListings();
     }
-});
+}
+
+function openMarketRegisterModal() {
+    document.getElementById('reg-market-ign').value = '';
+    document.getElementById('reg-market-user').value = '';
+    document.getElementById('reg-market-pass').value = '';
+    document.getElementById('market-register-modal').style.display = 'flex';
+}
+function closeMarketRegisterModal() {
+    document.getElementById('market-register-modal').style.display = 'none';
+}
+
+function openMarketLoginModal() {
+    document.getElementById('login-market-user').value = '';
+    document.getElementById('login-market-pass').value = '';
+    document.getElementById('market-login-modal').style.display = 'flex';
+}
+function closeMarketLoginModal() {
+    document.getElementById('market-login-modal').style.display = 'none';
+}
+
+async function submitMarketMemberRegistration() {
+    const ign = document.getElementById('reg-market-ign').value.trim();
+    const username = document.getElementById('reg-market-user').value.trim().toLowerCase();
+    const password = document.getElementById('reg-market-pass').value.trim();
+
+    if (!ign || !username || !password) {
+        alert("⚠️ Punan ang lahat ng fields para sa pagrehistro!");
+        return;
+    }
+
+    const regData = {
+        ign: ign,
+        username: username,
+        password: password,
+        timestamp: Date.now(),
+        status: "PENDING"
+    };
+
+    try {
+        await window.database.ref(`marketplace_accounts_pending/${username}`).set(regData);
+        alert("🎉 Matagumpay na naisumite ang iyong rehistro! Maghintay ng approval mula sa SuperAdmin.");
+        closeMarketRegisterModal();
+    } catch (err) {
+        console.error("Registration Error:", err);
+        alert("❌ Nabigo ang pagrehistro. Subukang muli.");
+    }
+}
+
+async function submitMarketMemberLogin() {
+    const username = document.getElementById('login-market-user').value.trim().toLowerCase();
+    const password = document.getElementById('login-market-pass').value.trim();
+
+    if (!username || !password) {
+        alert("⚠️ Ilagay ang iyong Username at Password!");
+        return;
+    }
+
+    try {
+        const snapshot = await window.database.ref(`marketplace_accounts_approved/${username}`).once('value');
+        if (snapshot.exists()) {
+            const acc = snapshot.val();
+            if (acc.password === password) {
+                localStorage.setItem('kultura_market_user', `${acc.ign} (@${acc.username})`);
+                alert(`✅ Maligayang pagdating, ${acc.ign}! Nakapasok ka na sa Marketplace.`);
+                closeMarketLoginModal();
+                checkMarketplaceAuthOnLoad();
+                return;
+            }
+        }
+        alert("❌ Mali ang password o ang account ay hindi pa na-approve ng SuperAdmin!");
+    } catch (err) {
+        console.error("Login Error:", err);
+        alert("❌ Error sa pag-login.");
+    }
+}
+
+function marketLogout() {
+    localStorage.removeItem('kultura_market_user');
+    checkMarketplaceAuthOnLoad();
+    alert("🔒 Nakapag-log out ka na sa Marketplace.");
+}
+
+function loadPendingMarketAccounts() {
+    const container = document.getElementById('pending-market-accounts-container');
+    if (!container) return;
+
+    window.database.ref('marketplace_accounts_pending').on('value', (snapshot) => {
+        container.innerHTML = "";
+        const data = snapshot.val();
+
+        if (!data) {
+            container.innerHTML = "<p style='color: var(--text-dim);'>Walang naghihintay na rehistro.</p>";
+            return;
+        }
+
+        Object.keys(data).forEach((userKey) => {
+            const acc = data[userKey];
+            const card = document.createElement('div');
+            card.style.cssText = "background: #111; border: 1px solid #444; padding: 10px; margin-bottom: 8px; border-radius: 4px; font-size: 0.85rem;";
+            card.innerHTML = `
+                <p><strong>IGN:</strong> ${acc.ign}</p>
+                <p><strong>Username:</strong> @${acc.username}</p>
+                <div style="margin-top: 8px; display: flex; gap: 8px;">
+                    <button onclick="approveMarketAccount('${acc.username}')" style="background: #28a745; color: #fff; border: none; padding: 4px 10px; cursor: pointer; border-radius: 3px; font-weight: bold;">🟢 Approve</button>
+                    <button onclick="rejectMarketAccount('${acc.username}')" style="background: #dc3545; color: #fff; border: none; padding: 4px 10px; cursor: pointer; border-radius: 3px; font-weight: bold;">🔴 Reject</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    });
+}
+
+async function approveMarketAccount(username) {
+    const pendingRef = window.database.ref(`marketplace_accounts_pending/${username}`);
+    const snap = await pendingRef.once('value');
+    if (!snap.exists()) return;
+
+    const accData = snap.val();
+    await window.database.ref(`marketplace_accounts_approved/${username}`).set(accData);
+    await pendingRef.remove();
+    alert(`✅ Na-approve na ang account ni @${username}! Makakapag-login na siya sa Marketplace.`);
+}
+
+async function rejectMarketAccount(username) {
+    if (confirm(`Tanggihan at tanggalin ang rehistro ni @${username}?`)) {
+        await window.database.ref(`marketplace_accounts_pending/${username}`).remove();
+        alert("🗑️ Tinanggihan ang rehistro.");
+    }
+}
 
 async function submitMarketplacePending() {
     const listingType = document.getElementById('market-listing-type').value;
