@@ -1103,34 +1103,22 @@
         // 🎙️ HIGH-ENERGY SPORTS / ESPORTS ANNOUNCER TTS ENGINE
         function speakKantyawanText(textToSpeak) {
             if ('speechSynthesis' in window) {
-                // Cancel ongoing utterances to ensure crisp live delivery
                 window.speechSynthesis.cancel();
-
-                // Clean emojis & extra symbols for smooth reading
                 let cleanText = textToSpeak.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
-                
                 let utterance = new SpeechSynthesisUtterance(cleanText);
-                
-                // ⚡ ANNOUNCER HIGH-ENERGY VOICE TUNING:
-                utterance.rate = 1.15;  // Energetic fast-paced commentary speed
-                utterance.pitch = 1.25; // High-pitched hyped announcer enthusiasm
-                utterance.volume = 1.0; // Max clear volume
-
-                // Voice selector prioritizing Filipino/Tagalog or local English voices
+                utterance.rate = 1.15;
+                utterance.pitch = 1.25;
+                utterance.volume = 1.0;
                 let voices = window.speechSynthesis.getVoices();
                 let selectedVoice = voices.find(v => v.lang.includes('tl') || v.lang.includes('fil') || v.lang.includes('id') || v.lang.includes('en-PH'));
                 if (!selectedVoice) {
                     selectedVoice = voices.find(v => v.lang.includes('en-US') || v.lang.includes('en-GB') || v.lang.includes('en'));
                 }
-                if (selectedVoice) {
-                    utterance.voice = selectedVoice;
-                }
-
+                if (selectedVoice) { utterance.voice = selectedVoice; }
                 window.speechSynthesis.speak(utterance);
             }
         }
 
-        // Global Audio Trigger on First Interaction
         function enableFirstClickAudio() {
             const playSound = () => {
                 const audio = document.getElementById('bg-audio');
@@ -1142,25 +1130,20 @@
                 window.removeEventListener('keydown', playSound);
                 window.removeEventListener('touchstart', playSound);
             };
-
             window.addEventListener('click', playSound);
             window.addEventListener('keydown', playSound);
             window.addEventListener('touchstart', playSound);
         }
-
         enableFirstClickAudio();
 
-        // JS-Generated Protected Credits
         document.addEventListener('DOMContentLoaded', () => {
             const footerContainer = document.getElementById('dynamic-secure-credits');
             if (footerContainer) {
                 const p1 = document.createElement('p');
                 p1.innerHTML = '&copy; 2026 <span>Kultura Guild</span> — NoLimit MU Online Community. All Rights Reserved.';
-                
                 const p2 = document.createElement('p');
                 p2.style.cssText = "margin-top: 6px; font-size: 0.75rem; color: #7a7a90; letter-spacing: 1px;";
                 p2.innerHTML = 'Developed & Maintained by <span style="color: var(--primary);">Lord Emperor Warlock</span>';
-                
                 footerContainer.appendChild(p1);
                 footerContainer.appendChild(p2);
             }
@@ -1172,7 +1155,6 @@
             rightLetters.forEach((letter, index) => { letter.style.animationDelay = `${index * 0.12}s`; });
         });
 
-        // Firebase Live Page View Counter Logic
         function initPageCounter() {
             if (!window.database) return;
             const dbRef = window.dbRef;
@@ -1666,12 +1648,10 @@
                 giveawayVisible: isGiveawayVisible
             };
 
-            // 1. I-save sa Firebase Database
             if (window.database) {
                 await window.dbSet(window.dbRef(window.database, 'kultura_events'), newEventsPayload);
             }
 
-            // 2. Magpadala ng Announcement Notification sa iyong Discord Webhook
             if (DISCORD_WEBHOOK_URL) {
                 try {
                     const discordBody = {
@@ -1681,7 +1661,7 @@
                         embeds: [
                             {
                                 title: "⚔️ KULTURA ALLIANCE - UPCOMING EVENTS ⚔️",
-                                color: 15120128, // Gold Color
+                                color: 15120128,
                                 fields: [
                                     {
                                         name: `📌 ${ev1Title || 'Event 1'}`,
@@ -1742,7 +1722,7 @@
                         {
                             title: title || "📢 GUILD ANNOUNCEMENT",
                             description: message,
-                            color: 15120128, // Gold Color
+                            color: 15120128,
                             footer: {
                                 text: `Announced by ${selectedSender} • Kultura Guild & Alliance`,
                                 icon_url: "https://nolimit.lv/themes/def_theme/images/logo.png"
@@ -1771,7 +1751,6 @@
         let currentCarRaceRound = 1;
         let carRaceAccumulatedWinners = [];
 
-        // 🎙️ HIGH ENERGY SHOUTCASTER / ANNOUNCER LINES
         const CAR_KANTYAWAN_PHRASES = [
             "Wooooh! Humahabol ang kotse ni [NAME]! Naka nitro boost yarn?!",
             "At nag-overtake sa kurbada si [NAME]! Grabe ang harurot!",
@@ -1883,7 +1862,6 @@
             let startTime = Date.now();
             let lastShoutTime = startTime;
 
-            // 🎙️ SHOUTCASTER INTRO COUNTDOWN
             let startMsg = `Attention drivers! Red light is on! Three, two, one, GO! Harurot na sa expressway!`;
             kantyawanBox.innerHTML = `🎙️ 🔊 ${startMsg}`;
             speakKantyawanText(startMsg);
@@ -1896,7 +1874,6 @@
                     timerDisplay.innerText = `⏱️ Time Remaining: ${remainingSec}s`;
                 }
 
-                // Periodic Voice Commentary every ~4 seconds
                 if (Date.now() - lastShoutTime > 4000 && remainingSec > 3) {
                     lastShoutTime = Date.now();
                     let randomCar = carElements[Math.floor(Math.random() * carElements.length)];
@@ -1960,7 +1937,6 @@
                     const publicWinnersBox = document.getElementById('public-winners-display-box');
                     if (publicWinnersBox) publicWinnersBox.innerHTML = publicWinnersHtml;
 
-                    // 🎙️ SHOUTCASTER VICTORY ANNOUNCEMENT
                     let victoryMessage = `At tinawid na ang finish line! Ang kampeon sa round ${currentCarRaceRound} ay si driver ${roundWinner.name}! Palakpakan at saludo!`;
                     kantyawanBox.innerHTML = `🎉 🎙️ 🔊 ${victoryMessage} 🎉`;
                     speakKantyawanText(victoryMessage);
@@ -2359,7 +2335,7 @@
             const data = getGuildData();
             let lowerMain = (mainIgn || "").toLowerCase();
             for (let divKey in data) {
-                let found = data[divKey].find(m => (m.mainOwner || m.name).toLowerCase() === lowerMain);
+                let found = data[divKey].find(m => (m.mainOwner || m.name).toLowerCase() === lowerMain || m.name.toLowerCase() === lowerMain);
                 if (found) return divKey;
             }
             return null;
