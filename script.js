@@ -599,12 +599,11 @@ async function sendCustomDiscordAnnouncement() {
     } catch (err) { console.error("Discord Webhook Error:", err); alert("❌ Nagkaroon ng problema sa pagpapadala sa Discord."); }
 }
 
-// 📋 Auto-Broadcast Attendance & Payout Split to Discord (English & Clean format without text link)
 async function sendAttendanceToDiscordChannel(dateKey, eventType, totalPool, presentsCount) {
     if (!ATTENDANCE_DISCORD_WEBHOOK_URL) return;
 
-    let payoutPool = 90000; // Fixed 90,000 SOL for active members payout
-    let raceEventPool = 10000; // Fixed 10,000 SOL for Race Event
+    let payoutPool = 90000; 
+    let raceEventPool = 10000; 
     let solPerMember = presentsCount > 0 ? Math.round(payoutPool / presentsCount) : 0;
 
     try {
@@ -836,7 +835,7 @@ function calculate3DayPayoutData() {
 
     last3Records.forEach(rec => {
         let totalPresent = rec.presents ? rec.presents.length : 0;
-        let payoutPool = 90000; // Fixed 90k pool for 3-day calculation per event
+        let payoutPool = 90000; 
         let solShare = totalPresent > 0 ? Math.round(payoutPool / totalPresent) : 0;
         if (rec.presents) {
             rec.presents.forEach(p => {
@@ -1143,7 +1142,6 @@ function renderMemberChecklist() {
     });
 }
 
-// 🛡️ STRICT ROUTING PARA SA MGA GUILD MASTERS
 function findMainGuildDivision(mainIgn) {
     let lowerMain = (mainIgn || "").toLowerCase().trim();
 
@@ -1207,7 +1205,6 @@ async function saveAttendanceEntry() {
     cloudAttendanceHistory = allRecords;
     if (window.database) { await window.dbSet(window.dbRef(window.database, 'kultura_attendance'), allRecords); }
     
-    // Auto-Send Notification to the new Attendance Discord Channel
     await sendAttendanceToDiscordChannel(targetDateKey, eventType, totalSolPool, updatedPresents.length);
 
     renderAttendanceHistory();
@@ -1229,7 +1226,7 @@ function renderAttendanceHistory() {
     tbody.innerHTML = '';
     history.forEach(rec => {
         const totalPresent = rec.presents ? rec.presents.length : 0;
-        let payoutPool = 90000; // Fixed 90k share for display
+        let payoutPool = 90000; 
         const solPerMember = totalPresent > 0 ? Math.round(payoutPool / totalPresent).toLocaleString() : 0;
         
         const groupedByDivision = {};
@@ -1629,3 +1626,145 @@ window.addEventListener('DOMContentLoaded', () => {
     updateLiveActiveWarriors();
     updatePortalButtonUI();
 });
+
+// ==========================================
+// 🛒 KULTURA MARKETPLACE SYSTEM FUNCTIONS
+// ==========================================
+const MARKETPLACE_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563784232256671766/LkcZY_xGBf0ci0r5-zpznt1V5HQhrAs43MTjb8o50dy0Qn24hQbuVNEmuhXKWUkzhhfl";
+
+document.addEventListener('DOMContentLoaded', () => {
+    const savedDiscordId = localStorage.getItem('kultura_market_discord_id');
+    if (savedDiscordId && document.getElementById('market-discord-id')) {
+        document.getElementById('market-discord-id').value = savedDiscordId;
+    }
+    if (typeof window.database !== 'undefined') {
+        loadPendingMarketplaceListings();
+    }
+});
+
+async function submitMarketplacePending() {
+    const seller = document.getElementById('market-seller-ign').value.trim();
+    const item = document.getElementById('market-item-desc').value.trim();
+    const price = document.getElementById('market-price-desc').value.trim();
+    const discordId = document.getElementById('market-discord-id').value.trim();
+
+    if (!seller || !item || !price) {
+        alert("⚠️ Please fill in Seller IGN, Item/Option, and Price!");
+        return;
+    }
+
+    if (discordId) {
+        localStorage.setItem('kultura_market_discord_id', discordId);
+    }
+
+    const newListing = {
+        seller: seller,
+        item: item,
+        price: price,
+        discordId: discordId || "",
+        timestamp: Date.now(),
+        status: "PENDING"
+    };
+
+    try {
+        await window.database.ref('marketplace_pending').push(newListing);
+        alert("🎉 Your listing has been submitted! It will appear on Discord once approved by SuperAdmin.");
+        document.getElementById('market-item-desc').value = '';
+        document.getElementById('market-price-desc').value = '';
+    } catch (err) {
+        console.error("Firebase Submit Error:", err);
+        alert("❌ Failed to submit listing. Please try again.");
+    }
+}
+
+function loadPendingMarketplaceListings() {
+    const container = document.getElementById('pending-listings-container');
+    if (!container) return;
+
+    window.database.ref('marketplace_pending').on('value', (snapshot) => {
+        container.innerHTML = "";
+        const data = snapshot.val();
+
+        if (!data) {
+            container.innerHTML = "<p style='color: var(--text-dim);'>No pending marketplace listings at this time.</p>";
+            return;
+        }
+
+        Object.keys(data).forEach((key) => {
+            const item = data[key];
+            const card = document.createElement('div');
+            card.style.cssText = "background: #111; border: 1px solid #444; padding: 12px; margin-bottom: 10px; border-radius: 4px;";
+            card.innerHTML = `
+                <p><strong>Seller:</strong> ${item.seller}</p>
+                <p><strong>Item:</strong> ${item.item}</p>
+                <p><strong>Price:</strong> ${item.price}</p>
+                <p><strong>Discord ID:</strong> ${item.discordId || "None"}</p>
+                <div style="margin-top: 10px; display: flex; gap: 10px;">
+                    <button onclick="approveMarketplaceListing('${key}')" style="background: #28a745; color: #fff; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold;">
+                        🟢 Approve & Post to Discord
+                    </button>
+                    <button onclick="rejectMarketplaceListing('${key}')" style="background: #dc3545; color: #fff; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold;">
+                        🔴 Reject / Delete
+                    </button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    });
+}
+
+async function approveMarketplaceListing(key) {
+    const ref = window.database.ref(`marketplace_pending/${key}`);
+    const snapshot = await ref.once('value');
+    const item = snapshot.val();
+
+    if (!item) return;
+
+    let contactField = item.discordId 
+        ? `[Direct Message Seller on Discord](https://discord.com/users/${item.discordId})` 
+        : `In-game IGN: **${item.seller}**`;
+    let mentionTag = item.discordId ? `<@${item.discordId}>` : `@everyone`;
+
+    const discordBody = {
+        username: "Kultura Marketplace Bot",
+        avatar_url: "https://nolimit.lv/themes/def_theme/images/logo.png",
+        content: `${mentionTag} 🛒 **NEW APPROVED MARKETPLACE LISTING!**`,
+        embeds: [{
+            title: `📦 Item Listing — ${item.seller}`,
+            color: 15120128,
+            fields: [
+                { name: "👤 Seller", value: `\`${item.seller}\``, inline: true },
+                { name: "💰 Price / Offer", value: `\`${item.price}\``, inline: true },
+                { name: "⚔️ Item & Option", value: `\`${item.item}\``, inline: false },
+                { name: "💬 How to Buy / Contact", value: contactField, inline: false }
+            ],
+            footer: { text: "Kultura Guild & Alliance • Verified Listing", icon_url: "https://nolimit.lv/themes/def_theme/images/logo.png" },
+            timestamp: new Date().toISOString()
+        }]
+    };
+
+    try {
+        const response = await fetch(MARKETPLACE_DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(discordBody)
+        });
+
+        if (response.ok || response.status === 204) {
+            await ref.remove();
+            alert("✅ Listing approved and successfully posted to Discord!");
+        } else {
+            alert("❌ Failed to post to Discord Webhook.");
+        }
+    } catch (err) {
+        console.error("Approval Webhook Error:", err);
+        alert("❌ Network error sending to Discord.");
+    }
+}
+
+async function rejectMarketplaceListing(key) {
+    if (confirm("Are you sure you want to reject and delete this listing?")) {
+        await window.database.ref(`marketplace_pending/${key}`).remove();
+        alert("🗑️ Listing deleted.");
+    }
+}
