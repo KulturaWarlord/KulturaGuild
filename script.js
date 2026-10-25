@@ -599,19 +599,30 @@ async function sendCustomDiscordAnnouncement() {
     } catch (err) { console.error("Discord Webhook Error:", err); alert("❌ Nagkaroon ng problema sa pagpapadala sa Discord."); }
 }
 
-// 📋 Auto-Broadcast Attendance to the New Discord Channel
+// 📋 Auto-Broadcast Attendance & Payout Split to Discord with Website Link (Fixed 90k Payout + 10k Race Pool)
 async function sendAttendanceToDiscordChannel(dateKey, eventType, totalPool, presentsCount) {
     if (!ATTENDANCE_DISCORD_WEBHOOK_URL) return;
+
+    let payoutPool = 90000; // Fixed 90,000 SOL para sa active members payout
+    let raceEventPool = 10000; // Fixed 10,000 SOL para sa Race Event
+    let solPerMember = presentsCount > 0 ? Math.round(payoutPool / presentsCount) : 0;
 
     try {
         const discordBody = {
             username: "Kultura Attendance Bot",
             avatar_url: "https://nolimit.lv/themes/def_theme/images/logo.png",
-            content: "@everyone 📋 **NEW ATTENDANCE & SOL PAYOUT LOG UPDATED!**",
+            content: "@everyone 📋 **NEW ATTENDANCE & SOL PAYOUT LOG UPDATED!**\n\n🔗 **Tingnan ang buong detalye sa website:** https://kulturaalliance.pages.dev",
             embeds: [{
                 title: `🛡️ Castle Siege & Event Attendance — ${dateKey}`,
-                description: `**Event:** ${eventType}\n**Total Main Present:** ${presentsCount} Warriors\n**SOL Pool:** ${totalPool.toLocaleString()} SOL`,
+                description: `**Event:** ${eventType}\n**Total Main Present:** ${presentsCount} Warriors\n\n💰 **Total Pool:** ${(payoutPool + raceEventPool).toLocaleString()} SOL\n🔸 **Payout Pool:** ${payoutPool.toLocaleString()} SOL (${solPerMember.toLocaleString()} SOL / ea)\n🏎️ **Race Event Pool:** ${raceEventPool.toLocaleString()} SOL`,
                 color: 2303786,
+                fields: [
+                    {
+                        name: "🌐 Quick Website Link",
+                        value: "[I-click dito para buksan ang Kultura Alliance Portal](https://kulturaalliance.pages.dev)",
+                        inline: false
+                    }
+                ],
                 footer: { text: "Kultura Guild & Alliance • Attendance System", icon_url: "https://nolimit.lv/themes/def_theme/images/logo.png" },
                 timestamp: new Date().toISOString()
             }]
@@ -825,7 +836,8 @@ function calculate3DayPayoutData() {
 
     last3Records.forEach(rec => {
         let totalPresent = rec.presents ? rec.presents.length : 0;
-        let solShare = totalPresent > 0 ? Math.round(rec.solPool / totalPresent) : 0;
+        let payoutPool = 90000; // Fixed 90k pool for 3-day calculation per event
+        let solShare = totalPresent > 0 ? Math.round(payoutPool / totalPresent) : 0;
         if (rec.presents) {
             rec.presents.forEach(p => {
                 let mainIgn = getOriginalCasedMainName((p.name || "").toLowerCase().trim()) || p.name;
@@ -1217,7 +1229,8 @@ function renderAttendanceHistory() {
     tbody.innerHTML = '';
     history.forEach(rec => {
         const totalPresent = rec.presents ? rec.presents.length : 0;
-        const solPerMember = totalPresent > 0 ? Math.round(rec.solPool / totalPresent).toLocaleString() : 0;
+        let payoutPool = 90000; // Fixed 90k share for display
+        const solPerMember = totalPresent > 0 ? Math.round(payoutPool / totalPresent).toLocaleString() : 0;
         
         const groupedByDivision = {};
         if (rec.presents) {
