@@ -1643,13 +1643,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function submitMarketplacePending() {
+    const listingType = document.getElementById('market-listing-type').value;
     const seller = document.getElementById('market-seller-ign').value.trim();
     const item = document.getElementById('market-item-desc').value.trim();
     const price = document.getElementById('market-price-desc').value.trim();
     const discordId = document.getElementById('market-discord-id').value.trim();
 
     if (!seller || !item || !price) {
-        alert("⚠️ Please fill in Seller IGN, Item/Option, and Price!");
+        alert("⚠️ Please fill in Seller/Trader IGN, Item/Option, and Price!");
         return;
     }
 
@@ -1658,6 +1659,7 @@ async function submitMarketplacePending() {
     }
 
     const newListing = {
+        type: listingType || "SELLING",
         seller: seller,
         item: item,
         price: price,
@@ -1692,10 +1694,12 @@ function loadPendingMarketplaceListings() {
 
         Object.keys(data).forEach((key) => {
             const item = data[key];
+            const typeBadge = item.type === "BUYING" ? "🟢 BUYING" : "🔴 SELLING";
             const card = document.createElement('div');
             card.style.cssText = "background: #111; border: 1px solid #444; padding: 12px; margin-bottom: 10px; border-radius: 4px;";
             card.innerHTML = `
-                <p><strong>Seller:</strong> ${item.seller}</p>
+                <p><strong>Type:</strong> <span style="color: ${item.type === 'BUYING' ? '#28a745' : '#ff3333'}; font-weight: bold;">${typeBadge}</span></p>
+                <p><strong>Trader IGN:</strong> ${item.seller}</p>
                 <p><strong>Item:</strong> ${item.item}</p>
                 <p><strong>Price:</strong> ${item.price}</p>
                 <p><strong>Discord ID:</strong> ${item.discordId || "None"}</p>
@@ -1721,24 +1725,28 @@ async function approveMarketplaceListing(key) {
     if (!item) return;
 
     let contactField = item.discordId 
-        ? `[Direct Message Seller on Discord](https://discord.com/users/${item.discordId})` 
+        ? `[Direct Message Trader on Discord](https://discord.com/users/${item.discordId})` 
         : `In-game IGN: **${item.seller}**`;
     let mentionTag = item.discordId ? `<@${item.discordId}>` : `@everyone`;
+    let isBuying = item.type === "BUYING";
+    let typeHeader = isBuying ? "🟢 **NEW BUYING LISTING!**" : "🔴 **NEW SELLING LISTING!**";
+    let embedColor = isBuying ? 3066993 : 15120128; // Green for Buying, Gold/Red for Selling
 
     const discordBody = {
         username: "Kultura Marketplace Bot",
         avatar_url: "https://nolimit.lv/themes/def_theme/images/logo.png",
-        content: `${mentionTag} 🛒 **NEW APPROVED MARKETPLACE LISTING!**`,
+        content: `${mentionTag} 🛒 ${typeHeader}`,
         embeds: [{
-            title: `📦 Item Listing — ${item.seller}`,
-            color: 15120128,
+            title: `📦 ${item.type || 'SELLING'} — ${item.seller}`,
+            color: embedColor,
             fields: [
-                { name: "👤 Seller", value: `\`${item.seller}\``, inline: true },
+                { name: "📌 Type", value: `\`${item.type || 'SELLING'}\``, inline: true },
+                { name: "👤 Trader IGN", value: `\`${item.seller}\``, inline: true },
                 { name: "💰 Price / Offer", value: `\`${item.price}\``, inline: true },
                 { name: "⚔️ Item & Option", value: `\`${item.item}\``, inline: false },
-                { name: "💬 How to Buy / Contact", value: contactField, inline: false }
+                { name: "💬 How to Contact", value: contactField, inline: false }
             ],
-            footer: { text: "Kultura Guild & Alliance • Verified Listing", icon_url: "https://nolimit.lv/themes/def_theme/images/logo.png" },
+            footer: { text: "Kultura Guild & Alliance • Verified Marketplace", icon_url: "https://nolimit.lv/themes/def_theme/images/logo.png" },
             timestamp: new Date().toISOString()
         }]
     };
