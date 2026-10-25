@@ -599,19 +599,19 @@ async function sendCustomDiscordAnnouncement() {
     } catch (err) { console.error("Discord Webhook Error:", err); alert("❌ Nagkaroon ng problema sa pagpapadala sa Discord."); }
 }
 
-// 📋 Auto-Broadcast Attendance & Payout Split to Discord with Website Link (Fixed 90k Payout + 10k Race Pool)
+// 📋 Auto-Broadcast Attendance & Payout Split to Discord (English & Clean format without text link)
 async function sendAttendanceToDiscordChannel(dateKey, eventType, totalPool, presentsCount) {
     if (!ATTENDANCE_DISCORD_WEBHOOK_URL) return;
 
-    let payoutPool = 90000; // Fixed 90,000 SOL para sa active members payout
-    let raceEventPool = 10000; // Fixed 10,000 SOL para sa Race Event
+    let payoutPool = 90000; // Fixed 90,000 SOL for active members payout
+    let raceEventPool = 10000; // Fixed 10,000 SOL for Race Event
     let solPerMember = presentsCount > 0 ? Math.round(payoutPool / presentsCount) : 0;
 
     try {
         const discordBody = {
             username: "Kultura Attendance Bot",
             avatar_url: "https://nolimit.lv/themes/def_theme/images/logo.png",
-            content: "@everyone 📋 **NEW ATTENDANCE & SOL PAYOUT LOG UPDATED!**\n\n🔗 **Tingnan ang buong detalye sa website:** https://kulturaalliance.pages.dev",
+            content: "@everyone 📋 **NEW ATTENDANCE & SOL PAYOUT LOG UPDATED!**",
             embeds: [{
                 title: `🛡️ Castle Siege & Event Attendance — ${dateKey}`,
                 description: `**Event:** ${eventType}\n**Total Main Present:** ${presentsCount} Warriors\n\n💰 **Total Pool:** ${(payoutPool + raceEventPool).toLocaleString()} SOL\n🔸 **Payout Pool:** ${payoutPool.toLocaleString()} SOL (${solPerMember.toLocaleString()} SOL / ea)\n🏎️ **Race Event Pool:** ${raceEventPool.toLocaleString()} SOL`,
@@ -619,7 +619,7 @@ async function sendAttendanceToDiscordChannel(dateKey, eventType, totalPool, pre
                 fields: [
                     {
                         name: "🌐 Quick Website Link",
-                        value: "[I-click dito para buksan ang Kultura Alliance Portal](https://kulturaalliance.pages.dev)",
+                        value: "[Click here to open the Kultura Alliance Portal](https://kulturaalliance.pages.dev)",
                         inline: false
                     }
                 ],
