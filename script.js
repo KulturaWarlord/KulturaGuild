@@ -76,7 +76,7 @@ function initPageCounter() {
     });
 }
 
-// 🌐 DISCORD WEBHOOK PARA SA ATTENDANCE & PAYOUTS (BAGONG NA-UPDATE NA WEBHOOK)
+// 🌐 DISCORD WEBHOOK PARA SA ATTENDANCE & PAYOUTS
 const ATTENDANCE_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1564136116242612286/wdzglpcZSMPXoN7hq562LLT6M3yDrPc8yVAhTQ2ugekBuuUBo0OI7Cst-EIxK1CQUOno";
 
 let ALL_DIVISIONS = [
@@ -626,11 +626,15 @@ async function sendAttendanceToDiscordChannel(dateKey, eventType, totalPool, pre
             }]
         };
 
-        await fetch(ATTENDANCE_DISCORD_WEBHOOK_URL, {
+        const res = await fetch(ATTENDANCE_DISCORD_WEBHOOK_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(discordBody)
         });
+
+        if (!res.ok) {
+            console.error("Attendance Webhook Failed with Status:", res.status);
+        }
     } catch (err) {
         console.error("Attendance Discord Webhook Error:", err);
     }
