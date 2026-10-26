@@ -142,15 +142,14 @@
             </div>
         </section>
 
-        <!-- 🛒 KULTURA PRIVATE MARKETPLACE SECTION -->
+        <!-- 🛒 MEMBERS PROFILE SECTION -->
         <section class="panel" style="margin-bottom: 60px; border: 2px solid var(--primary);">
             <div style="border-bottom: 1px solid var(--border-gold); padding-bottom: 10px; margin-bottom: 20px;">
-                <h3 style="margin: 0; color: var(--primary);">🛒 Kultura Private Marketplace</h3>
+                <h3 style="margin: 0; color: var(--primary);">🛒 Members Profile</h3>
             </div>
 
             <!-- LOCKED VIEW (Kapag hindi pa naka-login ang member) -->
             <div id="market-locked-view" style="text-align: center; padding: 25px 10px;">
-                <p style="color: var(--text-light); margin-bottom: 15px; font-size: 0.95rem;">🔒 Ang Marketplace na ito ay pampribado lamang sa mga Verified Members ng Kultura Alliance!</p>
                 <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                     <button onclick="openMarketLoginModal()" class="btn" style="padding: 10px 20px;">🔑 Member Login</button>
                     <button onclick="openMarketRegisterModal()" class="btn" style="padding: 10px 20px; background: linear-gradient(135deg, #28a745, #1e7e34);">📝 Register Account</button>
@@ -161,7 +160,7 @@
             <div id="market-unlocked-view" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: rgba(0,0,0,0.5); padding: 12px 15px; border-radius: 6px; border: 1px solid var(--border-gold); flex-wrap: wrap; gap: 10px;">
                     <span style="font-size: 0.9rem;">👤 Logged in as: <strong id="market-current-user-display" style="color: var(--primary-glow);">--</strong></span>
-                    <button onclick="marketLogout()" class="btn" style="background: #8b0000; border: 1px solid #ff3333; padding: 6px 12px; font-size: 0.8rem;">🔒 Logout Marketplace</button>
+                    <button onclick="marketLogout()" class="btn" style="background: #8b0000; border: 1px solid #ff3333; padding: 6px 12px; font-size: 0.8rem;">🔒 Logout</button>
                 </div>
 
                 <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 6px; border: 1px solid rgba(230,184,0,0.2);">
@@ -298,15 +297,15 @@
             </div>
         </div>
 
-        <!-- MARKETPLACE: MEMBER REGISTRATION MODAL -->
+        <!-- KULTURA ACCOUNT REGISTRATION MODAL -->
         <div id="market-register-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10003; justify-content: center; align-items: center;">
             <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 400px; padding: 25px; border-radius: 10px; color: #fff;">
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-gold); padding-bottom: 8px; margin-bottom: 15px;">
-                    <h3 style="color: var(--primary-glow); margin: 0; font-size: 1.1rem;">📝 Marketplace Account Registration</h3>
+                    <h3 style="color: var(--primary-glow); margin: 0; font-size: 1.1rem;">📝 Kultura Account Registration</h3>
                     <button onclick="closeMarketRegisterModal()" class="modal-win-btn" style="background: #8b0000; border: 1px solid #ff3333; color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: bold; font-size: 0.8rem;">✖</button>
                 </div>
 
-                <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 12px;">Magrehistro upang makapagsumite ng mga item listings. Kailangan muna itong i-approve ng SuperAdmin.</p>
+                <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 12px;">Waiting for GuildLeader approval.</p>
 
                 <div style="margin-bottom: 10px;">
                     <label style="font-size: 0.8rem; color: var(--primary-glow);">In-Game Name (IGN):</label>
@@ -330,11 +329,11 @@
             </div>
         </div>
 
-        <!-- MARKETPLACE: MEMBER LOGIN MODAL -->
+        <!-- MEMBER LOGIN MODAL -->
         <div id="market-login-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10003; justify-content: center; align-items: center;">
             <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 400px; padding: 25px; border-radius: 10px; color: #fff;">
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-gold); padding-bottom: 8px; margin-bottom: 15px;">
-                    <h3 style="color: var(--primary-glow); margin: 0; font-size: 1.1rem;">🔑 Marketplace Member Login</h3>
+                    <h3 style="color: var(--primary-glow); margin: 0; font-size: 1.1rem;">🔑 Member Login</h3>
                     <button onclick="closeMarketLoginModal()" class="modal-win-btn" style="background: #8b0000; border: 1px solid #ff3333; color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: bold; font-size: 0.8rem;">✖</button>
                 </div>
 
@@ -371,10 +370,10 @@
                 <div id="admin-modal-body-content">
                     <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">Officer</strong></p>
 
-                    <!-- SUPERADMIN: PENDING MARKETPLACE APPROVALS -->
+                    <!-- SUPERADMIN: PENDING APPROVALS -->
                     <div id="superadmin-inbox-block" class="admin-section-block" style="display: none; border-color: #ffaa33;">
                         <button onclick="toggleAdminSection('sec-market-inbox')" class="admin-collapsible-btn" style="color: #ffaa33; background: rgba(255,170,51,0.1);">
-                            <span>🛒 SuperAdmin: Marketplace Approvals (Accounts & Listings)</span>
+                            <span>🛒 SuperAdmin: Approvals (Accounts & Listings)</span>
                             <span id="icon-sec-market-inbox">▼ Expand</span>
                         </button>
                         <div id="sec-market-inbox" class="admin-collapsible-content">
@@ -383,7 +382,7 @@
                                 <span style="color: var(--text-dim);">Walang pending accounts.</span>
                             </div>
 
-                            <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">Pending Marketplace Listings:</h4>
+                            <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">Pending Listings:</h4>
                             <div id="pending-listings-container" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
                                 <span style="color: var(--text-dim);">Walang pending listings.</span>
                             </div>
