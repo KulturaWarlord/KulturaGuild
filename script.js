@@ -1632,7 +1632,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 🛒 KULTURA MARKETPLACE & MEMBER PROFILE FUNCTIONS (IP CHECK & AUTOMATIC DISCORD POST)
+// 🛒 KULTURA MARKETPLACE & MEMBER PROFILE FUNCTIONS (IP CHECK & AUTO DISCORD POST)
 // ==========================================
 const MARKETPLACE_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563790657254854707/HDVDF2jyaYM6fijrCnNEAlW1Z-bkMYPu7G_nHcQiHnGY4Ez0QXTKjvTXD96I9oFMyAnE";
 
@@ -1669,6 +1669,9 @@ async function checkMarketplaceAuthOnLoad() {
         } catch (e) {
             console.error("Error loading settings:", e);
         }
+
+        // Load Social Hub Data when member is logged in
+        loadSocialHubData();
     } else {
         if (lockedView) lockedView.style.display = 'block';
         if (unlockedView) unlockedView.style.display = 'none';
@@ -1762,7 +1765,6 @@ async function submitMarketMemberRegistration() {
         console.error("Failed to fetch user IP:", e);
     }
 
-    // Check if IP already exists in approved or pending accounts
     let isDuplicateIp = false;
     let originalRegisterUser = "";
     try {
@@ -2017,3 +2019,191 @@ async function submitMarketplacePending() {
         alert("❌ Connection error while posting to Discord.");
     }
 }
+
+// ==========================================
+// 👥 KULTURA MEMBERS SOCIAL & MESSAGING LOGIC
+// ==========================================
+
+async function loadSocialHubData() {
+    const loggedUsername = localStorage.getItem('kultura_market_username');
+    if (!loggedUsername) return;
+
+    // Load registered approved members
+    const membersContainer = document.getElementById('social-members-list');
+    if (membersContainer) {
+        window.dbOnValue(window.dbRef(window.database, 'marketplace_accounts_approved'), (snapshot) => {
+            membersContainer.innerHTML = "";
+            const members = snapshot.val();
+            if (!members) {
+                membersContainer.innerHTML = "<span style='color: var(--text-dim);'>No other members found.</span>";
+                return;
+            }
+
+            Object.keys(members).forEach((username) => {
+                if (username === loggedUsername) return;
+                const acc = members[username];
+
+                const card = document.createElement('div');
+                card.style.cssText = "background: #111; border: 1px solid #444; padding: 8px; margin-bottom: 6px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;";
+                card.innerHTML = `
+                    <span>👑 <strong>${acc.ign}</strong> (@${acc.username})</span>
+                    <div style="display: flex; gap: 4px;">
+                        <button onclick="openFriendProfileModal('${acc.username}', '${acc.ign}', '${acc.avatarUrl || ''}', '${acc.bgUrl || ''}')" class="btn" style="padding: 4px 8px; font-size: 0.75rem; background: #0088cc; color:#fff;">View Profile</button>
+                        <button onclick="sendFriendRequest('${acc.username}', '${acc.ign}')" class="btn" style="padding: 4px 8px; font-size: 0.75rem;">Add Friend</button>
+                    </div>
+                `;
+                membersContainer.appendChild(card);
+            });
+        });
+    }
+
+    // Load Friend Requests
+    const reqContainer = document.getElementById('social-friend-requests');
+    if (reqContainer) {
+        window.dbOnValue(window.dbRef(window.database, `social_requests/${loggedUsername}`), (snapshot) => {
+            reqContainer.innerHTML = "";
+            const requests = snapshot.val();
+            if (!requests) {
+                reqContainer.innerHTML = "<span style='color: var(--text-dim);'>No pending requests.</span>";
+                return;
+            }
+
+            Object.keys(requests).forEach((fromUser) => {
+                const reqData = requests[fromUser];
+                const div = document.createElement('div');
+                div.style.cssText = "background: #111; border: 1px solid #555; padding: 6px; margin-bottom: 4px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;";
+                div.innerHTML = `
+                    <span>From: <strong>${reqData.fromIgn}</strong></span>
+                    <div>
+                        <button onclick="acceptFriendRequest('${fromUser}', '${reqData.fromIgn}')" style="background: #28a745; color:#fff; border:none; padding:2px 6px; border-radius:3px; cursor:pointer;">Accept</button>
+                        <button onclick="declineFriendRequest('${fromUser}')" style="background: #dc3545; color:#fff; border:none; padding:2px 6px; border-radius:3px; cursor:pointer;">Decline</button>
+                    </div>
+                `;
+                reqContainer.appendChild(div);
+            });
+        });
+    }
+
+    // Load Friends for Chat Dropdown
+    const chatSelect = document.getElementById('chat-recipient-select');
+    if (chatSelect) {
+        window.dbOnValue(window.dbRef(window.database, `social_friends/${loggedUsername}`), (snapshot) => {
+            chatSelect.innerHTML = `<option value="">Select a friend to chat...</option>`;
+            const friends = snapshot.val();
+            if (friends) {
+                Object.keys(friends).forEach((friendUser) => {
+                    const fData = friends[friendUser];
+                    chatSelect.innerHTML += `<option value="${friendUser}">${fData.friendIgn} (@${friendUser})</option>`;
+                });
+            }
+        });
+    }
+}
+
+async function sendFriendRequest(targetUsername, targetIgn) {
+    const loggedUsername = localStorage.getItem('kultura_market_username');
+    const loggedIgn = localStorage.getItem('kultura_market_user');
+    if (!loggedUsername) return;
+
+    const reqRef = window.dbRef(window.database, `social_requests/${targetUsername}/${loggedUsername}`);
+    await window.dbSet(reqRef, {
+        fromUser: loggedUsername,
+        fromIgn: loggedIgn ? loggedIgn.split(' ')[0] : loggedUsername,
+        timestamp: Date.now()
+    });
+    alert(`🎉 Friend request successfully sent to ${targetIgn}!`);
+}
+
+async function acceptFriendRequest(fromUser, fromIgn) {
+    const loggedUsername = localStorage.getItem('kultura_market_username');
+    const loggedIgn = localStorage.getItem('kultura_market_user').split(' ')[0];
+
+    await window.dbSet(window.dbRef(window.database, `social_friends/${loggedUsername}/${fromUser}`), { friendIgn: fromIgn });
+    await window.dbSet(window.dbRef(window.database, `social_friends/${fromUser}/${loggedUsername}`), { friendIgn: loggedIgn });
+    await window.dbSet(window.dbRef(window.database, `social_requests/${loggedUsername}/${fromUser}`), null);
+    alert(`✅ You are now friends with ${fromIgn}!`);
+}
+
+async function declineFriendRequest(fromUser) {
+    const loggedUsername = localStorage.getItem('kultura_market_username');
+    await window.dbSet(window.dbRef(window.database, `social_requests/${loggedUsername}/${fromUser}`), null);
+    alert("🗑️ Friend request declined.");
+}
+
+async function openFriendProfileModal(username, ign, avatarUrl, bgUrl) {
+    document.getElementById('friend-modal-name').innerText = ign;
+    document.getElementById('friend-modal-username').innerText = `@${username}`;
+    
+    const avatarImg = document.getElementById('friend-modal-avatar');
+    avatarImg.src = avatarUrl ? avatarUrl : "https://nolimit.lv/themes/def_theme/images/logo.png";
+
+    const banner = document.getElementById('friend-modal-banner');
+    if (bgUrl) {
+        banner.style.backgroundImage = `linear-gradient(rgba(10,10,15,0.6), rgba(10,10,15,0.8)), url('${bgUrl}')`;
+    } else {
+        banner.style.backgroundImage = 'none';
+    }
+
+    document.getElementById('friend-profile-modal').style.display = 'flex';
+}
+
+function closeFriendProfileModal() {
+    document.getElementById('friend-profile-modal').style.display = 'none';
+}
+
+async function sendDirectMessage() {
+    const loggedUsername = localStorage.getItem('kultura_market_username');
+    const recipient = document.getElementById('chat-recipient-select').value;
+    const msgInput = document.getElementById('chat-message-input');
+    const msgText = msgInput.value.trim();
+
+    if (!recipient) {
+        alert("⚠️ Please select a friend from the dropdown to chat with!");
+        return;
+    }
+    if (!msgText) return;
+
+    const chatRoomId = [loggedUsername, recipient].sort().join('_');
+    const msgRef = window.dbRef(window.database, `social_chats/${chatRoomId}`);
+    
+    await window.dbPush(msgRef, {
+        sender: loggedUsername,
+        message: msgText,
+        timestamp: Date.now()
+    });
+
+    msgInput.value = '';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const chatSelect = document.getElementById('chat-recipient-select');
+    if (chatSelect) {
+        chatSelect.addEventListener('change', () => {
+            const loggedUsername = localStorage.getItem('kultura_market_username');
+            const recipient = chatSelect.value;
+            const chatBox = document.getElementById('chat-messages-container');
+
+            if (!recipient) {
+                chatBox.innerHTML = `<span style="color: var(--text-dim);">Select a friend to start chatting.</span>`;
+                return;
+            }
+
+            const chatRoomId = [loggedUsername, recipient].sort().join('_');
+            window.dbOnValue(window.dbRef(window.database, `social_chats/${chatRoomId}`), (snapshot) => {
+                chatBox.innerHTML = "";
+                const msgs = snapshot.val();
+                if (!msgs) {
+                    chatBox.innerHTML = `<span style="color: var(--text-dim);">No messages yet. Say hello!</span>`;
+                    return;
+                }
+
+                Object.values(msgs).forEach((m) => {
+                    const isMe = m.sender === loggedUsername;
+                    const senderColor = isMe ? "#00b4d8" : "var(--primary)";
+                    chatBox.innerHTML += `<div style="margin-bottom: 4px;"><strong style="color: ${senderColor};">${isMe ? 'You' : m.sender}:</strong> ${m.message}</div>`;
+                });
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        });
+    }
+});
