@@ -76,8 +76,8 @@ function initPageCounter() {
     });
 }
 
-// 🌐 DISCORD WEBHOOK PARA SA ATTENDANCE & PAYOUTS
-const ATTENDANCE_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563758263332380773/bxxU_cFnH1bfmcMw8hpMKGJ3wFslCq2rOg4avHYvH-R1S5W8SCZ_z2CoGxJ8H4Ww-3U7";
+// 🌐 DISCORD WEBHOOK PARA SA ATTENDANCE & PAYOUTS (BAGONG NA-UPDATE NA WEBHOOK)
+const ATTENDANCE_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1564136116242612286/wdzglpcZSMPXoN7hq562LLT6M3yDrPc8yVAhTQ2ugekBuuUBo0OI7Cst-EIxK1CQUOno";
 
 let ALL_DIVISIONS = [
     "Fullclip Division (Fullclip)",
@@ -525,7 +525,6 @@ function getOriginalCasedMainName(lowerKey) {
 
 async function saveGuildEventsToFirebase() {
     if (!currentLoggedInOfficer) return;
-    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1561685065963147334/u6MD_ZwJ8EjxSQUkxPmMSHDSGIcOOdHUXV4_ZLBsXcV2Ynav_bTzmt-qN8cLwffuEVBf";
 
     const isGiveawayVisible = document.getElementById('giveawaybot-visibility-select').value;
     const ev1Title = document.getElementById('event1-title').value.trim();
@@ -547,7 +546,7 @@ async function saveGuildEventsToFirebase() {
         await window.dbSet(window.dbRef(window.database, 'kultura_events'), newEventsPayload);
     }
 
-    if (DISCORD_WEBHOOK_URL) {
+    if (ATTENDANCE_DISCORD_WEBHOOK_URL) {
         try {
             const discordBody = {
                 username: "Kultura Guild Event Announcer",
@@ -564,7 +563,7 @@ async function saveGuildEventsToFirebase() {
                     timestamp: new Date().toISOString()
                 }]
             };
-            await fetch(DISCORD_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(discordBody) });
+            await fetch(ATTENDANCE_DISCORD_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(discordBody) });
         } catch (err) { console.error("Discord Webhook Error:", err); }
     }
     alert("🎉 Success! Guild Events updated on Website and successfully announced to your Discord channel!");
@@ -572,7 +571,6 @@ async function saveGuildEventsToFirebase() {
 
 async function sendCustomDiscordAnnouncement() {
     if (!currentLoggedInOfficer) return;
-    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1561685065963147334/u6MD_ZwJ8EjxSQUkxPmMSHDSGIcOOdHUXV4_ZLBsXcV2Ynav_bTzmt-qN8cLwffuEVBf";
 
     const selectedSender = document.getElementById('discord-announce-sender').value;
     const title = document.getElementById('discord-announce-title').value.trim();
@@ -593,7 +591,7 @@ async function sendCustomDiscordAnnouncement() {
                 timestamp: new Date().toISOString()
             }]
         };
-        await fetch(DISCORD_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(discordBody) });
+        await fetch(ATTENDANCE_DISCORD_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(discordBody) });
         alert("🚀 Official Announcement successfully sent to your Discord channel!");
         document.getElementById('discord-announce-title').value = '';
         document.getElementById('discord-announce-msg').value = '';
