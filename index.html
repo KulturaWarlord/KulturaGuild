@@ -148,7 +148,7 @@
                 <h3 style="margin: 0; color: var(--primary);">🛒 Members Profile & Social Hub</h3>
             </div>
 
-            <!-- LOCKED VIEW (Kapag hindi pa naka-login ang member) -->
+            <!-- LOCKED VIEW -->
             <div id="market-locked-view" style="text-align: center; padding: 25px 10px;">
                 <p style="color: var(--text-dim); margin-bottom: 15px;">Mag-log in o mag-rehistro para ma-access ang iyong Member Profile, Social Hub, at direktang makapaghain ng listing sa Discord!</p>
                 <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
@@ -157,7 +157,7 @@
                 </div>
             </div>
 
-            <!-- UNLOCKED VIEW (Kapag naka-login na ang member) -->
+            <!-- UNLOCKED VIEW -->
             <div id="market-unlocked-view" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: transparent; padding: 12px 15px; border-radius: 6px; border: 1px solid var(--border-gold); flex-wrap: wrap; gap: 10px;">
                     <span style="font-size: 0.9rem;">👤 Welcome back, <strong id="market-current-user-display" style="color: var(--primary-glow);">--</strong>!</span>
@@ -522,6 +522,36 @@
                             <div id="pending-listings-container" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
                                 <span style="color: var(--text-dim);">Walang pending listings.</span>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- SUPERADMIN: AUCTION ITEMS THREAD & PRICE LIST -->
+                    <div id="superadmin-auction-block" class="admin-section-block" style="display: none; border-color: #00ffcc;">
+                        <button onclick="toggleAdminSection('sec-auction-manager')" class="admin-collapsible-btn" style="color: #00ffcc; background: rgba(0, 255, 204, 0.1);">
+                            <span>⚖️ SuperAdmin: Auction Items Thread & Price List Manager</span>
+                            <span id="icon-sec-auction-manager">▼ Expand</span>
+                        </button>
+                        <div id="sec-auction-manager" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
+                                Magdagdag o mag-update ng mga items sa auction at i-broadcast ang updated price list diretso sa Discord.
+                            </p>
+                            
+                            <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; border: 1px solid #00ffcc; margin-bottom: 12px;">
+                                <h4 style="color: #00ffcc; font-size: 0.85rem; margin-bottom: 6px;">Add New Auction Item:</h4>
+                                <input type="text" id="auction-item-name" placeholder="Item Name & Options (e.g., Wings of Hero +15 FO)" style="width: 100%; padding: 6px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem; margin-bottom: 6px;">
+                                <input type="text" id="auction-item-price" placeholder="Current Bid / Starting Price (e.g., 25,000 SOL)" style="width: 100%; padding: 6px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem; margin-bottom: 6px;">
+                                <input type="text" id="auction-item-status" placeholder="Status (e.g., Open / Bidding / Sold)" style="width: 100%; padding: 6px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem; margin-bottom: 6px;">
+                                <button onclick="addAuctionItem()" class="btn" style="width: 100%; padding: 6px; font-size: 0.8rem; background: #00ffcc; color: #000; font-weight: bold;">➕ Add to Auction List</button>
+                            </div>
+
+                            <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">Current Auction Items Thread:</h4>
+                            <div id="admin-auction-items-list" style="max-height: 160px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem; margin-bottom: 10px;">
+                                <span style="color: var(--text-dim);">Walang auction items sa ngayon.</span>
+                            </div>
+
+                            <button onclick="sendAuctionPriceListToDiscord()" class="btn" style="width: 100%; padding: 8px; font-size: 0.85rem; background: linear-gradient(135deg, #00ffcc, #008866); color: #000; font-weight: bold;">
+                                🚀 Send Updated Price List to Discord
+                            </button>
                         </div>
                     </div>
 
