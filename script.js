@@ -153,6 +153,29 @@ function resetInactivityTimer() {
     window.addEventListener(eventType, resetInactivityTimer);
 });
 
+// 📡 IP TRACKER LOGGING FUNCTION
+async function logUserIpAction(actionType, identifier) {
+    try {
+        let response = await fetch('https://api.ipify.org?format=json');
+        let data = await response.json();
+        let userIp = data.ip || "Unknown IP";
+
+        let ipLogEntry = {
+            ip: userIp,
+            action: actionType, // "LOGIN" o "REGISTER"
+            user: identifier,
+            timestamp: new Date().toLocaleString()
+        };
+
+        if (window.database) {
+            let pushRef = window.dbPush(window.dbRef(window.database, 'kultura_ip_logs'));
+            await window.dbSet(pushRef, ipLogEntry);
+        }
+    } catch (err) {
+        console.error("IP Log Error:", err);
+    }
+}
+
 function updatePortalButtonUI() {
     const btn = document.getElementById('open-officer-portal-btn');
     if (!btn) return;
@@ -947,6 +970,10 @@ async function handleLogin() {
         await window.signInWithEmailAndPassword(window.auth, loginEmail, passVal);
         currentLoggedInOfficer = userVal.includes('@') ? userVal.split('@')[0] : userVal;
         localStorage.setItem('kultura_logged_officer', currentLoggedInOfficer);
+        
+        // 📡 Log IP Address upon Officer Login
+        await logUserIpAction("OFFICER_LOGIN", currentLoggedInOfficer);
+
         alert(`✅ Welcome ${currentLoggedInOfficer}! Successfully authenticated.`);
         closeLoginModal();
         updatePortalButtonUI();
@@ -1392,6 +1419,37 @@ async function registerAllianceAndGM() {
     openAdminModal();
 }
 
+function loadSuperAdminIpLogs() {
+    const container = document.getElementById('superadmin-ip-list-container');
+    if (!container) return;
+
+    window.dbOnValue(window.dbRef(window.database, 'kultura_ip_logs'), (snapshot) => {
+        container.innerHTML = "";
+        const data = snapshot.val();
+
+        if (!data) {
+            container.innerHTML = "<span style='color: var(--text-dim);'>Walang nakatalang IP logs.</span>";
+            return;
+        }
+
+        let logsArray = Object.values(data).reverse(); // Pinakabagong log sa unahan
+        logsArray.forEach(log => {
+            let badgeColor = log.action === "MEMBER_LOGIN" || log.action === "OFFICER_LOGIN" ? "#33cc33" : "#ffaa33";
+            const row = document.createElement('div');
+            row.style.cssText = "padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;";
+            row.innerHTML = `
+                <div>
+                    <span style="color: ${badgeColor}; font-weight: bold;">[${log.action}]</span> 
+                    <strong style="color: #fff;">${log.user}</strong> 
+                    <span style="color: var(--primary-glow); margin-left: 6px;">🌐 IP: ${log.ip}</span>
+                </div>
+                <small style="color: var(--text-dim);">${log.timestamp}</small>
+            `;
+            container.appendChild(row);
+        });
+    });
+}
+
 function openAdminModal() {
     if (!currentLoggedInOfficer) { openLoginModal(); return; }
     document.getElementById('logged-agm-display').innerText = `${currentLoggedInOfficer}`;
@@ -1410,6 +1468,7 @@ function openAdminModal() {
     const superDeleteLogsBlock = document.getElementById('superadmin-delete-logs-block');
     const superGuildRegBlock = document.getElementById('superadmin-guild-reg-block');
     const superEventsBlock = document.getElementById('superadmin-events-block');
+    const superIpBlock = document.getElementById('superadmin-ip-block');
 
     let currentLower = currentLoggedInOfficer.toLowerCase();
     let isSuperAdmin = (currentLower === "fullclip" || currentLower === "kultura" || currentLower === "kulturamain");
@@ -1420,15 +1479,18 @@ function openAdminModal() {
         superDeleteLogsBlock.style.display = 'block';
         superGuildRegBlock.style.display = 'block';
         if (superEventsBlock) superEventsBlock.style.display = 'block';
+        if (superIpBlock) superIpBlock.style.display = 'block';
         renderSuperAdminInbox();
         renderAdminAttendanceLogList();
         populateEventsAdminForm();
         loadPendingMarketAccounts();
+        loadSuperAdminIpLogs();
     } else {
         superInboxBlock.style.display = 'none';
         superDeleteLogsBlock.style.display = 'none';
         superGuildRegBlock.style.display = 'none';
         if (superEventsBlock) superEventsBlock.style.display = 'none';
+        if (superIpBlock) superIpBlock.style.display = 'none';
     }
 
     updateGiveawayBotVisibility();
@@ -1700,6 +1762,10 @@ async function submitMarketMemberRegistration() {
 
     try {
         await window.dbSet(window.dbRef(window.database, `marketplace_accounts_pending/${username}`), regData);
+        
+        // 📡 Log IP Address upon Member Registration
+        await logUserIpAction("MEMBER_REGISTER", `${ign} (@${username})`);
+
         alert("🎉 Matagumpay na naisumite ang iyong rehistro! Maghintay ng approval mula sa SuperAdmin.");
         closeMarketRegisterModal();
     } catch (err) {
@@ -1723,6 +1789,10 @@ async function submitMarketMemberLogin() {
             const acc = snapshot.val();
             if (acc.password === password) {
                 localStorage.setItem('kultura_market_user', `${acc.ign} (@${acc.username})`);
+                
+                // 📡 Log IP Address upon Member Login
+                await logUserIpAction("MEMBER_LOGIN", `${acc.ign} (@${acc.username})`);
+
                 alert(`✅ Maligayang pagdating, ${acc.ign}! Nakapasok ka na sa Marketplace.`);
                 closeMarketLoginModal();
                 checkMarketplaceAuthOnLoad();
