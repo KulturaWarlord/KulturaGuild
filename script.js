@@ -76,7 +76,7 @@ function initPageCounter() {
     });
 }
 
-// 🌐 DISCORD WEBHOOK PARA SA ATTENDANCE & PAYOUTS
+// 🌐 DISCORD WEBHOOK FOR ATTENDANCE & PAYOUTS
 const ATTENDANCE_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1564136116242612286/wdzglpcZSMPXoN7hq562LLT6M3yDrPc8yVAhTQ2ugekBuuUBo0OI7Cst-EIxK1CQUOno";
 
 let ALL_DIVISIONS = [
@@ -576,7 +576,7 @@ async function sendCustomDiscordAnnouncement() {
     const title = document.getElementById('discord-announce-title').value.trim();
     const message = document.getElementById('discord-announce-msg').value.trim();
 
-    if (!message) { alert("⚠️ Mangyaring maglagay ng announcement message!"); return; }
+    if (!message) { alert("⚠️ Please enter an announcement message!"); return; }
 
     try {
         const discordBody = {
@@ -595,7 +595,7 @@ async function sendCustomDiscordAnnouncement() {
         alert("🚀 Official Announcement successfully sent to your Discord channel!");
         document.getElementById('discord-announce-title').value = '';
         document.getElementById('discord-announce-msg').value = '';
-    } catch (err) { console.error("Discord Webhook Error:", err); alert("❌ Nagkaroon ng problema sa pagpapadala sa Discord."); }
+    } catch (err) { console.error("Discord Webhook Error:", err); alert("❌ An error occurred while sending to Discord."); }
 }
 
 async function sendAttendanceToDiscordChannel(dateKey, eventType, totalPool, presentsCount) {
@@ -644,16 +644,16 @@ let currentCarRaceRound = 1;
 let carRaceAccumulatedWinners = [];
 
 const CAR_KANTYAWAN_PHRASES = [
-    "Wooooh! Humahabol ang kotse ni [NAME]! Naka nitro boost yarn?!",
-    "At nag-overtake sa kurbada si [NAME]! Grabe ang harurot!",
-    "Lumilipad na sa expressway ang kotse ni [NAME]!",
-    "Pasok sa unahan si [NAME]! Ang bilis ng rebolusyon!",
-    "Kumatog ang makina ni [NAME]! Ayan na, bumubuntot na!",
-    "Bawal mag warp drive [NAME]! Fair race ito sa speedway!",
-    "Sumasabog ang tambutso ni [NAME]! Nitro sprint visual!",
-    "Ayan na, matinding unahan! Nagpa-pumpiyo si [NAME]!",
-    "Lumampas sa kurbada si [NAME]! Pasok sa pwesto!",
-    "Dikitan ang laban! Hahabol ba si [NAME] sa finish line?!"
+    "Wooooh! [NAME]'s car is catching up! Is that nitro boost?!",
+    "And [NAME] overtakes at the curve! Absolute speed!",
+    "Flying down the expressway, it's [NAME]'s car!",
+    "Moving up front, [NAME]! Amazing acceleration!",
+    "Engine roaring for [NAME]! Tailing the leader now!",
+    "No warp drives allowed, [NAME]! Fair race on the speedway!",
+    "Exhaust flaming for [NAME]! Incredible visual sprint!",
+    "Intense battle for the lead! [NAME] is pumping the gas!",
+    "Cutting past the bend, [NAME] takes the spot!",
+    "A tight race! Will [NAME] make it to the finish line?!"
 ];
 const CAR_ICONS = ["🏎️", "🏎️", "🏎️", "🏎️", "🏎️"];
 
@@ -731,7 +731,7 @@ async function runCarRace() {
     const TOTAL_DURATION_SEC = 45;
     let startTime = Date.now();
     let lastShoutTime = startTime;
-    let startMsg = `Attention drivers! Red light is on! Three, two, one, GO! Harurot na sa expressway!`;
+    let startMsg = `Attention drivers! Red light is on! Three, two, one, GO! Speed down the expressway!`;
     kantyawanBox.innerHTML = `🎙️ 🔊 ${startMsg}`;
     speakKantyawanText(startMsg);
 
@@ -795,7 +795,7 @@ async function runCarRace() {
             const publicWinnersBox = document.getElementById('public-winners-display-box');
             if (publicWinnersBox) publicWinnersBox.innerHTML = publicWinnersHtml;
 
-            let victoryMessage = `At tinawid na ang finish line! Ang kampeon sa round ${currentCarRaceRound} ay si driver ${roundWinner.name}!`;
+            let victoryMessage = `And crossing the finish line! The champion of round ${currentCarRaceRound} is driver ${roundWinner.name}!`;
             kantyawanBox.innerHTML = `🎉 🎙️ 🔊 ${victoryMessage} 🎉`;
             speakKantyawanText(victoryMessage);
 
@@ -1680,31 +1680,46 @@ function closeMarketLoginModal() {
     document.getElementById('market-login-modal').style.display = 'none';
 }
 
+// 🌐 FETCH USER IP ADDRESS IN BACKGROUND
+async function fetchUserIPAddress() {
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip || "Unknown IP";
+    } catch (e) {
+        return "Unknown IP";
+    }
+}
+
 async function submitMarketMemberRegistration() {
     const ign = document.getElementById('reg-market-ign').value.trim();
     const username = document.getElementById('reg-market-user').value.trim().toLowerCase();
     const password = document.getElementById('reg-market-pass').value.trim();
 
     if (!ign || !username || !password) {
-        alert("⚠️ Punan ang lahat ng fields para sa pagrehistro!");
+        alert("⚠️ Please fill in all fields to register!");
         return;
     }
+
+    // Fetch IP address before submitting to database
+    const userIp = await fetchUserIPAddress();
 
     const regData = {
         ign: ign,
         username: username,
         password: password,
+        ipAddress: userIp,
         timestamp: Date.now(),
         status: "PENDING"
     };
 
     try {
         await window.dbSet(window.dbRef(window.database, `marketplace_accounts_pending/${username}`), regData);
-        alert("🎉 Matagumpay na naisumite ang iyong rehistro! Maghintay ng approval mula sa SuperAdmin.");
+        alert("🎉 Registration successfully submitted! Please wait for approval from SuperAdmin.");
         closeMarketRegisterModal();
     } catch (err) {
         console.error("Registration Error:", err);
-        alert("❌ Nabigo ang pagrehistro. Subukang muli.");
+        alert("❌ Registration failed. Please try again.");
     }
 }
 
@@ -1713,7 +1728,7 @@ async function submitMarketMemberLogin() {
     const password = document.getElementById('login-market-pass').value.trim();
 
     if (!username || !password) {
-        alert("⚠️ Ilagay ang iyong Username at Password!");
+        alert("⚠️ Please enter your Username and Password!");
         return;
     }
 
@@ -1723,45 +1738,94 @@ async function submitMarketMemberLogin() {
             const acc = snapshot.val();
             if (acc.password === password) {
                 localStorage.setItem('kultura_market_user', `${acc.ign} (@${acc.username})`);
-                alert(`✅ Maligayang pagdating, ${acc.ign}! Nakapasok ka na sa Marketplace.`);
+                alert(`✅ Welcome, ${acc.ign}! You are now logged into the Marketplace.`);
                 closeMarketLoginModal();
                 checkMarketplaceAuthOnLoad();
                 return;
             }
         }
-        alert("❌ Mali ang password o ang account ay hindi pa na-approve ng SuperAdmin!");
+        alert("❌ Incorrect password or your account is not yet approved by SuperAdmin!");
     } catch (err) {
         console.error("Login Error:", err);
-        alert("❌ Error sa pag-login.");
+        alert("❌ Login error occurred.");
     }
 }
 
 function marketLogout() {
     localStorage.removeItem('kultura_market_user');
     checkMarketplaceAuthOnLoad();
-    alert("🔒 Nakapag-log out ka na sa Marketplace.");
+    alert("🔒 You have logged out of the Marketplace.");
 }
 
-function loadPendingMarketAccounts() {
+async function loadPendingMarketAccounts() {
     const container = document.getElementById('pending-market-accounts-container');
     if (!container) return;
 
-    window.dbOnValue(window.dbRef(window.database, 'marketplace_accounts_pending'), (snapshot) => {
+    // Fetch approved accounts to map existing IPs and IGN/Usernames
+    const approvedSnap = await window.dbGet(window.dbRef(window.database, 'marketplace_accounts_approved'));
+    const approvedAccounts = approvedSnap.exists() ? approvedSnap.val() : {};
+    
+    // Key: IP Address, Value: First registered Account Info
+    let approvedIpMap = {};
+    Object.values(approvedAccounts).forEach(acc => {
+        if (acc.ipAddress && !approvedIpMap[acc.ipAddress]) {
+            approvedIpMap[acc.ipAddress] = { ign: acc.ign, username: acc.username };
+        }
+    });
+
+    window.dbOnValue(window.dbRef(window.database, 'marketplace_accounts_pending'), async (snapshot) => {
         container.innerHTML = "";
         const data = snapshot.val();
 
         if (!data) {
-            container.innerHTML = "<p style='color: var(--text-dim);'>Walang naghihintay na rehistro.</p>";
+            container.innerHTML = "<p style='color: var(--text-dim);'>No pending registration requests.</p>";
             return;
         }
 
+        let allPendingEntries = Object.values(data);
+
         Object.keys(data).forEach((userKey) => {
             const acc = data[userKey];
+            const currentIp = acc.ipAddress || "Unknown IP";
+
+            let isDuplicateIp = false;
+            let originalOwnerInfo = "";
+
+            if (currentIp !== "Unknown IP") {
+                // Check if IP already exists in Approved Accounts
+                if (approvedIpMap[currentIp]) {
+                    isDuplicateIp = true;
+                    const original = approvedIpMap[currentIp];
+                    originalOwnerInfo = `${original.ign} (@${original.username})`;
+                } else {
+                    // Check against other Pending Accounts
+                    let pendingMatches = allPendingEntries.filter(item => item.ipAddress === currentIp);
+                    if (pendingMatches.length > 1) {
+                        isDuplicateIp = true;
+                        // Get the earliest applicant by timestamp
+                        pendingMatches.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+                        const firstPending = pendingMatches[0];
+                        if (firstPending.username !== acc.username) {
+                            originalOwnerInfo = `${firstPending.ign} (@${firstPending.username}) [Pending]`;
+                        }
+                    }
+                }
+            }
+
             const card = document.createElement('div');
             card.style.cssText = "background: #111; border: 1px solid #444; padding: 10px; margin-bottom: 8px; border-radius: 4px; font-size: 0.85rem;";
+            
+            let duplicateWarningHtml = isDuplicateIp 
+                ? `<div style="color: #ff3333; font-weight: bold; margin: 6px 0; background: rgba(255,51,51,0.1); padding: 6px; border-radius: 3px; border: 1px solid #ff3333;">
+                    ⚠️ Duplicate IP Detected: ${currentIp}<br>
+                    <span style="color: #ffaa33; font-size: 0.8rem;">👤 Originally Registered By: <strong>${originalOwnerInfo}</strong></span>
+                   </div>`
+                : `<div style="color: #33cc33; margin: 4px 0;">🌐 IP Address: ${currentIp}</div>`;
+
             card.innerHTML = `
                 <p><strong>IGN:</strong> ${acc.ign}</p>
                 <p><strong>Username:</strong> @${acc.username}</p>
+                ${duplicateWarningHtml}
                 <div style="margin-top: 8px; display: flex; gap: 8px;">
                     <button onclick="approveMarketAccount('${acc.username}')" style="background: #28a745; color: #fff; border: none; padding: 4px 10px; cursor: pointer; border-radius: 3px; font-weight: bold;">🟢 Approve</button>
                     <button onclick="rejectMarketAccount('${acc.username}')" style="background: #dc3545; color: #fff; border: none; padding: 4px 10px; cursor: pointer; border-radius: 3px; font-weight: bold;">🔴 Reject</button>
@@ -1780,13 +1844,13 @@ async function approveMarketAccount(username) {
     const accData = snap.val();
     await window.dbSet(window.dbRef(window.database, `marketplace_accounts_approved/${username}`), accData);
     await window.dbSet(pendingRef, null);
-    alert(`✅ Na-approve na ang account ni @${username}! Makakapag-login na siya sa Marketplace.`);
+    alert(`✅ Account for @${username} has been approved! They can now log in.`);
 }
 
 async function rejectMarketAccount(username) {
-    if (confirm(`Tanggihan at tanggalin ang rehistro ni @${username}?`)) {
+    if (confirm(`Reject and delete registration for @${username}?`)) {
         await window.dbSet(window.dbRef(window.database, `marketplace_accounts_pending/${username}`), null);
-        alert("🗑️ Tinanggihan ang rehistro.");
+        alert("🗑️ Registration rejected.");
     }
 }
 
