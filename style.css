@@ -260,3 +260,22 @@ footer p span { color: var(--primary); }
     background: repeating-linear-gradient(45deg, #fff, #fff 3px, #000 3px, #000 6px);
     z-index: 1; border-left: 1px solid #ff3399;
 }
+
+/* 🛒 CUSTOMIZED BACKGROUND PARA SA MEMBERS PROFILE & MARKETPLACE SECTION */
+#market-unlocked-view {
+    background-image: linear-gradient(rgba(10, 10, 15, 0.85), rgba(10, 10, 15, 0.92)), 
+                      url('ILAGAY_ANG_DIRECT_IMAGE_LINK_DITO.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 2px solid var(--border-gold);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(230, 184, 0, 0.2);
+}
+
+#market-unlocked-view > div {
+    background: rgba(15, 15, 22, 0.85) !important;
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-gold) !important;
+}
