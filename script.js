@@ -2196,7 +2196,7 @@ async function sendAuctionPriceListToDiscord() {
             content: "@everyone ⚖️ **UPDATED KULTURA GUILD AUCTION PRICE LIST**",
             embeds: [{
                 title: "🏛️ ACTIVE AUCTION ITEMS THREAD",
-                description: "Here are the prices from the last auction.!",
+                description: "Here are the prices from the last auction!",
                 color: 65535,
                 fields: fieldsArray,
                 footer: { text: "Kultura Guild & Alliance • Verified Auction Thread", icon_url: "https://nolimit.lv/themes/def_theme/images/logo.png" },
