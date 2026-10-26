@@ -1674,10 +1674,6 @@ async function checkMarketplaceAuthOnLoad() {
         if (lockedView) lockedView.style.display = 'block';
         if (unlockedView) unlockedView.style.display = 'none';
     }
-
-    if (typeof window.database !== 'undefined') {
-        loadPendingMarketplaceListings();
-    }
 }
 
 function applyCustomSectionBg(url) {
@@ -1685,7 +1681,7 @@ function applyCustomSectionBg(url) {
     if (!sectionContainer) return;
 
     if (url && url.trim() !== '') {
-        sectionContainer.style.backgroundImage = `linear-gradient(rgba(10, 10, 15, 0.45), rgba(10, 10, 15, 0.65)), url('${url}')`;
+        sectionContainer.style.backgroundImage = `url('${url}')`;
         sectionContainer.style.backgroundSize = 'cover';
         sectionContainer.style.backgroundPosition = 'center';
         sectionContainer.style.backgroundRepeat = 'no-repeat';
@@ -1882,6 +1878,7 @@ async function rejectMarketAccount(username) {
     }
 }
 
+// AUTOMATIC DIRECT POST TO DISCORD FUNCTION
 async function submitMarketplacePending() {
     const listingType = document.getElementById('market-listing-type').value;
     const seller = document.getElementById('market-seller-ign').value.trim();
@@ -1891,7 +1888,7 @@ async function submitMarketplacePending() {
     const loggedUsername = localStorage.getItem('kultura_market_username');
 
     if (!seller || !item || !price) {
-        alert("⚠️ Please fill in Seller/Trader IGN, Item/Option, and Price!");
+        alert("⚠️ Mangyaring punan ang Seller/Trader IGN, Item/Option, at Price!");
         return;
     }
 
@@ -1899,6 +1896,7 @@ async function submitMarketplacePending() {
         localStorage.setItem('kultura_market_discord_id', discordId);
     }
 
+    // Kukunin ang profile picture ng naka-login na miyembro (kung mayroon)
     let userAvatarUrl = "";
     if (loggedUsername) {
         try {
@@ -1906,101 +1904,36 @@ async function submitMarketplacePending() {
             if (userSnap.exists()) {
                 userAvatarUrl = userSnap.val().avatarUrl || "";
             }
-        } catch (e) {}
-    }
-
-    const newListing = {
-        type: listingType || "SELLING",
-        seller: seller,
-        item: item,
-        price: price,
-        discordId: discordId || "",
-        avatarUrl: userAvatarUrl,
-        timestamp: Date.now(),
-        status: "PENDING"
-    };
-
-    try {
-        const newPushRef = window.dbPush(window.dbRef(window.database, 'marketplace_pending'));
-        await window.dbSet(newPushRef, newListing);
-        alert("🎉 Your listing has been submitted! It will appear on Discord once approved by SuperAdmin.");
-        document.getElementById('market-item-desc').value = '';
-        document.getElementById('market-price-desc').value = '';
-    } catch (err) {
-        console.error("Firebase Submit Error:", err);
-        alert("❌ Failed to submit listing. Please try again.");
-    }
-}
-
-function loadPendingMarketplaceListings() {
-    const container = document.getElementById('pending-listings-container');
-    if (!container) return;
-
-    window.dbOnValue(window.dbRef(window.database, 'marketplace_pending'), (snapshot) => {
-        container.innerHTML = "";
-        const data = snapshot.val();
-
-        if (!data) {
-            container.innerHTML = "<p style='color: var(--text-dim);'>No pending marketplace listings at this time.</p>";
-            return;
+        } catch (e) {
+            console.error("Error fetching avatar:", e);
         }
+    }
 
-        Object.keys(data).forEach((key) => {
-            const item = data[key];
-            const typeBadge = item.type === "BUYING" ? "🟢 BUYING" : "🔴 SELLING";
-            const card = document.createElement('div');
-            card.style.cssText = "background: #111; border: 1px solid #444; padding: 12px; margin-bottom: 10px; border-radius: 4px;";
-            card.innerHTML = `
-                <p><strong>Type:</strong> <span style="color: ${item.type === 'BUYING' ? '#28a745' : '#ff3333'}; font-weight: bold;">${typeBadge}</span></p>
-                <p><strong>Trader IGN:</strong> ${item.seller}</p>
-                <p><strong>Item:</strong> ${item.item}</p>
-                <p><strong>Price:</strong> ${item.price}</p>
-                <p><strong>Discord ID:</strong> ${item.discordId || "None"}</p>
-                <div style="margin-top: 10px; display: flex; gap: 10px;">
-                    <button onclick="approveMarketplaceListing('${key}')" style="background: #28a745; color: #fff; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold;">
-                        🟢 Approve & Post to Discord
-                    </button>
-                    <button onclick="rejectMarketplaceListing('${key}')" style="background: #dc3545; color: #fff; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold;">
-                        🔴 Reject / Delete
-                    </button>
-                </div>
-            `;
-            container.appendChild(card);
-        });
-    });
-}
-
-async function approveMarketplaceListing(key) {
-    const itemRef = window.dbRef(window.database, `marketplace_pending/${key}`);
-    const snapshot = await window.dbGet(itemRef);
-    const item = snapshot.val();
-
-    if (!item) return;
-
-    let contactField = item.discordId 
-        ? `[Direct Message Trader on Discord](https://discord.com/users/${item.discordId})` 
-        : `In-game IGN: **${item.seller}**`;
-    let mentionTag = item.discordId ? `<@${item.discordId}>` : `@everyone`;
-    let isBuying = item.type === "BUYING";
+    // Paghahanda ng Discord Webhook Payload
+    let contactField = discordId 
+        ? `[Direct Message Trader on Discord](https://discord.com/users/${discordId})` 
+        : `In-game IGN: **${seller}**`;
+    let mentionTag = discordId ? `<@${discordId}>` : `@everyone`;
+    let isBuying = listingType === "BUYING";
     let typeHeader = isBuying ? "🟢 **NEW BUYING LISTING!**" : "🔴 **NEW SELLING LISTING!**";
     let embedColor = isBuying ? 3066993 : 15120128;
 
     let embedObject = {
-        title: `📦 ${item.type || 'SELLING'} — ${item.seller}`,
+        title: `📦 ${listingType || 'SELLING'} — ${seller}`,
         color: embedColor,
         fields: [
-            { name: "📌 Type", value: `\`${item.type || 'SELLING'}\``, inline: true },
-            { name: "👤 Trader IGN", value: `\`${item.seller}\``, inline: true },
-            { name: "💰 Price / Offer", value: `\`${item.price}\``, inline: true },
-            { name: "⚔️ Item & Option", value: `\`${item.item}\``, inline: false },
+            { name: "📌 Type", value: `\`${listingType || 'SELLING'}\``, inline: true },
+            { name: "👤 Trader IGN", value: `\`${seller}\``, inline: true },
+            { name: "💰 Price / Offer", value: `\`${price}\``, inline: true },
+            { name: "⚔️ Item & Option", value: `\`${item}\``, inline: false },
             { name: "💬 How to Contact", value: contactField, inline: false }
         ],
         footer: { text: "Kultura Guild & Alliance • Verified Marketplace", icon_url: "https://nolimit.lv/themes/def_theme/images/logo.png" },
         timestamp: new Date().toISOString()
     };
 
-    if (item.avatarUrl) {
-        embedObject.thumbnail = { url: item.avatarUrl };
+    if (userAvatarUrl) {
+        embedObject.thumbnail = { url: userAvatarUrl };
     }
 
     const discordBody = {
@@ -2010,6 +1943,7 @@ async function approveMarketplaceListing(key) {
         embeds: [embedObject]
     };
 
+    // AUTOMATIC DIRECT POST TO DISCORD WEBHOOK
     try {
         const response = await fetch(MARKETPLACE_DISCORD_WEBHOOK_URL, {
             method: 'POST',
@@ -2018,20 +1952,14 @@ async function approveMarketplaceListing(key) {
         });
 
         if (response.ok || response.status === 204) {
-            await window.dbSet(itemRef, null);
-            alert("✅ Listing approved and successfully posted to Discord with profile picture!");
+            alert("🎉 Matagumpay! Ang iyong Item Listing ay AWTOMATIKONG na-post na sa Discord Channel!");
+            document.getElementById('market-item-desc').value = '';
+            document.getElementById('market-price-desc').value = '';
         } else {
-            alert("❌ Failed to post to Discord Webhook.");
+            alert("❌ Nabigong mag-post sa Discord Webhook.");
         }
     } catch (err) {
-        console.error("Approval Webhook Error:", err);
-        alert("❌ Network error sending to Discord.");
-    }
-}
-
-async function rejectMarketplaceListing(key) {
-    if (confirm("Are you sure you want to reject and delete this listing?")) {
-        await window.dbSet(window.dbRef(window.database, `marketplace_pending/${key}`), null);
-        alert("🗑️ Listing deleted.");
+        console.error("Direct Post Discord Error:", err);
+        alert("❌ Nagkaroon ng problema sa koneksyon papuntang Discord.");
     }
 }
