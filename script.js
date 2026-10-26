@@ -1632,7 +1632,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 🛒 KULTURA MARKETPLACE & MEMBER PROFILE FUNCTIONS (ENGLISH COMMENTS & LOGS)
+// 🛒 KULTURA MARKETPLACE & MEMBER PROFILE FUNCTIONS (IP CHECK & AUTOMATIC DISCORD POST)
 // ==========================================
 const MARKETPLACE_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563790657254854707/HDVDF2jyaYM6fijrCnNEAlW1Z-bkMYPu7G_nHcQiHnGY4Ez0QXTKjvTXD96I9oFMyAnE";
 
@@ -1653,7 +1653,6 @@ async function checkMarketplaceAuthOnLoad() {
             document.getElementById('market-discord-id').value = savedDiscordId;
         }
 
-        // Load profile avatar and background from database
         try {
             const snap = await window.dbGet(window.dbRef(window.database, `marketplace_accounts_approved/${loggedMarketUsername}`));
             if (snap.exists()) {
@@ -1743,7 +1742,7 @@ function closeMarketLoginModal() {
     document.getElementById('market-login-modal').style.display = 'none';
 }
 
-// 🟢 REGISTER MEMBER WITH IP ADDRESS TRACKING
+// 🟢 REGISTER MEMBER WITH AUTOMATIC IP DUPLICATE CHECK
 async function submitMarketMemberRegistration() {
     const ign = document.getElementById('reg-market-ign').value.trim();
     const username = document.getElementById('reg-market-user').value.trim().toLowerCase();
@@ -1763,11 +1762,49 @@ async function submitMarketMemberRegistration() {
         console.error("Failed to fetch user IP:", e);
     }
 
+    // Check if IP already exists in approved or pending accounts
+    let isDuplicateIp = false;
+    let originalRegisterUser = "";
+    try {
+        const approvedSnap = await window.dbGet(window.dbRef(window.database, 'marketplace_accounts_approved'));
+        if (approvedSnap.exists()) {
+            const approvedAccounts = approvedSnap.val();
+            for (let accKey in approvedAccounts) {
+                if (approvedAccounts[accKey].ipAddress === userIp && userIp !== "Unknown IP") {
+                    isDuplicateIp = true;
+                    originalRegisterUser = approvedAccounts[accKey].username;
+                    break;
+                }
+            }
+        }
+
+        if (!isDuplicateIp) {
+            const pendingSnap = await window.dbGet(window.dbRef(window.database, 'marketplace_accounts_pending'));
+            if (pendingSnap.exists()) {
+                const pendingAccounts = pendingSnap.val();
+                let oldestTimestamp = Date.now();
+                for (let accKey in pendingAccounts) {
+                    if (pendingAccounts[accKey].ipAddress === userIp && userIp !== "Unknown IP") {
+                        isDuplicateIp = true;
+                        if (pendingAccounts[accKey].timestamp < oldestTimestamp) {
+                            oldestTimestamp = pendingAccounts[accKey].timestamp;
+                            originalRegisterUser = pendingAccounts[accKey].username;
+                        }
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        console.error("Error checking duplicate IP:", e);
+    }
+
     const regData = {
         ign: ign,
         username: username,
         password: password,
         ipAddress: userIp,
+        isDuplicateIp: isDuplicateIp,
+        originalUser: originalRegisterUser || username,
         avatarUrl: "",
         bgUrl: "",
         timestamp: Date.now(),
@@ -1840,7 +1877,7 @@ function marketLogout() {
     alert("🔒 Successfully logged out from Marketplace.");
 }
 
-// 🟢 SUPERADMIN PENDING ACCOUNTS WITH IP & FIFO TIMESTAMP SORTING
+// 🟢 SUPERADMIN PENDING ACCOUNTS WITH AUTOMATIC DUPLICATE IP HIGHLIGHTING
 function loadPendingMarketAccounts() {
     const container = document.getElementById('pending-market-accounts-container');
     if (!container) return;
@@ -1859,12 +1896,16 @@ function loadPendingMarketAccounts() {
 
         accountsArray.forEach((acc) => {
             const regDate = new Date(acc.timestamp).toLocaleString();
+            let ipBadgeStyle = acc.isDuplicateIp ? "color: #ff3333; font-weight: bold;" : "color: #ffaa33;";
+            let duplicateWarning = acc.isDuplicateIp ? `<p style="color: #ff3333; font-size: 0.8rem; font-weight: bold;">⚠️ WARNING: Same IP detected! (First registered: @${acc.originalUser})</p>` : "";
+
             const card = document.createElement('div');
             card.style.cssText = "background: #111; border: 1px solid #444; padding: 10px; margin-bottom: 8px; border-radius: 4px; font-size: 0.85rem;";
             card.innerHTML = `
                 <p><strong>IGN:</strong> ${acc.ign}</p>
                 <p><strong>Username:</strong> @${acc.username}</p>
-                <p style="color: #ffaa33;"><strong>IP Address:</strong> ${acc.ipAddress || 'Unknown'}</p>
+                <p style="${ipBadgeStyle}"><strong>IP Address:</strong> ${acc.ipAddress || 'Unknown'}</p>
+                ${duplicateWarning}
                 <p style="color: var(--text-dim); font-size: 0.75rem;"><strong>Registration Time:</strong> ${regDate}</p>
                 <div style="margin-top: 8px; display: flex; gap: 8px;">
                     <button onclick="approveMarketAccount('${acc.username}')" style="background: #28a745; color: #fff; border: none; padding: 4px 10px; cursor: pointer; border-radius: 3px; font-weight: bold;">🟢 Approve</button>
@@ -1894,7 +1935,7 @@ async function rejectMarketAccount(username) {
     }
 }
 
-// AUTOMATIC DIRECT POST TO DISCORD FUNCTION
+// 🟢 AUTOMATIC DIRECT POST TO DISCORD (NO MORE PENDING MARKETPLACE LISTINGS)
 async function submitMarketplacePending() {
     const listingType = document.getElementById('market-listing-type').value;
     const seller = document.getElementById('market-seller-ign').value.trim();
