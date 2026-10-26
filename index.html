@@ -9,12 +9,10 @@
 </head>
 <body>
 
-    <!-- 🎵 BACKGROUND AUDIO -->
     <audio id="bg-audio" loop preload="auto">
         <source src="background-music.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- 🌌 FLOATING SIDE TEXT ANIMATIONS -->
     <div id="left-floating-word" class="floating-side-word left-word">
         <span>K</span><span>U</span><span>L</span><span>T</span><span>U</span><span>R</span><span>A</span>
     </div>
@@ -22,7 +20,6 @@
         <span>A</span><span>L</span><span>L</span><span>I</span><span>A</span><span>N</span><span>C</span><span>E</span>
     </div>
 
-    <!-- 🛡️ TOP NAVIGATION & HEADER -->
     <header class="main-header">
         <div class="logo-container">
             <img src="logo.png" alt="Kultura Alliance Logo" class="guild-logo">
@@ -33,7 +30,6 @@
         </div>
         
         <div class="header-right-controls">
-            <!-- 🔐 AUTHORIZED OFFICER PORTAL BUTTON -->
             <button id="open-officer-portal-btn" onclick="openLoginModal()" class="btn btn-portal">
                 🔐 Open Authorized Officer Portal
             </button>
@@ -42,7 +38,6 @@
 
     <main class="main-content">
 
-        <!-- 🏎️ PUBLIC CAR RACE & GIVEAWAY SECTION -->
         <section id="public-giveaway-display-section" class="content-card" style="display: none;">
             <h2 class="section-title">🏎️ GRAND PRIX CAR RACE & GIVEAWAYS</h2>
             <div class="giveaway-status-box">
@@ -55,15 +50,11 @@
             </div>
         </section>
 
-        <!-- 📢 GUILD EVENTS & SCHEDULE -->
         <section class="content-card">
             <h2 class="section-title">📢 GUILD EVENTS & SCHEDULE</h2>
-            <div id="dynamic-events-container" class="events-grid">
-                <!-- Dynamic Events populated via JS -->
-            </div>
+            <div id="dynamic-events-container" class="events-grid"></div>
         </section>
 
-        <!-- 📊 ACTIVE WARRIORS & PAGE COUNTER -->
         <section class="stats-counter-bar">
             <div class="stat-item">
                 <span class="stat-label">⚔️ Active Warriors:</span>
@@ -75,7 +66,6 @@
             </div>
         </section>
 
-        <!-- 🛡️ GUILD ROSTER DIVISION GRID -->
         <section class="content-card">
             <div class="roster-header-flex">
                 <h2 class="section-title">🛡️ KULTURA DIVISION ROSTERS</h2>
@@ -84,18 +74,14 @@
                 </div>
             </div>
 
-            <!-- SEARCH MAIN / DUMMY INPUT -->
             <div class="search-box-container" style="margin-bottom: 15px;">
                 <input type="text" id="search-main-input" onkeyup="searchMainAndDummies()" placeholder="🔍 Search Main or Dummy character name..." style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--primary); color: #fff; border-radius: 5px;">
                 <div id="search-dummy-result-box" style="margin-top: 8px;"></div>
             </div>
 
-            <div id="dynamic-roster-grid" class="roster-grid">
-                <!-- Dynamic Rosters populated via JS -->
-            </div>
+            <div id="dynamic-roster-grid" class="roster-grid"></div>
         </section>
 
-        <!-- 📋 ATTENDANCE & PAYOUT HISTORY -->
         <section class="content-card">
             <div class="attendance-header-flex">
                 <h2 class="section-title">📋 ATTENDANCE & PAYOUT HISTORY</h2>
@@ -119,11 +105,9 @@
             </div>
         </section>
 
-        <!-- 🛒 KULTURA PRIVATE MARKETPLACE -->
         <section class="content-card">
             <h2 class="section-title">🛒 KULTURA PRIVATE MARKETPLACE</h2>
             
-            <!-- LOCKED VIEW (Kailangan Mag-login) -->
             <div id="market-locked-view" style="text-align: center; padding: 20px;">
                 <p style="color: var(--text-light); margin-bottom: 15px;">🔒 Ang Marketplace na ito ay pampribado lamang sa mga Verified Members!</p>
                 <div style="display: flex; gap: 10px; justify-content: center;">
@@ -132,7 +116,6 @@
                 </div>
             </div>
 
-            <!-- UNLOCKED VIEW (Kapag Naka-login na) -->
             <div id="market-unlocked-view" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 5px;">
                     <span>👤 Logged in as: <strong id="market-current-user-display" style="color: var(--primary-glow);">--</strong></span>
@@ -169,9 +152,6 @@
 
     </main>
 
-    <!-- 🌐 MODALS SECTION -->
-
-    <!-- 🔑 OFFICER LOGIN MODAL -->
     <div id="login-modal" class="modal-overlay">
         <div class="modal-card">
             <h3>🔐 OFFICER PORTAL LOGIN</h3>
@@ -185,7 +165,6 @@
         </div>
     </div>
 
-    <!-- 🛒 MARKETPLACE REGISTER MODAL -->
     <div id="market-register-modal" class="modal-overlay">
         <div class="modal-card">
             <h3>📝 MEMBERS REGISTRATION</h3>
@@ -200,7 +179,6 @@
         </div>
     </div>
 
-    <!-- 🛒 MARKETPLACE LOGIN MODAL -->
     <div id="market-login-modal" class="modal-overlay">
         <div class="modal-card">
             <h3>🔑 MARKETPLACE MEMBER LOGIN</h3>
@@ -213,7 +191,6 @@
         </div>
     </div>
 
-    <!-- 💰 3-DAY PAYOUT SUMMARY MODAL -->
     <div id="summary-3day-modal" class="modal-overlay">
         <div class="modal-card" style="max-width: 700px;">
             <h3>💰 3-DAY ATTENDANCE & PAYOUT SUMMARY</h3>
@@ -228,9 +205,7 @@
                             <th>TOTAL SOL SHARE</th>
                         </tr>
                     </thead>
-                    <tbody id="summary-3day-table-body">
-                        <!-- Populated via JS -->
-                    </tbody>
+                    <tbody id="summary-3day-table-body"></tbody>
                 </table>
             </div>
             <div style="display: flex; gap: 10px; margin-top: 15px;">
@@ -240,7 +215,6 @@
         </div>
     </div>
 
-    <!-- 🔓 AUTHORIZED OFFICER PORTAL ADMIN MODAL -->
     <div id="attendance-admin-modal" class="modal-overlay">
         <div id="admin-modal-card" class="modal-card" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--primary); padding-bottom: 8px;">
@@ -252,7 +226,6 @@
             </div>
 
             <div id="admin-modal-body-content">
-                <!-- OFFICER SELECT & ATTENDANCE RECORDING -->
                 <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; margin-bottom: 15px;">
                     <h4 style="color: var(--primary-glow); margin-bottom: 8px;">📋 RECORD ATTENDANCE</h4>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
@@ -281,14 +254,11 @@
                         </div>
                     </div>
 
-                    <div id="admin-member-checklist" style="max-height: 180px; overflow-y: auto; background: #111; padding: 8px; border-radius: 4px; margin-bottom: 10px; border: 1px solid #333;">
-                        <!-- Checklist checkboxes -->
-                    </div>
+                    <div id="admin-member-checklist" style="max-height: 180px; overflow-y: auto; background: #111; padding: 8px; border-radius: 4px; margin-bottom: 10px; border: 1px solid #333;"></div>
 
                     <button onclick="saveAttendanceEntry()" class="btn btn-primary" style="width: 100%;">💾 Save Attendance Entry & Post to Discord</button>
                 </div>
 
-                <!-- REGISTER NEW MEMBER TO DIVISION -->
                 <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; margin-bottom: 15px;">
                     <h4 style="color: var(--primary-glow); margin-bottom: 8px;">➕ REGISTER MEMBER TO ROSTER</h4>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
@@ -305,7 +275,6 @@
                     <button onclick="registerNewMember()" class="btn" style="width: 100%; margin-top: 8px; background: #28a745; color: #fff;">➕ Add to Division</button>
                 </div>
 
-                <!-- 🔗 SUPERADMIN: MAIN & DUMMY LINKAGE BLOCK -->
                 <div id="superadmin-main-dummy-block" style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; margin-bottom: 15px;">
                     <h4 style="color: var(--primary-glow); margin-bottom: 8px;">🎭 MULTI-DUMMY LINKAGE SYSTEM</h4>
                     <input type="text" id="type-main-ign" placeholder="Enter Main Character IGN" style="width: 100%; padding: 6px; background: #222; color: #fff; border: 1px solid #555; margin-bottom: 8px;">
@@ -319,7 +288,6 @@
                     </div>
                 </div>
 
-                <!-- 🛒 SUPERADMIN: PENDING MARKETPLACE APPROVALS -->
                 <div id="superadmin-inbox-block" style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none;">
                     <h4 style="color: var(--primary-glow); margin-bottom: 8px;">🛒 PENDING MARKETPLACE APPROVALS</h4>
                     
@@ -330,7 +298,6 @@
                     <div id="pending-listings-container" style="max-height: 150px; overflow-y: auto;"></div>
                 </div>
 
-                <!-- 🏎️ SUPERADMIN: CAR RACE CONTROL -->
                 <div id="superadmin-giveaway-block" style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none;">
                     <h4 style="color: var(--primary-glow); margin-bottom: 8px;">🏎️ CAR RACE TOURNAMENT CONTROL</h4>
                     <div id="giveaway-participants-info" style="font-size: 0.85rem; color: #fff; margin-bottom: 10px;">--</div>
@@ -348,7 +315,6 @@
                     <button id="start-duck-race-btn" onclick="runCarRace()" class="btn btn-primary" style="width: 100%;">🏎️ START CAR RACE TOURNAMENT</button>
                 </div>
 
-                <!-- 📢 SUPERADMIN: ANNOUNCEMENTS & EVENTS EDIT -->
                 <div id="superadmin-events-block" style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none;">
                     <h4 style="color: var(--primary-glow); margin-bottom: 8px;">📢 EDIT EVENTS & DISCORD ANNOUNCER</h4>
                     
@@ -396,7 +362,6 @@
                     </div>
                 </div>
 
-                <!-- 🗑️ SUPERADMIN: LOGS & GUILD MANAGEMENT -->
                 <div id="superadmin-delete-logs-block" style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none;">
                     <h4 style="color: var(--primary-glow); margin-bottom: 8px;">🗑️ ATTENDANCE LOGS MANAGEMENT</h4>
                     <div id="admin-attendance-logs-list" style="max-height: 120px; overflow-y: auto;"></div>
@@ -413,13 +378,11 @@
                     <button onclick="registerAllianceAndGM()" class="btn" style="width: 100%; background: #28a745; color: #fff;">👑 Add Alliance Guild</button>
                 </div>
 
-                <!-- DELETE MEMBERS FROM DIVISION -->
                 <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; margin-bottom: 15px;">
                     <h4 style="color: var(--primary-glow); margin-bottom: 8px;">❌ REMOVE MEMBERS FROM DIVISION</h4>
                     <div id="admin-delete-member-list" style="max-height: 120px; overflow-y: auto;"></div>
                 </div>
 
-                <!-- ACCOUNT & LOGOUT BUTTONS -->
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
                     <button onclick="handleLogout()" class="delete-btn" style="flex: 1; padding: 8px;">🔒 Logout Officer Session</button>
                 </div>
@@ -427,10 +390,8 @@
         </div>
     </div>
 
-    <!-- <footer> DYNAMIC SECURE CREDITS -->
     <footer id="dynamic-secure-credits" class="main-footer"></footer>
 
-    <!-- 🌐 FIREBASE V10 SDK CONFIGURATION -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
