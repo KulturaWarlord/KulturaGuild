@@ -2,6 +2,10 @@
    KULTURA GUILD & ALLIANCE — MAIN SYSTEM SCRIPT (script.js)
    ============================================================ */
 
+// ⚖️ AUCTION DISCORD WEBHOOK URL
+const AUCTION_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1564313295320645762/JuBWAotfT84Tl53F31pPEAu4wV0j2CxLdba-1QWI3XCILyTequUHw552tAZL-qvWjUfS";
+let cloudAuctionItems = [];
+
 // 🎙️ HIGH-ENERGY SPORTS / ESPORTS ANNOUNCER TTS ENGINE
 function speakKantyawanText(textToSpeak) {
     if ('speechSynthesis' in window) {
@@ -370,6 +374,12 @@ function initRealtimeListeners() {
         renderPublicGuildEvents();
         populateEventsAdminForm();
         updateGiveawayBotVisibility();
+    });
+
+    // Realtime Auction Items Listener
+    dbOnValue(dbRef(window.database, 'kultura_auction_items'), (snap) => {
+        cloudAuctionItems = snap.exists() ? snap.val() : [];
+        renderAdminAuctionList();
     });
 }
 
@@ -1414,6 +1424,7 @@ function openAdminModal() {
     const superDeleteLogsBlock = document.getElementById('superadmin-delete-logs-block');
     const superGuildRegBlock = document.getElementById('superadmin-guild-reg-block');
     const superEventsBlock = document.getElementById('superadmin-events-block');
+    const superAuctionBlock = document.getElementById('superadmin-auction-block');
 
     let currentLower = currentLoggedInOfficer.toLowerCase();
     let isSuperAdmin = (currentLower === "fullclip" || currentLower === "kultura" || currentLower === "kulturamain");
@@ -1424,15 +1435,18 @@ function openAdminModal() {
         superDeleteLogsBlock.style.display = 'block';
         superGuildRegBlock.style.display = 'block';
         if (superEventsBlock) superEventsBlock.style.display = 'block';
+        if (superAuctionBlock) superAuctionBlock.style.display = 'block';
         renderSuperAdminInbox();
         renderAdminAttendanceLogList();
         populateEventsAdminForm();
         loadPendingMarketAccounts();
+        renderAdminAuctionList();
     } else {
         superInboxBlock.style.display = 'none';
         superDeleteLogsBlock.style.display = 'none';
         superGuildRegBlock.style.display = 'none';
         if (superEventsBlock) superEventsBlock.style.display = 'none';
+        if (superAuctionBlock) superAuctionBlock.style.display = 'none';
     }
 
     updateGiveawayBotVisibility();
@@ -1674,10 +1688,7 @@ async function checkMarketplaceAuthOnLoad() {
             console.error("Error loading settings:", e);
         }
 
-        // Load Font Styles
         loadMemberFontStyles(loggedMarketUsername);
-
-        // Load Social Hub Data when member is logged in
         loadSocialHubData();
     } else {
         if (lockedView) lockedView.style.display = 'block';
@@ -1823,7 +1834,6 @@ function closeMarketLoginModal() {
     document.getElementById('market-login-modal').style.display = 'none';
 }
 
-// 🟢 REGISTER MEMBER WITH AUTOMATIC IP DUPLICATE CHECK
 async function submitMarketMemberRegistration() {
     const ign = document.getElementById('reg-market-ign').value.trim();
     const username = document.getElementById('reg-market-user').value.trim().toLowerCase();
@@ -1957,7 +1967,6 @@ function marketLogout() {
     alert("🔒 Successfully logged out from Marketplace.");
 }
 
-// 🟢 SUPERADMIN PENDING ACCOUNTS WITH AUTOMATIC DUPLICATE IP HIGHLIGHTING
 function loadPendingMarketAccounts() {
     const container = document.getElementById('pending-market-accounts-container');
     if (!container) return;
@@ -2015,7 +2024,6 @@ async function rejectMarketAccount(username) {
     }
 }
 
-// 🟢 AUTOMATIC DIRECT POST TO DISCORD
 async function submitMarketplacePending() {
     const listingType = document.getElementById('market-listing-type').value;
     const seller = document.getElementById('market-seller-ign').value.trim();
@@ -2095,6 +2103,121 @@ async function submitMarketplacePending() {
     } catch (err) {
         console.error("Direct Post Discord Error:", err);
         alert("❌ Connection error while posting to Discord.");
+    }
+}
+
+// ⚖️ AUCTION MANAGER FUNCTIONS
+async function addAuctionItem() {
+    const itemName = document.getElementById('auction-item-name').value.trim();
+    const itemPrice = document.getElementById('auction-item-price').value.trim();
+    const itemStatus = document.getElementById('auction-item-status').value.trim();
+
+    if (!itemName || !itemPrice) {
+        alert("⚠️ Paki-lagyan ang Item Name at Price!");
+        return;
+    }
+
+    const newItem = {
+        id: Date.now(),
+        name: itemName,
+        price: itemPrice,
+        status: itemStatus || "Open",
+        timestamp: new Date().toLocaleDateString()
+    };
+
+    cloudAuctionItems.push(newItem);
+
+    if (window.database) {
+        await window.dbSet(window.dbRef(window.database, 'kultura_auction_items'), cloudAuctionItems);
+    }
+
+    document.getElementById('auction-item-name').value = '';
+    document.getElementById('auction-item-price').value = '';
+    document.getElementById('auction-item-status').value = '';
+    renderAdminAuctionList();
+    alert("🎉 Tagumpay na naidagdag ang item sa Auction Thread!");
+}
+
+function renderAdminAuctionList() {
+    const container = document.getElementById('admin-auction-items-list');
+    if (!container) return;
+
+    if (!cloudAuctionItems || cloudAuctionItems.length === 0) {
+        container.innerHTML = `<span style="color: var(--text-dim);">Walang auction items sa ngayon.</span>`;
+        return;
+    }
+
+    container.innerHTML = "";
+    cloudAuctionItems.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 6px; margin-bottom: 5px; background: rgba(0,0,0,0.5); border-left: 3px solid #00ffcc; border-radius: 4px;";
+        div.innerHTML = `
+            <div>
+                <strong>⚖️ ${item.name}</strong><br>
+                <small style="color: #ffdd55;">Price: ${item.price}</small> | <small style="color: #33cc33;">Status: ${item.status}</small>
+            </div>
+            <button onclick="deleteAuctionItem(${index})" class="delete-btn" style="padding: 3px 6px; font-size: 0.7rem;">❌ Delete</button>
+        `;
+        container.appendChild(div);
+    });
+}
+
+async function deleteAuctionItem(index) {
+    if (confirm("Sigurado ka bang gusto mong tanggalin ang item na ito sa auction?")) {
+        cloudAuctionItems.splice(index, 1);
+        if (window.database) {
+            await window.dbSet(window.dbRef(window.database, 'kultura_auction_items'), cloudAuctionItems);
+        }
+        renderAdminAuctionList();
+    }
+}
+
+async function sendAuctionPriceListToDiscord() {
+    if (!AUCTION_DISCORD_WEBHOOK_URL) {
+        alert("⚠️ Walang nakatakdang Webhook URL para sa Auction!");
+        return;
+    }
+
+    if (!cloudAuctionItems || cloudAuctionItems.length === 0) {
+        alert("⚠️ Walang laman ang Auction Price List para i-send!");
+        return;
+    }
+
+    let fieldsArray = cloudAuctionItems.map((item, idx) => ({
+        name: `📦 Item #${idx + 1}: ${item.name}`,
+        value: `💰 **Price:** \`${item.price}\`\n📌 **Status:** \`${item.status}\``,
+        inline: false
+    }));
+
+    try {
+        const discordBody = {
+            username: "Kultura Auction Bot",
+            avatar_url: "https://nolimit.lv/themes/def_theme/images/logo.png",
+            content: "@everyone ⚖️ **UPDATED KULTURA GUILD AUCTION PRICE LIST**",
+            embeds: [{
+                title: "🏛️ ACTIVE AUCTION ITEMS THREAD",
+                description: "Narito ang pinakabagong listahan at presyo ng mga items na nakapila sa ating guild auction. Mag-bid na habang bukas pa!",
+                color: 65535,
+                fields: fieldsArray,
+                footer: { text: "Kultura Guild & Alliance • Verified Auction Thread", icon_url: "https://nolimit.lv/themes/def_theme/images/logo.png" },
+                timestamp: new Date().toISOString()
+            }]
+        };
+
+        const res = await fetch(AUCTION_DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(discordBody)
+        });
+
+        if (res.ok || res.status === 204) {
+            alert("🚀 Tagumpay na naipadala ang Updated Auction Price List sa Discord channel!");
+        } else {
+            alert("❌ Nabigong maipadala sa Discord Webhook.");
+        }
+    } catch (err) {
+        console.error("Auction Discord Webhook Error:", err);
+        alert("❌ May error sa koneksyon habang nagpapadala sa Discord.");
     }
 }
 
