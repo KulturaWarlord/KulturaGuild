@@ -1,3 +1,7 @@
+/* ============================================================
+   KULTURA GUILD & ALLIANCE — MAIN SYSTEM SCRIPT (script.js)
+   ============================================================ */
+
 // 🎙️ HIGH-ENERGY SPORTS / ESPORTS ANNOUNCER TTS ENGINE
 function speakKantyawanText(textToSpeak) {
     if ('speechSynthesis' in window) {
