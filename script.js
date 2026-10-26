@@ -162,7 +162,7 @@ async function logUserIpAction(actionType, identifier) {
 
         let ipLogEntry = {
             ip: userIp,
-            action: actionType, // "LOGIN" o "REGISTER"
+            action: actionType,
             user: identifier,
             timestamp: new Date().toLocaleString()
         };
@@ -971,7 +971,6 @@ async function handleLogin() {
         currentLoggedInOfficer = userVal.includes('@') ? userVal.split('@')[0] : userVal;
         localStorage.setItem('kultura_logged_officer', currentLoggedInOfficer);
         
-        // 📡 Log IP Address upon Officer Login
         await logUserIpAction("OFFICER_LOGIN", currentLoggedInOfficer);
 
         alert(`✅ Welcome ${currentLoggedInOfficer}! Successfully authenticated.`);
@@ -1432,7 +1431,7 @@ function loadSuperAdminIpLogs() {
             return;
         }
 
-        let logsArray = Object.values(data).reverse(); // Pinakabagong log sa unahan
+        let logsArray = Object.values(data).reverse();
         logsArray.forEach(log => {
             let badgeColor = log.action === "MEMBER_LOGIN" || log.action === "OFFICER_LOGIN" ? "#33cc33" : "#ffaa33";
             const row = document.createElement('div');
@@ -1763,7 +1762,6 @@ async function submitMarketMemberRegistration() {
     try {
         await window.dbSet(window.dbRef(window.database, `marketplace_accounts_pending/${username}`), regData);
         
-        // 📡 Log IP Address upon Member Registration
         await logUserIpAction("MEMBER_REGISTER", `${ign} (@${username})`);
 
         alert("🎉 Matagumpay na naisumite ang iyong rehistro! Maghintay ng approval mula sa SuperAdmin.");
@@ -1790,7 +1788,6 @@ async function submitMarketMemberLogin() {
             if (acc.password === password) {
                 localStorage.setItem('kultura_market_user', `${acc.ign} (@${acc.username})`);
                 
-                // 📡 Log IP Address upon Member Login
                 await logUserIpAction("MEMBER_LOGIN", `${acc.ign} (@${acc.username})`);
 
                 alert(`✅ Maligayang pagdating, ${acc.ign}! Nakapasok ka na sa Marketplace.`);
@@ -1949,7 +1946,7 @@ async function approveMarketplaceListing(key) {
     let mentionTag = item.discordId ? `<@${item.discordId}>` : `@everyone`;
     let isBuying = item.type === "BUYING";
     let typeHeader = isBuying ? "🟢 **NEW BUYING LISTING!**" : "🔴 **NEW SELLING LISTING!**";
-    let embedColor = isBuying ? 3066993 : 15120128; // Green for Buying, Gold/Red for Selling
+    let embedColor = isBuying ? 3066993 : 15120128;
 
     const discordBody = {
         username: "Kultura Marketplace Bot",
