@@ -76,7 +76,7 @@ function initPageCounter() {
     });
 }
 
-// 🌐 DISCORD WEBHOOK PARA SA ATTENDANCE & PAYOUTS
+// 🌐 DISCORD WEBHOOK FOR ATTENDANCE & PAYOUTS
 const ATTENDANCE_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1564136116242612286/wdzglpcZSMPXoN7hq562LLT6M3yDrPc8yVAhTQ2ugekBuuUBo0OI7Cst-EIxK1CQUOno";
 
 let ALL_DIVISIONS = [
@@ -576,7 +576,7 @@ async function sendCustomDiscordAnnouncement() {
     const title = document.getElementById('discord-announce-title').value.trim();
     const message = document.getElementById('discord-announce-msg').value.trim();
 
-    if (!message) { alert("⚠️ Mangyaring maglagay ng announcement message!"); return; }
+    if (!message) { alert("⚠️ Please enter an announcement message!"); return; }
 
     try {
         const discordBody = {
@@ -595,7 +595,7 @@ async function sendCustomDiscordAnnouncement() {
         alert("🚀 Official Announcement successfully sent to your Discord channel!");
         document.getElementById('discord-announce-title').value = '';
         document.getElementById('discord-announce-msg').value = '';
-    } catch (err) { console.error("Discord Webhook Error:", err); alert("❌ Nagkaroon ng problema sa pagpapadala sa Discord."); }
+    } catch (err) { console.error("Discord Webhook Error:", err); alert("❌ Failed to send announcement to Discord."); }
 }
 
 async function sendAttendanceToDiscordChannel(dateKey, eventType, totalPool, presentsCount) {
@@ -644,16 +644,16 @@ let currentCarRaceRound = 1;
 let carRaceAccumulatedWinners = [];
 
 const CAR_KANTYAWAN_PHRASES = [
-    "Wooooh! Humahabol ang kotse ni [NAME]! Naka nitro boost yarn?!",
-    "At nag-overtake sa kurbada si [NAME]! Grabe ang harurot!",
-    "Lumilipad na sa expressway ang kotse ni [NAME]!",
-    "Pasok sa unahan si [NAME]! Ang bilis ng rebolusyon!",
-    "Kumatog ang makina ni [NAME]! Ayan na, bumubuntot na!",
-    "Bawal mag warp drive [NAME]! Fair race ito sa speedway!",
-    "Sumasabog ang tambutso ni [NAME]! Nitro sprint visual!",
-    "Ayan na, matinding unahan! Nagpa-pumpiyo si [NAME]!",
-    "Lumampas sa kurbada si [NAME]! Pasok sa pwesto!",
-    "Dikitan ang laban! Hahabol ba si [NAME] sa finish line?!"
+    "Wooooh! [NAME]'s car is chasing hard! Nitro boost activated?!",
+    "And [NAME] overtakes at the curve! Incredible speed!",
+    "Flying down the expressway, [NAME]'s car is unstoppable!",
+    "Into the lead goes [NAME]! Supercharged engine!",
+    "Engine roaring for [NAME]! Closing the gap fast!",
+    "No warp drives allowed, [NAME]! Fair race on the speedway!",
+    "Exhaust pipe firing up for [NAME]! Nitro sprint visual!",
+    "Here comes a fierce battle! [NAME] pushes to the limit!",
+    "Sliding through the curve smoothly, [NAME] takes position!",
+    "Neck and neck! Can [NAME] reach the finish line first?!"
 ];
 const CAR_ICONS = ["🏎️", "🏎️", "🏎️", "🏎️", "🏎️"];
 
@@ -731,7 +731,7 @@ async function runCarRace() {
     const TOTAL_DURATION_SEC = 45;
     let startTime = Date.now();
     let lastShoutTime = startTime;
-    let startMsg = `Attention drivers! Red light is on! Three, two, one, GO! Harurot na sa expressway!`;
+    let startMsg = `Attention drivers! Red light is on! Three, two, one, GO! Sprinting down the expressway!`;
     kantyawanBox.innerHTML = `🎙️ 🔊 ${startMsg}`;
     speakKantyawanText(startMsg);
 
@@ -795,7 +795,7 @@ async function runCarRace() {
             const publicWinnersBox = document.getElementById('public-winners-display-box');
             if (publicWinnersBox) publicWinnersBox.innerHTML = publicWinnersHtml;
 
-            let victoryMessage = `At tinawid na ang finish line! Ang kampeon sa round ${currentCarRaceRound} ay si driver ${roundWinner.name}!`;
+            let victoryMessage = `And across the finish line! The champion of round ${currentCarRaceRound} is driver ${roundWinner.name}!`;
             kantyawanBox.innerHTML = `🎉 🎙️ 🔊 ${victoryMessage} 🎉`;
             speakKantyawanText(victoryMessage);
 
@@ -1632,7 +1632,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 🛒 KULTURA MARKETPLACE & MEMBER PROFILE FUNCTIONS
+// 🛒 KULTURA MARKETPLACE & MEMBER PROFILE FUNCTIONS (ENGLISH COMMENTS & LOGS)
 // ==========================================
 const MARKETPLACE_DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1563790657254854707/HDVDF2jyaYM6fijrCnNEAlW1Z-bkMYPu7G_nHcQiHnGY4Ez0QXTKjvTXD96I9oFMyAnE";
 
@@ -1692,7 +1692,6 @@ function applyCustomSectionBg(url) {
     }
 }
 
-// Function para sa Minimize / Maximize toggle ng Profile & Background Settings
 function toggleProfileSettingsMinimize() {
     const bodyContent = document.getElementById('profile-settings-body');
     const minBtn = document.getElementById('profile-min-btn');
@@ -1709,7 +1708,7 @@ function toggleProfileSettingsMinimize() {
 async function saveMemberSectionBackground() {
     const loggedMarketUsername = localStorage.getItem('kultura_market_username');
     if (!loggedMarketUsername) {
-        alert("⚠️ Kailangang naka-login ka muna sa Members Profile!");
+        alert("⚠️ You must be logged in to your Member Profile!");
         return;
     }
 
@@ -1718,10 +1717,10 @@ async function saveMemberSectionBackground() {
     try {
         await window.dbSet(window.dbRef(window.database, `marketplace_accounts_approved/${loggedMarketUsername}/bgUrl`), bgUrl);
         applyCustomSectionBg(bgUrl);
-        alert("🎉 Matagumpay na na-save ang iyong Customized Background!");
+        alert("🎉 Successfully saved your customized background!");
     } catch (err) {
         console.error("Background Save Error:", err);
-        alert("❌ Nabigong i-save ang background image.");
+        alert("❌ Failed to save background image.");
     }
 }
 
@@ -1744,20 +1743,31 @@ function closeMarketLoginModal() {
     document.getElementById('market-login-modal').style.display = 'none';
 }
 
+// 🟢 REGISTER MEMBER WITH IP ADDRESS TRACKING
 async function submitMarketMemberRegistration() {
     const ign = document.getElementById('reg-market-ign').value.trim();
     const username = document.getElementById('reg-market-user').value.trim().toLowerCase();
     const password = document.getElementById('reg-market-pass').value.trim();
 
     if (!ign || !username || !password) {
-        alert("⚠️ Punan ang lahat ng fields para sa pagrehistro!");
+        alert("⚠️ Please fill in all fields for registration!");
         return;
+    }
+
+    let userIp = "Unknown IP";
+    try {
+        const ipRes = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipRes.json();
+        userIp = ipData.ip;
+    } catch (e) {
+        console.error("Failed to fetch user IP:", e);
     }
 
     const regData = {
         ign: ign,
         username: username,
         password: password,
+        ipAddress: userIp,
         avatarUrl: "",
         bgUrl: "",
         timestamp: Date.now(),
@@ -1766,11 +1776,11 @@ async function submitMarketMemberRegistration() {
 
     try {
         await window.dbSet(window.dbRef(window.database, `marketplace_accounts_pending/${username}`), regData);
-        alert("🎉 Matagumpay na naisumite ang iyong rehistro! Maghintay ng approval mula sa SuperAdmin.");
+        alert("🎉 Registration successfully submitted! Please wait for SuperAdmin approval.");
         closeMarketRegisterModal();
     } catch (err) {
         console.error("Registration Error:", err);
-        alert("❌ Nabigo ang pagrehistro. Subukang muli.");
+        alert("❌ Registration failed. Please try again.");
     }
 }
 
@@ -1779,7 +1789,7 @@ async function submitMarketMemberLogin() {
     const password = document.getElementById('login-market-pass').value.trim();
 
     if (!username || !password) {
-        alert("⚠️ Ilagay ang iyong Username at Password!");
+        alert("⚠️ Please enter your Username and Password!");
         return;
     }
 
@@ -1790,16 +1800,16 @@ async function submitMarketMemberLogin() {
             if (acc.password === password) {
                 localStorage.setItem('kultura_market_user', `${acc.ign} (@${acc.username})`);
                 localStorage.setItem('kultura_market_username', acc.username);
-                alert(`✅ Maligayang pagdating, ${acc.ign}! Nakapasok ka na sa Marketplace.`);
+                alert(`✅ Welcome back, ${acc.ign}! Successfully logged into Marketplace.`);
                 closeMarketLoginModal();
                 checkMarketplaceAuthOnLoad();
                 return;
             }
         }
-        alert("❌ Mali ang password o ang account ay hindi pa na-approve ng SuperAdmin!");
+        alert("❌ Incorrect password or account has not been approved by SuperAdmin yet!");
     } catch (err) {
         console.error("Login Error:", err);
-        alert("❌ Error sa pag-login.");
+        alert("❌ Error during login.");
     }
 }
 
@@ -1816,10 +1826,10 @@ async function saveMemberProfileAvatar() {
         } else {
             document.getElementById('profile-avatar-img').src = "https://nolimit.lv/themes/def_theme/images/logo.png";
         }
-        alert("🎉 Matagumpay na na-update ang iyong Profile Picture!");
+        alert("🎉 Successfully updated your Profile Picture!");
     } catch (err) {
         console.error("Avatar Save Error:", err);
-        alert("❌ Nabigong i-update ang avatar.");
+        alert("❌ Failed to update avatar.");
     }
 }
 
@@ -1827,9 +1837,10 @@ function marketLogout() {
     localStorage.removeItem('kultura_market_user');
     localStorage.removeItem('kultura_market_username');
     checkMarketplaceAuthOnLoad();
-    alert("🔒 Nakapag-log out ka na sa Marketplace.");
+    alert("🔒 Successfully logged out from Marketplace.");
 }
 
+// 🟢 SUPERADMIN PENDING ACCOUNTS WITH IP & FIFO TIMESTAMP SORTING
 function loadPendingMarketAccounts() {
     const container = document.getElementById('pending-market-accounts-container');
     if (!container) return;
@@ -1839,17 +1850,22 @@ function loadPendingMarketAccounts() {
         const data = snapshot.val();
 
         if (!data) {
-            container.innerHTML = "<p style='color: var(--text-dim);'>Walang naghihintay na rehistro.</p>";
+            container.innerHTML = "<p style='color: var(--text-dim);'>No pending registrations found.</p>";
             return;
         }
 
-        Object.keys(data).forEach((userKey) => {
-            const acc = data[userKey];
+        let accountsArray = Object.keys(data).map(key => ({ key, ...data[key] }));
+        accountsArray.sort((a, b) => a.timestamp - b.timestamp);
+
+        accountsArray.forEach((acc) => {
+            const regDate = new Date(acc.timestamp).toLocaleString();
             const card = document.createElement('div');
             card.style.cssText = "background: #111; border: 1px solid #444; padding: 10px; margin-bottom: 8px; border-radius: 4px; font-size: 0.85rem;";
             card.innerHTML = `
                 <p><strong>IGN:</strong> ${acc.ign}</p>
                 <p><strong>Username:</strong> @${acc.username}</p>
+                <p style="color: #ffaa33;"><strong>IP Address:</strong> ${acc.ipAddress || 'Unknown'}</p>
+                <p style="color: var(--text-dim); font-size: 0.75rem;"><strong>Registration Time:</strong> ${regDate}</p>
                 <div style="margin-top: 8px; display: flex; gap: 8px;">
                     <button onclick="approveMarketAccount('${acc.username}')" style="background: #28a745; color: #fff; border: none; padding: 4px 10px; cursor: pointer; border-radius: 3px; font-weight: bold;">🟢 Approve</button>
                     <button onclick="rejectMarketAccount('${acc.username}')" style="background: #dc3545; color: #fff; border: none; padding: 4px 10px; cursor: pointer; border-radius: 3px; font-weight: bold;">🔴 Reject</button>
@@ -1868,13 +1884,13 @@ async function approveMarketAccount(username) {
     const accData = snap.val();
     await window.dbSet(window.dbRef(window.database, `marketplace_accounts_approved/${username}`), accData);
     await window.dbSet(pendingRef, null);
-    alert(`✅ Na-approve na ang account ni @${username}! Makakapag-login na siya sa Marketplace.`);
+    alert(`✅ Account @${username} has been approved! They can now log into the Marketplace.`);
 }
 
 async function rejectMarketAccount(username) {
-    if (confirm(`Tanggihan at tanggalin ang rehistro ni @${username}?`)) {
+    if (confirm(`Reject and delete registration for @${username}?`)) {
         await window.dbSet(window.dbRef(window.database, `marketplace_accounts_pending/${username}`), null);
-        alert("🗑️ Tinanggihan ang rehistro.");
+        alert("🗑️ Registration rejected.");
     }
 }
 
@@ -1888,7 +1904,7 @@ async function submitMarketplacePending() {
     const loggedUsername = localStorage.getItem('kultura_market_username');
 
     if (!seller || !item || !price) {
-        alert("⚠️ Mangyaring punan ang Seller/Trader IGN, Item/Option, at Price!");
+        alert("⚠️ Please fill in Seller/Trader IGN, Item & Options, and Price!");
         return;
     }
 
@@ -1896,7 +1912,6 @@ async function submitMarketplacePending() {
         localStorage.setItem('kultura_market_discord_id', discordId);
     }
 
-    // Kukunin ang profile picture ng naka-login na miyembro (kung mayroon)
     let userAvatarUrl = "";
     if (loggedUsername) {
         try {
@@ -1909,7 +1924,6 @@ async function submitMarketplacePending() {
         }
     }
 
-    // Paghahanda ng Discord Webhook Payload
     let contactField = discordId 
         ? `[Direct Message Trader on Discord](https://discord.com/users/${discordId})` 
         : `In-game IGN: **${seller}**`;
@@ -1943,7 +1957,6 @@ async function submitMarketplacePending() {
         embeds: [embedObject]
     };
 
-    // AUTOMATIC DIRECT POST TO DISCORD WEBHOOK
     try {
         const response = await fetch(MARKETPLACE_DISCORD_WEBHOOK_URL, {
             method: 'POST',
@@ -1952,14 +1965,14 @@ async function submitMarketplacePending() {
         });
 
         if (response.ok || response.status === 204) {
-            alert("🎉 Matagumpay! Ang iyong Item Listing ay AWTOMATIKONG na-post na sa Discord Channel!");
+            alert("🎉 Success! Your Item Listing has been AUTOMATICALLY posted to the Discord Channel!");
             document.getElementById('market-item-desc').value = '';
             document.getElementById('market-price-desc').value = '';
         } else {
-            alert("❌ Nabigong mag-post sa Discord Webhook.");
+            alert("❌ Failed to post to Discord Webhook.");
         }
     } catch (err) {
         console.error("Direct Post Discord Error:", err);
-        alert("❌ Nagkaroon ng problema sa koneksyon papuntang Discord.");
+        alert("❌ Connection error while posting to Discord.");
     }
 }
