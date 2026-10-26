@@ -1653,7 +1653,7 @@ async function checkMarketplaceAuthOnLoad() {
             document.getElementById('market-discord-id').value = savedDiscordId;
         }
 
-        // Load profile avatar from database
+        // Load profile avatar and background from database
         try {
             const snap = await window.dbGet(window.dbRef(window.database, `marketplace_accounts_approved/${loggedMarketUsername}`));
             if (snap.exists()) {
@@ -1662,9 +1662,13 @@ async function checkMarketplaceAuthOnLoad() {
                     document.getElementById('market-profile-avatar-url').value = acc.avatarUrl;
                     document.getElementById('profile-avatar-img').src = acc.avatarUrl;
                 }
+                if (acc.bgUrl && document.getElementById('market-section-bg-url')) {
+                    document.getElementById('market-section-bg-url').value = acc.bgUrl;
+                    applyCustomSectionBg(acc.bgUrl);
+                }
             }
         } catch (e) {
-            console.error("Error loading avatar:", e);
+            console.error("Error loading settings:", e);
         }
     } else {
         if (lockedView) lockedView.style.display = 'block';
@@ -1673,6 +1677,41 @@ async function checkMarketplaceAuthOnLoad() {
 
     if (typeof window.database !== 'undefined') {
         loadPendingMarketplaceListings();
+    }
+}
+
+function applyCustomSectionBg(url) {
+    const sectionContainer = document.getElementById('market-unlocked-view');
+    if (!sectionContainer) return;
+
+    if (url && url.trim() !== '') {
+        sectionContainer.style.backgroundImage = `linear-gradient(rgba(10, 10, 15, 0.85), rgba(10, 10, 15, 0.92)), url('${url}')`;
+        sectionContainer.style.backgroundSize = 'cover';
+        sectionContainer.style.backgroundPosition = 'center';
+        sectionContainer.style.backgroundRepeat = 'no-repeat';
+        sectionContainer.style.borderRadius = '10px';
+        sectionContainer.style.padding = '20px';
+    } else {
+        sectionContainer.style.backgroundImage = 'none';
+    }
+}
+
+async function saveMemberSectionBackground() {
+    const loggedMarketUsername = localStorage.getItem('kultura_market_username');
+    if (!loggedMarketUsername) {
+        alert("⚠️ Kailangang naka-login ka muna sa Members Profile!");
+        return;
+    }
+
+    const bgUrl = document.getElementById('market-section-bg-url').value.trim();
+    
+    try {
+        await window.dbSet(window.dbRef(window.database, `marketplace_accounts_approved/${loggedMarketUsername}/bgUrl`), bgUrl);
+        applyCustomSectionBg(bgUrl);
+        alert("🎉 Matagumpay na na-save ang iyong Customized Background!");
+    } catch (err) {
+        console.error("Background Save Error:", err);
+        alert("❌ Nabigong i-save ang background image.");
     }
 }
 
@@ -1710,6 +1749,7 @@ async function submitMarketMemberRegistration() {
         username: username,
         password: password,
         avatarUrl: "",
+        bgUrl: "",
         timestamp: Date.now(),
         status: "PENDING"
     };
