@@ -1674,12 +1674,86 @@ async function checkMarketplaceAuthOnLoad() {
             console.error("Error loading settings:", e);
         }
 
+        // Load Font Styles
+        loadMemberFontStyles(loggedMarketUsername);
+
         // Load Social Hub Data when member is logged in
         loadSocialHubData();
     } else {
         if (lockedView) lockedView.style.display = 'block';
         if (unlockedView) unlockedView.style.display = 'none';
     }
+}
+
+// ✍️ FONT, SIZE, COLOR, & BOLD CUSTOMIZATION FUNCTIONS
+function saveMemberFontStyles() {
+    const fontFamily = document.getElementById('market-font-family') ? document.getElementById('market-font-family').value : "'Montserrat', sans-serif";
+    const fontSize = document.getElementById('market-font-size') ? document.getElementById('market-font-size').value : "15px";
+    const textColor = document.getElementById('market-text-color') ? document.getElementById('market-text-color').value : "#e0e0e8";
+    const isBold = (document.getElementById('market-text-bold') && document.getElementById('market-text-bold').checked) ? 'bold' : 'normal';
+
+    const profileSection = document.getElementById('market-unlocked-view');
+    if (profileSection) {
+        profileSection.style.fontFamily = fontFamily;
+        profileSection.style.fontSize = fontSize;
+        profileSection.style.color = textColor;
+        profileSection.style.fontWeight = isBold;
+
+        const allElements = profileSection.querySelectorAll('label, input, select, span, h4');
+        allElements.forEach(el => {
+            el.style.fontFamily = fontFamily;
+            el.style.fontSize = fontSize;
+            el.style.fontWeight = isBold;
+            el.style.color = textColor;
+        });
+    }
+
+    const currentUser = localStorage.getItem('kultura_market_username');
+    if (currentUser && window.database) {
+        const styleRef = window.dbRef(window.database, `marketplace_accounts_approved/${currentUser}/styles`);
+        window.dbSet(styleRef, {
+            fontFamily: fontFamily,
+            fontSize: fontSize,
+            textColor: textColor,
+            fontWeight: isBold
+        }).then(() => {
+            alert('✅ Na-save at nailapat na ang iyong Font, Size, at Color settings sa form!');
+        }).catch((error) => {
+            console.error("Error saving font styles:", error);
+        });
+    } else {
+        alert('✅ Nailapat na ang settings sa iyong screen!');
+    }
+}
+
+function loadMemberFontStyles(username) {
+    if (!window.database || !username) return;
+    const styleRef = window.dbRef(window.database, `marketplace_accounts_approved/${username}/styles`);
+    window.dbGet(styleRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            const profileSection = document.getElementById('market-unlocked-view');
+            if (profileSection) {
+                if (data.fontFamily) profileSection.style.fontFamily = data.fontFamily;
+                if (data.fontSize) profileSection.style.fontSize = data.fontSize;
+                if (data.textColor) profileSection.style.color = data.textColor;
+                if (data.fontWeight) profileSection.style.fontWeight = data.fontWeight;
+
+                const allElements = profileSection.querySelectorAll('label, input, select, span, h4');
+                allElements.forEach(el => {
+                    if (data.fontFamily) el.style.fontFamily = data.fontFamily;
+                    if (data.fontSize) el.style.fontSize = data.fontSize;
+                    if (data.textColor) el.style.color = data.textColor;
+                    if (data.fontWeight) el.style.fontWeight = data.fontWeight;
+                });
+
+                if (document.getElementById('market-font-family')) document.getElementById('market-font-family').value = data.fontFamily;
+                if (document.getElementById('market-font-size')) document.getElementById('market-font-size').value = data.fontSize;
+                if (document.getElementById('market-text-color')) document.getElementById('market-text-color').value = data.textColor;
+                if (document.getElementById('market-text-bold')) document.getElementById('market-text-bold').checked = (data.fontWeight === 'bold');
+            }
+        }
+    }).catch(err => console.log("Style load info:", err));
 }
 
 function applyCustomSectionBg(url) {
@@ -1941,7 +2015,7 @@ async function rejectMarketAccount(username) {
     }
 }
 
-// 🟢 AUTOMATIC DIRECT POST TO DISCORD (NO MORE PENDING MARKETPLACE LISTINGS)
+// 🟢 AUTOMATIC DIRECT POST TO DISCORD
 async function submitMarketplacePending() {
     const listingType = document.getElementById('market-listing-type').value;
     const seller = document.getElementById('market-seller-ign').value.trim();
@@ -2032,7 +2106,6 @@ async function loadSocialHubData() {
     const loggedUsername = localStorage.getItem('kultura_market_username');
     if (!loggedUsername) return;
 
-    // Load registered approved members
     const membersContainer = document.getElementById('social-members-list');
     if (membersContainer) {
         window.dbOnValue(window.dbRef(window.database, 'marketplace_accounts_approved'), (snapshot) => {
@@ -2061,7 +2134,6 @@ async function loadSocialHubData() {
         });
     }
 
-    // Load Friend Requests
     const reqContainer = document.getElementById('social-friend-requests');
     if (reqContainer) {
         window.dbOnValue(window.dbRef(window.database, `social_requests/${loggedUsername}`), (snapshot) => {
@@ -2088,7 +2160,6 @@ async function loadSocialHubData() {
         });
     }
 
-    // Load Friends for Chat Dropdown
     const chatSelect = document.getElementById('chat-recipient-select');
     if (chatSelect) {
         window.dbOnValue(window.dbRef(window.database, `social_friends/${loggedUsername}`), (snapshot) => {
