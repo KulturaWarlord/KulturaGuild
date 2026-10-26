@@ -1685,7 +1685,7 @@ function applyCustomSectionBg(url) {
     if (!sectionContainer) return;
 
     if (url && url.trim() !== '') {
-        sectionContainer.style.backgroundImage = `linear-gradient(rgba(10, 10, 15, 0.85), rgba(10, 10, 15, 0.92)), url('${url}')`;
+        sectionContainer.style.backgroundImage = `linear-gradient(rgba(10, 10, 15, 0.45), rgba(10, 10, 15, 0.65)), url('${url}')`;
         sectionContainer.style.backgroundSize = 'cover';
         sectionContainer.style.backgroundPosition = 'center';
         sectionContainer.style.backgroundRepeat = 'no-repeat';
@@ -1693,6 +1693,20 @@ function applyCustomSectionBg(url) {
         sectionContainer.style.padding = '20px';
     } else {
         sectionContainer.style.backgroundImage = 'none';
+    }
+}
+
+// Function para sa Minimize / Maximize toggle ng Profile & Background Settings
+function toggleProfileSettingsMinimize() {
+    const bodyContent = document.getElementById('profile-settings-body');
+    const minBtn = document.getElementById('profile-min-btn');
+
+    if (bodyContent.style.display === "none") {
+        bodyContent.style.display = "flex";
+        minBtn.innerText = "➖ Minimize";
+    } else {
+        bodyContent.style.display = "none";
+        minBtn.innerText = "➕ Maximize";
     }
 }
 
