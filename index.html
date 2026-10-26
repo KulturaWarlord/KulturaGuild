@@ -3,425 +3,770 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kultura Guild & Alliance - Official Portal</title>
+    <title>Kultura Guild & Alliance | NoLimit MU Online</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=MedievalSharp&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- External CSS Link -->
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="favicon.png">
-</head>
-<body>
 
-    <audio id="bg-audio" loop preload="auto">
-        <source src="background-music.mp3" type="audio/mpeg">
-    </audio>
-
-    <div id="left-floating-word" class="floating-side-word left-word">
-        <span>K</span><span>U</span><span>L</span><span>T</span><span>U</span><span>R</span><span>A</span>
-    </div>
-    <div id="right-floating-word" class="floating-side-word right-word">
-        <span>A</span><span>L</span><span>L</span><span>I</span><span>A</span><span>N</span><span>C</span><span>E</span>
-    </div>
-
-    <header class="main-header">
-        <div class="logo-container">
-            <img src="logo.png" alt="Kultura Alliance Logo" class="guild-logo">
-            <div class="logo-text">
-                <h1>KULTURA ALLIANCE</h1>
-                <p>NoLimit MU Online Community</p>
-            </div>
-        </div>
-        
-        <div class="header-right-controls">
-            <button id="open-officer-portal-btn" onclick="openLoginModal()" class="btn btn-portal">
-                🔐 Open Authorized Officer Portal
-            </button>
-        </div>
-    </header>
-
-    <main class="main-content">
-
-        <section id="public-giveaway-display-section" class="content-card" style="display: none;">
-            <h2 class="section-title">🏎️ GRAND PRIX CAR RACE & GIVEAWAYS</h2>
-            <div class="giveaway-status-box">
-                <div id="public-qualified-list">
-                    <span style="color: var(--text-dim);">Loading qualified members...</span>
-                </div>
-            </div>
-            <div id="public-winners-display-box" class="winners-display-box" style="margin-top: 10px;">
-                <em style="color: var(--text-dim);">No car race winners yet.</em>
-            </div>
-        </section>
-
-        <section class="content-card">
-            <h2 class="section-title">📢 GUILD EVENTS & SCHEDULE</h2>
-            <div id="dynamic-events-container" class="events-grid"></div>
-        </section>
-
-        <section class="stats-counter-bar">
-            <div class="stat-item">
-                <span class="stat-label">⚔️ Active Warriors:</span>
-                <span id="active-warriors-count" class="stat-value">--</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">👁️ Total Portal Views:</span>
-                <span id="live-page-views-count" class="stat-value">--</span>
-            </div>
-        </section>
-
-        <section class="content-card">
-            <div class="roster-header-flex">
-                <h2 class="section-title">🛡️ KULTURA DIVISION ROSTERS</h2>
-                <div id="rotating-alliance-badge" class="alliance-badge">
-                    <span id="rotating-icon">🛡️</span> <span id="rotating-text">PROTECT GUILD</span>
-                </div>
-            </div>
-
-            <div class="search-box-container" style="margin-bottom: 15px;">
-                <input type="text" id="search-main-input" onkeyup="searchMainAndDummies()" placeholder="🔍 Search Main or Dummy character name..." style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--primary); color: #fff; border-radius: 5px;">
-                <div id="search-dummy-result-box" style="margin-top: 8px;"></div>
-            </div>
-
-            <div id="dynamic-roster-grid" class="roster-grid"></div>
-        </section>
-
-        <section class="content-card">
-            <div class="attendance-header-flex">
-                <h2 class="section-title">📋 ATTENDANCE & PAYOUT HISTORY</h2>
-                <button onclick="open3DaySummaryModal()" class="btn btn-payout">💰 View 3-Day Payout Summary</button>
-            </div>
-            <div class="table-responsive">
-                <table class="attendance-table">
-                    <thead>
-                        <tr>
-                            <th>DATE & TIME</th>
-                            <th>EVENT TYPE</th>
-                            <th>TOTAL MAIN PRESENT</th>
-                            <th>SOL POOL</th>
-                            <th>ATTENDEES & SHARE</th>
-                        </tr>
-                    </thead>
-                    <tbody id="public-attendance-history">
-                        <tr><td colspan="5" style="text-align: center; color: var(--text-dim);">Loading attendance history...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <section class="content-card">
-            <h2 class="section-title">🛒 KULTURA PRIVATE MARKETPLACE</h2>
-            
-            <div id="market-locked-view" style="text-align: center; padding: 20px;">
-                <p style="color: var(--text-light); margin-bottom: 15px;">🔒 Ang Marketplace na ito ay pampribado lamang sa mga Verified Members!</p>
-                <div style="display: flex; gap: 10px; justify-content: center;">
-                    <button onclick="openMarketLoginModal()" class="btn">🔑 Member Login</button>
-                    <button onclick="openMarketRegisterModal()" class="btn btn-primary">📝 Register Account</button>
-                </div>
-            </div>
-
-            <div id="market-unlocked-view" style="display: none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 5px;">
-                    <span>👤 Logged in as: <strong id="market-current-user-display" style="color: var(--primary-glow);">--</strong></span>
-                    <button onclick="marketLogout()" class="delete-btn">🔒 Logout Marketplace</button>
-                </div>
-
-                <div class="marketplace-form-grid">
-                    <div>
-                        <label>Listing Type:</label>
-                        <select id="market-listing-type" style="width: 100%; padding: 8px; background: #222; color: #fff; border: 1px solid #555; margin-bottom: 10px;">
-                            <option value="SELLING">🔴 SELLING (Nagbebenta)</option>
-                            <option value="BUYING">🟢 BUYING (Bumibili)</option>
-                        </select>
-
-                        <label>Seller / Trader IGN:</label>
-                        <input type="text" id="market-seller-ign" placeholder="In-game Name" style="width: 100%; padding: 8px; background: #222; color: #fff; border: 1px solid #555; margin-bottom: 10px;">
-
-                        <label>Discord User ID (Optional for Direct DM):</label>
-                        <input type="text" id="market-discord-id" placeholder="e.g. 123456789012345678" style="width: 100%; padding: 8px; background: #222; color: #fff; border: 1px solid #555; margin-bottom: 10px;">
-                    </div>
-
-                    <div>
-                        <label>Item & Options:</label>
-                        <input type="text" id="market-item-desc" placeholder="e.g. FO Great Dragon Set +15" style="width: 100%; padding: 8px; background: #222; color: #fff; border: 1px solid #555; margin-bottom: 10px;">
-
-                        <label>Price / Offer:</label>
-                        <input type="text" id="market-price-desc" placeholder="e.g. 50,000 SOL or Offer" style="width: 100%; padding: 8px; background: #222; color: #fff; border: 1px solid #555; margin-bottom: 10px;">
-
-                        <button onclick="submitMarketplacePending()" class="btn btn-primary" style="width: 100%; margin-top: 5px;">🚀 Submit Listing for Approval</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <div id="login-modal" class="modal-overlay">
-        <div class="modal-card">
-            <h3>🔐 OFFICER PORTAL LOGIN</h3>
-            <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 10px;">Enter your assigned credentials to access administration features.</p>
-            <input type="text" id="login-username" placeholder="Username / Email">
-            <input type="password" id="login-password" placeholder="Password">
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button onclick="handleLogin()" class="btn btn-primary" style="flex: 1;">Login</button>
-                <button onclick="closeLoginModal()" class="btn" style="flex: 1;">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="market-register-modal" class="modal-overlay">
-        <div class="modal-card">
-            <h3>📝 MEMBERS REGISTRATION</h3>
-            <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 10px;">Magparehistro para makapasok sa Kultura Alliance Portal. Kailangan ng SuperAdmin approval bago makapag-login.</p>
-            <input type="text" id="reg-market-ign" placeholder="In-Game Name (IGN)">
-            <input type="text" id="reg-market-user" placeholder="Desired Username">
-            <input type="password" id="reg-market-pass" placeholder="Password">
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button onclick="submitMarketMemberRegistration()" class="btn btn-primary" style="flex: 1;">Register Now</button>
-                <button onclick="closeMarketRegisterModal()" class="btn" style="flex: 1;">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="market-login-modal" class="modal-overlay">
-        <div class="modal-card">
-            <h3>🔑 MARKETPLACE MEMBER LOGIN</h3>
-            <input type="text" id="login-market-user" placeholder="Username">
-            <input type="password" id="login-market-pass" placeholder="Password">
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button onclick="submitMarketMemberLogin()" class="btn btn-primary" style="flex: 1;">Login</button>
-                <button onclick="closeMarketLoginModal()" class="btn" style="flex: 1;">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="summary-3day-modal" class="modal-overlay">
-        <div class="modal-card" style="max-width: 700px;">
-            <h3>💰 3-DAY ATTENDANCE & PAYOUT SUMMARY</h3>
-            <div id="summary-3day-dates" style="font-size: 0.85rem; color: var(--primary-glow); margin-bottom: 10px;">--</div>
-            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-                <table class="attendance-table" style="width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>MAIN CHARACTER</th>
-                            <th>DIVISION</th>
-                            <th>ATTENDED DAYS</th>
-                            <th>TOTAL SOL SHARE</th>
-                        </tr>
-                    </thead>
-                    <tbody id="summary-3day-table-body"></tbody>
-                </table>
-            </div>
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button onclick="downloadCleanPayoutTxt()" class="btn btn-primary" style="flex: 1;">📥 Download .TXT Summary</button>
-                <button onclick="close3DaySummaryModal()" class="btn" style="flex: 1;">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="attendance-admin-modal" class="modal-overlay">
-        <div id="admin-modal-card" class="modal-card" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--primary); padding-bottom: 8px;">
-                <h3>🔓 AUTHORIZED OFFICER PORTAL (@<span id="logged-agm-display">--</span>)</h3>
-                <div>
-                    <button id="modal-min-btn" onclick="toggleMinimizeAdminModal()" class="btn" style="padding: 2px 8px;">➖</button>
-                    <button onclick="closeAdminModal()" class="btn" style="padding: 2px 8px;">❌</button>
-                </div>
-            </div>
-
-            <div id="admin-modal-body-content">
-                <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; margin-bottom: 15px;">
-                    <h4 style="color: var(--primary-glow); margin-bottom: 8px;">📋 RECORD ATTENDANCE</h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-                        <div>
-                            <label>Assigned Division:</label>
-                            <select id="admin-officer-select" onchange="onDivisionChange()" style="width: 100%; padding: 6px; background: #222; color: #fff; border: 1px solid #555;"></select>
-                        </div>
-                        <div>
-                            <label>Event Type:</label>
-                            <select id="admin-event-type" onchange="renderMemberChecklist()" style="width: 100%; padding: 6px; background: #222; color: #fff; border: 1px solid #555;">
-                                <option value="Castle Siege War">Castle Siege War</option>
-                                <option value="Guild Boss Event">Guild Boss Event</option>
-                                <option value="Alliance War">Alliance War</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-                        <div>
-                            <label>Date:</label>
-                            <input type="date" id="admin-attendance-date" onchange="renderMemberChecklist()" style="width: 100%; padding: 6px; background: #222; color: #fff; border: 1px solid #555;">
-                        </div>
-                        <div>
-                            <label>SOL Pool:</label>
-                            <input type="number" id="admin-sol-pool" value="100000" style="width: 100%; padding: 6px; background: #222; color: #fff; border: 1px solid #555;">
-                        </div>
-                    </div>
-
-                    <div id="admin-member-checklist" style="max-height: 180px; overflow-y: auto; background: #111; padding: 8px; border-radius: 4px; margin-bottom: 10px; border: 1px solid #333;"></div>
-
-                    <button onclick="saveAttendanceEntry()" class="btn btn-primary" style="width: 100%;">💾 Save Attendance Entry & Post to Discord</button>
-                </div>
-
-                <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; margin-bottom: 15px;">
-                    <h4 style="color: var(--primary-glow); margin-bottom: 8px;">➕ REGISTER MEMBER TO ROSTER</h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <input type="text" id="new-member-ign" placeholder="In-Game Name (IGN)">
-                        <select id="new-member-class" style="padding: 6px; background: #222; color: #fff; border: 1px solid #555;">
-                            <option value="Blade Master">Blade Master</option>
-                            <option value="Dark Lord">Dark Lord</option>
-                            <option value="Summoner">Summoner</option>
-                            <option value="Elf">Elf</option>
-                            <option value="Soul Master">Soul Master</option>
-                            <option value="Dimension Master">Dimension Master</option>
-                        </select>
-                    </div>
-                    <button onclick="registerNewMember()" class="btn" style="width: 100%; margin-top: 8px; background: #28a745; color: #fff;">➕ Add to Division</button>
-                </div>
-
-                <div id="superadmin-main-dummy-block" style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; margin-bottom: 15px;">
-                    <h4 style="color: var(--primary-glow); margin-bottom: 8px;">🎭 MULTI-DUMMY LINKAGE SYSTEM</h4>
-                    <input type="text" id="type-main-ign" placeholder="Enter Main Character IGN" style="width: 100%; padding: 6px; background: #222; color: #fff; border: 1px solid #555; margin-bottom: 8px;">
-                    <div id="dummy-boxes-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
-                        <input type="text" class="dummy-input-field" placeholder="Dummy 1" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
-                        <input type="text" class="dummy-input-field" placeholder="Dummy 2" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button onclick="addMoreDummyBox()" class="btn" style="flex: 1; background: #444;">➕ Add More Dummy Box</button>
-                        <button onclick="saveSuperAdminMultiLinkage()" class="btn btn-primary" style="flex: 1;">🔗 Link Dummies to Main</button>
-                    </div>
-                </div>
-
-                <div id="superadmin-inbox-block" style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none;">
-                    <h4 style="color: var(--primary-glow); margin-bottom: 8px;">🛒 PENDING MARKETPLACE APPROVALS</h4>
-                    
-                    <h5 style="color: var(--text-light); margin: 8px 0;">Accounts Approval:</h5>
-                    <div id="pending-market-accounts-container" style="max-height: 120px; overflow-y: auto;"></div>
-
-                    <h5 style="color: var(--text-light); margin: 8px 0;">Listings Approval:</h5>
-                    <div id="pending-listings-container" style="max-height: 150px; overflow-y: auto;"></div>
-                </div>
-
-                <div id="superadmin-giveaway-block" style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none;">
-                    <h4 style="color: var(--primary-glow); margin-bottom: 8px;">🏎️ CAR RACE TOURNAMENT CONTROL</h4>
-                    <div id="giveaway-participants-info" style="font-size: 0.85rem; color: #fff; margin-bottom: 10px;">--</div>
-                    
-                    <div id="duck-race-arena" style="display: none; background: #050505; border: 1px solid var(--primary); padding: 10px; border-radius: 6px; margin-bottom: 10px;">
-                        <div id="duck-race-timer-display" style="text-align: center; color: var(--primary-glow); font-weight: bold;">⏱️ Time Remaining: 45s</div>
-                        <div id="kantyawan-box" style="text-align: center; margin: 8px 0; font-size: 0.9rem; color: #ffaa33;">🎙️ 🔊 Ready drivers...</div>
-                        <div id="duck-lanes-container"></div>
-                    </div>
-
-                    <div id="giveaway-results-box" style="display: none; margin-bottom: 10px;">
-                        <div id="giveaway-winners-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px;"></div>
-                    </div>
-
-                    <button id="start-duck-race-btn" onclick="runCarRace()" class="btn btn-primary" style="width: 100%;">🏎️ START CAR RACE TOURNAMENT</button>
-                </div>
-
-                <div id="superadmin-events-block" style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none;">
-                    <h4 style="color: var(--primary-glow); margin-bottom: 8px;">📢 EDIT EVENTS & DISCORD ANNOUNCER</h4>
-                    
-                    <div style="margin-bottom: 10px;">
-                        <label>Car Race Public Visibility:</label>
-                        <select id="giveawaybot-visibility-select" style="width: 100%; padding: 6px; background: #222; color: #fff; border: 1px solid #555;">
-                            <option value="HIDE">HIDE (Nakatago sa bisita)</option>
-                            <option value="SHOW">SHOW (Lalabas sa pampublikong pahina)</option>
-                        </select>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
-                        <div>
-                            <input type="text" id="event1-title" placeholder="Event 1 Title">
-                            <input type="text" id="event1-time" placeholder="Event 1 Time" style="margin-top: 4px;">
-                            <input type="text" id="event1-desc" placeholder="Event 1 Desc" style="margin-top: 4px;">
-                        </div>
-                        <div>
-                            <input type="text" id="event2-title" placeholder="Event 2 Title">
-                            <input type="text" id="event2-time" placeholder="Event 2 Time" style="margin-top: 4px;">
-                            <input type="text" id="event2-desc" placeholder="Event 2 Desc" style="margin-top: 4px;">
-                        </div>
-                    </div>
-                    <button onclick="saveGuildEventsToFirebase()" class="btn" style="width: 100%; background: #007bff; color: #fff; margin-bottom: 10px;">💾 Save & Announce Schedule</button>
-
-                    <hr style="border-color: #333; margin: 10px 0;">
-
-                    <label>Custom Announcement Sender:</label>
-                    <select id="discord-announce-sender" style="width: 100%; padding: 6px; background: #222; color: #fff; border: 1px solid #555; margin-bottom: 6px;">
-                        <option value="Guild Master Fullclip">Fullclip</option>
-                        <option value="Assistant GM Warlock">Warlock</option>
-                        <option value="Kultura SuperAdmin">Kultura Admin</option>
-                    </select>
-                    <input type="text" id="discord-announce-title" placeholder="Announcement Title" style="width: 100%; padding: 6px; background: #222; color: #fff; border: 1px solid #555; margin-bottom: 6px;">
-                    <textarea id="discord-announce-msg" placeholder="Announcement Message..." style="width: 100%; height: 60px; padding: 6px; background: #222; color: #fff; border: 1px solid #555; margin-bottom: 6px;"></textarea>
-                    <button onclick="sendCustomDiscordAnnouncement()" class="btn btn-primary" style="width: 100%;">📢 Post Custom Announcement to Discord</button>
-                </div>
-
-                <!-- 🌐 SUPERADMIN IP VIEWER BLOCK -->
-                <div id="superadmin-ip-block" style="background: rgba(0,0,0,0.6); border: 1px solid var(--primary); padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none;">
-                    <h4 style="color: var(--primary-glow); margin-bottom: 8px;">📡 Member Login & Registration IP Log Viewer</h4>
-                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px;">Listahan ng mga IP address ng mga miyembrong nag-log in o nag-register:</p>
-                    <div id="superadmin-ip-list-container" style="max-height: 150px; overflow-y: auto; font-size: 0.85rem; background: #111; padding: 8px; border-radius: 4px; border: 1px solid #444;">
-                        <span style="color: var(--text-dim);">Wala pang nakatalang IP logs.</span>
-                    </div>
-                </div>
-
-                <div id="superadmin-delete-logs-block" style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none;">
-                    <h4 style="color: var(--primary-glow); margin-bottom: 8px;">🗑️ ATTENDANCE LOGS MANAGEMENT</h4>
-                    <div id="admin-attendance-logs-list" style="max-height: 120px; overflow-y: auto;"></div>
-                </div>
-
-                <div id="superadmin-guild-reg-block" style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none;">
-                    <h4 style="color: var(--primary-glow); margin-bottom: 8px;">⚔️ ALLIANCE GUILD REGISTRATION</h4>
-                    <input type="text" id="reg-guild-name" placeholder="New Guild Name" style="width: 100%; padding: 6px; background: #222; color: #fff; border: 1px solid #555; margin-bottom: 6px;">
-                    <select id="reg-gm-class" style="width: 100%; padding: 6px; background: #222; color: #fff; border: 1px solid #555; margin-bottom: 6px;">
-                        <option value="Blade Master">Blade Master</option>
-                        <option value="Dark Lord">Dark Lord</option>
-                        <option value="Summoner">Summoner</option>
-                    </select>
-                    <button onclick="registerAllianceAndGM()" class="btn" style="width: 100%; background: #28a745; color: #fff;">👑 Add Alliance Guild</button>
-                </div>
-
-                <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; margin-bottom: 15px;">
-                    <h4 style="color: var(--primary-glow); margin-bottom: 8px;">❌ REMOVE MEMBERS FROM DIVISION</h4>
-                    <div id="admin-delete-member-list" style="max-height: 120px; overflow-y: auto;"></div>
-                </div>
-
-                <div style="display: flex; gap: 10px; margin-top: 15px;">
-                    <button onclick="handleLogout()" class="delete-btn" style="flex: 1; padding: 8px;">🔒 Logout Officer Session</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <footer id="dynamic-secure-credits" class="main-footer"></footer>
-
+    <!-- Firebase SDKs -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, get, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child, onValue, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyDummyKeyForSecurityPlaceholder",
+            apiKey: "AIzaSyAq_TzBp-Jjr3Wbp7RIHz05OW3IR5Iovmk",
             authDomain: "kulturaguildattendance.firebaseapp.com",
-            databaseURL: "https://kulturaguildattendance-default-rtdb.firebaseio.com",
+            databaseURL: "https://kulturaguildattendance-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "kulturaguildattendance",
-            storageBucket: "kulturaguildattendance.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abcdef123456"
+            storageBucket: "kulturaguildattendance.firebasestorage.app",
+            messagingSenderId: "198261862227",
+            appId: "1:198261862227:web:48a5c4e59af017af70bba6",
+            measurementId: "G-TE07YVT2D5"
         };
 
         const app = initializeApp(firebaseConfig);
-        window.database = getDatabase(app);
-        window.auth = getAuth(app);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
 
         window.dbRef = ref;
-        window.dbSet = set;
         window.dbGet = get;
+        window.dbChild = child;
+        window.dbSet = set;
         window.dbPush = push;
         window.dbOnValue = onValue;
+        window.database = db;
+        window.auth = auth;
         window.signInWithEmailAndPassword = signInWithEmailAndPassword;
         window.signOut = signOut;
-
+        
         window.dispatchEvent(new Event('firebase-ready'));
     </script>
+</head>
+<body>
 
+    <!-- FLOATING SIDE TEXT: LEFT -->
+    <div class="side-floating-text left" id="left-floating-word">
+        <span>K</span><span>U</span><span>L</span><span>T</span><span>U</span><span>R</span><span>A</span>
+    </div>
+
+    <!-- FLOATING SIDE TEXT: RIGHT -->
+    <div class="side-floating-text right" id="right-floating-word">
+        <span>A</span><span>L</span><span>L</span><span>I</span><span>A</span><span>N</span><span>C</span><span>E</span>
+        <span class="gap-space"></span>
+        <span>P</span>
+        <span>H</span>
+    </div>
+
+    <!-- Background Audio Element -->
+    <audio id="bg-audio" loop preload="auto">
+        <source src="Epic Medieval Battle Music_ _Valiant Warriors of our Lands_ by RageSound (Copyright Free Music) [MGIt04kMV_g].mp3" type="audio/mpeg">
+        <source src="https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png" type="audio/mpeg">
+    </audio>
+
+    <!-- Header Section -->
+    <header>
+        <a href="https://nolimit.lv/" target="_blank" rel="noopener noreferrer" class="server-logo-link">
+            <img src="https://nolimit.lv/themes/def_theme/images/logo.png" alt="NoLimit MU Online Logo" class="server-logo">
+        </a>
+
+        <h1 class="guild-logo">KULTURA <span>GUILD</span></h1>
+        
+        <div class="rotating-alliance-container">
+            <a href="#guild" class="rotating-alliance-badge">
+                <span id="rotating-icon">🛡️</span> <span id="rotating-text">PROTECT GUILD</span>
+            </a>
+        </div>
+
+        <p class="guild-motto">"Respect, Loyalty, Unity, and Victory."</p>
+        <div class="hero-btns">
+            <a href="https://discord.gg/GuXgjj4JyZ" target="_blank" rel="noopener noreferrer" class="btn">Apply For Guild</a>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- Guild Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" style="font-size: 1.8rem; margin-top: 5px;">KULTURA</div>
+                <div class="stat-label">Castle Owner Guild</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="active-warriors-count">--</div>
+                <div class="stat-label">Active Warriors</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">100k SOL</div>
+                <div class="stat-label">CS Prize Pool</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">Valley</div>
+                <div class="stat-label">Main HQ</div>
+            </div>
+        </div>
+
+        <!-- ATTENDANCE SYSTEM SECTION -->
+        <section id="attendance-system" class="panel" style="margin-bottom: 60px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-gold); padding-bottom: 10px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="margin: 0; color: var(--primary);">📋 Live Attendance & Anti-Double Compensation Log</h3>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="open3DaySummaryModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem; background: linear-gradient(135deg, #0088cc, #004488);">
+                        📊 View 3-Day Summary & Download Payout List
+                    </button>
+                    <button id="open-officer-portal-btn" onclick="openLoginModal()" class="btn" style="padding: 8px 16px; font-size: 0.85rem;">
+                        🔐 Open Authorized Officer Portal
+                    </button>
+                </div>
+            </div>
+
+            <div>
+                <h4 style="color: var(--primary-glow); margin-bottom: 10px;">Castle Siege Live SOL Shares (Strictly 1 Share per Main Character)</h4>
+                <div style="max-height: 400px; overflow-y: auto; background: rgba(0,0,0,0.4); border-radius: 6px; padding: 10px;">
+                    <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.85rem;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--primary); color: var(--primary-glow);">
+                                <th style="padding: 8px;">Date (Event)</th>
+                                <th style="padding: 8px;">Total Main Present</th>
+                                <th style="padding: 8px;">SOL Pool</th>
+                                <th style="padding: 8px;">SOL Share / Main Member</th>
+                                <th style="padding: 8px;">Acknowledged Main Characters (Credited to Main Guild)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="public-attendance-history">
+                            <tr><td colspan="5" style="padding: 10px; text-align: center; color: var(--text-dim);">Connecting to Live Firebase Sync...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- PUBLIC DISPLAY FOR CAR RACE ARENA -->
+        <section id="public-giveaway-display-section" class="panel" style="display: none; border: 2px solid #ff3399; background: rgba(255, 0, 127, 0.05); margin-bottom: 60px;">
+            <h3 style="color: #ff99dd; text-align: center; margin-bottom: 10px;">🏎️ Live 3-Day Castle Siege Grand Prix Car Race Arena</h3>
+
+            <div id="duck-race-arena" style="display: none; background: #0b192c; border: 2px dashed #00b4d8; border-radius: 8px; padding: 12px; margin-bottom: 20px; position: relative; width: 100%;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div style="font-size: 0.8rem; color: #90e0ef; text-transform: uppercase; font-weight: bold;">🏁 KULTURA GRAND PRIX SPEEDWAY (LIVE NO-SCROLL ARENA) 🏁</div>
+                    <div id="duck-race-timer-display" style="font-size: 0.85rem; color: #ffdd55; font-weight: bold; background: rgba(0,0,0,0.6); padding: 2px 10px; border-radius: 12px; border: 1px solid #ffdd55;">⏱️ Time Remaining: 45s</div>
+                </div>
+
+                <div id="kantyawan-box" style="min-height: 32px; font-size: 0.95rem; color: #00ffcc; font-weight: bold; font-style: italic; margin-bottom: 10px; text-shadow: 0 0 8px rgba(0,255,204,0.6); display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.6); border-radius: 6px; padding: 6px 12px; border: 1px solid rgba(0,255,204,0.3);">
+                    🎙️ 🔊 Handa na ba ang mga drivers?! Simula na ng karera!
+                </div>
+
+                <div id="duck-lanes-container" style="display: flex; flex-direction: column; gap: 2px; width: 100%;"></div>
+            </div>
+
+            <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; margin-top: 15px;">
+                <div style="flex: 1; min-width: 280px; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 6px; border: 1px solid var(--border-gold);">
+                    <h4 style="color: var(--primary-glow); font-size: 0.9rem; margin-bottom: 8px;">📋 Qualified 3/3 Attendance Main Members:</h4>
+                    <div id="public-qualified-list" style="max-height: 150px; overflow-y: auto; font-size: 0.85rem; color: #fff;">
+                        <span style="color: var(--text-dim);">Calculating from the last 3 CS records...</span>
+                    </div>
+                </div>
+
+                <div style="flex: 1; min-width: 280px; background: rgba(255, 0, 127, 0.1); padding: 15px; border-radius: 6px; border: 1px solid #ff3399; text-align: center;">
+                    <h4 style="color: #ff99dd; font-size: 0.9rem; margin-bottom: 8px;">🏆 Official Grand Prix Tournament Winners (6 Rounds):</h4>
+                    <div id="public-winners-display-box" style="font-size: 0.9rem; color: #fff; margin-top: 10px;">
+                        <em style="color: var(--text-dim);">No car race winners yet.</em>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3-DAY PAYOUT SUMMARY & DOWNLOAD MODAL -->
+        <div id="summary-3day-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10002; justify-content: center; align-items: center;">
+            <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 650px; padding: 25px; border-radius: 10px; color: #fff; max-height: 85vh; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-gold); padding-bottom: 10px; margin-bottom: 15px;">
+                    <h3 style="color: var(--primary-glow); margin: 0; font-size: 1.2rem;">📊 3-Day Attendance & Payout Summary</h3>
+                    <button onclick="close3DaySummaryModal()" class="modal-win-btn" style="background: #8b0000; border: 1px solid #ff3333; color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: bold; font-size: 0.8rem;">✖</button>
+                </div>
+
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">
+                    Compiled from the **last 3 recorded attendance dates**. Displays the total attendance count and calculated total SOL shares.
+                </p>
+
+                <div id="summary-3day-dates" style="font-size: 0.85rem; color: var(--primary-glow); margin-bottom: 12px; font-weight: bold;"></div>
+
+                <div style="max-height: 320px; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; margin-bottom: 15px; border: 1px solid rgba(230,184,0,0.2);">
+                    <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.85rem;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--primary); color: var(--primary-glow);">
+                                <th style="padding: 6px;">Main Member</th>
+                                <th style="padding: 6px;">Main Guild</th>
+                                <th style="padding: 6px; text-align: center;">3-Day Count</th>
+                                <th style="padding: 6px; text-align: right;">Total SOL Share</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summary-3day-table-body"></tbody>
+                    </table>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: space-between; flex-wrap: wrap;">
+                    <button onclick="downloadCleanPayoutTxt()" class="btn" style="background: linear-gradient(135deg, #33cc33, #008800); color: #000; flex: 1; min-width: 200px;">
+                        📥 Download Clean Payout (.txt)
+                    </button>
+                    <button onclick="close3DaySummaryModal()" class="btn" style="background: #444;">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- LOGIN MODAL FOR OFFICERS -->
+        <div id="login-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10001; justify-content: center; align-items: center;">
+            <div style="background: var(--bg-card); border: 2px solid var(--primary); width: 90%; max-width: 400px; padding: 25px; border-radius: 10px; color: #fff; text-align: center;">
+                <h3 style="color: var(--primary-glow); margin-bottom: 15px;">🔐 Secure Firebase Authentication</h3>
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Log in using your Registered Email / Username in the Firebase Console.</p>
+                
+                <div style="margin-bottom: 12px; text-align: left;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Registered Email or Username:</label>
+                    <input type="text" id="login-username" placeholder="e.g. kulturamain@alliance.com or Fullclip" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                </div>
+
+                <div style="margin-bottom: 15px; text-align: left;">
+                    <label style="font-size: 0.8rem; color: var(--primary-glow);">Password:</label>
+                    <input type="password" id="login-password" placeholder="Enter Password" style="width: 100%; padding: 10px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; margin-top: 3px;">
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button onclick="closeLoginModal()" class="btn" style="background: #444;">Cancel</button>
+                    <button onclick="handleLogin()" class="btn">Login</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- AUTHORIZED OFFICER PORTAL -->
+        <div id="attendance-admin-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center;">
+            <div id="admin-modal-card" style="background: var(--bg-card); border: 2px solid var(--primary); width: 95%; max-width: 800px; padding: 25px; border-radius: 10px; color: #fff; max-height: 90vh; overflow-y: auto; position: relative; transition: all 0.3s ease; pointer-events: auto;">
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(230,184,0,0.3); padding-bottom: 8px; margin-bottom: 12px;">
+                    <h3 style="color: var(--primary-glow); margin: 0; font-size: 1.1rem;">🔒 Authorized Officer Portal</h3>
+                    <div style="display: flex; gap: 6px;">
+                        <button onclick="handleLogout()" class="modal-win-btn" title="Log Out" style="background: #8b0000; border: 1px solid #ff3333; color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: bold; font-size: 0.75rem;">🚪 Log Out</button>
+                        <button onclick="toggleMinimizeAdminModal()" id="modal-min-btn" class="modal-win-btn" title="Minimize / Restore" style="background: #333; border: 1px solid var(--primary); color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: bold; font-size: 0.8rem;">➖</button>
+                        <button onclick="closeAdminModal()" class="modal-win-btn" title="Close" style="background: #333; border: 1px solid #777; color: #fff; padding: 2px 8px; border-radius: 3px; font-weight: bold; font-size: 0.8rem;">✖</button>
+                    </div>
+                </div>
+
+                <div id="admin-modal-body-content">
+                    <p style="font-size: 0.85rem; color: #33cc33; margin-bottom: 15px;">Logged in as: <strong id="logged-agm-display">Officer</strong></p>
+
+                    <div id="superadmin-giveaway-block" class="admin-section-block" style="display: none; border-color: #ff3399;">
+                        <button onclick="toggleAdminSection('sec-giveaway-bot')" class="admin-collapsible-btn" style="color: #ff99dd; background: rgba(255, 51, 153, 0.15);">
+                            <span>🏎️ 3-Day Castle Siege Grand Prix Car Race Controls (45-Sec Sprint | 6 Rounds)</span>
+                            <span id="icon-sec-giveaway-bot">▼ Expand</span>
+                        </button>
+                        <div id="sec-giveaway-bot" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
+                                Car Race Eligibility: Main characters who completed <strong>3/3 Castle Siege Attendance</strong> across the last 3 recorded CS events. <strong>Guild Masters are automatically excluded</strong>.
+                            </p>
+
+                            <div style="background: rgba(0,0,0,0.6); padding: 12px; border-radius: 6px; border: 1px solid #ff3399; margin-bottom: 12px; text-align: center;">
+                                <div id="giveaway-participants-info" style="font-size: 0.85rem; color: #ff99dd; margin-bottom: 10px; font-weight: bold;">
+                                    Click the button below to start Grand Prix Car Race Round 1!
+                                </div>
+
+                                <button id="start-duck-race-btn" onclick="runCarRace()" class="btn" style="padding: 10px 20px; font-size: 0.9rem; background: linear-gradient(135deg, #00b4d8, #0077b6); color: #fff; border-color: #90e0ef;">
+                                    🎙️ START GRAND PRIX CAR RACE ROUND 1 OF 6 (WITH LIVE ANNOUNCER VOICE)
+                                </button>
+                            </div>
+
+                            <div id="giveaway-results-box" style="display: none; background: rgba(255, 0, 127, 0.1); border: 2px solid #ff3399; padding: 15px; border-radius: 8px; text-align: center;">
+                                <h4 style="color: #ff99dd; margin-bottom: 10px; font-size: 1.1rem;">🎉 GRAND PRIX TOURNAMENT WINNERS LEADERBOARD 🎉</h4>
+                                <div id="giveaway-winners-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="superadmin-events-block" class="admin-section-block" style="display: none; border-color: var(--primary);">
+                        <button onclick="toggleAdminSection('sec-events-manager')" class="admin-collapsible-btn" style="color: var(--primary-glow); background: rgba(230, 184, 0, 0.1);">
+                            <span>📢 Guild Events Manager & Module Visibility Controls</span>
+                            <span id="icon-sec-events-manager">▼ Expand</span>
+                        </button>
+                        <div id="sec-events-manager" class="admin-collapsible-content">
+                            
+                            <div style="background: rgba(255, 51, 153, 0.1); padding: 12px; border-radius: 6px; border: 1px solid #ff3399; margin-bottom: 15px;">
+                                <h4 style="color: #ff99dd; font-size: 0.85rem; margin-bottom: 6px;">🏎️ Car Race Public Visibility Control:</h4>
+                                <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">
+                                    Set whether the <strong>Car Race display outside the portal</strong> should be visible to members.
+                                </p>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <select id="giveawaybot-visibility-select" style="flex: 1; padding: 8px; background: #111; border: 1px solid #ff3399; color: #fff; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">
+                                        <option value="HIDE">🔒 HIDE Car Race (Hidden outside)</option>
+                                        <option value="SHOW">👁️ SHOW Car Race (Visible outside portal)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:12px;">
+                                Modify the information below and click <strong>💾 Save & Publish Events</strong> to update the landing page and portal settings immediately.
+                            </p>
+
+                            <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; border: 1px solid var(--border-gold); margin-bottom: 12px;">
+                                <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">Event 1 Settings (e.g. Castle Siege):</h4>
+                                <input type="text" id="event1-title" placeholder="Event Title (e.g. CASTLE SIEGE WAR)" style="width: 100%; padding: 6px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem; margin-bottom: 6px;">
+                                <input type="text" id="event1-time" placeholder="Schedule Time (e.g. 📅 Saturday | 6:00 PM PH Time)" style="width: 100%; padding: 6px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem; margin-bottom: 6px;">
+                                <textarea id="event1-desc" rows="2" placeholder="Event Description..." style="width: 100%; padding: 6px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;"></textarea>
+                            </div>
+
+                            <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; border: 1px solid var(--border-gold); margin-bottom: 12px;">
+                                <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">Event 2 Settings (e.g. Weekly Guild Event):</h4>
+                                <input type="text" id="event2-title" placeholder="Event Title (e.g. GUILD EVENTS / PK TOURNAMENT)" style="width: 100%; padding: 6px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem; margin-bottom: 6px;">
+                                <input type="text" id="event2-time" placeholder="Schedule Time (e.g. 📅 Saturday | 8:00 PM PH Time)" style="width: 100%; padding: 6px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem; margin-bottom: 6px;">
+                                <textarea id="event2-desc" rows="2" placeholder="Event Description..." style="width: 100%; padding: 6px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;"></textarea>
+                            </div>
+
+                            <button onclick="saveGuildEventsToFirebase()" class="btn" style="width: 100%; padding: 8px; font-size: 0.85rem; background: linear-gradient(135deg, #e6b800, #b38f00); color: #000;">
+                                💾 Save & Publish Events to Website
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="admin-section-block" style="border-color: #7289da;">
+                        <button onclick="toggleAdminSection('sec-discord-announcer')" class="admin-collapsible-btn" style="color: #7289da; background: rgba(114, 137, 218, 0.1);">
+                            <span>📣 Send Custom Announcement to Discord Webhook</span>
+                            <span id="icon-sec-discord-announcer">▼ Expand</span>
+                        </button>
+                        <div id="sec-discord-announcer" class="admin-collapsible-content">
+                            <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 10px;">
+                                Select the announcing Guild Leader, type your title and message below to broadcast directly to Discord.
+                            </p>
+                            
+                            <div style="margin-bottom: 10px;">
+                                <label style="font-size: 0.8rem; color: var(--primary-glow); font-weight: bold;">👑 Select Announcer / Officer:</label>
+                                <select id="discord-announce-sender" style="width: 100%; padding: 8px; background: #111; border: 1px solid #7289da; color: #ffdd55; border-radius: 4px; font-size: 0.85rem; font-weight: bold; margin-top: 3px;">
+                                    <option value="Guild Master : Warlock">Guild Master : Warlock</option>
+                                    <option value="Guild Master : LordDwight">Guild Master : LordDwight</option>
+                                    <option value="Guild Master : Fullclip">Guild Master : Fullclip</option>
+                                    <option value="Guild Master : WindTalker">Guild Master : WindTalker</option>
+                                    <option value="Assistant Guild Master : Tsukushi">Assistant Guild Master : Tsukushi</option>
+                                </select>
+                            </div>
+
+                            <div style="margin-bottom: 10px;">
+                                <label style="font-size: 0.8rem; color: var(--primary-glow);">Announcement Header / Title:</label>
+                                <input type="text" id="discord-announce-title" placeholder="e.g. ⚔️ MANDATORY CASTLE SIEGE PREPARATION" style="width: 100%; padding: 8px; background: #111; border: 1px solid #7289da; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
+                            </div>
+
+                            <div style="margin-bottom: 12px;">
+                                <label style="font-size: 0.8rem; color: var(--primary-glow);">Announcement Message Body:</label>
+                                <textarea id="discord-announce-msg" rows="4" placeholder="Type your guild announcement message here..." style="width: 100%; padding: 8px; background: #111; border: 1px solid #7289da; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;"></textarea>
+                            </div>
+
+                            <button onclick="sendCustomDiscordAnnouncement()" class="btn" style="width: 100%; padding: 8px; font-size: 0.85rem; background: linear-gradient(135deg, #7289da, #4e5d94); color: #fff;">
+                                🚀 Send Announcement to Discord
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="superadmin-inbox-block" class="admin-section-block" style="display: none;">
+                        <button onclick="toggleAdminSection('sec-inbox')" class="admin-collapsible-btn">
+                            <span>📬 SuperAdmin Inbox (Password Reset Requests)</span>
+                            <span id="icon-sec-inbox">▼ Expand</span>
+                        </button>
+                        <div id="sec-inbox" class="admin-collapsible-content">
+                            <div id="superadmin-inbox-list" style="max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
+                                <span style="color: var(--text-dim);">No reserved tickets in the inbox.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="superadmin-main-dummy-block" class="admin-section-block" style="border-color: #33cc33;">
+                        <button onclick="toggleAdminSection('sec-main-dummy-linker')" class="admin-collapsible-btn" style="color: #33cc33; background: rgba(51, 204, 51, 0.1);">
+                            <span>🎭 Multi-Dummy Character Mapper & Search Portal</span>
+                            <span id="icon-sec-main-dummy-linker">▼ Expand</span>
+                        </button>
+                        <div id="sec-main-dummy-linker" class="admin-collapsible-content">
+                            
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
+                                Type the <strong>Main Character IGN</strong> and list their <strong>Dummy Accounts</strong> to link them in the database.
+                            </p>
+                            
+                            <div style="margin-bottom: 12px; background: rgba(51,204,51,0.1); padding: 10px; border: 1px solid #33cc33; border-radius: 6px;">
+                                <label style="font-size: 0.8rem; color: #33cc33; font-weight: bold;">👑 Main Character IGN:</label>
+                                <input type="text" id="type-main-ign" placeholder="e.g. Eremes" style="width: 100%; padding: 8px; background: #111; border: 1px solid #33cc33; color: #fff; border-radius: 4px; font-size: 0.85rem; margin-top: 3px;">
+                            </div>
+
+                            <label style="font-size: 0.8rem; color: #ffaa33; font-weight: bold;">🎭 Dummy / Alt Character Accounts:</label>
+                            <div id="dummy-boxes-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; margin-bottom: 10px; max-height: 220px; overflow-y: auto; padding-right: 5px;">
+                                <input type="text" class="dummy-input-field" placeholder="Dummy 1 (e.g. Kreios)" style="padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                                <input type="text" class="dummy-input-field" placeholder="Dummy 2 (e.g. Papaliciou)" style="padding: 7px; background: #111; border: 1px solid #ffaa33; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                                <input type="text" class="dummy-input-field" placeholder="Dummy 3" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                                <input type="text" class="dummy-input-field" placeholder="Dummy 4" style="padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                            </div>
+
+                            <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+                                <button onclick="addMoreDummyBox()" class="btn" style="padding: 5px 12px; font-size: 0.75rem; background: #333; border-color: #777;">➕ Add More Dummy Box</button>
+                                <button onclick="saveSuperAdminMultiLinkage()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; flex: 1; background: linear-gradient(135deg, #8b0000, #ffaa33); color: #000;">🔗 Link & Save Dummies</button>
+                            </div>
+
+                            <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 6px; border: 1px solid var(--border-gold);">
+                                <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">🔍 Search Main or Dummy Character:</h4>
+                                <input type="text" id="search-main-input" onkeyup="searchMainAndDummies()" placeholder="Type Main or Dummy Character IGN..." style="width: 100%; padding: 8px 12px; background: #111; border: 1px solid var(--primary); color: #fff; border-radius: 4px; font-size: 0.85rem; margin-bottom: 8px;">
+                                
+                                <div id="search-dummy-result-box" style="background: rgba(0,0,0,0.8); padding: 10px; border-radius: 4px; font-size: 0.85rem; min-height: 40px;">
+                                    <span style="color: var(--text-dim); font-style: italic;">Type a Main or Dummy character name to search...</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div id="superadmin-delete-logs-block" class="admin-section-block" style="display: none;">
+                        <button onclick="toggleAdminSection('sec-delete-attendance')" class="admin-collapsible-btn">
+                            <span>🗑️ SuperAdmin: Delete Past Attendance Logs</span>
+                            <span id="icon-sec-delete-attendance">▼ Expand</span>
+                        </button>
+                        <div id="sec-delete-attendance" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
+                                Select a past attendance log from the list below and click <strong>❌ Delete Log</strong> to permanently remove it from the database.
+                            </p>
+                            <div id="admin-attendance-logs-list" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
+                                <span style="color: var(--text-dim);">No reserved attendance logs.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="superadmin-guild-reg-block" class="admin-section-block" style="display: none;">
+                        <button onclick="toggleAdminSection('sec-guild-reg')" class="admin-collapsible-btn">
+                            <span>🏰 SuperAdmin: Register New Alliance & Guild Master</span>
+                            <span id="icon-sec-guild-reg">▼ Expand</span>
+                        </button>
+                        <div id="sec-guild-reg" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">Note: The **Guild Name** will automatically become the **Username** of the new Guild Master.</p>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                                <input type="text" id="reg-guild-name" placeholder="Guild Name & Username (e.g., SPIDEY)" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem; grid-column: span 2;">
+                                <input type="password" id="reg-gm-password" placeholder="GM Account Password" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                <select id="reg-gm-class" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                    <option value="Blade Master">GM Class: Blade Master</option>
+                                    <option value="Dark Lord">GM Class: Dark Lord</option>
+                                    <option value="Summoner">GM Class: Summoner</option>
+                                    <option value="Soul Master">GM Class: Soul Master</option>
+                                    <option value="Elf">GM Class: Elf</option>
+                                    <option value="Dimension Master">GM Class: Dimension Master</option>
+                                </select>
+                            </div>
+                            <button onclick="registerAllianceAndGM()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%; background: linear-gradient(135deg, #0055ff, #002288);">🚀 Create Guild & Register Guild Master</button>
+                        </div>
+                    </div>
+
+                    <div class="admin-section-block">
+                        <button onclick="toggleAdminSection('sec-account-settings')" class="admin-collapsible-btn">
+                            <span>⚙️ Account Settings, Username & Password Manager</span>
+                            <span id="icon-sec-account-settings">▼ Expand</span>
+                        </button>
+                        <div id="sec-account-settings" class="admin-collapsible-content">
+                            <div style="margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px dashed rgba(230,184,0,0.3);">
+                                <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">✏️ Change My Username:</h4>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                                    <input type="text" id="change-username-new" placeholder="Enter New Guild Username" style="flex: 1; min-width: 150px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                </div>
+                                <button onclick="changeMyUsername()" class="btn" style="padding: 6px 14px; font-size: 0.75rem; width: 100%; background: linear-gradient(135deg, #0088cc, #004488);">✏️ Update My Username</button>
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <h4 style="color: var(--primary-glow); font-size: 0.85rem; margin-bottom: 6px;">🔑 Change My Password:</h4>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                                    <input type="password" id="change-pass-current" placeholder="Current Password" style="flex: 1; min-width: 130px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                    <input type="password" id="change-pass-new" placeholder="New Password" style="flex: 1; min-width: 130px; padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                </div>
+                                <button onclick="changeMyPassword()" class="btn" style="padding: 6px 14px; font-size: 0.75rem; width: 100%;">⚙️ Update My Password</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-section-block">
+                        <button onclick="toggleAdminSection('sec-attendance-roster')" class="admin-collapsible-btn">
+                            <span>📋 Member Management & Anti-Double Compensation Attendance</span>
+                            <span id="icon-sec-attendance-roster">▲ Hide</span>
+                        </button>
+                        <div id="sec-attendance-roster" class="admin-collapsible-content" style="display: block;">
+                            <div style="margin-bottom: 12px;">
+                                <label style="font-size: 0.85rem; color: var(--primary-glow);">Select Division / Guild to Manage:</label>
+                                <select id="admin-officer-select" onchange="onDivisionChange()" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: var(--primary-glow); border-radius: 4px; font-weight: bold;"></select>
+                            </div>
+
+                            <div style="margin-bottom: 15px; padding: 12px; background: rgba(230, 184, 0, 0.05); border: 1px solid var(--border-gold); border-radius: 6px;">
+                                <h4 style="color: var(--primary-glow); font-size: 0.9rem; margin-bottom: 8px;">➕ Register New Guild Member</h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                                    <input type="text" id="new-member-ign" placeholder="IGN Member Name" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                    <select id="new-member-class" style="padding: 8px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.85rem;">
+                                        <option value="Blade Master">Blade Master</option>
+                                        <option value="Dark Lord">Dark Lord</option>
+                                        <option value="Summoner">Summoner</option>
+                                        <option value="Soul Master">Soul Master</option>
+                                        <option value="Elf">Elf</option>
+                                        <option value="Dimension Master">Dimension Master</option>
+                                    </select>
+                                </div>
+                                <button onclick="registerNewMember()" class="btn" style="padding: 6px 14px; font-size: 0.8rem; width: 100%;">➕ Save Member to Roster</button>
+                            </div>
+
+                            <div class="admin-section-block" style="margin-bottom: 15px; border-color: rgba(255, 51, 51, 0.4);">
+                                <button onclick="toggleAdminSection('sec-delete-member')" class="admin-collapsible-btn" style="color: #ffaa33; background: rgba(139, 0, 0, 0.2);">
+                                    <span>🗑️ Remove / Delete Member from Roster</span>
+                                    <span id="icon-sec-delete-member">▼ Expand</span>
+                                </button>
+                                <div id="sec-delete-member" class="admin-collapsible-content">
+                                    <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 8px;">
+                                        Exercise caution when clicking. Deleted members will be removed from the selected division record.
+                                    </p>
+                                    <div id="admin-delete-member-list" style="max-height: 140px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+                                <div>
+                                    <label style="font-size: 0.85rem;">Event Type:</label>
+                                    <select id="admin-event-type" onchange="renderMemberChecklist()" style="width: 100%; padding: 8px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
+                                        <option value="Castle Siege War">Castle Siege War (100,000 SOL Pool)</option>
+                                        <option value="Boss Hunt Raid">Boss Hunt Raid</option>
+                                        <option value="Guild Event">Guild Event</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.85rem; color: var(--primary-glow);">📅 Select Attendance Date:</label>
+                                    <input type="date" id="admin-attendance-date" onchange="renderMemberChecklist()" style="width: 100%; padding: 7px; background: #111; border: 1px solid var(--border-gold); color: #fff; border-radius: 4px; font-weight: bold;">
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <label style="font-size: 0.85rem;">Prize Pool (SOL):</label>
+                                <input type="number" id="admin-sol-pool" value="100000" style="width: 100%; padding: 8px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-gold); color: #fff; border-radius: 4px;">
+                            </div>
+
+                            <h4 style="color: var(--primary-glow); margin: 15px 0 10px;">Check Member Attendance (Auto Cross-Guild Main Routing Enforced):</h4>
+                            <div id="admin-member-checklist" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; margin-bottom: 15px;"></div>
+
+                            <button onclick="saveAttendanceEntry()" class="btn" style="width: 100%;">Submit Attendance</button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px;">
+                        <button onclick="closeAdminModal()" class="btn" style="background: #444;">Close Portal</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guild Leadership Section -->
+        <section id="guild">
+            <h2 class="section-title">Guild Leadership & Alliance</h2>
+            
+            <h3 class="category-title">Guild Masters & Assistant GMs</h3>
+            <div class="roster-grid">
+                <div class="member-card master">
+                    <span class="role-badge role-master">Guild Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-e9abc289-df86-43b8-8976-9aa4912c39d5.png" alt="Fullclip" class="member-avatar battle-avatar-flash">
+                    <h3 class="member-name">Fullclip</h3>
+                    <div class="member-class">Kultura Guild Master</div>
+                    <div class="member-details"><span>Role: Leader / Sealer</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card master">
+                    <span class="role-badge role-master">Guild Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-07-4f35248b-2602-408c-8175-3e37cc1e0977.png" alt="Warlock" class="member-avatar battle-avatar-flash">
+                    <h3 class="member-name">Warlock</h3>
+                    <div class="member-class">Kultura Guild Master</div>
+                    <div class="member-details"><span>Role: Leader / Shotcaller</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card master">
+                    <span class="role-badge role-master">Guild Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-f86e67c4-ab50-45e0-8c0b-38490e52c60c.png" alt="LordDwight" class="member-avatar battle-avatar-flash">
+                    <h3 class="member-name">LordDwight</h3>
+                    <div class="member-class">Stealth Guild Master</div>
+                    <div class="member-details"><span>Role: Leader / Shotcaller</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card master">
+                    <span class="role-badge role-master">Guild Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-a6619f00-88bb-4a5b-b244-715b129a4c1e.png" alt="WindTalker" class="member-avatar battle-avatar-flash">
+                    <h3 class="member-name">WindTalker</h3>
+                    <div class="member-class">Protect Guild Master</div>
+                    <div class="member-details"><span>Role: Leader / Support Leader</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card master">
+                    <span class="role-badge role-master">Guild Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-9594006c-6428-4b19-a7a4-e6f1e807e489.png" alt="iKapitana" class="member-avatar battle-avatar-flash">
+                    <h3 class="member-name">iKapitana</h3>
+                    <div class="member-class">Anxiety Guild Master</div>
+                    <div class="member-details"><span>Role: Leader / Support Leader</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card master">
+                    <span class="role-badge role-master">Assistant GM</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-0b3aef55-bea9-4b9e-935a-12629c594da5.png" alt="Mechado" class="member-avatar battle-avatar-flash">
+                    <h3 class="member-name">Mechado</h3>
+                    <div class="member-class">Assistant Guild Master</div>
+                    <div class="member-details"><span>Fullclip Division AGM</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card master">
+                    <span class="role-badge role-master">Assistant GM</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-07-5cb85190-c10a-47a1-8b08-870ed366d52f.png" alt="Tsukushi" class="member-avatar battle-avatar-flash">
+                    <h3 class="member-name">Tsukushi</h3>
+                    <div class="member-class">Assistant Guild Master</div>
+                    <div class="member-details"><span>Warlock Division AGM</span><span>Resets: Max</span></div>
+                </div>
+            </div>
+
+            <h3 class="category-title">Battle Masters & Commanders</h3>
+            <div class="roster-grid">
+                <div class="member-card battle-card-1">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-0b3aef55-bea9-4b9e-935a-12629c594da5.png" alt="Battle Master Crafted" class="member-avatar">
+                    <h3 class="member-name">Crafted</h3>
+                    <div class="member-class">Blade Master (BM)</div>
+                    <div class="member-details"><span>Role: Frontline / PvP</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card battle-card-2">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-c3395667-4870-47b9-9bfa-59edf9189938.png" alt="Battle Master Tognaluk" class="member-avatar">
+                    <h3 class="member-name">Tognaluk</h3>
+                    <div class="member-class class-blademaster">Blade Master (BM)</div>
+                    <div class="member-details"><span>Role: Vanguard / Frontline</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card battle-card-1">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-9594006c-6428-4b19-a7a4-e6f1e807e489.png" alt="Battle Master Gail" class="member-avatar">
+                    <h3 class="member-name">Gail</h3>
+                    <div class="member-class">Bloody Summoner (BS)</div>
+                    <div class="member-details"><span>Role: Support Leader</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card battle-card-2">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-4bf45f09-a4bb-4ca2-b9d1-d8dd804a47fc.png" alt="Battle Master Eremes" class="member-avatar">
+                    <h3 class="member-name">Eremes</h3>
+                    <div class="member-class class-soulmaster">Soul Master (SM)</div>
+                    <div class="member-details"><span>Role: Main Crowd Control/Support</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card battle-card-1">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-c3395667-4870-47b9-9bfa-59edf9189938.png" alt="Battle Master DeelanPaul" class="member-avatar">
+                    <h3 class="member-name">DeelanPaul</h3>
+                    <div class="member-class">Battle Master</div>
+                    <div class="member-details"><span>Role: Vanguard / PvP</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card battle-card-2">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-4bf45f09-a4bb-4ca2-b9d1-d8dd804a47fc.png" alt="Battle Master Warheadz" class="member-avatar">
+                    <h3 class="member-name">Warheadz</h3>
+                    <div class="member-class">Battle Master</div>
+                    <div class="member-details"><span>Role: Assault / Frontline</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card battle-card-1">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-09-c667fbee-0b34-4336-9f29-7e868651fa23.png" alt="Battle Master Misthios" class="member-avatar">
+                    <h3 class="member-name">Misthios</h3>
+                    <div class="member-class">Battle Master</div>
+                    <div class="member-details"><span>Role: Tactical Striker</span><span>Resets: Max</span></div>
+                </div>
+
+                <div class="member-card battle-card-2">
+                    <span class="role-badge role-bm">Battle Master</span>
+                    <img src="https://cdn.phototourl.com/member/2026-10-08-a6619f00-88bb-4a5b-b244-715b129a4c1e.png" alt="Battle Master R4LykS" class="member-avatar">
+                    <h3 class="member-name">R4LykS</h3>
+                    <div class="member-class">Battle Master</div>
+                    <div class="member-details"><span>Role: Vanguard / Sealer Support</span><span>Resets: Max</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GUILD MEMBERS ROSTER SECTION -->
+        <section id="members-roster-section">
+            <h2 class="section-title">Guild Members Roster</h2>
+            <div class="roster-grid-container" id="dynamic-roster-grid"></div>
+        </section>
+
+        <!-- UPCOMING GUILD SCHEDULE SECTION -->
+        <section id="schedule-section">
+            <h2 class="section-title">Upcoming Guild Schedule</h2>
+            <div style="max-width: 800px; margin: 0 auto;" id="dynamic-events-container">
+                <div class="schedule-box">
+                    <div class="schedule-title">CASTLE SIEGE WAR</div>
+                    <div class="schedule-time">📅 Saturday | 6:00 PM PH Time</div>
+                    <p style="font-size: 0.9rem; color: var(--text-light);">Mandatory attendance for all main members and alliance rosters. Be ready 30 mins prior.</p>
+                </div>
+
+                <div class="schedule-box">
+                    <div class="schedule-title">GUILD EVENTS</div>
+                    <div class="schedule-time">📅 Saturday | 8:00 PM PH Time</div>
+                    <p style="font-size: 0.9rem; color: var(--text-light);">All Guild Leaders will host an Event.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- GUILD REQUIREMENTS & JOIN US SECTION -->
+        <section id="requirements-and-join-section">
+            <div class="two-col-grid">
+                <div class="panel">
+                    <h3>GUILD REQUIREMENTS</h3>
+                    <ul class="req-list">
+                        <li>Must be active in daily events, Boss Hunts, and weekly Castle Siege.</li>
+                        <li>Discord with working microphone is required during Siege and PvP raids.</li>
+                        <li>Respect all guildmates and allies; external drama is strictly forbidden.</li>
+                        <li>Minimum Resets: 50+ (Exceptions made for dedicated support classes like Elves).</li>
+                    </ul>
+                </div>
+
+                <div class="panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <h3>JOIN KULTURA TODAY</h3>
+                        <p style="font-size: 0.9rem; margin-bottom: 25px; line-height: 1.6; color: var(--text-light);">
+                            We are always looking for dedicated players who thrive in high-stakes PvP, Castle Siege strategies, and endgame farming in NoLimit MU Online.
+                        </p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <a href="https://discord.gg/GuXgjj4JyZ" target="_blank" rel="noopener noreferrer" class="btn" style="width: 100%;">JOIN OUR DISCORD</a>
+                        <a href="https://discordapp.com/users/385770015720472576" target="_blank" rel="noopener noreferrer" class="btn" style="width: 100%; background: linear-gradient(135deg, rgba(60,0,0,0.9), rgba(20,0,0,0.95)); border-color: rgba(139, 0, 0, 0.8);">MESSAGE TSUKUSHI IN GAME</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Castle Siege Media Player -->
+        <section id="media-player">
+            <h2 class="section-title">Castle Siege Wars</h2>
+            <div class="video-grid">
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/C7_WnodZ9SE" title="Defense" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info"><div class="video-title">Castle Siege Defense Highlights</div></div>
+                </div>
+                <div class="video-card">
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/odEg-UWoY7s" title="Push" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-info"><div class="video-title">Crown Sealing & Final Push</div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LIVE PAGE VIEWS COUNTER -->
+        <div style="text-align: center; margin: 40px 0 10px;">
+            <div style="display: inline-block; background: var(--bg-card); border: 1px solid var(--border-gold); padding: 12px 25px; border-radius: 30px; backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.6);">
+                <span style="font-size: 0.9rem; color: var(--text-dim); font-family: 'Cinzel', serif;">👀 Total Page Visits: </span>
+                <span id="live-page-views-count" style="font-size: 1.1rem; color: var(--primary-glow); font-weight: 800; font-family: 'Cinzel', serif;">Loading...</span>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div id="dynamic-secure-credits"></div>
+    </footer>
+
+    <!-- External JS Link -->
     <script src="script.js"></script>
 </body>
 </html>
