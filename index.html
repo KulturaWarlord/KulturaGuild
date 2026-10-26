@@ -163,16 +163,28 @@
                     <button onclick="marketLogout()" class="btn" style="background: #8b0000; border: 1px solid #ff3333; padding: 6px 12px; font-size: 0.8rem;">🔒 Logout</button>
                 </div>
 
-                <!-- PROFILE PICTURE & SETTINGS SECTION -->
-                <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 6px; border: 1px solid var(--border-gold); margin-bottom: 20px; display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
-                    <div id="profile-avatar-preview-container" style="width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--primary); overflow: hidden; background: #111; display: flex; justify-content: center; align-items: center; flex-shrink: 0;">
-                        <img id="profile-avatar-img" src="https://nolimit.lv/themes/def_theme/images/logo.png" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                <!-- PROFILE PICTURE & BACKGROUND SETTINGS SECTION -->
+                <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 6px; border: 1px solid var(--border-gold); margin-bottom: 20px; display: flex; flex-direction: column; gap: 15px;">
+                    <!-- Profile Avatar Row -->
+                    <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                        <div id="profile-avatar-preview-container" style="width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--primary); overflow: hidden; background: #111; display: flex; justify-content: center; align-items: center; flex-shrink: 0;">
+                            <img id="profile-avatar-img" src="https://nolimit.lv/themes/def_theme/images/logo.png" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div style="flex: 1; min-width: 220px;">
+                            <label style="font-size: 0.8rem; color: var(--primary-glow); display: block; margin-bottom: 4px;">🖼️ Profile Picture / Avatar URL:</label>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="market-profile-avatar-url" placeholder="Paste direct image link (Discord, Imgur, etc.)" style="flex: 1; padding: 7px; background: #111; color: #fff; border: 1px solid var(--border-gold); border-radius: 4px; font-size: 0.8rem;">
+                                <button onclick="saveMemberProfileAvatar()" class="btn" style="padding: 7px 12px; font-size: 0.8rem; background: linear-gradient(135deg, #e6b800, #b38f00); color: #000; font-weight: bold;">Save Avatar</button>
+                            </div>
+                        </div>
                     </div>
-                    <div style="flex: 1; min-width: 220px;">
-                        <label style="font-size: 0.8rem; color: var(--primary-glow); display: block; margin-bottom: 4px;">🖼️ Profile Picture / Avatar URL:</label>
+
+                    <!-- Customized Section Background Row -->
+                    <div style="border-top: 1px dashed var(--border-gold); padding-top: 12px;">
+                        <label style="font-size: 0.8rem; color: #ffaa33; display: block; margin-bottom: 4px; font-weight: bold;">🎨 Customized Section Background URL:</label>
                         <div style="display: flex; gap: 8px;">
-                            <input type="text" id="market-profile-avatar-url" placeholder="Paste direct image link (Discord, Imgur, etc.)" style="flex: 1; padding: 7px; background: #111; color: #fff; border: 1px solid var(--border-gold); border-radius: 4px; font-size: 0.8rem;">
-                            <button onclick="saveMemberProfileAvatar()" class="btn" style="padding: 7px 12px; font-size: 0.8rem; background: linear-gradient(135deg, #e6b800, #b38f00); color: #000; font-weight: bold;">Save Avatar</button>
+                            <input type="text" id="market-section-bg-url" placeholder="Paste direct image link for Members Profile background" style="flex: 1; padding: 7px; background: #111; color: #fff; border: 1px solid #ffaa33; border-radius: 4px; font-size: 0.8rem;">
+                            <button onclick="saveMemberSectionBackground()" class="btn" style="padding: 7px 12px; font-size: 0.8rem; background: linear-gradient(135deg, #ffaa33, #cc7700); color: #000; font-weight: bold;">Save Background</button>
                         </div>
                     </div>
                 </div>
@@ -234,7 +246,7 @@
                 <div id="duck-lanes-container" style="display: flex; flex-direction: column; gap: 2px; width: 100%;"></div>
             </div>
 
-            <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; margin-top: 15px;">
+            <div style="display: flex; justify-around: flex-wrap: wrap; gap: 20px; margin-top: 15px;">
                 <div style="flex: 1; min-width: 280px; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 6px; border: 1px solid var(--border-gold);">
                     <h4 style="color: var(--primary-glow); font-size: 0.9rem; margin-bottom: 8px;">📋 Qualified 3/3 Attendance Main Members:</h4>
                     <div id="public-qualified-list" style="max-height: 150px; overflow-y: auto; font-size: 0.85rem; color: #fff;">
