@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ⚖️ AUCTION DISCORD WEBHOOK URL
-const AUCTION_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev";
+const AUCTION_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev?target=auction";
 let cloudAuctionItems = [];
 
 // 🎙️ HIGH-ENERGY SPORTS / ESPORTS ANNOUNCER TTS ENGINE
@@ -85,7 +85,7 @@ function initPageCounter() {
 }
 
 // 🌐 DISCORD WEBHOOK FOR ATTENDANCE & PAYOUTS
-const ATTENDANCE_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev";
+const ATTENDANCE_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev?target=attendance";
 
 let ALL_DIVISIONS = [
     "Fullclip Division (Fullclip)",
@@ -376,7 +376,6 @@ function initRealtimeListeners() {
         updateGiveawayBotVisibility();
     });
 
-    // Realtime Auction Items Listener
     dbOnValue(dbRef(window.database, 'kultura_auction_items'), (snap) => {
         cloudAuctionItems = snap.exists() ? snap.val() : [];
         renderAdminAuctionList();
@@ -1652,7 +1651,7 @@ window.addEventListener('DOMContentLoaded', () => {
 // ==========================================
 // 🛒 KULTURA MARKETPLACE & MEMBER PROFILE FUNCTIONS (IP CHECK & AUTO DISCORD POST)
 // ==========================================
-const MARKETPLACE_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev";
+const MARKETPLACE_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev?target=marketplace";
 
 async function checkMarketplaceAuthOnLoad() {
     const loggedMarketUser = localStorage.getItem('kultura_market_user');
