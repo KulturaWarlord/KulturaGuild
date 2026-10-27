@@ -1688,11 +1688,34 @@ window.addEventListener('DOMContentLoaded', () => {
 // ==========================================
 // 🛒 KULTURA MARKETPLACE & MEMBER PROFILE FUNCTIONS (IP CHECK & AUTO DISCORD POST)
 // ==========================================
+function startOnlineStatusHeartbeat(username) {
+    if (!window.database || !username) return;
+    const userStatusRef = window.dbRef(window.database, `marketplace_status/${username}`);
+
+    window.dbSet(userStatusRef, {
+        status: 'online',
+        lastSeen: Date.now()
+    });
+
+    window.addEventListener('beforeunload', () => {
+        window.dbSet(userStatusRef, {
+            status: 'offline',
+            lastSeen: Date.now()
+        });
+    });
+
+    setInterval(() => {
+        window.dbSet(userStatusRef, {
+            status: 'online',
+            lastSeen: Date.now()
+        });
+    }, 30000);
+}
+
 async function checkMarketplaceAuthOnLoad() {
     let loggedMarketUser = localStorage.getItem('kultura_market_user');
     let loggedMarketUsername = localStorage.getItem('kultura_market_username');
 
-    // 👑 AUTO-BYPASS FOR GUILD MASTERS & OFFICERS
     if (!loggedMarketUsername && currentLoggedInOfficer) {
         const officerLower = currentLoggedInOfficer.toLowerCase();
         if (GUILD_MASTERS_LIST.includes(officerLower) || PROTECTED_ADMIN_ACCOUNTS.includes(officerLower)) {
@@ -2107,6 +2130,23 @@ async function submitMarketplacePending() {
     let typeHeader = isBuying ? "🟢 **NEW BUYING LISTING!**" : "🔴 **NEW SELLING LISTING!**";
     let embedColor = isBuying ? 3066993 : 15120128;
 
+    let listingObj = {
+        id: Date.now(),
+        username: loggedUsername || "",
+        type: listingType || 'SELLING',
+        seller: seller,
+        item: item,
+        price: price,
+        timestamp: new Date().toISOString()
+    };
+
+    // Save listing sa database para Makita sa Profile Modal
+    try {
+        await window.dbSet(window.dbRef(window.database, `marketplace_listings/${listingObj.id}`), listingObj);
+    } catch (e) {
+        console.error("Error saving listing to DB:", e);
+    }
+
     let embedObject = {
         title: `📦 ${listingType || 'SELLING'} — ${seller}`,
         color: embedColor,
@@ -2274,30 +2314,45 @@ async function loadSocialHubData() {
     const loggedUsername = localStorage.getItem('kultura_market_username');
     if (!loggedUsername) return;
 
+    startOnlineStatusHeartbeat(loggedUsername);
+
     const membersContainer = document.getElementById('social-members-list');
     if (membersContainer) {
-        window.dbOnValue(window.dbRef(window.database, 'marketplace_accounts_approved'), (snapshot) => {
-            membersContainer.innerHTML = "";
-            const members = snapshot.val();
-            if (!members) {
-                membersContainer.innerHTML = "<span style='color: var(--text-dim);'>No other members found.</span>";
-                return;
-            }
+        window.dbOnValue(window.dbRef(window.database, 'marketplace_status'), (statusSnap) => {
+            const statusData = statusSnap.exists() ? statusSnap.val() : {};
 
-            Object.keys(members).forEach((username) => {
-                if (username === loggedUsername) return;
-                const acc = members[username];
+            window.dbOnValue(window.dbRef(window.database, 'marketplace_accounts_approved'), (snapshot) => {
+                membersContainer.innerHTML = "";
+                const members = snapshot.val();
+                if (!members) {
+                    membersContainer.innerHTML = "<span style='color: var(--text-dim);'>No other members found.</span>";
+                    return;
+                }
 
-                const card = document.createElement('div');
-                card.style.cssText = "background: #111; border: 1px solid #444; padding: 8px; margin-bottom: 6px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;";
-                card.innerHTML = `
-                    <span>👑 <strong>${acc.ign}</strong> (@${acc.username})</span>
-                    <div style="display: flex; gap: 4px;">
-                        <button onclick="openFriendProfileModal('${acc.username}', '${acc.ign}', '${acc.avatarUrl || ''}', '${acc.bgUrl || ''}')" class="btn" style="padding: 4px 8px; font-size: 0.75rem; background: #0088cc; color:#fff;">View Profile</button>
-                        <button onclick="sendFriendRequest('${acc.username}', '${acc.ign}')" class="btn" style="padding: 4px 8px; font-size: 0.75rem;">Add Friend</button>
-                    </div>
-                `;
-                membersContainer.appendChild(card);
+                Object.keys(members).forEach((username) => {
+                    if (username === loggedUsername) return;
+                    const acc = members[username];
+
+                    const userStatusObj = statusData[username];
+                    const isOnline = userStatusObj && userStatusObj.status === 'online' && (Date.now() - userStatusObj.lastSeen < 60000);
+                    const statusBadge = isOnline 
+                        ? `<span style="color: #28a745; font-size: 0.75rem; font-weight: bold;">🟢 Online</span>` 
+                        : `<span style="color: #dc3545; font-size: 0.75rem;">🔴 Offline</span>`;
+
+                    const card = document.createElement('div');
+                    card.style.cssText = "background: #111; border: 1px solid #444; padding: 8px; margin-bottom: 6px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;";
+                    card.innerHTML = `
+                        <div>
+                            <span>👑 <strong>${acc.ign}</strong> (@${acc.username})</span><br>
+                            ${statusBadge}
+                        </div>
+                        <div style="display: flex; gap: 4px;">
+                            <button onclick="openFriendProfileModal('${acc.username}', '${acc.ign}', '${acc.avatarUrl || ''}', '${acc.bgUrl || ''}')" class="btn" style="padding: 4px 8px; font-size: 0.75rem; background: #0088cc; color:#fff;">View Profile</button>
+                            <button onclick="sendFriendRequest('${acc.username}', '${acc.ign}')" class="btn" style="padding: 4px 8px; font-size: 0.75rem;">Add Friend</button>
+                        </div>
+                    `;
+                    membersContainer.appendChild(card);
+                });
             });
         });
     }
@@ -2385,6 +2440,45 @@ async function openFriendProfileModal(username, ign, avatarUrl, bgUrl) {
         banner.style.backgroundImage = `linear-gradient(rgba(10,10,15,0.6), rgba(10,10,15,0.8)), url('${bgUrl}')`;
     } else {
         banner.style.backgroundImage = 'none';
+    }
+
+    const listingsContainer = document.getElementById('friend-modal-listings-container');
+    if (listingsContainer) {
+        listingsContainer.innerHTML = "<span style='color: var(--text-dim);'>Loading listings...</span>";
+
+        try {
+            const snapshot = await window.dbGet(window.dbRef(window.database, 'marketplace_listings'));
+            if (snapshot.exists()) {
+                const allListings = snapshot.val();
+                let userListings = [];
+
+                Object.values(allListings).forEach(item => {
+                    if (item.username === username || (item.seller && item.seller.toLowerCase() === ign.toLowerCase())) {
+                        userListings.push(item);
+                    }
+                });
+
+                if (userListings.length > 0) {
+                    listingsContainer.innerHTML = "";
+                    userListings.forEach(item => {
+                        let typeColor = item.type === "BUYING" ? "#28a745" : "#dc3545";
+                        listingsContainer.innerHTML += `
+                            <div style="background: rgba(255,255,255,0.05); padding: 6px; margin-bottom: 4px; border-radius: 4px; border-left: 3px solid ${typeColor};">
+                                <span style="color: ${typeColor}; font-weight: bold;">[${item.type || 'SELLING'}]</span> 
+                                <strong>${item.item}</strong> — <span style="color: #ffdd55;">${item.price}</span>
+                            </div>
+                        `;
+                    });
+                } else {
+                    listingsContainer.innerHTML = "<span style='color: var(--text-dim);'>No active buying/selling listings.</span>";
+                }
+            } else {
+                listingsContainer.innerHTML = "<span style='color: var(--text-dim);'>No active buying/selling listings.</span>";
+            }
+        } catch (e) {
+            console.error("Error loading user listings:", e);
+            listingsContainer.innerHTML = "<span style='color: var(--text-dim);'>Failed to load listings.</span>";
+        }
     }
 
     document.getElementById('friend-profile-modal').style.display = 'flex';
