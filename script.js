@@ -560,12 +560,12 @@ async function saveGuildEventsToFirebase() {
         await window.dbSet(window.dbRef(window.database, 'kultura_events'), newEventsPayload);
     }
 
-    if (ATTENDANCE_DISCORD_WEBHOOK_URL) {
+    if (ANNOUNCEMENT_DISCORD_WEBHOOK_URL) {
         try {
             const discordBody = {
                 username: "Kultura Guild Event Announcer",
                 avatar_url: "https://nolimit.lv/themes/def_theme/images/logo.png",
-                content: "@everyone 📢 **GUILD EVENTS SCHEDULE IS LIVE!**",
+                content: "@everyone 📢 **GUILD EVENTS & SCHEDULE UPDATED!**",
                 embeds: [{
                     title: "⚔️ KULTURA ALLIANCE - UPCOMING EVENTS ⚔️",
                     color: 15120128,
@@ -577,10 +577,25 @@ async function saveGuildEventsToFirebase() {
                     timestamp: new Date().toISOString()
                 }]
             };
-            await fetch(ATTENDANCE_DISCORD_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(discordBody) });
-        } catch (err) { console.error("Discord Webhook Error:", err); }
+            
+            const res = await fetch(ANNOUNCEMENT_DISCORD_WEBHOOK_URL, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify(discordBody) 
+            });
+
+            if (res.ok) {
+                alert("🎉 Success! Guild Events updated on Website and successfully announced to your Announcement Discord channel!");
+            } else {
+                alert("⚠️ Saved to website, but failed to post on Discord webhook.");
+            }
+        } catch (err) { 
+            console.error("Discord Webhook Error:", err); 
+            alert("⚠️ Saved to website, but encountered an error connecting to Discord."); 
+        }
+    } else {
+        alert("🎉 Success! Guild Events updated on Website.");
     }
-    alert("🎉 Success! Guild Events updated on Website and successfully announced to your Discord channel!");
 }
 
 async function sendCustomDiscordAnnouncement() {
