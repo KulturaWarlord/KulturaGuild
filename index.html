@@ -150,7 +150,7 @@
 
             <!-- LOCKED VIEW -->
             <div id="market-locked-view" style="text-align: center; padding: 25px 10px;">
-                <p style="color: var(--text-dim); margin-bottom: 15px;">Mag-log in o mag-rehistro para ma-access ang iyong Member Profile, Social Hub, at direktang makapaghain ng listing sa Discord!</p>
+                <p style="color: var(--text-dim); margin-bottom: 15px;">Log in or register to access your Member Profile</p>
                 <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                     <button onclick="openMarketLoginModal()" class="btn" style="padding: 10px 20px;">🔑 Member Login</button>
                     <button onclick="openMarketRegisterModal()" class="btn" style="padding: 10px 20px; background: linear-gradient(135deg, #28a745, #1e7e34);">📝 Register Account</button>
@@ -245,12 +245,12 @@
                         <div>
                             <label style="font-size: 0.8rem; color: var(--primary-glow);">Listing Type:</label>
                             <select id="market-listing-type" style="width: 100%; padding: 8px; background: transparent; color: #fff; border: 1px solid var(--border-gold); border-radius: 4px; margin-top: 4px;">
-                                <option value="SELLING" style="background: #111;">🔴 SELLING (Nagbebenta)</option>
-                                <option value="BUYING" style="background: #111;">🟢 BUYING (Bumibili)</option>
+                                <option value="SELLING" style="background: #111;">🔴 SELLING</option>
+                                <option value="BUYING" style="background: #111;">🟢 BUYING</option>
                             </select>
                         </div>
                         <div>
-                            <label style="font-size: 0.8rem; color: var(--primary-glow);">Seller / Trader IGN:</label>
+                            <label style="font-size: 0.8rem; color: var(--primary-glow);">Trader IGN:</label>
                             <input type="text" id="market-seller-ign" placeholder="In-game Name" style="width: 100%; padding: 8px; background: transparent; color: #fff; border: 1px solid var(--border-gold); border-radius: 4px; margin-top: 4px;">
                         </div>
                     </div>
@@ -290,7 +290,7 @@
                             </div>
                         </div>
 
-                        <!-- RIGHT: INBOX & DIRECT MESSAGES -->
+                        <!-- RIGHT: MAIL & DIRECT MESSAGES -->
                         <div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 6px; border: 1px solid rgba(230,184,0,0.3);">
                             <h5 style="color: #ffaa33; margin-bottom: 6px; font-size: 0.85rem;">📩 Friend Requests</h5>
                             <div id="social-friend-requests" style="max-height: 90px; overflow-y: auto; font-size: 0.8rem; margin-bottom: 12px;">
