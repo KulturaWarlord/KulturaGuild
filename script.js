@@ -2092,7 +2092,7 @@ async function submitMarketplacePending() {
             body: JSON.stringify(discordBody)
         });
 
-        if (response.ok || response.status === 204) {
+        if (response.ok || response.status === 200 || response.status === 204) {
             alert("🎉 Success! Your Item Listing has been AUTOMATICALLY posted to the Discord Channel!");
             document.getElementById('market-item-desc').value = '';
             document.getElementById('market-price-desc').value = '';
@@ -2203,13 +2203,14 @@ async function sendAuctionPriceListToDiscord() {
             }]
         };
 
+        // ✅ TAMANG FIX: AUCTION_DISCORD_WEBHOOK_URL na ang gamit dito!
         const res = await fetch(AUCTION_DISCORD_WEBHOOK_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(discordBody)
         });
 
-        if (res.ok || res.status === 204) {
+        if (res.ok || res.status === 200 || res.status === 204) {
             alert("🚀 Tagumpay na naipadala ang Updated Auction Price List sa Discord channel!");
         } else {
             alert("❌ Nabigong maipadala sa Discord Webhook.");
