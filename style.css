@@ -13,11 +13,22 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    cursor: url('https://muonline.webzen.com/Cont/images/common/cursor.cur'), auto !important;
+    /* Na-update: Ginagamit na ang iyong uploaded normal cursor */
+    cursor: url('/cursor/normal cursor.cur') 0 0, auto !important;
 }
 
 a, button, .server-logo-link, .rotating-alliance-badge, .roster-toggle-btn, .admin-collapsible-btn, .modal-win-btn {
-    cursor: url('https://muonline.webzen.com/Cont/images/common/cursor_select.cur'), pointer !important;
+    /* Na-update: Ginagamit na ang iyong uploaded link select cursor */
+    cursor: url('/cursor/link select.cur') 0 0, pointer !important;
+}
+
+/* Dagdag para sa iba pang states kung gagamitin */
+input[type="text"], input[type="password"], textarea {
+    cursor: url('/cursor/text.cur') 4 8, text !important;
+}
+
+.is-loading {
+    cursor: url('/cursor/busy.cur') 8 8, wait !important;
 }
 
 body {
