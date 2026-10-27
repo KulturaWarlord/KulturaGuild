@@ -2,8 +2,12 @@
    KULTURA GUILD & ALLIANCE — MAIN SYSTEM SCRIPT (script.js)
    ============================================================ */
 
-// ⚖️ AUCTION DISCORD WEBHOOK URL (May tamang ?target=auction)
+// 🌐 DISCORD WEBHOOK URLS NA NAKATURO SA WORKER PROXY
 const AUCTION_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev?target=auction";
+const ATTENDANCE_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev?target=attendance";
+const ANNOUNCEMENT_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev?target=announcement";
+const MARKETPLACE_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev?target=marketplace";
+
 let cloudAuctionItems = [];
 
 // 🎙️ HIGH-ENERGY SPORTS / ESPORTS ANNOUNCER TTS ENGINE
@@ -83,9 +87,6 @@ function initPageCounter() {
         console.error("Error updating page views:", error);
     });
 }
-
-// 🌐 DISCORD WEBHOOK FOR ATTENDANCE & PAYOUTS (May tamang ?target=attendance)
-const ATTENDANCE_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev?target=attendance";
 
 let ALL_DIVISIONS = [
     "Fullclip Division (Fullclip)",
@@ -604,11 +605,24 @@ async function sendCustomDiscordAnnouncement() {
                 timestamp: new Date().toISOString()
             }]
         };
-        await fetch(ATTENDANCE_DISCORD_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(discordBody) });
-        alert("🚀 Official Announcement successfully sent to your Discord channel!");
-        document.getElementById('discord-announce-title').value = '';
-        document.getElementById('discord-announce-msg').value = '';
-    } catch (err) { console.error("Discord Webhook Error:", err); alert("❌ Failed to send announcement to Discord."); }
+
+        const res = await fetch(ANNOUNCEMENT_DISCORD_WEBHOOK_URL, { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify(discordBody) 
+        });
+
+        if (res.ok) {
+            alert("🚀 Official Announcement successfully sent to your Discord channel!");
+            document.getElementById('discord-announce-title').value = '';
+            document.getElementById('discord-announce-msg').value = '';
+        } else {
+            alert("❌ Failed to send announcement to Discord.");
+        }
+    } catch (err) { 
+        console.error("Discord Webhook Error:", err); 
+        alert("❌ Failed to send announcement to Discord."); 
+    }
 }
 
 async function sendAttendanceToDiscordChannel(dateKey, eventType, totalPool, presentsCount) {
@@ -639,15 +653,11 @@ async function sendAttendanceToDiscordChannel(dateKey, eventType, totalPool, pre
             }]
         };
 
-        const res = await fetch(ATTENDANCE_DISCORD_WEBHOOK_URL, {
+        await fetch(ATTENDANCE_DISCORD_WEBHOOK_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(discordBody)
         });
-
-        if (!res.ok) {
-            console.error("Attendance Webhook Failed with Status:", res.status);
-        }
     } catch (err) {
         console.error("Attendance Discord Webhook Error:", err);
     }
@@ -1651,9 +1661,6 @@ window.addEventListener('DOMContentLoaded', () => {
 // ==========================================
 // 🛒 KULTURA MARKETPLACE & MEMBER PROFILE FUNCTIONS (IP CHECK & AUTO DISCORD POST)
 // ==========================================
-// (May tamang ?target=marketplace)
-const MARKETPLACE_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev?target=marketplace";
-
 async function checkMarketplaceAuthOnLoad() {
     const loggedMarketUser = localStorage.getItem('kultura_market_user');
     const loggedMarketUsername = localStorage.getItem('kultura_market_username');
@@ -2204,7 +2211,6 @@ async function sendAuctionPriceListToDiscord() {
             }]
         };
 
-        // ✅ TAMA: Nakaturo na sa AUCTION_DISCORD_WEBHOOK_URL na may ?target=auction
         const res = await fetch(AUCTION_DISCORD_WEBHOOK_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -2225,7 +2231,6 @@ async function sendAuctionPriceListToDiscord() {
 // ==========================================
 // 👥 KULTURA MEMBERS SOCIAL & MESSAGING LOGIC
 // ==========================================
-
 async function loadSocialHubData() {
     const loggedUsername = localStorage.getItem('kultura_market_username');
     if (!loggedUsername) return;
