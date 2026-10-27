@@ -2140,7 +2140,7 @@ async function submitMarketplacePending() {
         timestamp: new Date().toISOString()
     };
 
-    // Save listing sa database para Makita sa Profile Modal
+    // Save listing sa database para makita sa Profile Modal
     try {
         await window.dbSet(window.dbRef(window.database, `marketplace_listings/${listingObj.id}`), listingObj);
     } catch (e) {
@@ -2318,45 +2318,75 @@ async function loadSocialHubData() {
 
     const membersContainer = document.getElementById('social-members-list');
     if (membersContainer) {
-        window.dbOnValue(window.dbRef(window.database, 'marketplace_status'), (statusSnap) => {
-            const statusData = statusSnap.exists() ? statusSnap.val() : {};
+        // 1. KUNIN MUNA ANG LISTAHAN NG FRIENDS
+        window.dbOnValue(window.dbRef(window.database, `social_friends/${loggedUsername}`), (friendsSnap) => {
+            const myFriends = friendsSnap.exists() ? friendsSnap.val() : {};
 
-            window.dbOnValue(window.dbRef(window.database, 'marketplace_accounts_approved'), (snapshot) => {
-                membersContainer.innerHTML = "";
-                const members = snapshot.val();
-                if (!members) {
-                    membersContainer.innerHTML = "<span style='color: var(--text-dim);'>No other members found.</span>";
-                    return;
-                }
+            // 2. KUNIN ANG PENDING REQUESTS
+            window.dbOnValue(window.dbRef(window.database, `social_requests`), (requestsSnap) => {
+                const allRequests = requestsSnap.exists() ? requestsSnap.val() : {};
 
-                Object.keys(members).forEach((username) => {
-                    if (username === loggedUsername) return;
-                    const acc = members[username];
+                // 3. LISTEN SA ONLINE/OFFLINE STATUS
+                window.dbOnValue(window.dbRef(window.database, 'marketplace_status'), (statusSnap) => {
+                    const statusData = statusSnap.exists() ? statusSnap.val() : {};
 
-                    const userStatusObj = statusData[username];
-                    const isOnline = userStatusObj && userStatusObj.status === 'online' && (Date.now() - userStatusObj.lastSeen < 60000);
-                    const statusBadge = isOnline 
-                        ? `<span style="color: #28a745; font-size: 0.75rem; font-weight: bold;">🟢 Online</span>` 
-                        : `<span style="color: #dc3545; font-size: 0.75rem;">🔴 Offline</span>`;
+                    // 4. LOAD APPROVED GUILD MEMBERS
+                    window.dbOnValue(window.dbRef(window.database, 'marketplace_accounts_approved'), (snapshot) => {
+                        membersContainer.innerHTML = "";
+                        const members = snapshot.val();
+                        if (!members) {
+                            membersContainer.innerHTML = "<span style='color: var(--text-dim);'>No other members found.</span>";
+                            return;
+                        }
 
-                    const card = document.createElement('div');
-                    card.style.cssText = "background: #111; border: 1px solid #444; padding: 8px; margin-bottom: 6px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;";
-                    card.innerHTML = `
-                        <div>
-                            <span>👑 <strong>${acc.ign}</strong> (@${acc.username})</span><br>
-                            ${statusBadge}
-                        </div>
-                        <div style="display: flex; gap: 4px;">
-                            <button onclick="openFriendProfileModal('${acc.username}', '${acc.ign}', '${acc.avatarUrl || ''}', '${acc.bgUrl || ''}')" class="btn" style="padding: 4px 8px; font-size: 0.75rem; background: #0088cc; color:#fff;">View Profile</button>
-                            <button onclick="sendFriendRequest('${acc.username}', '${acc.ign}')" class="btn" style="padding: 4px 8px; font-size: 0.75rem;">Add Friend</button>
-                        </div>
-                    `;
-                    membersContainer.appendChild(card);
+                        Object.keys(members).forEach((username) => {
+                            if (username === loggedUsername) return;
+                            const acc = members[username];
+
+                            // Online/Offline Status check
+                            const userStatusObj = statusData[username];
+                            const isOnline = userStatusObj && userStatusObj.status === 'online' && (Date.now() - userStatusObj.lastSeen < 60000);
+                            const statusBadge = isOnline 
+                                ? `<span style="color: #28a745; font-size: 0.75rem; font-weight: bold;">🟢 Online</span>` 
+                                : `<span style="color: #dc3545; font-size: 0.75rem;">🔴 Offline</span>`;
+
+                            // 🔍 CHECK KUNG FRIENDS NA SILA
+                            const isAlreadyFriend = myFriends.hasOwnProperty(username);
+
+                            // 🔍 CHECK KUNG MAY PENDING FRIEND REQUEST
+                            const hasSentRequest = allRequests[username] && allRequests[username][loggedUsername];
+
+                            // Dynamic Button Display Logic
+                            let actionButtonHtml = "";
+                            if (isAlreadyFriend) {
+                                actionButtonHtml = `<span style="color: #00ffcc; font-size: 0.75rem; font-weight: bold; background: rgba(0,255,204,0.1); padding: 4px 8px; border-radius: 4px; border: 1px solid #00ffcc;">🤝 Friends</span>`;
+                            } else if (hasSentRequest) {
+                                actionButtonHtml = `<button class="btn" style="padding: 4px 8px; font-size: 0.75rem; background: #6c757d; color:#fff; cursor: not-allowed;" disabled>⏳ Pending</button>`;
+                            } else {
+                                actionButtonHtml = `<button onclick="sendFriendRequest('${acc.username}', '${acc.ign}')" class="btn" style="padding: 4px 8px; font-size: 0.75rem;">Add Friend</button>`;
+                            }
+
+                            const card = document.createElement('div');
+                            card.style.cssText = "background: #111; border: 1px solid #444; padding: 8px; margin-bottom: 6px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;";
+                            card.innerHTML = `
+                                <div>
+                                    <span>👑 <strong>${acc.ign}</strong> (@${acc.username})</span><br>
+                                    ${statusBadge}
+                                </div>
+                                <div style="display: flex; gap: 6px; align-items: center;">
+                                    <button onclick="openFriendProfileModal('${acc.username}', '${acc.ign}', '${acc.avatarUrl || ''}', '${acc.bgUrl || ''}')" class="btn" style="padding: 4px 8px; font-size: 0.75rem; background: #0088cc; color:#fff;">View Profile</button>
+                                    ${actionButtonHtml}
+                                </div>
+                            `;
+                            membersContainer.appendChild(card);
+                        });
+                    });
                 });
             });
         });
     }
 
+    // FRIEND REQUESTS INBOX LOGIC
     const reqContainer = document.getElementById('social-friend-requests');
     if (reqContainer) {
         window.dbOnValue(window.dbRef(window.database, `social_requests/${loggedUsername}`), (snapshot) => {
@@ -2383,6 +2413,7 @@ async function loadSocialHubData() {
         });
     }
 
+    // CHAT DROPDOWN LOGIC
     const chatSelect = document.getElementById('chat-recipient-select');
     if (chatSelect) {
         window.dbOnValue(window.dbRef(window.database, `social_friends/${loggedUsername}`), (snapshot) => {
