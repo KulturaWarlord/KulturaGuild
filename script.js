@@ -985,9 +985,18 @@ async function handleLogin() {
         await window.signInWithEmailAndPassword(window.auth, loginEmail, passVal);
         currentLoggedInOfficer = userVal.includes('@') ? userVal.split('@')[0] : userVal;
         localStorage.setItem('kultura_logged_officer', currentLoggedInOfficer);
+        
+        // 👑 AUTO-SET MARKETPLACE & PROFILE HUB FOR GUILD MASTERS / OFFICERS
+        const officerLower = currentLoggedInOfficer.toLowerCase();
+        if (GUILD_MASTERS_LIST.includes(officerLower) || PROTECTED_ADMIN_ACCOUNTS.includes(officerLower)) {
+            localStorage.setItem('kultura_market_user', `${currentLoggedInOfficer} (Guild Master)`);
+            localStorage.setItem('kultura_market_username', officerLower);
+        }
+
         alert(`✅ Welcome ${currentLoggedInOfficer}! Successfully authenticated.`);
         closeLoginModal();
         updatePortalButtonUI();
+        checkMarketplaceAuthOnLoad();
         openAdminModal();
         resetInactivityTimer();
     } catch (error) {
@@ -1000,9 +1009,12 @@ async function handleLogout() {
     try { if (window.auth) { await window.signOut(window.auth); } } catch(e) {}
     currentLoggedInOfficer = null;
     localStorage.removeItem('kultura_logged_officer');
+    localStorage.removeItem('kultura_market_user');
+    localStorage.removeItem('kultura_market_username');
     clearTimeout(inactivityTimer);
     closeAdminModal();
     updatePortalButtonUI();
+    checkMarketplaceAuthOnLoad();
     alert("🔒 Successfully Logged Out.");
 }
 
@@ -1677,8 +1689,20 @@ window.addEventListener('DOMContentLoaded', () => {
 // 🛒 KULTURA MARKETPLACE & MEMBER PROFILE FUNCTIONS (IP CHECK & AUTO DISCORD POST)
 // ==========================================
 async function checkMarketplaceAuthOnLoad() {
-    const loggedMarketUser = localStorage.getItem('kultura_market_user');
-    const loggedMarketUsername = localStorage.getItem('kultura_market_username');
+    let loggedMarketUser = localStorage.getItem('kultura_market_user');
+    let loggedMarketUsername = localStorage.getItem('kultura_market_username');
+
+    // 👑 AUTO-BYPASS FOR GUILD MASTERS & OFFICERS
+    if (!loggedMarketUsername && currentLoggedInOfficer) {
+        const officerLower = currentLoggedInOfficer.toLowerCase();
+        if (GUILD_MASTERS_LIST.includes(officerLower) || PROTECTED_ADMIN_ACCOUNTS.includes(officerLower)) {
+            loggedMarketUsername = officerLower;
+            loggedMarketUser = `${currentLoggedInOfficer} (Guild Master)`;
+            localStorage.setItem('kultura_market_user', loggedMarketUser);
+            localStorage.setItem('kultura_market_username', loggedMarketUsername);
+        }
+    }
+
     const lockedView = document.getElementById('market-locked-view');
     const unlockedView = document.getElementById('market-unlocked-view');
     const userDisplay = document.getElementById('market-current-user-display');
