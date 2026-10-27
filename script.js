@@ -2,7 +2,7 @@
    KULTURA GUILD & ALLIANCE — MAIN SYSTEM SCRIPT (script.js)
    ============================================================ */
 
-// ⚖️ AUCTION DISCORD WEBHOOK URL
+// ⚖️ AUCTION DISCORD WEBHOOK URL (May tamang ?target=auction)
 const AUCTION_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev?target=auction";
 let cloudAuctionItems = [];
 
@@ -84,7 +84,7 @@ function initPageCounter() {
     });
 }
 
-// 🌐 DISCORD WEBHOOK FOR ATTENDANCE & PAYOUTS
+// 🌐 DISCORD WEBHOOK FOR ATTENDANCE & PAYOUTS (May tamang ?target=attendance)
 const ATTENDANCE_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev?target=attendance";
 
 let ALL_DIVISIONS = [
@@ -1651,6 +1651,7 @@ window.addEventListener('DOMContentLoaded', () => {
 // ==========================================
 // 🛒 KULTURA MARKETPLACE & MEMBER PROFILE FUNCTIONS (IP CHECK & AUTO DISCORD POST)
 // ==========================================
+// (May tamang ?target=marketplace)
 const MARKETPLACE_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev?target=marketplace";
 
 async function checkMarketplaceAuthOnLoad() {
@@ -2092,7 +2093,7 @@ async function submitMarketplacePending() {
             body: JSON.stringify(discordBody)
         });
 
-        if (response.ok || response.status === 200 || response.status === 204) {
+        if (response.ok) {
             alert("🎉 Success! Your Item Listing has been AUTOMATICALLY posted to the Discord Channel!");
             document.getElementById('market-item-desc').value = '';
             document.getElementById('market-price-desc').value = '';
@@ -2203,14 +2204,14 @@ async function sendAuctionPriceListToDiscord() {
             }]
         };
 
-        // ✅ TAMANG FIX: AUCTION_DISCORD_WEBHOOK_URL na ang gamit dito!
+        // ✅ TAMA: Nakaturo na sa AUCTION_DISCORD_WEBHOOK_URL na may ?target=auction
         const res = await fetch(AUCTION_DISCORD_WEBHOOK_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(discordBody)
         });
 
-        if (res.ok || res.status === 200 || res.status === 204) {
+        if (res.ok) {
             alert("🚀 Tagumpay na naipadala ang Updated Auction Price List sa Discord channel!");
         } else {
             alert("❌ Nabigong maipadala sa Discord Webhook.");
