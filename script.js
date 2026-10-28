@@ -1442,6 +1442,124 @@ async function registerAllianceAndGM() {
     openAdminModal();
 }
 
+// ==========================================
+// 🗑️ PURE DISBAND & 👑 AGM PROMOTION FUNCTIONS
+// ==========================================
+async function deleteGuildDivision(divKey) {
+    let currentLower = currentLoggedInOfficer ? currentLoggedInOfficer.toLowerCase() : '';
+    let isSuperAdmin = (currentLower === "fullclip" || currentLower === "kultura" || currentLower === "kulturamain");
+
+    if (!isSuperAdmin) {
+        alert("⚠️ Unauthorized! Only SuperAdmins can delete/disband a guild division.");
+        return;
+    }
+
+    const confirmDelete = confirm(`⚠️ MAG-INGAT! Sigurado ka bang gusto mong i-disband at tanggalin nang buo ang "${divKey}" kasama ang mga miyembro nito sa roster? (Ligtas ang nakaraang attendance history).`);
+    if (!confirmDelete) return;
+
+    let data = getGuildData();
+    if (data[divKey]) {
+        delete data[divKey]; 
+        await saveGuildData(data);
+        
+        alert(`🗑️ Ang guild na "${divKey}" at ang mga miyembro nito ay matagumpay na na-disband!`);
+        renderRosters();
+        renderAdminGuildDeleteList();
+        onDivisionChange();
+    } else {
+        alert("⚠️ Error: Hindi nahanap ang guild division na ito sa database.");
+    }
+}
+
+function renderAdminGuildDeleteList() {
+    const container = document.getElementById('admin-guild-delete-list');
+    if (!container) return;
+
+    let data = getGuildData();
+    let allDivs = Object.keys(data);
+
+    if (allDivs.length === 0) {
+        container.innerHTML = `<span style="color: var(--text-dim);">Walang nakitang active guilds.</span>`;
+        return;
+    }
+
+    container.innerHTML = "";
+    allDivs.forEach(divKey => {
+        let memberCount = data[divKey] ? data[divKey].length : 0;
+        const div = document.createElement('div');
+        div.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 6px; margin-bottom: 5px; background: rgba(0,0,0,0.5); border-left: 3px solid #ff3333; border-radius: 4px;";
+        div.innerHTML = `
+            <div>
+                <strong>🛡️ ${divKey}</strong><br>
+                <small style="color: var(--text-dim);">Members count: ${memberCount}</small>
+            </div>
+            <button onclick="deleteGuildDivision('${divKey}')" class="delete-btn" style="padding: 3px 8px; font-size: 0.75rem; background: #8b0000; color: #fff; border: 1px solid #ff3333; border-radius: 3px; cursor: pointer;">🗑️ Disband Guild</button>
+        `;
+        container.appendChild(div);
+    });
+}
+
+async function executeAGMPromotion() {
+    let currentLower = currentLoggedInOfficer ? currentLoggedInOfficer.toLowerCase() : '';
+    let isSuperAdmin = (currentLower === "fullclip" || currentLower === "kultura" || currentLower === "kulturamain");
+
+    if (!isSuperAdmin) {
+        alert("⚠️ Unauthorized! Only SuperAdmins can promote an AGM.");
+        return;
+    }
+
+    const agmName = document.getElementById('promote-agm-name').value.trim();
+    const oldDivision = document.getElementById('promote-old-division').value.trim();
+    const newGuildName = document.getElementById('promote-new-guild-name').value.trim();
+
+    if (!agmName || !oldDivision || !newGuildName) {
+        alert("⚠️ Paki-fill up ang lahat ng fields (AGM Name, Old Division, at New Guild Name)!");
+        return;
+    }
+
+    let data = getGuildData();
+    if (!data[oldDivision]) {
+        alert(`⚠️ Hindi nahanap ang lumang division na "${oldDivision}".`);
+        return;
+    }
+
+    let memberIndex = data[oldDivision].findIndex(m => m.name.toLowerCase() === agmName.toLowerCase());
+    if (memberIndex === -1) {
+        alert(`⚠️ Ang miyembrong si "${agmName}" ay hindi nahanap sa ${oldDivision}.`);
+        return;
+    }
+
+    // Alisin sa lumang division
+    let [agmObj] = data[oldDivision].splice(memberIndex, 1);
+    
+    // I-update bilang Guild Master
+    agmObj.icon = "👑";
+    agmObj.mainOwner = agmObj.name;
+
+    // Gawan ng bagong Guild Division
+    const newDivisionKey = `${newGuildName} Division (${agmObj.name})`;
+    data[newDivisionKey] = [agmObj];
+
+    // Idagdag sa listahan ng Guild Masters at Protected Accounts
+    if (!GUILD_MASTERS_LIST.includes(agmObj.name.toLowerCase())) {
+        GUILD_MASTERS_LIST.push(agmObj.name.toLowerCase());
+    }
+    if (!PROTECTED_ADMIN_ACCOUNTS.includes(agmObj.name.toLowerCase())) {
+        PROTECTED_ADMIN_ACCOUNTS.push(agmObj.name.toLowerCase());
+    }
+
+    await saveGuildData(data);
+    alert(`🎉 Tagumpay! Si ${agmObj.name} ay na-promote na at nagtayo ng bagong Guild: "${newGuildName}"!`);
+    
+    document.getElementById('promote-agm-name').value = '';
+    document.getElementById('promote-old-division').value = '';
+    document.getElementById('promote-new-guild-name').value = '';
+
+    renderRosters();
+    renderAdminGuildDeleteList();
+    onDivisionChange();
+}
+
 function openAdminModal() {
     if (!currentLoggedInOfficer) { openLoginModal(); return; }
     document.getElementById('logged-agm-display').innerText = `${currentLoggedInOfficer}`;
@@ -1461,6 +1579,8 @@ function openAdminModal() {
     const superGuildRegBlock = document.getElementById('superadmin-guild-reg-block');
     const superEventsBlock = document.getElementById('superadmin-events-block');
     const superAuctionBlock = document.getElementById('superadmin-auction-block');
+    const superGuildDeleteBlock = document.getElementById('superadmin-guild-delete-block');
+    const superPromoteAgmBlock = document.getElementById('superadmin-promote-agm-block');
 
     let currentLower = currentLoggedInOfficer.toLowerCase();
     let isSuperAdmin = (currentLower === "fullclip" || currentLower === "kultura" || currentLower === "kulturamain");
@@ -1470,10 +1590,13 @@ function openAdminModal() {
         superInboxBlock.style.display = 'block';
         superDeleteLogsBlock.style.display = 'block';
         superGuildRegBlock.style.display = 'block';
+        if (superGuildDeleteBlock) superGuildDeleteBlock.style.display = 'block';
+        if (superPromoteAgmBlock) superPromoteAgmBlock.style.display = 'block';
         if (superEventsBlock) superEventsBlock.style.display = 'block';
         if (superAuctionBlock) superAuctionBlock.style.display = 'block';
         renderSuperAdminInbox();
         renderAdminAttendanceLogList();
+        renderAdminGuildDeleteList();
         populateEventsAdminForm();
         loadPendingMarketAccounts();
         renderAdminAuctionList();
@@ -1481,6 +1604,8 @@ function openAdminModal() {
         superInboxBlock.style.display = 'none';
         superDeleteLogsBlock.style.display = 'none';
         superGuildRegBlock.style.display = 'none';
+        if (superGuildDeleteBlock) superGuildDeleteBlock.style.display = 'none';
+        if (superPromoteAgmBlock) superPromoteAgmBlock.style.display = 'none';
         if (superEventsBlock) superEventsBlock.style.display = 'none';
         if (superAuctionBlock) superAuctionBlock.style.display = 'none';
     }
@@ -2140,7 +2265,6 @@ async function submitMarketplacePending() {
         timestamp: new Date().toISOString()
     };
 
-    // Save listing sa database para makita sa Profile Modal
     try {
         await window.dbSet(window.dbRef(window.database, `marketplace_listings/${listingObj.id}`), listingObj);
     } catch (e) {
@@ -2318,19 +2442,15 @@ async function loadSocialHubData() {
 
     const membersContainer = document.getElementById('social-members-list');
     if (membersContainer) {
-        // 1. KUNIN MUNA ANG LISTAHAN NG FRIENDS
         window.dbOnValue(window.dbRef(window.database, `social_friends/${loggedUsername}`), (friendsSnap) => {
             const myFriends = friendsSnap.exists() ? friendsSnap.val() : {};
 
-            // 2. KUNIN ANG PENDING REQUESTS
             window.dbOnValue(window.dbRef(window.database, `social_requests`), (requestsSnap) => {
                 const allRequests = requestsSnap.exists() ? requestsSnap.val() : {};
 
-                // 3. LISTEN SA ONLINE/OFFLINE STATUS
                 window.dbOnValue(window.dbRef(window.database, 'marketplace_status'), (statusSnap) => {
                     const statusData = statusSnap.exists() ? statusSnap.val() : {};
 
-                    // 4. LOAD APPROVED GUILD MEMBERS
                     window.dbOnValue(window.dbRef(window.database, 'marketplace_accounts_approved'), (snapshot) => {
                         membersContainer.innerHTML = "";
                         const members = snapshot.val();
@@ -2343,20 +2463,15 @@ async function loadSocialHubData() {
                             if (username === loggedUsername) return;
                             const acc = members[username];
 
-                            // Online/Offline Status check
                             const userStatusObj = statusData[username];
                             const isOnline = userStatusObj && userStatusObj.status === 'online' && (Date.now() - userStatusObj.lastSeen < 60000);
                             const statusBadge = isOnline 
                                 ? `<span style="color: #28a745; font-size: 0.75rem; font-weight: bold;">🟢 Online</span>` 
                                 : `<span style="color: #dc3545; font-size: 0.75rem;">🔴 Offline</span>`;
 
-                            // 🔍 CHECK KUNG FRIENDS NA SILA
                             const isAlreadyFriend = myFriends.hasOwnProperty(username);
-
-                            // 🔍 CHECK KUNG MAY PENDING FRIEND REQUEST
                             const hasSentRequest = allRequests[username] && allRequests[username][loggedUsername];
 
-                            // Dynamic Button Display Logic
                             let actionButtonHtml = "";
                             if (isAlreadyFriend) {
                                 actionButtonHtml = `<span style="color: #00ffcc; font-size: 0.75rem; font-weight: bold; background: rgba(0,255,204,0.1); padding: 4px 8px; border-radius: 4px; border: 1px solid #00ffcc;">🤝 Friends</span>`;
@@ -2386,7 +2501,6 @@ async function loadSocialHubData() {
         });
     }
 
-    // FRIEND REQUESTS INBOX LOGIC
     const reqContainer = document.getElementById('social-friend-requests');
     if (reqContainer) {
         window.dbOnValue(window.dbRef(window.database, `social_requests/${loggedUsername}`), (snapshot) => {
@@ -2413,7 +2527,6 @@ async function loadSocialHubData() {
         });
     }
 
-    // CHAT DROPDOWN LOGIC
     const chatSelect = document.getElementById('chat-recipient-select');
     if (chatSelect) {
         window.dbOnValue(window.dbRef(window.database, `social_friends/${loggedUsername}`), (snapshot) => {
