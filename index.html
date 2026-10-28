@@ -675,6 +675,56 @@
                         </div>
                     </div>
 
+                    <!-- 🗑️ SUPERADMIN: DISBAND GUILD MANAGER -->
+                    <div id="superadmin-guild-delete-block" class="admin-section-block" style="display: none; border-color: #ff3333;">
+                        <button onclick="toggleAdminSection('sec-guild-delete')" class="admin-collapsible-btn" style="color: #ff3333; background: rgba(255, 51, 51, 0.1);">
+                            <span>🗑️ SuperAdmin: Disband & Delete Guild Manager</span>
+                            <span id="icon-sec-guild-delete">▼ Expand</span>
+                        </button>
+                        <div id="sec-guild-delete" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:8px;">
+                                Pumili ng guild at i-click ang button para i-disband ito nang buo sa website roster kasama ang mga miyembro nito.
+                            </p>
+                            <div id="admin-guild-delete-list" style="max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 4px; font-size: 0.8rem;">
+                                <span style="color: var(--text-dim);">Loading guilds...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 👑 SUPERADMIN: PROMOTE AGM & CREATE NEW GUILD -->
+                    <div id="superadmin-promote-agm-block" class="admin-section-block" style="display: none; border-color: #00ffcc;">
+                        <button onclick="toggleAdminSection('sec-promote-agm')" class="admin-collapsible-btn" style="color: #00ffcc; background: rgba(0, 255, 204, 0.1);">
+                            <span>👑 SuperAdmin: Promote AGM & Create New Guild</span>
+                            <span id="icon-sec-promote-agm">▼ Expand</span>
+                        </button>
+                        <div id="sec-promote-agm" class="admin-collapsible-content">
+                            <p style="font-size:0.75rem; color:var(--text-dim); margin-bottom:10px;">
+                                Ilipat ang iyong Assistant Guild Master (AGM) mula sa lumang division at gawin siyang opisyal na Guild Master ng sarili niyang bagong Guild!
+                            </p>
+                            
+                            <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; border: 1px solid #00ffcc; margin-bottom: 12px;">
+                                <div style="margin-bottom: 8px;">
+                                    <label style="font-size: 0.8rem; color: #00ffcc; font-weight: bold;">👤 Pangalan ng AGM na I-propromote (IGN):</label>
+                                    <input type="text" id="promote-agm-name" placeholder="e.g. Tsukushi" style="width: 100%; padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem; margin-top: 3px;">
+                                </div>
+
+                                <div style="margin-bottom: 8px;">
+                                    <label style="font-size: 0.8rem; color: #00ffcc; font-weight: bold;">🏰 Lumang Division / Guild Niya:</label>
+                                    <input type="text" id="promote-old-division" placeholder="e.g. Warlock Division (Warlock)" style="width: 100%; padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem; margin-top: 3px;">
+                                </div>
+
+                                <div style="margin-bottom: 10px;">
+                                    <label style="font-size: 0.8rem; color: #00ffcc; font-weight: bold;">✨ Pangalan ng Bagong Guild na Itatayo:</label>
+                                    <input type="text" id="promote-new-guild-name" placeholder="e.g. TSUKUSHI GUILD" style="width: 100%; padding: 7px; background: #111; border: 1px solid #555; color: #fff; border-radius: 4px; font-size: 0.8rem; margin-top: 3px;">
+                                </div>
+
+                                <button onclick="executeAGMPromotion()" class="btn" style="width: 100%; padding: 8px; font-size: 0.85rem; background: linear-gradient(135deg, #00ffcc, #008866); color: #000; font-weight: bold;">
+                                    🚀 I-promote ang AGM at Gumawa ng Bagong Guild
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                     <div id="superadmin-main-dummy-block" class="admin-section-block" style="border-color: #33cc33;">
                         <button onclick="toggleAdminSection('sec-main-dummy-linker')" class="admin-collapsible-btn" style="color: #33cc33; background: rgba(51, 204, 51, 0.1);">
                             <span>🎭 Multi-Dummy Character Mapper & Search Portal</span>
