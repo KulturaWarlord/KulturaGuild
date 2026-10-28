@@ -7,6 +7,7 @@ const AUCTION_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-dric
 const ATTENDANCE_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev?target=attendance";
 const ANNOUNCEMENT_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev?target=announcement";
 const MARKETPLACE_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev?target=marketplace";
+const CHARACTER_MAPPING_DISCORD_WEBHOOK_URL = "https://kultura-webhook-proxy.official-drickz.workers.dev?target=mapping";
 
 let cloudAuctionItems = [];
 
@@ -96,7 +97,7 @@ let ALL_DIVISIONS = [
     "REVENGE Division (Tsukushi)"
 ];
 
-// 👑 BAGONG GUILD: REVENGE (TSUKUSHI GUILDMASTER) & TINANGGAL ANG ANXIETY/IKAPITANA
+// 👑 BAGONG GUILD: REVENGE (TSUKUSHI GUILDMASTER)
 let PROTECTED_ADMIN_ACCOUNTS = [
     "fullclip", "warlock", "lorddwight", "windtalker", "mechado", "tsukushi", "kultura", "kulturamain"
 ];
@@ -294,16 +295,19 @@ function searchMainAndDummies() {
     resultBox.innerHTML = displayHtml;
 }
 
+// 🔓 UNLINK DUMMY ACCOUNT WITH DEDICATED DISCORD CHANNEL BROADCAST
 async function unlinkDummyAccount(dummyIgn) {
     const confirmUnlink = confirm(`⚠️ Are you sure you want to unlink "${dummyIgn}"? It will revert back to being independent or its own main.`);
     if (!confirmUnlink) return;
 
     let data = getGuildData();
     let found = false;
+    let previousMain = "";
 
     for (let divKey in data) {
         let member = data[divKey].find(m => m.name.toLowerCase() === dummyIgn.toLowerCase());
         if (member) {
+            previousMain = member.mainOwner || "Main Character";
             member.mainOwner = member.name;
             member.icon = getClassIcon(member.class);
             found = true;
@@ -316,6 +320,33 @@ async function unlinkDummyAccount(dummyIgn) {
         alert(`🔓 Successfully unlinked "${dummyIgn}"!`);
         searchMainAndDummies();
         renderRosters();
+
+        // 📢 DISCORD NOTIFICATION (DIRECT TO MAPPING CHANNEL)
+        if (CHARACTER_MAPPING_DISCORD_WEBHOOK_URL) {
+            const discordBody = {
+                username: "Kultura Character Mapper Bot",
+                avatar_url: "https://nolimit.lv/themes/def_theme/images/logo.png",
+                content: "🔓 **CHARACTER UNLINKING NOTIFICATION**",
+                embeds: [{
+                    title: `🔓 Dummy Character Unlinked`,
+                    color: 15158332,
+                    fields: [
+                        { name: "🎭 Unlinked Character", value: `\`${dummyIgn}\``, inline: true },
+                        { name: "👑 Former Main Owner", value: `\`${previousMain}\``, inline: true },
+                        { name: "📌 Status", value: "`REVERTED TO INDEPENDENT CHARACTER`", inline: false }
+                    ],
+                    footer: { text: "Kultura Guild & Alliance • Security System", icon_url: "https://nolimit.lv/themes/def_theme/images/logo.png" },
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            fetch(CHARACTER_MAPPING_DISCORD_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(discordBody)
+            }).catch(err => console.error("Discord Unlink Webhook Error:", err));
+        }
+
     } else {
         alert(`⚠️ Error: Dummy character not found in database.`);
     }
@@ -1076,6 +1107,7 @@ function addMoreDummyBox() {
     container.appendChild(newInput);
 }
 
+// 🔗 LINKING DUMMIES TO MAIN WITH DISCORD MAPPING NOTIFICATION
 async function saveSuperAdminMultiLinkage() {
     const mainIgnInput = document.getElementById('type-main-ign').value.trim();
     const dummyInputs = document.querySelectorAll('.dummy-input-field');
@@ -1104,7 +1136,7 @@ async function saveSuperAdminMultiLinkage() {
     }
 
     let linkedCount = 0;
-    let missingDummies = [];
+    let successfullyLinkedDummies = [];
 
     dummyList.forEach(dummyIgn => {
         let foundDummyObj = null;
@@ -1115,9 +1147,8 @@ async function saveSuperAdminMultiLinkage() {
         if (foundDummyObj) {
             foundDummyObj.mainOwner = canonicalMainIgn;
             foundDummyObj.icon = '🎭';
+            successfullyLinkedDummies.push(foundDummyObj.name);
             linkedCount++;
-        } else {
-            missingDummies.push(dummyIgn);
         }
     });
 
@@ -1130,6 +1161,36 @@ async function saveSuperAdminMultiLinkage() {
         onDivisionChange();
         document.getElementById('search-main-input').value = canonicalMainIgn;
         searchMainAndDummies();
+
+        // 📢 DISCORD NOTIFICATION (DIRECT TO DEDICATED MAPPING CHANNEL)
+        if (CHARACTER_MAPPING_DISCORD_WEBHOOK_URL) {
+            const formattedDummies = successfullyLinkedDummies.map(d => `\`🎭 ${d}\``).join(', ');
+            const mainDivision = findMainGuildDivision(canonicalMainIgn) || "Kultura Alliance";
+
+            const discordBody = {
+                username: "Kultura Character Mapper Bot",
+                avatar_url: "https://nolimit.lv/themes/def_theme/images/logo.png",
+                content: "🔗 **CHARACTER MAPPING & DUMMY LINKAGE UPDATED!**",
+                embeds: [{
+                    title: `🎭 Main & Dummy Ownership Verification`,
+                    color: 3066993,
+                    fields: [
+                        { name: "👑 Main Character (Owner)", value: `\`${canonicalMainIgn}\` (${mainDivision})`, inline: false },
+                        { name: "🎭 Linked Dummy Account(s)", value: formattedDummies, inline: false },
+                        { name: "🛡️ Verification Status", value: "`OFFICIALLY REGISTERED & VERIFIED BY SUPERADMIN`", inline: false }
+                    ],
+                    footer: { text: "Kultura Guild & Alliance • Anti-Double Compensation System", icon_url: "https://nolimit.lv/themes/def_theme/images/logo.png" },
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            fetch(CHARACTER_MAPPING_DISCORD_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(discordBody)
+            }).catch(err => console.error("Discord Linkage Webhook Error:", err));
+        }
+
     } else {
         alert(`⚠️ No accounts linked! Ensure the Dummy Accounts are registered in the Roster first.`);
     }
@@ -2023,6 +2084,7 @@ function closeMarketLoginModal() {
     document.getElementById('market-login-modal').style.display = 'none';
 }
 
+// 🔔 REGISTRATION SUBMISSION WITH AUTOMATIC ANNOUNCEMENT DISCORD WEBHOOK ALERTS
 async function submitMarketMemberRegistration() {
     const ign = document.getElementById('reg-market-ign').value.trim();
     const username = document.getElementById('reg-market-user').value.trim().toLowerCase();
@@ -2094,6 +2156,38 @@ async function submitMarketMemberRegistration() {
         await window.dbSet(window.dbRef(window.database, `marketplace_accounts_pending/${username}`), regData);
         alert("🎉 Registration successfully submitted! Please wait for SuperAdmin approval.");
         closeMarketRegisterModal();
+
+        // 📢 DISCORD ANNOUNCEMENT NOTIFICATION
+        if (ANNOUNCEMENT_DISCORD_WEBHOOK_URL) {
+            const ipStatusText = isDuplicateIp 
+                ? `⚠️ **WARNING: DUPLICATE IP DETECTED!**\n(First account on this IP: \`@${originalRegisterUser}\`)` 
+                : `🟢 Clean / Unique IP (\`${userIp}\`)`;
+
+            const discordBody = {
+                username: "Kultura Registration Bot",
+                avatar_url: "https://nolimit.lv/themes/def_theme/images/logo.png",
+                content: "🔔 **NEW MEMBER REGISTRATION PENDING APPROVAL!**",
+                embeds: [{
+                    title: `👤 New Member Registration: ${ign}`,
+                    color: isDuplicateIp ? 15158332 : 3066993,
+                    fields: [
+                        { name: "⚔️ In-Game Name (IGN)", value: `\`${ign}\``, inline: true },
+                        { name: "👤 Username", value: `\`@${username}\``, inline: true },
+                        { name: "🌐 IP Security Check", value: ipStatusText, inline: false },
+                        { name: "📌 Status", value: "`PENDING SUPERADMIN APPROVAL`", inline: false }
+                    ],
+                    footer: { text: "Kultura Guild Portal • Security System", icon_url: "https://nolimit.lv/themes/def_theme/images/logo.png" },
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            fetch(ANNOUNCEMENT_DISCORD_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(discordBody)
+            }).catch(err => console.error("Discord Reg Webhook Error:", err));
+        }
+
     } catch (err) {
         console.error("Registration Error:", err);
         alert("❌ Registration failed. Please try again.");
