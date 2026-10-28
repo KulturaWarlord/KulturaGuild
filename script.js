@@ -64,6 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const rightLetters = document.querySelectorAll('#right-floating-word span');
     rightLetters.forEach((letter, index) => { letter.style.animationDelay = `${index * 0.12}s`; });
+
+    // 🔗 LIVE DUMMY PREVIEW LISTENER HABANG NAGTA-TYPE NG MAIN IGN
+    const mainInputElem = document.getElementById('type-main-ign');
+    if (mainInputElem) {
+        mainInputElem.addEventListener('input', updateLiveMainDummyPreview);
+    }
 });
 
 function initPageCounter() {
@@ -97,7 +103,6 @@ let ALL_DIVISIONS = [
     "REVENGE Division (Tsukushi)"
 ];
 
-// 👑 BAGONG GUILD: REVENGE (TSUKUSHI GUILDMASTER)
 let PROTECTED_ADMIN_ACCOUNTS = [
     "fullclip", "warlock", "lorddwight", "windtalker", "mechado", "tsukushi", "kultura", "kulturamain"
 ];
@@ -295,7 +300,71 @@ function searchMainAndDummies() {
     resultBox.innerHTML = displayHtml;
 }
 
-// 🔓 UNLINK DUMMY ACCOUNT WITH DEDICATED DISCORD CHANNEL BROADCAST
+// 🔗 LIVE PREVIEW FUNCTION HABANG NAGTA-TYPE NG MAIN IGN
+function updateLiveMainDummyPreview() {
+    const mainIgnInput = document.getElementById('type-main-ign') ? document.getElementById('type-main-ign').value.trim().toLowerCase() : '';
+    let previewBox = document.getElementById('live-mapping-preview-box');
+    
+    if (!previewBox) {
+        const parentDiv = document.getElementById('type-main-ign') ? document.getElementById('type-main-ign').parentNode : null;
+        if (parentDiv) {
+            previewBox = document.createElement('div');
+            previewBox.id = 'live-mapping-preview-box';
+            previewBox.style.cssText = "margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.4); border: 1px dashed var(--primary); border-radius: 4px; font-size: 0.85rem;";
+            parentDiv.appendChild(previewBox);
+        } else {
+            return;
+        }
+    }
+
+    if (!mainIgnInput) {
+        previewBox.innerHTML = `<span style="color: var(--text-dim); font-style: italic;">Type a Main Character IGN above to view its currently linked dummies...</span>`;
+        return;
+    }
+
+    let data = getGuildData();
+    let foundMainName = null;
+    let currentDummies = [];
+
+    for (let divKey in data) {
+        let members = data[divKey];
+        let matchMain = members.find(m => m.name.toLowerCase() === mainIgnInput);
+        if (matchMain) {
+            foundMainName = matchMain.name;
+        }
+        members.forEach(m => {
+            let owner = m.mainOwner ? m.mainOwner.toLowerCase() : m.name.toLowerCase();
+            if (owner === mainIgnInput && m.name.toLowerCase() !== mainIgnInput) {
+                currentDummies.push({ name: m.name, class: m.class, division: divKey });
+            }
+        });
+    }
+
+    if (!foundMainName && currentDummies.length === 0) {
+        previewBox.innerHTML = `<span style="color: #ff3333;">⚠️ Character "${mainIgnInput}" not found in roster or has no links.</span>`;
+        return;
+    }
+
+    let displayName = foundMainName || mainIgnInput;
+    let dummiesHtml = '';
+    if (currentDummies.length > 0) {
+        currentDummies.forEach(d => {
+            dummiesHtml += `<li style="margin-left: 15px; color: #fff; margin-top: 3px; display: flex; justify-content: space-between; align-items: center;"><span>🎭 <strong>${d.name}</strong> <small style="color: var(--text-dim);">(${d.class} - ${d.division})</small></span> <button onclick="unlinkDummyAccount('${d.name}')" style="background:#8b0000; color:#fff; border:none; padding:1px 5px; border-radius:3px; font-size:0.65rem; cursor:pointer;">🔓 Unlink</button></li>`;
+        });
+    } else {
+        dummiesHtml = `<li style="color: var(--text-dim); margin-left: 15px; font-size: 0.8rem;">(No dummies currently linked yet)</li>`;
+    }
+
+    previewBox.innerHTML = `
+        <div style="color: var(--primary-glow); font-weight: bold;">👑 Main: <span style="color:#fff;">${displayName}</span></div>
+        <div style="margin-top: 4px; color: #ffaa33;">Current Linked Dummies (${currentDummies.length}):</div>
+        <ul style="list-style-type: none; padding: 0; margin-top: 2px;">
+            ${dummiesHtml}
+        </ul>
+    `;
+}
+
+// 🔓 UNLINK DUMMY ACCOUNT (WITH REMAINING DUMMIES DISCORD NOTIFICATION)
 async function unlinkDummyAccount(dummyIgn) {
     const confirmUnlink = confirm(`⚠️ Are you sure you want to unlink "${dummyIgn}"? It will revert back to being independent or its own main.`);
     if (!confirmUnlink) return;
@@ -307,7 +376,14 @@ async function unlinkDummyAccount(dummyIgn) {
     for (let divKey in data) {
         let member = data[divKey].find(m => m.name.toLowerCase() === dummyIgn.toLowerCase());
         if (member) {
-            previousMain = member.mainOwner || "Main Character";
+            previousMain = member.mainOwner || member.name;
+            break;
+        }
+    }
+
+    for (let divKey in data) {
+        let member = data[divKey].find(m => m.name.toLowerCase() === dummyIgn.toLowerCase());
+        if (member) {
             member.mainOwner = member.name;
             member.icon = getClassIcon(member.class);
             found = true;
@@ -320,9 +396,24 @@ async function unlinkDummyAccount(dummyIgn) {
         alert(`🔓 Successfully unlinked "${dummyIgn}"!`);
         searchMainAndDummies();
         renderRosters();
+        if (typeof updateLiveMainDummyPreview === 'function') { updateLiveMainDummyPreview(); }
 
-        // 📢 DISCORD NOTIFICATION (DIRECT TO MAPPING CHANNEL)
+        let remainingDummies = [];
+        let freshData = getGuildData();
+        for (let divKey in freshData) {
+            freshData[divKey].forEach(m => {
+                let owner = m.mainOwner ? m.mainOwner.toLowerCase() : m.name.toLowerCase();
+                if (owner === previousMain.toLowerCase() && m.name.toLowerCase() !== previousMain.toLowerCase()) {
+                    remainingDummies.push(m.name);
+                }
+            });
+        }
+
         if (CHARACTER_MAPPING_DISCORD_WEBHOOK_URL) {
+            const formattedRemaining = remainingDummies.length > 0 
+                ? remainingDummies.map(d => `\`🎭 ${d}\``).join(', ') 
+                : "`No remaining dummies linked`";
+
             const discordBody = {
                 username: "Kultura Character Mapper Bot",
                 avatar_url: "https://nolimit.lv/themes/def_theme/images/logo.png",
@@ -332,7 +423,8 @@ async function unlinkDummyAccount(dummyIgn) {
                     color: 15158332,
                     fields: [
                         { name: "🎭 Unlinked Character", value: `\`${dummyIgn}\``, inline: true },
-                        { name: "👑 Former Main Owner", value: `\`${previousMain}\``, inline: true },
+                        { name: "👑 Main Character Owner", value: `\`${previousMain}\``, inline: true },
+                        { name: "📋 Remaining Active Dummies (" + remainingDummies.length + ")", value: formattedRemaining, inline: false },
                         { name: "📌 Status", value: "`REVERTED TO INDEPENDENT CHARACTER`", inline: false }
                     ],
                     footer: { text: "Kultura Guild & Alliance • Security System", icon_url: "https://nolimit.lv/themes/def_theme/images/logo.png" },
@@ -371,6 +463,7 @@ function initRealtimeListeners() {
         renderRosters();
         updateLiveActiveWarriors();
         searchMainAndDummies();
+        if (typeof updateLiveMainDummyPreview === 'function') { updateLiveMainDummyPreview(); }
         if (document.getElementById('attendance-admin-modal').style.display === 'flex') {
             onDivisionChange();
         }
@@ -1017,7 +1110,6 @@ async function handleLogin() {
         currentLoggedInOfficer = userVal.includes('@') ? userVal.split('@')[0] : userVal;
         localStorage.setItem('kultura_logged_officer', currentLoggedInOfficer);
         
-        // 👑 AUTO-SET MARKETPLACE & PROFILE HUB FOR GUILD MASTERS / OFFICERS
         const officerLower = currentLoggedInOfficer.toLowerCase();
         if (GUILD_MASTERS_LIST.includes(officerLower) || PROTECTED_ADMIN_ACCOUNTS.includes(officerLower)) {
             localStorage.setItem('kultura_market_user', `${currentLoggedInOfficer} (Guild Master)`);
@@ -1107,7 +1199,7 @@ function addMoreDummyBox() {
     container.appendChild(newInput);
 }
 
-// 🔗 LINKING DUMMIES TO MAIN WITH DISCORD MAPPING NOTIFICATION
+// 🔗 LINKING DUMMIES TO MAIN (WITH ALL ACTIVE DUMMIES IN DISCORD NOTIFICATION)
 async function saveSuperAdminMultiLinkage() {
     const mainIgnInput = document.getElementById('type-main-ign').value.trim();
     const dummyInputs = document.querySelectorAll('.dummy-input-field');
@@ -1155,16 +1247,31 @@ async function saveSuperAdminMultiLinkage() {
     if (linkedCount > 0) {
         await saveGuildData(data);
         alert(`🎉 Successfully linked ${linkedCount} Dummy Accounts to Main "${canonicalMainIgn}"!`);
+        
         document.getElementById('type-main-ign').value = '';
         dummyInputs.forEach(i => i.value = '');
         renderRosters();
         onDivisionChange();
         document.getElementById('search-main-input').value = canonicalMainIgn;
         searchMainAndDummies();
+        if (typeof updateLiveMainDummyPreview === 'function') { updateLiveMainDummyPreview(); }
 
-        // 📢 DISCORD NOTIFICATION (DIRECT TO DEDICATED MAPPING CHANNEL)
+        let allCurrentDummiesForMain = [];
+        let freshData = getGuildData();
+        for (let divKey in freshData) {
+            freshData[divKey].forEach(m => {
+                let owner = m.mainOwner ? m.mainOwner.toLowerCase() : m.name.toLowerCase();
+                if (owner === canonicalMainIgn.toLowerCase() && m.name.toLowerCase() !== canonicalMainIgn.toLowerCase()) {
+                    allCurrentDummiesForMain.push(m.name);
+                }
+            });
+        }
+
         if (CHARACTER_MAPPING_DISCORD_WEBHOOK_URL) {
-            const formattedDummies = successfullyLinkedDummies.map(d => `\`🎭 ${d}\``).join(', ');
+            const formattedNewlyLinked = successfullyLinkedDummies.map(d => `\`🎭 ${d}\``).join(', ');
+            const formattedAllDummies = allCurrentDummiesForMain.length > 0 
+                ? allCurrentDummiesForMain.map(d => `\`🎭 ${d}\``).join(', ') 
+                : "`None`";
             const mainDivision = findMainGuildDivision(canonicalMainIgn) || "Kultura Alliance";
 
             const discordBody = {
@@ -1176,8 +1283,9 @@ async function saveSuperAdminMultiLinkage() {
                     color: 3066993,
                     fields: [
                         { name: "👑 Main Character (Owner)", value: `\`${canonicalMainIgn}\` (${mainDivision})`, inline: false },
-                        { name: "🎭 Linked Dummy Account(s)", value: formattedDummies, inline: false },
-                        { name: "🛡️ Verification Status", value: "`OFFICIALLY REGISTERED & VERIFIED BY SUPERADMIN`", inline: false }
+                        { name: "✨ Newly Linked Dummy(s)", value: formattedNewlyLinked, inline: false },
+                        { name: "📋 Complete List of Active Dummies (" + allCurrentDummiesForMain.length + ")", value: formattedAllDummies, inline: false },
+                        { name: "🛡️ Verification Status", value: "`OFFICIALLY REGISTERED & VERIFIED`", inline: false }
                     ],
                     footer: { text: "Kultura Guild & Alliance • Anti-Double Compensation System", icon_url: "https://nolimit.lv/themes/def_theme/images/logo.png" },
                     timestamp: new Date().toISOString()
@@ -1503,9 +1611,6 @@ async function registerAllianceAndGM() {
     openAdminModal();
 }
 
-// ==========================================
-// 🗑️ PURE DISBAND & 👑 AGM PROMOTION FUNCTIONS
-// ==========================================
 async function deleteGuildDivision(divKey) {
     let currentLower = currentLoggedInOfficer ? currentLoggedInOfficer.toLowerCase() : '';
     let isSuperAdmin = (currentLower === "fullclip" || currentLower === "kultura" || currentLower === "kulturamain");
@@ -1833,7 +1938,6 @@ function toggleDivision(rosterId, btnId) {
     }
 }
 
-// ROTATING ALLIANCE BADGE WITH REVENGE GUILD
 const allianceGuilds = [
     { name: "PROTECT GUILD", icon: "🛡️" },
     { name: "REVENGE GUILD", icon: "⚔️" },
@@ -1867,9 +1971,6 @@ window.addEventListener('DOMContentLoaded', () => {
     updatePortalButtonUI();
 });
 
-// ==========================================
-// 🛒 KULTURA MARKETPLACE & MEMBER PROFILE FUNCTIONS
-// ==========================================
 function startOnlineStatusHeartbeat(username) {
     if (!window.database || !username) return;
     const userStatusRef = window.dbRef(window.database, `marketplace_status/${username}`);
@@ -2084,7 +2185,6 @@ function closeMarketLoginModal() {
     document.getElementById('market-login-modal').style.display = 'none';
 }
 
-// 🔔 REGISTRATION SUBMISSION WITH AUTOMATIC ANNOUNCEMENT DISCORD WEBHOOK ALERTS
 async function submitMarketMemberRegistration() {
     const ign = document.getElementById('reg-market-ign').value.trim();
     const username = document.getElementById('reg-market-user').value.trim().toLowerCase();
@@ -2157,7 +2257,6 @@ async function submitMarketMemberRegistration() {
         alert("🎉 Registration successfully submitted! Please wait for SuperAdmin approval.");
         closeMarketRegisterModal();
 
-        // 📢 DISCORD ANNOUNCEMENT NOTIFICATION
         if (ANNOUNCEMENT_DISCORD_WEBHOOK_URL) {
             const ipStatusText = isDuplicateIp 
                 ? `⚠️ **WARNING: DUPLICATE IP DETECTED!**\n(First account on this IP: \`@${originalRegisterUser}\`)` 
@@ -2405,7 +2504,6 @@ async function submitMarketplacePending() {
     }
 }
 
-// ⚖️ AUCTION MANAGER FUNCTIONS
 async function addAuctionItem() {
     const itemName = document.getElementById('auction-item-name').value.trim();
     const itemPrice = document.getElementById('auction-item-price').value.trim();
@@ -2520,9 +2618,6 @@ async function sendAuctionPriceListToDiscord() {
     }
 }
 
-// ==========================================
-// 👥 KULTURA MEMBERS SOCIAL & MESSAGING LOGIC
-// ==========================================
 async function loadSocialHubData() {
     const loggedUsername = localStorage.getItem('kultura_market_username');
     if (!loggedUsername) return;
