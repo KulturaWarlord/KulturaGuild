@@ -93,14 +93,15 @@ let ALL_DIVISIONS = [
     "Warlock Division (Warlock)",
     "PROTECT Division (Windtalker)",
     "STEALTH Division (LordDwight)",
-    "ANXIETY Division (iKapitana)"
+    "REVENGE Division (Tsukushi)"
 ];
 
+// 👑 BAGONG GUILD: REVENGE (TSUKUSHI GUILDMASTER) & TINANGGAL ANG ANXIETY/IKAPITANA
 let PROTECTED_ADMIN_ACCOUNTS = [
-    "fullclip", "warlock", "lorddwight", "windtalker", "ikapitana", "mechado", "tsukushi", "kultura", "kulturamain"
+    "fullclip", "warlock", "lorddwight", "windtalker", "mechado", "tsukushi", "kultura", "kulturamain"
 ];
 
-const GUILD_MASTERS_LIST = ["fullclip", "warlock", "lorddwight", "windtalker", "ikapitana"];
+const GUILD_MASTERS_LIST = ["fullclip", "warlock", "lorddwight", "windtalker", "tsukushi"];
 let OFFICER_ACCOUNTS_SYNC = {};
 
 const defaultDivisionMembers = {
@@ -109,8 +110,7 @@ const defaultDivisionMembers = {
         { name: "Mechado", class: "Blade Master", icon: "⚔️", mainOwner: "Mechado" }
     ],
     "Warlock Division (Warlock)": [
-        { name: "Warlock", class: "Blade Master", icon: "👑", mainOwner: "Warlock" },
-        { name: "Tsukushi", class: "Blade Master", icon: "🛡️", mainOwner: "Tsukushi" }
+        { name: "Warlock", class: "Blade Master", icon: "👑", mainOwner: "Warlock" }
     ],
     "PROTECT Division (Windtalker)": [
         { name: "Windtalker", class: "Blade Master", icon: "👑", mainOwner: "Windtalker" }
@@ -118,8 +118,8 @@ const defaultDivisionMembers = {
     "STEALTH Division (LordDwight)": [
         { name: "LordDwight", class: "Dark Lord", icon: "👑", mainOwner: "LordDwight" }
     ],
-    "ANXIETY Division (iKapitana)": [
-        { name: "iKapitana", class: "Summoner", icon: "👑", mainOwner: "iKapitana" }
+    "REVENGE Division (Tsukushi)": [
+        { name: "Tsukushi", class: "Blade Master", icon: "👑", mainOwner: "Tsukushi" }
     ]
 };
 
@@ -1202,7 +1202,7 @@ function findMainGuildDivision(mainIgn) {
     if (lowerMain === "warlock") return "Warlock Division (Warlock)";
     if (lowerMain === "lorddwight") return "STEALTH Division (LordDwight)";
     if (lowerMain === "windtalker") return "PROTECT Division (Windtalker)";
-    if (lowerMain === "ikapitana") return "ANXIETY Division (iKapitana)";
+    if (lowerMain === "tsukushi") return "REVENGE Division (Tsukushi)";
 
     const data = getGuildData();
     for (let divKey in data) {
@@ -1529,18 +1529,14 @@ async function executeAGMPromotion() {
         return;
     }
 
-    // Alisin sa lumang division
     let [agmObj] = data[oldDivision].splice(memberIndex, 1);
     
-    // I-update bilang Guild Master
     agmObj.icon = "👑";
     agmObj.mainOwner = agmObj.name;
 
-    // Gawan ng bagong Guild Division
     const newDivisionKey = `${newGuildName} Division (${agmObj.name})`;
     data[newDivisionKey] = [agmObj];
 
-    // Idagdag sa listahan ng Guild Masters at Protected Accounts
     if (!GUILD_MASTERS_LIST.includes(agmObj.name.toLowerCase())) {
         GUILD_MASTERS_LIST.push(agmObj.name.toLowerCase());
     }
@@ -1584,7 +1580,6 @@ function openAdminModal() {
 
     let currentLower = currentLoggedInOfficer.toLowerCase();
     let isSuperAdmin = (currentLower === "fullclip" || currentLower === "kultura" || currentLower === "kulturamain");
-    let isIkapitana = (currentLower === "ikapitana");
 
     if (isSuperAdmin) {
         superInboxBlock.style.display = 'block';
@@ -1611,7 +1606,7 @@ function openAdminModal() {
     }
 
     updateGiveawayBotVisibility();
-    superMainDummyBlock.style.display = isIkapitana ? 'none' : 'block';
+    superMainDummyBlock.style.display = 'block';
 
     const selectDiv = document.getElementById('admin-officer-select');
     selectDiv.innerHTML = '';
@@ -1777,9 +1772,10 @@ function toggleDivision(rosterId, btnId) {
     }
 }
 
+// ROTATING ALLIANCE BADGE WITH REVENGE GUILD
 const allianceGuilds = [
     { name: "PROTECT GUILD", icon: "🛡️" },
-    { name: "ANXIETY GUILD", icon: "⚡" },
+    { name: "REVENGE GUILD", icon: "⚔️" },
     { name: "SPIDEY GUILD", icon: "🕷️" },
     { name: "STEALTH GUILD", icon: "⚔️" },
     { name: "VALKYRIE GUILD", icon: "✨" },
@@ -1811,7 +1807,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// 🛒 KULTURA MARKETPLACE & MEMBER PROFILE FUNCTIONS (IP CHECK & AUTO DISCORD POST)
+// 🛒 KULTURA MARKETPLACE & MEMBER PROFILE FUNCTIONS
 // ==========================================
 function startOnlineStatusHeartbeat(username) {
     if (!window.database || !username) return;
@@ -1890,7 +1886,6 @@ async function checkMarketplaceAuthOnLoad() {
     }
 }
 
-// ✍️ FONT, SIZE, COLOR, & BOLD CUSTOMIZATION FUNCTIONS
 function saveMemberFontStyles() {
     const fontFamily = document.getElementById('market-font-family') ? document.getElementById('market-font-family').value : "'Montserrat', sans-serif";
     const fontSize = document.getElementById('market-font-size') ? document.getElementById('market-font-size').value : "15px";
